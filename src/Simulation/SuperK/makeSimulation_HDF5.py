@@ -2,7 +2,6 @@
 import ROOT as root
 from ROOT import TCanvas, TFile, TTree
 import numpy as np
-import math
 import argparse
 #import multiprocessing
 
@@ -10,7 +9,6 @@ import argparse
 from RootFilesManager import *
 from TrueRing import *
 from RecoRing import *
-# from applications import ClearBadHadrons
 from RandomGenerator import RecoDists
 from GenieHDF5 import *
 from applications import Azimuth
