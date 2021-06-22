@@ -10,7 +10,7 @@ import sterileutil as util
 
 # Use numerical solving methods to calculate matter effect
 def prob(a, b, exp, cond, fit, m4 = 6, t14 = 0.1, t24= 0.1, t34= 0.1, \
-	mand13 = False, vald13 = 0, manE = False, valE = 1, d14 = 0.1, d34 = 0.1, anti = False, avg = False):
+	mand13 = False, vald13 = 0, manE = False, valE = 1, d14 = 0.1, d34 = 0.1, anti = False, avg = False, manL = False, valL = 0):
 	q = util.params(exp, cond, fit)
 	[m1, m2, m3, t12, t13, t23, d13, A, Ap, l, E] = \
 	[q['m1'], q['m2'], q['m3'], q['t12'], q['t13'], q['t23'],\
@@ -21,6 +21,8 @@ def prob(a, b, exp, cond, fit, m4 = 6, t14 = 0.1, t24= 0.1, t34= 0.1, \
 		d13 = vald13
 	if manE:
 		E = valE
+	if manL:
+		l = valL
 	if not anti:
 		U = sterileU.PMNS(t12, t13, t23, t14, t24, t34, d13, d14, d34)
 	else:
