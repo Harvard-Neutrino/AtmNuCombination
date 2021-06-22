@@ -15,28 +15,30 @@ from applications import Azimuth
 
 parser = argparse.ArgumentParser()
 parser.add_argument("in_hdf5filename", type=str, nargs='?', default='/home/pablofer/AtmNuCombination/utils/atm_genie.root.hdf5')
-parser.add_argument("out_rootfilename", type=str, nargs='?', default='testfcmc.root')
+parser.add_argument("outfilename", type=str, nargs='?', default='testfcmc.hdf5')
 parser.add_argument("-v", dest='verbo', default=False, action='store_true')
 
 args = parser.parse_args()
 verbose = args.verbo
 genie_input = args.in_hdf5filename
-output = args.out_rootfilename
+output = args.outfilename
 
 honda_file = '/home/pablofer/IceCube-SuperK_AtmNu/SuperK/Flux/flux_at_Kamioka/honda_flux_log.root'
 #distros = 'RecoDistributions.root'
 
 root.gROOT.SetBatch(True) # No graphics enabled
 
-# Initialize random generator
-root.gRandom.SetSeed(1)
-rand = root.TRandom3(0)
+# # Initialize random generator
+# root.gRandom.SetSeed(1)
+# rand = root.TRandom3(0)
 
 # Read GENIE GST file
-event = GenieSimulation('/home/pablofer/AtmNuCombination/utils/atm_genie.root.hdf5')
+event = GenieSimulation('/home/pablofer/old.AtmNuCombination/utils/atm_genie.root.hdf5')
 
 # Read Honda flux
 hfile,htree = read_tree(honda_file,'honda')
+event.Flux(htree)
+# print('Done Fluxes')
 
 # Read reco distributions
 #dfile = read_histo(distros)
@@ -45,37 +47,40 @@ rd = RecoDists()
 
 # # Output file to write
 # ofile, osc_tuple = out_tree(output,'osc_tuple')
-# # Variable declaration for out tree
-# ipnu       = np.zeros(1,dtype=np.double) ; osc_tuple.Branch("ipnu",ipnu,"ipnu/D")
-# pnu        = np.zeros(1,dtype=np.double) ; osc_tuple.Branch("pnu",pnu,"pnu/D")
-# dirnu_x    = np.zeros(1,dtype=np.double) ; osc_tuple.Branch("dirnu_x",dirnu_x,"dirnu_x/D")
-# dirnu_y    = np.zeros(1,dtype=np.double) ; osc_tuple.Branch("dirnu_y",dirnu_y,"dirnu_y/D")
-# dirnu_z    = np.zeros(1,dtype=np.double) ; osc_tuple.Branch("dirnu_z",dirnu_z,"dirnu_z/D")
-# cz         = np.zeros(1,dtype=np.double) ; osc_tuple.Branch("cz",cz,"cz/D")
-# azi        = np.zeros(1,dtype=np.double) ; osc_tuple.Branch("azi",azi,"azi/D")
-# fluxho     = np.zeros(4,dtype=np.double) ; osc_tuple.Branch("fluxho",fluxho,"fluxho[4]/D")
-# plep       = np.zeros(1,dtype=np.double) ; osc_tuple.Branch("plep",plep,"plep/D")
-# dirlep_x   = np.zeros(1,dtype=np.double) ; osc_tuple.Branch("dirlep_x",dirlep_x,"dirlep_x/D")
-# dirlep_y   = np.zeros(1,dtype=np.double) ; osc_tuple.Branch("dirlep_y",dirlep_y,"dirlep_y/D")
-# dirlep_z   = np.zeros(1,dtype=np.double) ; osc_tuple.Branch("dirlep_z",dirlep_z,"dirlep_z/D")
-# ## reco variables
-# reco_pmax  = np.zeros(1,dtype=np.double) ; osc_tuple.Branch("reco_pmax",reco_pmax,"reco_pmax/D")
-# evis       = np.zeros(1,dtype=np.double) ; osc_tuple.Branch("evis",evis,"evis/D")
-# reco_dir_x = np.zeros(1,dtype=np.double) ; osc_tuple.Branch("reco_dir_x",reco_dir_x,"reco_dir_x/D")
-# reco_dir_y = np.zeros(1,dtype=np.double) ; osc_tuple.Branch("reco_dir_y",reco_dir_y,"reco_dir_y/D")
-# reco_dir_z = np.zeros(1,dtype=np.double) ; osc_tuple.Branch("reco_dir_z",reco_dir_z,"reco_dir_z/D")
-# ip         = np.zeros(1,dtype=np.double) ; osc_tuple.Branch("ip",ip,"ip/D")
-# nring      = np.zeros(1,dtype=np.double) ; osc_tuple.Branch("nring",nring,"nring/D")
-# muedk      = np.zeros(1,dtype=np.double) ; osc_tuple.Branch("muedk",muedk,"muedk/D")
-# itype      = np.zeros(1,dtype=np.double) ; osc_tuple.Branch("itype",itype,"itype/D")
-# mode       = np.zeros(1,dtype=np.double) ; osc_tuple.Branch("mode",mode,"mode/D")
+# Variable declaration for out tree
+ipnu       = np.array([], dtype=np.double)
+pnu        = np.array([], dtype=np.double)
+dirnu_x    = np.array([], dtype=np.double)
+dirnu_y    = np.array([], dtype=np.double)
+dirnu_z    = np.array([], dtype=np.double)
+cz         = np.array([], dtype=np.double)
+azi        = np.array([], dtype=np.double)
+fluxho_numu = np.array([], dtype=np.double)
+fluxho_nue  = np.array([], dtype=np.double)
+fluxho_numub= np.array([], dtype=np.double)
+fluxho_nueb = np.array([], dtype=np.double)
+plep       = np.array([], dtype=np.double)
+dirlep_x   = np.array([], dtype=np.double)
+dirlep_y   = np.array([], dtype=np.double)
+dirlep_z   = np.array([], dtype=np.double)
+## reco variables
+reco_pmax  = np.array([], dtype=np.double)
+evis       = np.array([], dtype=np.double)
+reco_dir_x = np.array([], dtype=np.double)
+reco_dir_y = np.array([], dtype=np.double)
+reco_dir_z = np.array([], dtype=np.double)
+ip         = np.array([], dtype=np.double)
+nring      = np.array([], dtype=np.double)
+muedk      = np.array([], dtype=np.double)
+itype      = np.array([], dtype=np.double)
+mode       = np.array([], dtype=np.double)
 
 # if verbose: osc_tuple.Print()
 
 # Start loop over Genie simulated
 for i, nu in enumerate(event.Ipnu):
 
-	if i>1000: continue
+	# if i>1000: continue
 	
 	if verbose:
 	    print('----------------------------------------------------')
@@ -149,34 +154,64 @@ for i, nu in enumerate(event.Ipnu):
 
 	# mp_flux.join()
 
-	ipnu[0]       = event.Ipnu[i]
-	pnu[0]        = event.Enu[i]
-	dirnu_x[0]    = Pnu_v[0] / event.Enu[i]
-	dirnu_y[0]    = Pnu_v[1] / event.Enu[i]
-	dirnu_z[0]    = Pnu_v[2] / event.Enu[i]
-	cz[0]         = dirnu_z[0]
-	azi[0]        = Azimuth(dirnu_y[0], dirnu_z[0])
-	fluxho        = event.Flux
-	plep[0]       = event.Plep[i]
-	dirlep_x[0]   = event.Pxlep[i] / event.Plep[i]
-	dirlep_y[0]   = event.Pylep[i] / event.Plep[i]
-	dirlep_z[0]   = event.Pzlep[i] / event.Plep[i]
+	ipnu       = np.append(ipnu, event.Ipnu[i])
+	pnu        = np.append(pnu, event.Enu[i])
+	dirnu_x    = np.append(dirnu_x, Pnu_v[0] / event.Enu[i])
+	dirnu_y    = np.append(dirnu_y, Pnu_v[1] / event.Enu[i])
+	dirnu_z    = np.append(dirnu_z, Pnu_v[2] / event.Enu[i])
+	azi        = np.append(azi, Azimuth(dirnu_y[0], dirnu_z[0]))
+	# print(event.Flux_nue[i])
+	# print(event.Flux_nueb[i])
+	# print(event.Flux_numu[i])
+	# print(event.Flux_numub[i])
+	fluxho_nue  = np.append(fluxho_nue, event.Flux_nue[i])
+	fluxho_nueb  = np.append(fluxho_nueb, event.Flux_nueb[i])
+	fluxho_numu  = np.append(fluxho_numu, event.Flux_numu[i])
+	fluxho_numub  = np.append(fluxho_numub, event.Flux_numub[i])
+	plep       = np.append(plep, event.Plep[i])
+	dirlep_x   = np.append(dirlep_x, event.Pxlep[i] / event.Plep[i])
+	dirlep_y   = np.append(dirlep_y, event.Pylep[i] / event.Plep[i])
+	dirlep_z   = np.append(dirlep_z, event.Pzlep[i] / event.Plep[i])
 	## reco variables
-	reco_pmax[0]  = RRing.MERMomentum
-	evis[0]       = RRing.Evis
-	reco_dir_x[0] = RRing.TotDir[0]
-	reco_dir_y[0] = RRing.TotDir[1]
-	reco_dir_z[0] = RRing.TotDir[2]
-	ip[0]         = RRing.MERIP
-	nring[0]      = RRing.NRing
-	muedk[0]      = RRing.MuEdk
-	itype[0]      = RRing.Type
-	mode[0]       = event.Mode[i]
+	reco_pmax  = np.append(reco_pmax, RRing.MERMomentum)
+	evis       = np.append(evis, RRing.Evis)
+	reco_dir_x = np.append(reco_dir_x, RRing.TotDir[0])
+	reco_dir_y = np.append(reco_dir_y, RRing.TotDir[1])
+	reco_dir_z = np.append(reco_dir_z, RRing.TotDir[2])
+	ip         = np.append(ip, RRing.MERIP)
+	nring      = np.append(nring, RRing.NRing)
+	muedk      = np.append(muedk, RRing.MuEdk)
+	itype      = np.append(itype, RRing.Type)
+	mode       = np.append(mode, event.Mode[i])
 
 	del RRing
 
-	osc_tuple.Fill()
+cz = dirnu_z
 
-osc_tuple.Write()
-ofile.Write()
-ofile.Close()
+with h5py.File(output, 'w') as hf:
+	hf.create_dataset('ipnu', data=ipnu, compression='gzip')
+	hf.create_dataset('pnu', data=pnu, compression='gzip')
+	hf.create_dataset('dirnuX', data=dirnu_x, compression='gzip')
+	hf.create_dataset('dirnuY', data=dirnu_y, compression='gzip')
+	hf.create_dataset('dirnuZ', data=dirnu_z, compression='gzip')
+	hf.create_dataset('azi', data=azi, compression='gzip')
+	hf.create_dataset('cz', data=cz, compression='gzip')
+	hf.create_dataset('fluxho_nue', data=fluxho_nue, compression='gzip')
+	hf.create_dataset('fluxho_nueb', data=fluxho_nueb, compression='gzip')
+	hf.create_dataset('fluxho_numu', data=fluxho_numu, compression='gzip')
+	hf.create_dataset('fluxho_numub', data=fluxho_numub, compression='gzip')
+	hf.create_dataset('plep', data=plep, compression='gzip')
+	hf.create_dataset('dirlepX', data=dirlep_x, compression='gzip')
+	hf.create_dataset('dirlepY', data=dirlep_y, compression='gzip')
+	hf.create_dataset('dirlepZ', data=dirlep_z, compression='gzip')
+	hf.create_dataset('pmax', data=reco_pmax, compression='gzip')
+	hf.create_dataset('evis', data=evis, compression='gzip')
+	hf.create_dataset('recodirX', data=reco_dir_x, compression='gzip')
+	hf.create_dataset('recodirY', data=reco_dir_y, compression='gzip')
+	hf.create_dataset('recodirZ', data=reco_dir_z, compression='gzip')
+	hf.create_dataset('ip', data=ip, compression='gzip')
+	hf.create_dataset('nring', data=nring, compression='gzip')
+	hf.create_dataset('muedk', data=muedk, compression='gzip')
+	hf.create_dataset('itype', data=itype, compression='gzip')
+	hf.create_dataset('mode', data=mode, compression='gzip')
+
