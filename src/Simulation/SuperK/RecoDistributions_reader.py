@@ -25,7 +25,7 @@ for key in f1.keys():
 #        plt.hist(np.hstack(data.flatten()))
 #    elif data.dtype != np.dtype('bool'):
     plt.hist(d, bins=w.size, weights=w, density=True)
-    print('Histogram saved to ', key+'.png')
-    plt.savefig(key+'.png')
+    print('Histogram saved to ', 'figs/'+key+'.png')
+    plt.savefig('figs/'+key+'.png')
     plt.clf()
 

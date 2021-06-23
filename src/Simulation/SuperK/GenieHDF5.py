@@ -1,6 +1,5 @@
 import h5py
 import numpy as np
-from math import log10
 import nuflux
 
 
@@ -56,11 +55,7 @@ class GenieSimulation:
 		lep_pdg[self.CC] = (abs(lep_pdg[self.CC]) - 1) * np.sign(lep_pdg[self.CC])
 		self.PDGlep = lep_pdg
 
-	# def RestHadrons(self, index):
-	# 	return self.Phad[index]>0.001
-
 	def Flux(self): # To be implemented with IC's NuFlux
-
 		# Try other fluxes, may need to tune nuflux to extend energy regions and include fluxes at SK location
 		# flux = nuflux.makeFlux('honda2006')
 		flux = nuflux.makeFlux('H3a_SIBYLL21')
@@ -79,7 +74,6 @@ class GenieSimulation:
 			flux_numub = np.append(flux_numub, flux.getFlux(numub, E, self.Cz[i]))
 			flux_nue   = np.append(flux_nue, flux.getFlux(nue, E, self.Cz[i]))
 			flux_nueb  = np.append(flux_nueb, flux.getFlux(nueb, E, self.Cz[i]))
-		
 
 		self.Flux_numu = flux_numu
 		self.Flux_numub = flux_numub

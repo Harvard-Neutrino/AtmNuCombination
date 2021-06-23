@@ -1,7 +1,6 @@
 import numpy as np
 from particle import Particle
 import ParticleProperties as pp
-# import mulself.TrueIProcessing
 
 
 def SKIP(pdg):

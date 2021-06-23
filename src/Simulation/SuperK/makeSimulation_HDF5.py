@@ -8,7 +8,7 @@ from RandomGenerator import RecoDists
 from GenieHDF5 import *
 
 parser = argparse.ArgumentParser()
-parser.add_argument("in_hdf5filename", type=str, nargs='?', default='/home/pablofer/AtmNuCombination/utils/atm_genie.root.hdf5')
+parser.add_argument("in_hdf5filename", type=str, nargs='?', default='../../../utils/atm_genie.root.hdf5')
 parser.add_argument("outfilename", type=str, nargs='?', default='testfcmc.hdf5')
 parser.add_argument("-v", dest='verbo', default=False, action='store_true')
 
@@ -18,7 +18,8 @@ genie_input = args.in_hdf5filename
 output = args.outfilename
 
 # Read GENIE GST file
-event = GenieSimulation('/home/pablofer/old.AtmNuCombination/utils/atm_genie.root.hdf5')
+genie_input = '/home/pablofer/old.AtmNuCombination/utils/atm_genie.root.hdf5'
+event = GenieSimulation(genie_input)
 
 # Read reco distributions
 rd = RecoDists()

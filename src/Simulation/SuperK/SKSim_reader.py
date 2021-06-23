@@ -21,7 +21,7 @@ for key in f1.keys():
     data = np.array(ds[()])
 #    print(data)
     plt.hist(data, bins=100, density=True)
-    print('Histogram saved to ', key+'.png')
-    plt.savefig(key+'.png')
+    print('Histogram saved to ', 'figs/'+key+'.png')
+    plt.savefig('figs/'+key+'.png')
     plt.clf()
 

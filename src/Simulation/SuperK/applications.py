@@ -1,23 +1,5 @@
 import numpy as np
-import ParticleProperties as pp
-from math import sqrt, asin, atan, sin, cos, pi
-
-
-def ClearBadHadrons(nhad, norm, E, pdg, dire, mom, p):
-	boo = np.where(norm!=norm)
-	bad_hads = np.size(boo)
-
-	new_norm = np.delete(norm,boo)
-	new_E = np.delete(E,boo)
-	new_p = np.delete(p,boo)
-	new_pdg = np.delete(pdg,boo)
-
-	new_dire = np.delete(dire,boo,0)
-	new_mom = np.delete(mom,boo,0)
-
-	new_nhad = nhad - bad_hads
-
-	return new_nhad, new_norm, new_E, new_pdg, new_dire, new_mom, new_p
+from math import sin, cos, pi
 
 
 def RodRot(v,u,ang):
