@@ -3,11 +3,8 @@ from particle import Particle
 import ParticleProperties as pp
 import math
 from math import log10, pi
-# import ROOT as root
-# import mulself.TrueIProcessing
 import random
 import applications as ap
-# from Apps import TrueRingConstructor
 
 class RecoRing:
 	AngResoThr = 0.9 #math.cos(25.*pi/180.)
