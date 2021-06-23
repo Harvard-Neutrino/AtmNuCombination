@@ -45,6 +45,3 @@ def CrossProduct(a,b):
     modc = np.linalg.norm(c)
     c = c / modc
     return modc, c
-
-def Azimuth(a, b):
-    return asin(a/(sqrt(1-b**2)))

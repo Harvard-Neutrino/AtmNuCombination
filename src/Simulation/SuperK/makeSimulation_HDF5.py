@@ -1,17 +1,11 @@
 # Requirements
-import ROOT as root
-from ROOT import TCanvas, TFile, TTree
 import numpy as np
 import argparse
-#import multiprocessing
-
 # Local dependencies
-from RootFilesManager import *
 from TrueRing import *
 from RecoRing import *
 from RandomGenerator import RecoDists
 from GenieHDF5 import *
-from applications import Azimuth
 
 parser = argparse.ArgumentParser()
 parser.add_argument("in_hdf5filename", type=str, nargs='?', default='/home/pablofer/AtmNuCombination/utils/atm_genie.root.hdf5')
@@ -23,31 +17,14 @@ verbose = args.verbo
 genie_input = args.in_hdf5filename
 output = args.outfilename
 
-honda_file = '/home/pablofer/IceCube-SuperK_AtmNu/SuperK/Flux/flux_at_Kamioka/honda_flux_log.root'
-#distros = 'RecoDistributions.root'
-
-root.gROOT.SetBatch(True) # No graphics enabled
-
-# # Initialize random generator
-# root.gRandom.SetSeed(1)
-# rand = root.TRandom3(0)
-
 # Read GENIE GST file
 event = GenieSimulation('/home/pablofer/old.AtmNuCombination/utils/atm_genie.root.hdf5')
 
-# Read Honda flux
-hfile,htree = read_tree(honda_file,'honda')
-event.Flux(htree)
-# print('Done Fluxes')
-
 # Read reco distributions
-#dfile = read_histo(distros)
-
 rd = RecoDists()
 
-# # Output file to write
-# ofile, osc_tuple = out_tree(output,'osc_tuple')
 # Variable declaration for out tree
+# True variables
 ipnu       = np.array([], dtype=np.double)
 pnu        = np.array([], dtype=np.double)
 dirnu_x    = np.array([], dtype=np.double)
@@ -63,7 +40,7 @@ plep       = np.array([], dtype=np.double)
 dirlep_x   = np.array([], dtype=np.double)
 dirlep_y   = np.array([], dtype=np.double)
 dirlep_z   = np.array([], dtype=np.double)
-## reco variables
+## Reco variables
 reco_pmax  = np.array([], dtype=np.double)
 evis       = np.array([], dtype=np.double)
 reco_dir_x = np.array([], dtype=np.double)
@@ -75,12 +52,11 @@ muedk      = np.array([], dtype=np.double)
 itype      = np.array([], dtype=np.double)
 mode       = np.array([], dtype=np.double)
 
-# if verbose: osc_tuple.Print()
 
 # Start loop over Genie simulated
 for i, nu in enumerate(event.Ipnu):
 
-	# if i>1000: continue
+	if i>1000: continue
 	
 	if verbose:
 	    print('----------------------------------------------------')
@@ -159,7 +135,8 @@ for i, nu in enumerate(event.Ipnu):
 	dirnu_x    = np.append(dirnu_x, Pnu_v[0] / event.Enu[i])
 	dirnu_y    = np.append(dirnu_y, Pnu_v[1] / event.Enu[i])
 	dirnu_z    = np.append(dirnu_z, Pnu_v[2] / event.Enu[i])
-	azi        = np.append(azi, Azimuth(dirnu_y[0], dirnu_z[0]))
+	azi        = np.append(azi, event.Azi[i])
+	cz        = np.append(cz, event.Cz[i])
 	# print(event.Flux_nue[i])
 	# print(event.Flux_nueb[i])
 	# print(event.Flux_numu[i])
@@ -185,8 +162,6 @@ for i, nu in enumerate(event.Ipnu):
 	mode       = np.append(mode, event.Mode[i])
 
 	del RRing
-
-cz = dirnu_z
 
 with h5py.File(output, 'w') as hf:
 	hf.create_dataset('ipnu', data=ipnu, compression='gzip')

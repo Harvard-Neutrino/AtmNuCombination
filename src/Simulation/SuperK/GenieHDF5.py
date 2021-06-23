@@ -1,8 +1,7 @@
 import h5py
 import numpy as np
-import ROOT as root
-from applications import Azimuth
 from math import log10
+import nuflux
 
 
 class GenieSimulation:
@@ -26,6 +25,11 @@ class GenieSimulation:
 			self.Pxnu = np.array(np.array(hf['pxv'][()]))
 			self.Pynu = np.array(np.array(hf['pyv'][()]))
 			self.Pznu = np.array(np.array(hf['pzv'][()]))
+			self.Dirxnu = self.Pxnu / self.Enu
+			self.Dirynu = self.Pynu / self.Enu
+			self.Dirznu = self.Pznu / self.Enu
+			self.Cz = self.Dirznu
+			self.Azimuth()
 			
 			self.Elep = np.array(hf['El'][()])
 			self.GetLeptonPDG(np.array(hf['neu'][()]))
@@ -42,7 +46,10 @@ class GenieSimulation:
 			self.Pyhad = np.array(np.array(hf['pyf'][()]))
 			self.Pzhad = np.array(np.array(hf['pzf'][()]))
 
-			# self.Flux()
+			self.Flux()
+
+	def Azimuth(self):
+		self.Azi = np.arcsin(self.Dirynu/(np.sqrt(1-self.Cz**2)))
 
 	def GetLeptonPDG(self, ipnu):
 		lep_pdg = ipnu
@@ -52,39 +59,27 @@ class GenieSimulation:
 	# def RestHadrons(self, index):
 	# 	return self.Phad[index]>0.001
 
-	def Flux(self, tree): # To be implemented with IC's NuFlux
-		CZ_points = 10
-		E_points = 20
-		Azi_step = 30*3.14159265/180.
+	def Flux(self): # To be implemented with IC's NuFlux
+
+		# Try other fluxes, may need to tune nuflux to extend energy regions and include fluxes at SK location
+		# flux = nuflux.makeFlux('honda2006')
+		flux = nuflux.makeFlux('H3a_SIBYLL21')
+		numu = nuflux.NuMu
+		numub = nuflux.NuMuBar
+		nue = nuflux.NuE
+		nueb = nuflux.NuEBar
 
 		flux_nue = np.array([])
 		flux_nueb = np.array([])
 		flux_numu = np.array([])
 		flux_numub = np.array([])
 
-		E_per_Azi = 101
-		Azi_per_CZ = 12
-
 		for i,E in enumerate(self.Enu):
-			E_index = int(E_points*(log10(E)+1))
-			CZ_index = int(CZ_points*(1-self.Pznu[i]/E)) # decreasing order in cos zenith
-			Azi_index = int(Azimuth(self.Pynu[i]/E, self.Pznu[i]/E) / Azi_step)
-
-			tree_index0 = E_index + E_per_Azi*Azi_index + E_per_Azi*Azi_per_CZ*CZ_index
-			tree_index1 = tree_index0 + 1
-
-			tree.GetEntry(tree_index0)
-			E0 = tree.logE
-			flux0 = np.array([tree.flux[0],tree.flux[1],tree.flux[2],tree.flux[3]])
-			tree.GetEntry(tree_index1)
-			E1 = tree.logE
-			flux1 = np.array([tree.flux[0],tree.flux[1],tree.flux[2],tree.flux[3]])
-			
-			flux_numu = np.append(flux_numu, np.interp(log10(E), [E0,E1], [flux0[0],flux1[0]]))
-			flux_numub = np.append(flux_numub, np.interp(log10(E), [E0,E1], [flux0[1],flux1[1]]))
-			flux_nue = np.append(flux_nue, np.interp(log10(E), [E0,E1], [flux0[2],flux1[2]]))
-			flux_nueb = np.append(flux_nueb, np.interp(log10(E), [E0,E1], [flux0[3],flux1[3]]))
-
+			flux_numu  = np.append(flux_numu, flux.getFlux(numu, E, self.Cz[i]))
+			flux_numub = np.append(flux_numub, flux.getFlux(numub, E, self.Cz[i]))
+			flux_nue   = np.append(flux_nue, flux.getFlux(nue, E, self.Cz[i]))
+			flux_nueb  = np.append(flux_nueb, flux.getFlux(nueb, E, self.Cz[i]))
+		
 
 		self.Flux_numu = flux_numu
 		self.Flux_numub = flux_numub
