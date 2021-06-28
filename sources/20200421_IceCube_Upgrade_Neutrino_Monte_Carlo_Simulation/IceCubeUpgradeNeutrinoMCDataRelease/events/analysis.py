@@ -82,7 +82,7 @@ _ = ax.legend()
 
 #fig.savefig("EffectiveArea.png")
 
-'''
+
 #Define some plotting parameters for future use
 interactions = False
 
@@ -99,19 +99,44 @@ cth_nodes = nsq.linspace(cth_min,cth_max,cth_nodes)
 neutrino_flavors = 3
 
 nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,neutrino_flavors,nsq.NeutrinoType.both,interactions)
-'''
 
 flux = nuflux.makeFlux("honda2006")
 
-# First let's check out what the flux looks like
+
+# First lets check out what the flux looks like
 fig, ax = plt.subplots(figsize = (7,6))
-energy_grid, coszen_grid = np.meshgrid(np.logspace(0., 2., num=100),\
-			 np.linspace(-1., 1., num=100), indexing="ij")
+energy_grid, coszen_grid = np.meshgrid(energy_nodes, cth_nodes, indexing="ij")
 flux_grid = flux.getFlux(nuflux.NuE, energy_grid*units.GeV, np.arccos(coszen_grid))
 cmesh = ax.pcolormesh(energy_grid, coszen_grid, flux_grid, vmin=0., vmax=1000.)
 fig.colorbar(cmesh, ax=ax, label=r"$P(\nu_e)$"" flux")
 ax.set_xlabel(r"$E_{\nu,\rm{true}}$ [GeV]")
 ax.set_xscale("log")
 ax.set_ylabel(r"$\cos(\theta_{\rm{zenith,true}})$")
-
 fig.savefig("Nu_E_Fluxx.png")
+
+
+AtmInitialFlux = np.zeros((len(cth_nodes),len(energy_nodes),2,neutrino_flavors))
+flux = nuflux.makeFlux('honda2006')
+for ic,cth in enumerate(nsq_atm.GetCosthRange()):
+    for ie,E in enumerate(nsq_atm.GetERange()):
+        nu_energy = E/units.GeV
+        nu_cos_zenith = cth
+        AtmInitialFlux[ic][ie][0][0] = flux.getFlux(nuflux.NuE,nu_energy,nu_cos_zenith) # nue
+        AtmInitialFlux[ic][ie][1][0] = flux.getFlux(nuflux.NuEBar,nu_energy,nu_cos_zenith) # nue bar
+        AtmInitialFlux[ic][ie][0][1] = flux.getFlux(nuflux.NuMu,nu_energy,nu_cos_zenith) # numu
+        AtmInitialFlux[ic][ie][1][1] = flux.getFlux(nuflux.NuMuBar,nu_energy,nu_cos_zenith) # numu bar
+        AtmInitialFlux[ic][ie][0][2] = flux.getFlux(nuflux.NuTau,nu_energy,nu_cos_zenith) # nutau
+        AtmInitialFlux[ic][ie][1][2] = flux.getFlux(nuflux.NuTauBar,nu_energy,nu_cos_zenith) # nutau bar
+
+AtmInitialFluxNuE = np.zeros((len(cth_nodes), len(energy_nodes))) 
+print(AtmInitialFluxNuE.shape)
+for ic in range(0, len(cth_nodes)):
+    for ie in range(0, len(energy_nodes)):
+        AtmInitialFluxNuE = AtmInitialFlux[ic][ie][0][0]
+
+print("HAAAAAAAAAAAAAAAAAAAAAAAA")
+print(AtmInitialFluxNuE.shape)
+
+plt.imshow(AtmInitialFluxNuE, cmap = "hot", interpolation = "nearest")
+plt.savefig("ExampleFlux.png")
+
