@@ -87,7 +87,7 @@ _ = ax.legend()
 interactions = False
 
 E_min = 1.0*units.GeV
-E_max = 1.0e3*units.PeV
+E_max = 1.0e3*units.GeV
 E_nodes = 100
 energy_nodes = nsq.logspace(E_min,E_max,E_nodes)
 
@@ -106,7 +106,7 @@ flux = nuflux.makeFlux("honda2006")
 # First lets check out what the flux looks like
 fig, ax = plt.subplots(figsize = (7,6))
 energy_grid, coszen_grid = np.meshgrid(energy_nodes, cth_nodes, indexing="ij")
-flux_grid = flux.getFlux(nuflux.NuE, energy_grid*units.GeV, np.arccos(coszen_grid))
+flux_grid = flux.getFlux(nuflux.NuE, energy_grid/units.GeV, np.arccos(coszen_grid))
 cmesh = ax.pcolormesh(energy_grid, coszen_grid, flux_grid, vmin=0., vmax=1000.)
 fig.colorbar(cmesh, ax=ax, label=r"$P(\nu_e)$"" flux")
 ax.set_xlabel(r"$E_{\nu,\rm{true}}$ [GeV]")
@@ -114,7 +114,7 @@ ax.set_xscale("log")
 ax.set_ylabel(r"$\cos(\theta_{\rm{zenith,true}})$")
 fig.savefig("Nu_E_Fluxx.png")
 
-
+'''
 AtmInitialFlux = np.zeros((len(cth_nodes),len(energy_nodes),2,neutrino_flavors))
 flux = nuflux.makeFlux('honda2006')
 for ic,cth in enumerate(nsq_atm.GetCosthRange()):
@@ -139,4 +139,4 @@ print(AtmInitialFluxNuE.shape)
 
 plt.imshow(AtmInitialFluxNuE, cmap = "hot", interpolation = "nearest")
 plt.savefig("ExampleFlux.png")
-
+'''
