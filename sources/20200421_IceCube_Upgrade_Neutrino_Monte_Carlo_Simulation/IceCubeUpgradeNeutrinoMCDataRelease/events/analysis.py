@@ -86,10 +86,13 @@ _ = ax.legend()
 #Define some plotting parameters for future use
 interactions = False
 
-E_min = 1.0*units.GeV
+E_min = 9.9*units.GeV
 E_max = 1.0e3*units.GeV
 E_nodes = 100
 energy_nodes = nsq.logspace(E_min,E_max,E_nodes)
+#print(energy_nodes)
+
+
 
 cth_min = -1.0
 cth_max = 1.0
@@ -102,10 +105,11 @@ nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,neutrino_flavors,nsq.NeutrinoTy
 
 flux = nuflux.makeFlux("honda2006")
 
-
+'''
 # First lets check out what the flux looks like
 fig, ax = plt.subplots(figsize = (7,6))
 energy_grid, coszen_grid = np.meshgrid(energy_nodes, cth_nodes, indexing="ij")
+print(coszen_grid)
 flux_grid = flux.getFlux(nuflux.NuE, energy_grid/units.GeV, np.arccos(coszen_grid))
 cmesh = ax.pcolormesh(energy_grid, coszen_grid, flux_grid, vmin=0., vmax=1000.)
 fig.colorbar(cmesh, ax=ax, label=r"$P(\nu_e)$"" flux")
@@ -113,8 +117,8 @@ ax.set_xlabel(r"$E_{\nu,\rm{true}}$ [GeV]")
 ax.set_xscale("log")
 ax.set_ylabel(r"$\cos(\theta_{\rm{zenith,true}})$")
 fig.savefig("Nu_E_Fluxx.png")
-
 '''
+
 AtmInitialFlux = np.zeros((len(cth_nodes),len(energy_nodes),2,neutrino_flavors))
 flux = nuflux.makeFlux('honda2006')
 for ic,cth in enumerate(nsq_atm.GetCosthRange()):
@@ -128,6 +132,13 @@ for ic,cth in enumerate(nsq_atm.GetCosthRange()):
         AtmInitialFlux[ic][ie][0][2] = flux.getFlux(nuflux.NuTau,nu_energy,nu_cos_zenith) # nutau
         AtmInitialFlux[ic][ie][1][2] = flux.getFlux(nuflux.NuTauBar,nu_energy,nu_cos_zenith) # nutau bar
 
+print(AtmInitialFlux[10][30][0][0])
+print(AtmInitialFlux[10][35][0][0])
+print(AtmInitialFlux[39][0][0][0])
+print(AtmInitialFlux[39][35][0][0])
+print(AtmInitialFlux[39][99][0][0])
+
+'''
 AtmInitialFluxNuE = np.zeros((len(cth_nodes), len(energy_nodes))) 
 print(AtmInitialFluxNuE.shape)
 for ic in range(0, len(cth_nodes)):
