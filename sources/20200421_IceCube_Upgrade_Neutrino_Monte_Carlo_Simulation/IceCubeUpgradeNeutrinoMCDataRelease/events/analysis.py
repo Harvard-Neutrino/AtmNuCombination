@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 import nuSQUIDSpy as nsq
 import nuflux
 
+from sterileprob import prob		
+
 matplotlib.rcParams.update({'font.size': 16})
 matplotlib.rcParams.update({'lines.linewidth': 3})
 matplotlib.rcParams.update({'patch.linewidth': 3})
@@ -170,7 +172,7 @@ def plot_rate():
 	_ = ax.legend()
 
 
-def get_rate_2(e, cth):
+def plot_rate_2(e, cth, pdg, weight):
 	# first get the flux
 	def getflux(nu_energy, nu_cos_zenith):
 		nueflux = flux.getFlux(nuflux.NuE,nu_energy,nu_cos_zenith) # nue
@@ -180,8 +182,47 @@ def get_rate_2(e, cth):
 		nutauflux = flux.getFlux(nuflux.NuTau,nu_energy,nu_cos_zenith) # nutau
 		#nutaubflux = flux.getFlux(nuflux.NuTauBar,nu_energy,nu_cos_zenith) # nutau bar
 		return nueflux, numuflux, nutauflux
-	nueflux, nuebflux, numuflux, numubflux, nutauflux, nutaubflux = getflux(e, cth)
-	# then get the 
+	nueflux, numuflux, nutauflux, = getflux(e, cth)
+	# then get the oscillation probabilities
+	# Use 3+1 model of oscillation, mu to tau oscillation probability
+	def prob(true_energy, true_zenith):
+	    # find baseline length from true zenith
+	    true_coszen = np.cos(true_zenith)
+	    earth_radius = 6371.
+	    production_height = 15. # Assuming neutrino produced 15 km above surface
+	    detector_depth = 1. # Assuming detector depth of 1 km
+	    baseline = -earth_radius*true_coszen +  \
+	                np.sqrt( (earth_radius*true_coszen)**2 - earth_radius**2 + \
+	                        (earth_radius+production_height+detector_depth)**2 )
+    
+	    # now compute the oscillation probability
+	    Petau = prob(1, 3, "t2k", "IH", "t2k", manE = True, valE = true_energy, \
+	              manL = True, valL = baseline)
+	    Pemu = prob(1, 2, "t2k", "IH", "t2k", manE = True, valE = true_energy, \
+	              manL = True, valL = baseline)
+	    Pmutau = prob(2, 3, "t2k", "IH", "t2k", manE = True, valE = true_energy, \
+	              manL = True, valL = baseline)
+	    Pmue = prob(2, 1, "t2k", "IH", "t2k", manE = True, valE = true_energy, \
+	              manL = True, valL = baseline)
+	    Ptaue = prob(3, 1, "t2k", "IH", "t2k", manE = True, valE = true_energy, \
+	              manL = True, valL = baseline)
+	    Ptaumu = prob(3, 2, "t2k", "IH", "t2k", manE = True, valE = true_energy, \
+	              manL = True, valL = baseline)
+	    return Pemu, Petau, Pmue, Pmutau, Ptaue, Ptaumu
+
+	# Get fluxes
+	nue_flux, numu_flux, nutau_flux = getflux(input_data["true_energy"], input_data["true_zenith"])
+
+	# Get oscillations
+	Pemu, Petau, Pmue, Pmutau, Ptaue, Ptaumu = prob(e, cth)
+
+	# Now compute weights representing event rates
+	# This is flux * osc * weight
+	rate_weight = np.zeros_like(input_data["weight"])
+	rate_weight[nue_mask] = nue_flux[nue_mask] * input_data["weight"][nue_mask] # No oscillations in 2 flavor model
+	rate_weight[numu_mask] = numu_flux[numu_mask] * (1. - Pmutau[numu_mask]) * input_data["weight"][numu_mask] # numu flux, less those that oscillation
+	rate_weight[nutau_mask] = numu_flux[nutau_mask] * Pmutau[nutau_mask] * input_data["weight"][nutau_mask] # nutau purely come from oscillations in the numu flux
+	input_data["rate_weight_new"] = rate_weight
 
 
 
