@@ -108,10 +108,11 @@ def get_rate(nu_energy, nu_cos_zenith, pdg, weight):
 	# Set the propagation
 	nu = nsq.nuSQUIDS(3, nsq.NeutrinoType.neutrino)
 	nu.Set_E(nu_energy/units.GeV)
-	nu.Set_Body(nsq.EarthAtm)
+	nu.Set_Body(nsq.EarthAtm())
 	nu.Set_Track(nsq.EarthAtm.Track(np.arccos(nu_cos_zenith)))
 	# Grab the flux
 	nueflux = flux.getFlux(nuflux.NuE,nu_energy,nu_cos_zenith) # nue
+	#print(nueflux)
 	#nuebflux = flux.getFlux(nuflux.NuEBar,nu_energy,nu_cos_zenith) # nue
 	numuflux = flux.getFlux(nuflux.NuMu,nu_energy,nu_cos_zenith) # numu
 	#numubflux = flux.getFlux(nuflux.NuMuBar,nu_energy,nu_cos_zenith) # numu bar
@@ -119,23 +120,25 @@ def get_rate(nu_energy, nu_cos_zenith, pdg, weight):
 	#nutaubflux = flux.getFlux(nuflux.NuTauBar,nu_energy,nu_cos_zenith) # nutau bar
 	# Set the initial Flux
 	nu.Set_initial_state(np.array([nueflux, numuflux, nutauflux]), nsq.Basis.flavor)
+	#print(nu.EvalFlavor(0))
 	nu.EvolveState()
 	# Get the oscillated flux
 	oscillatedNuE = nu.EvalFlavor(0)
 	oscillatedNuMu = nu.EvalFlavor(1)
 	oscillatedNuTau = nu.EvalFlavor(2)
-	print(oscillatedNuE, oscillatedNuMu, oscillatedNuTau)
+	#print(oscillatedNuE, oscillatedNuMu, oscillatedNuTau)
 	# now get the rate
-	if pdg = 12:
+	if pdg == 12:
 		return weight * oscillatedNuE
-	if pdg = 14:
+	if pdg == 14:
 		return weight * oscillatedNuMu
-	if pdg = 16:
+	if pdg == 16:
 		return weight * oscillatedNuTau
-	print("Not a Neutrino Event Selected")
-	return oscillatedNuE, oscillatedNuMu, oscillatedNuTau
+	else:
+		print("Not a Neutrino Event Selected")
+		return oscillatedNuE, oscillatedNuMu, oscillatedNuTau
 
-get_rate(5094138/units.GeV, -0.48718)
+get_rate(50941380148/units.GeV, -0.48718, 12, 1)
 
 def plot_rate():
 	# Plot histograms of event rates vs energy
