@@ -107,7 +107,7 @@ def plot_flux():
 def get_rate(nu_energy, nu_cos_zenith, pdg, weight):
 	# Set the propagation
 	nu = nsq.nuSQUIDS(3, nsq.NeutrinoType.neutrino)
-	nu.Set_E(nu_energy/units.GeV)
+	nu.Set_E(nu_energy*units.GeV)
 	nu.Set_Body(nsq.EarthAtm())
 	nu.Set_Track(nsq.EarthAtm.Track(np.arccos(nu_cos_zenith)))
 	# Grab the flux
@@ -138,7 +138,7 @@ def get_rate(nu_energy, nu_cos_zenith, pdg, weight):
 		print("Not a Neutrino Event Selected")
 		return oscillatedNuE, oscillatedNuMu, oscillatedNuTau
 
-get_rate(50941380148/units.GeV, -0.48718, 12, 1)
+#get_rate(50941380148/units.GeV, -0.48718, 12, 1)
 
 def plot_rate():
 	# Plot histograms of event rates vs energy
@@ -174,6 +174,8 @@ def plot_rate():
 	ax.grid(True)
 	_ = ax.legend()
 
+print(input_data["true_energy"][nue_mask] * 1)
+plot_rate()
 
 def plot_rate_2(e, cth, pdg, weight):
 	# first get the flux
