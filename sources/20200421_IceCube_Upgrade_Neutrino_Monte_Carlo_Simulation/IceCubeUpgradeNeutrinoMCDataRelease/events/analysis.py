@@ -158,7 +158,7 @@ AtmInitialEx[ic][ie][1][2] = flux.getFlux(nuflux.NuTauBar,nu_energy,nu_cos_zenit
 nsq_atm_ex.Set_initial_state(AtmInitialEx,nsq.Basis.flavor)
 nsq_atm_ex.Set_ProgressBar(True) # progress bar will be printed on terminal
 nsq_atm_ex.EvolveState()
-
+print(nsq_atm_ex)
 
 
 
