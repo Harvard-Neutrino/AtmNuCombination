@@ -86,7 +86,7 @@ _ = ax.legend()
 #Define some plotting parameters for future use
 interactions = False
 
-E_min = 9.9*units.GeV
+E_min = 10.0*units.GeV
 E_max = 1.0e3*units.GeV
 E_nodes = 100
 energy_nodes = nsq.logspace(E_min,E_max,E_nodes)
@@ -132,22 +132,35 @@ for ic,cth in enumerate(nsq_atm.GetCosthRange()):
         AtmInitialFlux[ic][ie][0][2] = flux.getFlux(nuflux.NuTau,nu_energy,nu_cos_zenith) # nutau
         AtmInitialFlux[ic][ie][1][2] = flux.getFlux(nuflux.NuTauBar,nu_energy,nu_cos_zenith) # nutau bar
 
-print(AtmInitialFlux[10][30][0][0])
+'''
+print(cth_nodes[10])
+print(cth_nodes[30])
+print(energy_nodes[35])
+#print(AtmInitialFlux[10][30][0][0])
 print(AtmInitialFlux[10][35][0][0])
-print(AtmInitialFlux[39][0][0][0])
-print(AtmInitialFlux[39][35][0][0])
-print(AtmInitialFlux[39][99][0][0])
-
+print(AtmInitialFlux[30][35][0][0])
+#print(AtmInitialFlux[39][0][0][0])
+#print(AtmInitialFlux[39][35][0][0])
+#print(AtmInitialFlux[39][99][0][0])
+print(flux.getFlux(nuflux.NuE,50941380148.1643/units.GeV, -0.48717948717948684))
+print(flux.getFlux(nuflux.NuE,50941380148.1643/units.GeV, 0.5384615384615385))
 '''
-AtmInitialFluxNuE = np.zeros((len(cth_nodes), len(energy_nodes))) 
-print(AtmInitialFluxNuE.shape)
-for ic in range(0, len(cth_nodes)):
-    for ie in range(0, len(energy_nodes)):
-        AtmInitialFluxNuE = AtmInitialFlux[ic][ie][0][0]
+nsq_atm_ex = nsq.nuSQUIDSAtm(np.array([-0.48718]),np.array([5094138/units.GeV]), neutrino_flavors,nsq.NeutrinoType.both,interactions)
+AtmInitialEx = np.zeros((1,1,2,neutrino_flavors))
+ic = 0
+ie = 0
+AtmInitialEx[ic][ie][0][0] = flux.getFlux(nuflux.NuE,nu_energy,nu_cos_zenith) # nue
+AtmInitialEx[ic][ie][1][0] = flux.getFlux(nuflux.NuEBar,nu_energy,nu_cos_zenith) # nue
+AtmInitialEx[ic][ie][0][1] = flux.getFlux(nuflux.NuMu,nu_energy,nu_cos_zenith) # numu
+AtmInitialEx[ic][ie][1][1] = flux.getFlux(nuflux.NuMuBar,nu_energy,nu_cos_zenith) # numu bar
+AtmInitialEx[ic][ie][0][2] = flux.getFlux(nuflux.NuTau,nu_energy,nu_cos_zenith) # nutau
+AtmInitialEx[ic][ie][1][2] = flux.getFlux(nuflux.NuTauBar,nu_energy,nu_cos_zenith) # nutau bar
+nsq_atm_ex.Set_initial_state(AtmInitialEx,nsq.Basis.flavor)
+nsq_atm_ex.Set_ProgressBar(True) # progress bar will be printed on terminal
+nsq_atm_ex.EvolveState()
 
-print("HAAAAAAAAAAAAAAAAAAAAAAAA")
-print(AtmInitialFluxNuE.shape)
 
-plt.imshow(AtmInitialFluxNuE, cmap = "hot", interpolation = "nearest")
-plt.savefig("ExampleFlux.png")
-'''
+
+
+
+
