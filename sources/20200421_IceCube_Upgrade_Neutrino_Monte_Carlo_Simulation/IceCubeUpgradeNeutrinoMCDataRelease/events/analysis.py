@@ -145,19 +145,31 @@ def plot_rate():
 	# Plot histograms of event rates vs energy
 	# First use get_rate function to obtain rate
 	rate_weight = np.zeros_like(input_data["weight"])
-	for i in nue_mask:
-		rate_weight[i] = get_rate(input_data["true_energy"][i], \
-										input_data["true_zenith"][i], 12, \
-										input_data["weight"][i])
-	for i in numu_mask:
-		rate_weight[i] = get_rate(input_data["true_energy"][i], \
-										input_data["true_zenith"][i], 14, \
-										input_data["weight"][i])
-	for i in nutau_mask:
-		rate_weight[i] = get_rate(input_data["true_energy"][i], \
-										input_data["true_zenith"][i], 16, \
+	# for i in nue_mask:
+	# 	rate_weight[i] = get_rate(input_data["true_energy"][i], \
+	# 									input_data["true_zenith"][i], 12, \
+	# 									input_data["weight"][i])
+	# for i in numu_mask:
+	# 	rate_weight[i] = get_rate(input_data["true_energy"][i], \
+	# 									input_data["true_zenith"][i], 14, \
+	# 									input_data["weight"][i])
+	# for i in nutau_mask:
+	# 	rate_weight[i] = get_rate(input_data["true_energy"][i], \
+	# 									input_data["true_zenith"][i], 16, \
+	# 									input_data["weight"][i])
+	# input_data["rate_weight"] = rate_weight
+
+	for i in range(len(rate_weight)):
+		neutype = input_data["pdg"][i]
+		if neutype not in [12, 14, 16]:
+			rate_weight[i] = 0
+		else:
+			rate_weight[i] = get_rate(input_data["true_energy"][i], \
+										input_data["true_zenith"][i], \
+										input_data["pdg"][i], \
 										input_data["weight"][i])
 	input_data["rate_weight"] = rate_weight
+
 	# Note that converting to mHz for the rate, as this is a more suitable unit for the IceCube Upgrade 
 	fig, ax = plt.subplots(figsize=(7,6))
 	ax.hist(input_data["true_energy"][nue_cc_mask], bins=energy_bins_fine, \
