@@ -160,7 +160,7 @@ def plot_rate():
 	# input_data["rate_weight"] = rate_weight
 
 	for i in range(len(rate_weight)):
-		neutype = input_data["pdg"][i]
+		neutype = np.abs(input_data["pdg"][i])
 		if neutype not in [12, 14, 16]:
 			rate_weight[i] = 0
 		else:
@@ -189,6 +189,7 @@ def plot_rate():
 	ax.set_ylabel("Rate [mHz]")
 	ax.grid(True)
 	_ = ax.legend()
+	fig.savefig("rated_weight_distribution_true_energy.png")
 
 
 plot_rate()
