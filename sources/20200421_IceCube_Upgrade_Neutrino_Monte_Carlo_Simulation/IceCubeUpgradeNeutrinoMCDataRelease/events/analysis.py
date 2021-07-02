@@ -141,18 +141,22 @@ def get_rate(nu_energy, nu_cos_zenith, pdg, weight):
 #get_rate(50941380148/units.GeV, -0.48718, 12, 1)
 
 def plot_rate():
+	print("plotting rated weight distribution")
 	# Plot histograms of event rates vs energy
 	# First use get_rate function to obtain rate
 	rate_weight = np.zeros_like(input_data["weight"])
-	rate_weight[nue_mask] = get_rate(input_data["true_energy"][nue_mask], \
-									input_data["true_zenith"][nue_mask], 12, \
-									input_data["weight"][nue_mask])
-	rate_weight[numu_mask] = get_rate(input_data["true_energy"][numu_mask], \
-									input_data["true_zenith"][numu_mask], 14, \
-									input_data["weight"][numu_mask])
-	rate_weight[nutau_mask] = get_rate(input_data["true_energy"][nutau_mask], \
-									input_data["true_zenith"][nutau_mask], 16, \
-									input_data["weight"][nutau_mask])
+	for i in nue_mask:
+		rate_weight[nue_mask] = get_rate(input_data["true_energy"][nue_mask], \
+										input_data["true_zenith"][nue_mask], 12, \
+										input_data["weight"][nue_mask])
+	for i in numu_mask:
+		rate_weight[numu_mask] = get_rate(input_data["true_energy"][numu_mask], \
+										input_data["true_zenith"][numu_mask], 14, \
+										input_data["weight"][numu_mask])
+	for i in nutau_mask:
+		rate_weight[nutau_mask] = get_rate(input_data["true_energy"][nutau_mask], \
+										input_data["true_zenith"][nutau_mask], 16, \
+										input_data["weight"][nutau_mask])
 	input_data["rate_weight"] = rate_weight
 	# Note that converting to mHz for the rate, as this is a more suitable unit for the IceCube Upgrade 
 	fig, ax = plt.subplots(figsize=(7,6))
@@ -174,7 +178,7 @@ def plot_rate():
 	ax.grid(True)
 	_ = ax.legend()
 
-print(input_data["true_energy"][nue_mask] * 1)
+
 plot_rate()
 
 def plot_rate_2(e, cth, pdg, weight):
