@@ -140,7 +140,7 @@ def get_rate(nu_energy, nu_cos_zenith, pdg, weight):
 
 #get_rate(50941380148/units.GeV, -0.48718, 12, 1)
 
-def plot_rate():
+def plot_rate(count):
 	print("plotting rated weight distribution")
 	# Plot histograms of event rates vs energy
 	# First use get_rate function to obtain rate
@@ -160,6 +160,8 @@ def plot_rate():
 	# input_data["rate_weight"] = rate_weight
 
 	for i in range(len(rate_weight)):
+		cnt ++
+		print(cnt)
 		neutype = np.abs(input_data["pdg"][i])
 		if neutype not in [12, 14, 16]:
 			rate_weight[i] = 0
@@ -191,8 +193,8 @@ def plot_rate():
 	_ = ax.legend()
 	fig.savefig("rated_weight_distribution_true_energy.png")
 
-
-plot_rate()
+cnt = 0
+plot_rate(cnt)
 
 def plot_rate_2(e, cth, pdg, weight):
 	# first get the flux
