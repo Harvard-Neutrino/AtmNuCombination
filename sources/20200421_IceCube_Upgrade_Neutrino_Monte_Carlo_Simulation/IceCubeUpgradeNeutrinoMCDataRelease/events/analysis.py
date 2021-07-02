@@ -161,7 +161,7 @@ def plot_rate(count):
 
 	for i in range(len(rate_weight)):
 		count += 1
-		print(cnt)
+		print(count)
 		neutype = np.abs(input_data["pdg"][i])
 		if neutype not in [12, 14, 16]:
 			rate_weight[i] = 0
