@@ -146,17 +146,17 @@ def plot_rate():
 	# First use get_rate function to obtain rate
 	rate_weight = np.zeros_like(input_data["weight"])
 	for i in nue_mask:
-		rate_weight[nue_mask] = get_rate(input_data["true_energy"][nue_mask], \
-										input_data["true_zenith"][nue_mask], 12, \
-										input_data["weight"][nue_mask])
+		rate_weight[i] = get_rate(input_data["true_energy"][i], \
+										input_data["true_zenith"][i], 12, \
+										input_data["weight"][i])
 	for i in numu_mask:
-		rate_weight[numu_mask] = get_rate(input_data["true_energy"][numu_mask], \
-										input_data["true_zenith"][numu_mask], 14, \
-										input_data["weight"][numu_mask])
+		rate_weight[i] = get_rate(input_data["true_energy"][i], \
+										input_data["true_zenith"][i], 14, \
+										input_data["weight"][i])
 	for i in nutau_mask:
-		rate_weight[nutau_mask] = get_rate(input_data["true_energy"][nutau_mask], \
-										input_data["true_zenith"][nutau_mask], 16, \
-										input_data["weight"][nutau_mask])
+		rate_weight[i] = get_rate(input_data["true_energy"][i], \
+										input_data["true_zenith"][i], 16, \
+										input_data["weight"][i])
 	input_data["rate_weight"] = rate_weight
 	# Note that converting to mHz for the rate, as this is a more suitable unit for the IceCube Upgrade 
 	fig, ax = plt.subplots(figsize=(7,6))
