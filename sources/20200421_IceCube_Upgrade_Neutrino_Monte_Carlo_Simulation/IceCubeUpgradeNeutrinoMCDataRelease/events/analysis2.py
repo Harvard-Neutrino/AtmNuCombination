@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
-import nuSQuIDS as nsq
+import nuSQuIDSpy as nsq
 import nuflux
 
 matplotlib.rcParams.update({'font.size': 16})
@@ -111,7 +111,7 @@ def plot_rate():
     ax.set_ylabel("Rate [mHz]")
     ax.grid(True)
     _ = ax.legend()
-    fig.savefig("rated_weight_distribution_true_energy.png")
+    fig.savefig("rated_weight_distribution_true_energy_2.png")
 
 plot_rate()
 
