@@ -37,7 +37,7 @@ units = nsq.Const()
 
 interactions = False
 
-E_min = 1.0*units.GeV
+E_min = 10.0*units.GeV
 E_max = 1.0e3*units.PeV
 E_nodes = 100
 energy_nodes = nsq.logspace(E_min,E_max,E_nodes)
@@ -91,7 +91,7 @@ for i in range(len(rate_weight)):
     rate_weight[i] = input_data["weight"][i]*nsq_atm.EvalFlavor(neuflavor,
                                                                 np.cos(input_data["true_zenith"][i]),
                                                                 input_data["true_energy"][i]*\
-                                                                units.GeV,neutype)*lifetime*meter_to_cm_sq
+                                                                units.GeV,neutype)#*lifetime*meter_to_cm_sq
 input_data["rate_weight"] = rate_weight
 
 def plot_rate():
@@ -114,7 +114,7 @@ def plot_rate():
     ax.set_ylabel("Rate [mHz]")
     ax.grid(True)
     _ = ax.legend()
-    fig.savefig("rated_weight_distribution_true_energy_2.png")
+    fig.savefig("rated_weight_distribution_true_energy(mHz).png")
 
 plot_rate()
 
