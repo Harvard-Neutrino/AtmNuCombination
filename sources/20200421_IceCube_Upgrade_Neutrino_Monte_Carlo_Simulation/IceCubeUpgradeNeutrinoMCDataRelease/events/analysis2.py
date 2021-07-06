@@ -289,7 +289,7 @@ def plot_rate_comparison_2(rate_weight):
                      useOffset=None, useLocale=None, useMathText=None)
 	plt.savefig("Weighted_Event_Rates_Make_Up2.png")
 
-plot_rate_comparison2(rate_weight)
+plot_rate_comparison_2(rate_weight)
 
 
 
