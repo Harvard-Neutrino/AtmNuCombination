@@ -53,6 +53,7 @@ cth_nodes = nsq.linspace(cth_min,cth_max,cth_nodes)
 neutrino_flavors = 3
 
 nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,neutrino_flavors,nsq.NeutrinoType.both,interactions)
+unosci_nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,neutrino_flavors,nsq.NeutrinoType.both,interactions)
 
 AtmInitialFlux = np.zeros((len(cth_nodes),len(energy_nodes),2,neutrino_flavors))
 flux = nuflux.makeFlux('honda2006')
@@ -72,9 +73,12 @@ nsq_atm.Set_initial_state(AtmInitialFlux,nsq.Basis.flavor)
 nsq_atm.Set_ProgressBar(True) # progress bar will be printed on terminal
 nsq_atm.EvolveState()
 
+unosci_nsq_atm.Set_initial_state(AtmInitialFlux,nsq.Basis.flavor)
+
 lifetime = 5.0*365*24*60*60
 meter_to_cm_sq = 1e4
 rate_weight = np.zeros_like(input_data["weight"])
+unosci_rate_weight = np.zeros_like(input_data["weight"])
 for i in range(len(rate_weight)):
     if input_data["pdg"][i] > 0 :
         neutype = 0
@@ -90,8 +94,13 @@ for i in range(len(rate_weight)):
         
     if input_data["true_energy"][i]*units.GeV < E_min or input_data["true_energy"][i]*units.GeV > E_max:
         rate_weight[i] = 0
+	unosci_rate_weight
         continue
     rate_weight[i] = input_data["weight"][i]*nsq_atm.EvalFlavor(neuflavor,
+                                                                np.cos(input_data["true_zenith"][i]),
+                                                                input_data["true_energy"][i]*\
+                                                                units.GeV,neutype)*lifetime*meter_to_cm_sq
+    unosci_rate_weight[i] = input_data["weight"][i]*unosci_nsq_atm.EvalFlavor(neuflavor,
                                                                 np.cos(input_data["true_zenith"][i]),
                                                                 input_data["true_energy"][i]*\
                                                                 units.GeV,neutype)*lifetime*meter_to_cm_sq
@@ -258,6 +267,40 @@ def plot_rate_comparison(rate_weight):
 	plt.savefig("Weighted_Event_Rates_Make_Up(True_Energy).png")
 
 # plot_rate_comparison(rate_weight)
+
+
+def plot_unosci_rate_comparison(rate_weight):
+	input_data["rate_weight"] = unosci_rate_weight
+	
+	# Get cumulative rates
+	nueCC = 1e3 * np.nansum(input_data["rate_weight"][nue_cc_mask])
+	nueNC = 1e3 * np.nansum(input_data["rate_weight"][nue_nc_mask])
+	numuCC = 1e3 * np.nansum(input_data["rate_weight"][numu_cc_mask])
+	numuNC = 1e3 * np.nansum(input_data["rate_weight"][numu_nc_mask])
+	nutauCC = 1e3 * np.nansum(input_data["rate_weight"][nutau_cc_mask])
+	nutauNC = 1e3 * np.nansum(input_data["rate_weight"][nutau_nc_mask])
+	
+	currents = ['CC', 'NC']
+	nue = np.array([nueCC, nueNC])
+	numu = np.array([numuCC, numuNC])
+	nutau = np.array([nutauCC, nutauNC])
+	ind = [x for x, _ in enumerate(currents)]
+	
+	plt.subplots(figsize=(7,6))
+	plt.bar(ind, nue, width=0.8, label=r"$\nu_{e}$", color='skyblue', bottom=numu+nutau)
+	plt.bar(ind, numu, width=0.8, label=r"$\nu_{\mu}$", color='lightcoral', bottom=nutau)
+	plt.bar(ind, nutau, width=0.8, label=r"$\nu_{\tau}$", color='seagreen')
+
+	plt.xticks(ind, currents)
+	plt.ylabel("Weighted Event Rates (mHz)")
+	plt.xlabel("Interaction Types")
+	plt.legend(loc="upper right")
+	plt.title("Unoscillated Weighted Event Rates Composition", y = 1.08)
+	plt.ticklabel_format(axis='y', style='sci', scilimits=None,\
+                     useOffset=None, useLocale=None, useMathText=None)
+	plt.savefig("Unoscillated_Weighted_Event_Rates_Make_Up(True_Energy).png")
+
+plot_unosci_rate_comparison(rate_weight)
 	
 
 def plot_rate_comparison_2(rate_weight):
@@ -289,7 +332,7 @@ def plot_rate_comparison_2(rate_weight):
                      useOffset=None, useLocale=None, useMathText=None)
 	plt.savefig("Weighted_Event_Rates_Make_Up2.png")
 
-plot_rate_comparison_2(rate_weight)
+#plot_rate_comparison_2(rate_weight)
 
 
 
