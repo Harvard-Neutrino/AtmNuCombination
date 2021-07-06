@@ -249,10 +249,10 @@ def plot_rate_comparison_true_energy(rate_weight):
 	plt.bar(ind, nutau, width=0.8, label=r"$\nu_{\tau}$", color='seagreen')
 
 	plt.xticks(ind, currents)
-	plt.ylabel("Weighted Event Rates")
+	plt.ylabel("Weighted Event Rates (mHz)")
 	plt.xlabel("Interaction Types")
 	plt.legend(loc="upper right")
-	plt.title("Weighted Event Rates Make Up (True Energy)", y = 1.08)
+	plt.title("Weighted Event Rates Make Up", y = 1.08)
 	plt.ticklabel_format(axis='y', style='sci', scilimits=None,\
                      useOffset=None, useLocale=None, useMathText=None)
 	plt.savefig("Weighted_Event_Rates_Make_Up(True_Energy).png")
