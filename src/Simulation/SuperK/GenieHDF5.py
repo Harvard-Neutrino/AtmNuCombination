@@ -58,7 +58,7 @@ class GenieSimulation:
 	def Flux(self): # To be implemented with IC's NuFlux
 		# Try other fluxes, may need to tune nuflux to extend energy regions and include fluxes at SK location
 		# flux = nuflux.makeFlux('honda2006')
-		flux = nuflux.makeFlux('H3a_SIBYLL21')
+		flux = nuflux.makeFlux('IPSGhonda2006_sno_solmin')
 		numu = nuflux.NuMu
 		numub = nuflux.NuMuBar
 		nue = nuflux.NuE

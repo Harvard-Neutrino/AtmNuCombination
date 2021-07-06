@@ -3,7 +3,7 @@ import numpy as np
 from numpy.random import choice
 
 class RecoDists:
-	def __init__(self, filename='defaultRecoDistributions.hdf5'):
+	def __init__(self, filename='data/defaultRecoDistributions.hdf5'):
 		self.f = h5py.File(filename, 'r')
 
 	def Random(self, label):

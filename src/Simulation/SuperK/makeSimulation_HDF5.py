@@ -7,9 +7,11 @@ from RecoRing import *
 from RandomGenerator import RecoDists
 from GenieHDF5 import *
 
+import time
+
 parser = argparse.ArgumentParser()
 parser.add_argument("in_hdf5filename", type=str, nargs='?', default='../../../utils/atm_genie.root.hdf5')
-parser.add_argument("outfilename", type=str, nargs='?', default='testfcmc.hdf5')
+parser.add_argument("outfilename", type=str, nargs='?', default='data/testfcmc.hdf5')
 parser.add_argument("-v", dest='verbo', default=False, action='store_true')
 
 args = parser.parse_args()
@@ -19,10 +21,14 @@ output = args.outfilename
 
 # Read GENIE GST file
 genie_input = '/home/pablofer/old.AtmNuCombination/utils/atm_genie.root.hdf5'
+start_time = time.time()
 event = GenieSimulation(genie_input)
+print('Event loading:', time.time() - start_time, 'seconds')
 
 # Read reco distributions
+start_time = time.time()
 rd = RecoDists()
+print('Reco. distros.:', time.time() - start_time, 'seconds')
 
 # Variable declaration for out tree
 # True variables
@@ -55,6 +61,8 @@ mode       = np.array([], dtype=np.double)
 
 
 # Start loop over Genie simulated
+start_time = time.time()
+
 for i, nu in enumerate(event.Ipnu):
 
 	if i>1000: continue
@@ -80,6 +88,9 @@ for i, nu in enumerate(event.Ipnu):
 	
 # True Ring constructor, baseline for reconstructing the event
 	TrueNRing, TrueRingPDG, TrueRingIP, TrueRingE, TrueRingP, TrueRingDir = TrueRingConstructor(event.PDGlep[i], pdg_fp, event.Elep[i], E_fp, event.Plep[i], P_fp, Plep_v, P_fp_v)
+
+	# print('True Ring:', time.time() - start_time, 'seconds')
+
 	if TrueNRing == 0:
 		if verbose:
 			print('Zero Rings')
@@ -92,11 +103,16 @@ for i, nu in enumerate(event.Ipnu):
 	# print(TrueRingIP)
 	# print(TrueRingE)
 
+	# start_time = time.time()
+
 	RRing = RecoRing(TrueNRing, TrueRingPDG, TrueRingIP, TrueRingE, TrueRingP, TrueRingDir, rd, event.Mode[i])
 
 	if RRing.NRing == 1: RRing.DecayE(event.Ipnu[i], event.CC[i], event.Mode[i])
 
 	RRing.SKType(event.Ipnu[i], event.CC[i])
+
+	# print('Recos Ring:', time.time() - start_time, 'seconds')
+
 
 	if RRing.NRing < 1 or RRing.Type < 0:
 		del RRing
@@ -130,6 +146,8 @@ for i, nu in enumerate(event.Ipnu):
 	# 		print('Interacting NC with code: ', nu.Mode)
 
 	# mp_flux.join()
+	
+	# start_time = time.time()
 
 	ipnu       = np.append(ipnu, event.Ipnu[i])
 	pnu        = np.append(pnu, event.Enu[i])
@@ -162,7 +180,10 @@ for i, nu in enumerate(event.Ipnu):
 	itype      = np.append(itype, RRing.Type)
 	mode       = np.append(mode, event.Mode[i])
 
+
 	del RRing
+
+print('Fill arrays:', time.time() - start_time, 'seconds')
 
 with h5py.File(output, 'w') as hf:
 	hf.create_dataset('ipnu', data=ipnu, compression='gzip')
