@@ -91,7 +91,7 @@ for i in range(len(rate_weight)):
     rate_weight[i] = input_data["weight"][i]*nsq_atm.EvalFlavor(neuflavor,
                                                                 np.cos(input_data["true_zenith"][i]),
                                                                 input_data["true_energy"][i]*\
-                                                                units.GeV,neutype)
+                                                                units.GeV,neutype)*lifetime*meter_to_cm_sq
 
 '''
 This next part compares different methods of calculating the flux
@@ -154,7 +154,7 @@ def get_rate_multiple(i):                                               #
 
 def plot_rate(rate_weight):
     # First multiply by lifetime and conversion
-    rate_weight[i] *= lifetime*meter_to_cm_sq
+    #rate_weight[i] *= lifetime*meter_to_cm_sq
     input_data["rate_weight"] = rate_weight
     # Note that converting to mHz for the rate, as this is a more suitable unit for the IceCube Upgrade 
     fig, ax = plt.subplots(figsize=(7,6))
