@@ -158,6 +158,7 @@ def plot_rate_true_energy(rate_weight):
     input_data["rate_weight"] = rate_weight
     # Note that converting to mHz for the rate, as this is a more suitable unit for the IceCube Upgrade 
     fig, ax = plt.subplots(figsize=(7,6))
+    fig.suptitle("True Energy Rated Weight")
     ax.hist(input_data["true_energy"][nue_cc_mask], bins=energy_bins_fine, \
           weights=(1e3)*input_data["rate_weight"][nue_cc_mask], \
           label=r"$\nu_{e,CC}$", color="blue", histtype="step")
@@ -183,7 +184,7 @@ def plot_rate_true_energy(rate_weight):
     _ = ax.legend()
     fig.savefig("rated_weight_distribution_true_energy(mHz).png")
 
-# plot_rate_true_energy(rate_weight)
+plot_rate_true_energy(rate_weight)
 	
 	
 	
@@ -193,6 +194,7 @@ def plot_rate_reconstructed_energy(rate_weight):
     input_data["rate_weight"] = rate_weight
     # Note that converting to mHz for the rate, as this is a more suitable unit for the IceCube Upgrade 
     fig, ax = plt.subplots(figsize=(7,6))
+    fig.suptitle("Reconstructed Energy Rated Weight")
     ax.hist(input_data["reco_energy"][nue_cc_mask], bins=energy_bins_fine, \
           weights=(1e3)*input_data["rate_weight"][nue_cc_mask], \
           label=r"$\nu_{e,CC}$", color="blue", histtype="step")
@@ -215,11 +217,44 @@ def plot_rate_reconstructed_energy(rate_weight):
                      useOffset=None, useLocale=None, useMathText=None)
     ax.set_ylabel("Rate [mHz]")
     ax.grid(True)
-    _ = ax.legend()
+    ax.legend()
     fig.savefig("rated_weight_distribution_reco_energy(mHz).png")
 
 	
 plot_rate_reconstructed_energy(rate_weight)
+
+def plot_rate_comparison_true_energy(rate_weight):
+	input_data["rate_weight"] = rate_weight
+	
+	# Get cumulative rates
+	nueCC = 1
+	nueNC = 2
+	numuCC = 3
+	numuNC = 5
+	nutauCC = 4
+	nutauNC = 6
+	
+	currents = ['CC', 'NC']
+	nue = np.array([nueCC, nueNC])
+	numu = np.array([numuCC, numuNC])
+	nutau = np.array([nutauCC, nutauNC])
+	ind = [x for x, _ in enumerate(currents)]
+	
+	plt.subplots(figsize=(7,6))
+	plt.bar(ind, nue, width=0.8, label='r"$\nu_{e}$"', color='blue', bottom=numu+nutau)
+	plt.bar(ind, numu, width=0.8, label=r"$\nu_{\mu}$", color='red', bottom=nutau)
+	plt.bar(ind, nutau, width=0.8, label=r"$\nu_{\tau}$", color='green')
+
+	plt.xticks(ind, currents)
+	plt.ylabel("Weighted Event Rates")
+	plt.xlabel("Interaction Types")
+	plt.legend(loc="upper right")
+	plt.title("Weighted Event Rates Make Up (True Energy)")
+	
+	plt.savefig("Weighted_Event_Rates_Make_Up(True_Energy).png")
+
+plot_rate_comparison_true_energy(rate_weight)
+	
 
 
 
