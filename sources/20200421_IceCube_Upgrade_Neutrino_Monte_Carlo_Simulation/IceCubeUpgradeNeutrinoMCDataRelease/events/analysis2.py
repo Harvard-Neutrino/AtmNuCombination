@@ -261,7 +261,7 @@ def plot_rate_comparison(rate_weight):
 	plt.ylabel("Weighted Event Rates (Year)")
 	plt.xlabel("Interaction Types")
 	plt.legend(loc="upper right")
-	plt.title("Weighted Event Rates Make Up", y = 1.08)
+	plt.title("Weighted Event Rates Composition", y = 1.08)
 	plt.ticklabel_format(axis='y', style='sci', scilimits=None,\
                      useOffset=None, useLocale=None, useMathText=None)
 	plt.savefig("Weighted_Event_Rates_Make_Up(True_Energy).png")
@@ -327,7 +327,7 @@ def plot_rate_comparison_2(rate_weight):
 	plt.ylabel("Weighted Event Rates (Year)")
 	plt.xlabel("(Anti-)Neutrino Flavors")
 	plt.legend(loc="upper right")
-	plt.title("Weighted Event Rates Make Up", y = 1.08)
+	plt.title("Weighted Event Rates Composition", y = 1.08)
 	plt.ticklabel_format(axis='y', style='sci', scilimits=None,\
                      useOffset=None, useLocale=None, useMathText=None)
 	plt.savefig("Weighted_Event_Rates_Make_Up2.png")
