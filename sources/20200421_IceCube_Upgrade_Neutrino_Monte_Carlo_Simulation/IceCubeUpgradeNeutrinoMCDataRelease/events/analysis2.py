@@ -113,8 +113,7 @@ def plot_rate():
     _ = ax.legend()
     fig.savefig("rated_weight_distribution_true_energy.png")
 
-
-  plot_rate()
+plot_rate()
 
 
 
