@@ -109,8 +109,14 @@ def plot_rate():
     ax.hist(input_data["true_energy"][nc_mask], bins=energy_bins_fine, \
           weights=(1e3)*input_data["rate_weight"][nc_mask], \
           label=r"$\nu_{NC}$", color="grey", histtype="step")
+    
+    print("Total neutrino rate = %0.3g mHz" % (np.nansum(rate_weight) * 1e3) )
+    
     ax.set_xscale("log")
     ax.set_xlabel(r"$E_{\nu,\rm{true}}$ [GeV]")
+    ax.set_xlim(10, 1000)
+    ticklabel_format(self, *, axis='both', style='sci', scilimits=None,\
+                     useOffset=None, useLocale=None, useMathText=None)
     ax.set_ylabel("Rate [mHz]")
     ax.grid(True)
     _ = ax.legend()
