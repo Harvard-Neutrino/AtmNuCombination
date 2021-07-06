@@ -273,7 +273,7 @@ def plot_rate_comparison_2(rate_weight):
 	
 	flavors = ['nue', 'numu', "nutau"]
 	CC = np.array([nueCC, numuCC, nutauCC])
-	NC = np.array([nueNC, numuNCm nutauNC])
+	NC = np.array([nueNC, numuNC, nutauNC])
 	ind = [x for x, _ in enumerate(flavors)]
 	
 	plt.subplots(figsize=(7,6))
