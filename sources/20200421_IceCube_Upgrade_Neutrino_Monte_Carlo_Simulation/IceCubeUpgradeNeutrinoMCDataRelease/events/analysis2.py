@@ -106,12 +106,12 @@ def atmo_nu_flux(true_energy) :                                                 
 #################################################################################
 
 
-#########################################################################################
-# The single-energy mode calculated flux                                                #
-def get_rate_single(nu_energy, nu_cos_zenith, pdg, weight):                             #
+#############################################################################################
+# The single-energy mode calculated flux                                                    #
+def get_rate_single(nu_energy, nu_cos_zenith, pdg, weight):                                 #
 	# Set the propagation                                                               #
 	nu = nsq.nuSQUIDS(3, nsq.NeutrinoType.neutrino)                                     #
-	nu.Set_E(nu_energy*units.GeV)     rate_weight[i]                                                  #
+	nu.Set_E(nu_energy*units.GeV)  	                                                    #
 	nu.Set_Body(nsq.EarthAtm())                                                         #
 	nu.Set_Track(nsq.EarthAtm.Track(np.arccos(nu_cos_zenith)))                          #
 	# Grab the flux                                                                     #
@@ -133,15 +133,15 @@ def get_rate_single(nu_energy, nu_cos_zenith, pdg, weight):                     
 	#print(oscillatedNuE, oscillatedNuMu, oscillatedNuTau)                              #
 	# now get the rate                                                                  #
 	if pdg == 12:                                                                       #
-		return weight * oscillatedNuE                                                   #
+		return weight * oscillatedNuE                                               #
 	if pdg == 14:                                                                       #
-		return weight * oscillatedNuMu                                                  #
+		return weight * oscillatedNuMu                                              #
 	if pdg == 16:                                                                       #
-		return weight * oscillatedNuTau                                                 #
+		return weight * oscillatedNuTau                                             #
 	else:                                                                               #
-		print("Not a Neutrino Event Selected")                                          #
-		return oscillatedNuE, oscillatedNuMu, oscillatedNuTau                           #
-#########################################################################################
+		print("Not a Neutrino Event Selected")                                      #
+		return oscillatedNuE, oscillatedNuMu, oscillatedNuTau                       #
+#############################################################################################
 
 
 #########################################################################
