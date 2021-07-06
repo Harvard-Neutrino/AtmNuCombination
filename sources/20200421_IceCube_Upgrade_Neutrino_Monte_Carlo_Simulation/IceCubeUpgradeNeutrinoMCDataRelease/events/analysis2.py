@@ -9,6 +9,12 @@ matplotlib.rcParams.update({'font.size': 16})
 matplotlib.rcParams.update({'lines.linewidth': 3})
 matplotlib.rcParams.update({'patch.linewidth': 3})
 
+# Define path to file (you may need to change this to match your system)
+input_file = "neutrino_mc.csv"
+
+# Load the file using pandas
+input_data = pd.read_csv(input_file)
+
 
 # Define masks to identify different neutrino flavors
 nue_mask = (np.abs(input_data["pdg"]) == 12)
@@ -21,14 +27,6 @@ cc_mask = input_data["current_type"] == 1
 nue_cc_mask = nue_mask & cc_mask
 numu_cc_mask = numu_mask & cc_mask
 nutau_cc_mask = nutau_mask & cc_mask 
-
-
-
-# Define path to file (you may need to change this to match your system)
-input_file = "neutrino_mc.csv"
-
-# Load the file using pandas
-input_data = pd.read_csv(input_file)
 
 units = nsq.Const()
 
