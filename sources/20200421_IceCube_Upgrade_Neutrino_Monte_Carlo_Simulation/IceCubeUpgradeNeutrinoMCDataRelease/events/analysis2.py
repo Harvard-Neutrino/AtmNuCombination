@@ -184,7 +184,7 @@ def plot_rate_true_energy(rate_weight):
     _ = ax.legend()
     fig.savefig("rated_weight_distribution_true_energy(mHz).png")
 
-plot_rate_true_energy(rate_weight)
+# plot_rate_true_energy(rate_weight)
 	
 	
 	
@@ -221,18 +221,18 @@ def plot_rate_reconstructed_energy(rate_weight):
     fig.savefig("rated_weight_distribution_reco_energy(mHz).png")
 
 	
-plot_rate_reconstructed_energy(rate_weight)
+# plot_rate_reconstructed_energy(rate_weight)
 
 def plot_rate_comparison_true_energy(rate_weight):
 	input_data["rate_weight"] = rate_weight
 	
 	# Get cumulative rates
-	nueCC = 1
-	nueNC = 2
-	numuCC = 3
-	numuNC = 5
-	nutauCC = 4
-	nutauNC = 6
+	nueCC = np.nansum(input_data["rate_weight"][nue_cc_mask])
+	nueNC = np.nansum(input_data["rate_weight"][nue_nc_mask])
+	numuCC = np.nansum(input_data["rate_weight"][numu_cc_mask])
+	numuNC = np.nansum(input_data["rate_weight"][numu_nc_mask])
+	nutauCC = np.nansum(input_data["rate_weight"][nutau_cc_mask])
+	nutauNC = np.nansum(input_data["rate_weight"][nutau_nc_mask])
 	
 	currents = ['CC', 'NC']
 	nue = np.array([nueCC, nueNC])
