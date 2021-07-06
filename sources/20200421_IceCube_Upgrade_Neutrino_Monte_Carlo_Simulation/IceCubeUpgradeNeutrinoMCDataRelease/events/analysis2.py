@@ -26,7 +26,10 @@ nc_mask = input_data["current_type"] == 0
 cc_mask = input_data["current_type"] == 1
 nue_cc_mask = nue_mask & cc_mask
 numu_cc_mask = numu_mask & cc_mask
-nutau_cc_mask = nutau_mask & cc_mask 
+nutau_cc_mask = nutau_mask & cc_mask
+nue_nc_mask = nue_mask & nc_mask
+numu_nc_mask = numu_mask & nc_mask
+nutau_nc_mask = nutau_mask & nc_mask 
 
 # Define some energy bins (used throughout this notebook)
 energy_bins_fine = np.logspace(0., 2., num=21)
