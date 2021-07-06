@@ -152,7 +152,7 @@ def get_rate_multiple(i):                                               #
 
 
 
-def plot_rate(rate_weight):
+def plot_rate_true_energy(rate_weight):
     # First multiply by lifetime and conversion
     #rate_weight[i] *= lifetime*meter_to_cm_sq
     input_data["rate_weight"] = rate_weight
@@ -183,7 +183,45 @@ def plot_rate(rate_weight):
     _ = ax.legend()
     fig.savefig("rated_weight_distribution_true_energy(mHz).png")
 
-plot_rate(rate_weight)
+# plot_rate_true_energy(rate_weight)
+	
+	
+	
+def plot_rate_reconstructed_energy(rate_weight):
+    # First multiply by lifetime and conversion
+    #rate_weight[i] *= lifetime*meter_to_cm_sq
+    input_data["rate_weight"] = rate_weight
+    # Note that converting to mHz for the rate, as this is a more suitable unit for the IceCube Upgrade 
+    fig, ax = plt.subplots(figsize=(7,6))
+    ax.hist(input_data["reco_energy"][nue_cc_mask], bins=energy_bins_fine, \
+          weights=(1e3)*input_data["rate_weight"][nue_cc_mask], \
+          label=r"$\nu_{e,CC}$", color="blue", histtype="step")
+    ax.hist(input_data["reco_energy"][numu_cc_mask], bins=energy_bins_fine, \
+          weights=(1e3)*input_data["rate_weight"][numu_cc_mask], \
+          label=r"$\nu_{\mu,CC}$", color="red", histtype="step")
+    ax.hist(input_data["reco_energy"][nutau_cc_mask], bins=energy_bins_fine, \
+          weights=(1e3)*input_data["rate_weight"][nutau_cc_mask], \
+          label=r"$\nu_{\tau,CC}$", color="green", histtype="step")
+    ax.hist(input_data["reco_energy"][nc_mask], bins=energy_bins_fine, \
+          weights=(1e3)*input_data["rate_weight"][nc_mask], \
+          label=r"$\nu_{NC}$", color="grey", histtype="step")
+    
+    print("Total neutrino rate = %0.3g mHz" % (np.nansum(rate_weight) * 1e3) )
+    
+    ax.set_xscale("log")
+    ax.set_xlabel(r"$E_{\nu,\rm{true}}$ [GeV]")
+    ax.set_xlim(10, 100)
+    ax.ticklabel_format(axis='y', style='sci', scilimits=None,\
+                     useOffset=None, useLocale=None, useMathText=None)
+    ax.set_ylabel("Rate [mHz]")
+    ax.grid(True)
+    _ = ax.legend()
+    fig.savefig("rated_weight_distribution_reco_energy(mHz).png")
+
+	
+plot_rate_reconstructed_energy(rate_weight)
+
+
 
 
 
