@@ -99,7 +99,7 @@ for i in range(len(rate_weight)):
     rate_weight[i] = input_data["weight"][i]*nsq_atm.EvalFlavor(neuflavor,
                                                                 np.cos(input_data["true_zenith"][i]),
                                                                 input_data["true_energy"][i]*\
-                                                                units.GeV,neutype)#*lifetime*meter_to_cm_sq
+                                                                units.GeV,neutype)*lifetime*meter_to_cm_sq
     unosci_rate_weight[i] = input_data["weight"][i]*unosci_nsq_atm.EvalFlavor(neuflavor,
                                                                 np.cos(input_data["true_zenith"][i]),
                                                                 input_data["true_energy"][i]*\
