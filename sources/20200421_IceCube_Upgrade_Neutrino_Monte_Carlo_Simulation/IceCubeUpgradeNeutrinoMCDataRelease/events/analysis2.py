@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
-import nuSQuIDSpy as nsq
+import nuSQUIDSpy as nsq
 import nuflux
 
 matplotlib.rcParams.update({'font.size': 16})
