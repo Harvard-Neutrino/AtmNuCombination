@@ -115,7 +115,7 @@ def plot_rate():
     ax.set_xscale("log")
     ax.set_xlabel(r"$E_{\nu,\rm{true}}$ [GeV]")
     ax.set_xlim(10, 1000)
-    ax.ticklabel_format(axis='both', style='sci', scilimits=None,\
+    ax.ticklabel_format(axis='y', style='sci', scilimits=None,\
                      useOffset=None, useLocale=None, useMathText=None)
     ax.set_ylabel("Rate [mHz]")
     ax.grid(True)
