@@ -230,12 +230,12 @@ def plot_rate_comparison_true_energy(rate_weight):
 	input_data["rate_weight"] = rate_weight
 	
 	# Get cumulative rates
-	nueCC = np.nansum(input_data["rate_weight"][nue_cc_mask])
-	nueNC = np.nansum(input_data["rate_weight"][nue_nc_mask])
-	numuCC = np.nansum(input_data["rate_weight"][numu_cc_mask])
-	numuNC = np.nansum(input_data["rate_weight"][numu_nc_mask])
-	nutauCC = np.nansum(input_data["rate_weight"][nutau_cc_mask])
-	nutauNC = np.nansum(input_data["rate_weight"][nutau_nc_mask])
+	nueCC = 1e3 * np.nansum(input_data["rate_weight"][nue_cc_mask])
+	nueNC = 1e3 * np.nansum(input_data["rate_weight"][nue_nc_mask])
+	numuCC = 1e3 * np.nansum(input_data["rate_weight"][numu_cc_mask])
+	numuNC = 1e3 * np.nansum(input_data["rate_weight"][numu_nc_mask])
+	nutauCC = 1e3 * np.nansum(input_data["rate_weight"][nutau_cc_mask])
+	nutauNC = 1e3 * np.nansum(input_data["rate_weight"][nutau_nc_mask])
 	
 	currents = ['CC', 'NC']
 	nue = np.array([nueCC, nueNC])
@@ -253,7 +253,8 @@ def plot_rate_comparison_true_energy(rate_weight):
 	plt.xlabel("Interaction Types")
 	plt.legend(loc="upper right")
 	plt.title("Weighted Event Rates Make Up (True Energy)")
-	
+	plt.ticklabel_format(axis='y', style='sci', scilimits=None,\
+                     useOffset=None, useLocale=None, useMathText=None)
 	plt.savefig("Weighted_Event_Rates_Make_Up(True_Energy).png")
 
 plot_rate_comparison_true_energy(rate_weight)
