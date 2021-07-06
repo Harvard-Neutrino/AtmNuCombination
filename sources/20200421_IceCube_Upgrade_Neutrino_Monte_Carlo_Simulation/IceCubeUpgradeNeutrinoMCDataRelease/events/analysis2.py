@@ -280,7 +280,7 @@ def plot_rate_comparison_2(rate_weight):
 	plt.bar(ind, CC, width=0.8, label="CC", color='steelblue', bottom=NC)
 	plt.bar(ind, NC, width=0.8, label="NC", color='dimgrey')
 
-	plt.xticks(ind, currents)
+	plt.xticks(ind, flavors)
 	plt.ylabel("Weighted Event Rates (mHz)")
 	plt.xlabel("(Anti-)Neutrino Flavors")
 	plt.legend(loc="upper right")
