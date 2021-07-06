@@ -196,16 +196,16 @@ def plot_rate_reconstructed_energy(rate_weight):
     fig, ax = plt.subplots(figsize=(7,6))
     fig.suptitle("Reconstructed Energy Rated Weight")
     ax.hist(input_data["reco_energy"][nue_cc_mask], bins=energy_bins_fine, \
-          weights=(1e3)*input_data["rate_weight"][nue_cc_mask], \
+          weights=(1e-4)*input_data["rate_weight"][nue_cc_mask], \
           label=r"$\nu_{e,CC}$", color="blue", histtype="step")
     ax.hist(input_data["reco_energy"][numu_cc_mask], bins=energy_bins_fine, \
-          weights=(1e3)*input_data["rate_weight"][numu_cc_mask], \
+          weights=(1e-4)*input_data["rate_weight"][numu_cc_mask], \
           label=r"$\nu_{\mu,CC}$", color="red", histtype="step")
     ax.hist(input_data["reco_energy"][nutau_cc_mask], bins=energy_bins_fine, \
-          weights=(1e3)*input_data["rate_weight"][nutau_cc_mask], \
+          weights=(1e-4)*input_data["rate_weight"][nutau_cc_mask], \
           label=r"$\nu_{\tau,CC}$", color="green", histtype="step")
     ax.hist(input_data["reco_energy"][nc_mask], bins=energy_bins_fine, \
-          weights=(1e3)*input_data["rate_weight"][nc_mask], \
+          weights=(1e-4)*input_data["rate_weight"][nc_mask], \
           label=r"$\nu_{NC}$", color="grey", histtype="step")
     
     print("Total neutrino rate = %0.3g mHz" % (np.nansum(rate_weight) * 1e3) )
