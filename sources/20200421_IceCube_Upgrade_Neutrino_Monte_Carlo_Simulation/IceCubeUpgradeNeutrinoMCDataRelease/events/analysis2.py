@@ -91,12 +91,12 @@ for i in range(len(rate_weight)):
     rate_weight[i] = input_data["weight"][i]*nsq_atm.EvalFlavor(neuflavor,
                                                                 np.cos(input_data["true_zenith"][i]),
                                                                 input_data["true_energy"][i]*\
-                                                                units.GeV,neutype)#*lifetime*meter_to_cm_sq
+                                                                units.GeV,neutype)*lifetime*meter_to_cm_sq
 input_data["rate_weight"] = rate_weight
 
 def plot_rate():
     # Note that converting to mHz for the rate, as this is a more suitable unit for the IceCube Upgrade 
-    fig, ax = plt.subplots(figsize=(7,6))
+    fig, ax = plt.subplots(figsize=(10,6))
     ax.hist(input_data["true_energy"][nue_cc_mask], bins=energy_bins_fine, \
           weights=(1e3)*input_data["rate_weight"][nue_cc_mask], \
           label=r"$\nu_{e,CC}$", color="blue", histtype="step")
@@ -114,7 +114,7 @@ def plot_rate():
     
     ax.set_xscale("log")
     ax.set_xlabel(r"$E_{\nu,\rm{true}}$ [GeV]")
-    ax.set_xlim(10, 1000)
+    ax.set_xlim(10, 100)
     ax.ticklabel_format(axis='y', style='sci', scilimits=None,\
                      useOffset=None, useLocale=None, useMathText=None)
     ax.set_ylabel("Rate [mHz]")
