@@ -96,7 +96,7 @@ input_data["rate_weight"] = rate_weight
 
 def plot_rate():
     # Note that converting to mHz for the rate, as this is a more suitable unit for the IceCube Upgrade 
-    fig, ax = plt.subplots(figsize=(10,6))
+    fig, ax = plt.subplots(figsize=(7,6))
     ax.hist(input_data["true_energy"][nue_cc_mask], bins=energy_bins_fine, \
           weights=(1e3)*input_data["rate_weight"][nue_cc_mask], \
           label=r"$\nu_{e,CC}$", color="blue", histtype="step")
