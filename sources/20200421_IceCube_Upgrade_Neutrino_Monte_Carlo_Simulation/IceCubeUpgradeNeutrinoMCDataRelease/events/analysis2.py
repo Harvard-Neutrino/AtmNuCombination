@@ -244,15 +244,15 @@ def plot_rate_comparison_true_energy(rate_weight):
 	ind = [x for x, _ in enumerate(currents)]
 	
 	plt.subplots(figsize=(7,6))
-	plt.bar(ind, nue, width=0.8, label=r"$\nu_{e}$", color='blue', bottom=numu+nutau)
-	plt.bar(ind, numu, width=0.8, label=r"$\nu_{\mu}$", color='red', bottom=nutau)
-	plt.bar(ind, nutau, width=0.8, label=r"$\nu_{\tau}$", color='green')
+	plt.bar(ind, nue, width=0.8, label=r"$\nu_{e}$", color='skyblue', bottom=numu+nutau)
+	plt.bar(ind, numu, width=0.8, label=r"$\nu_{\mu}$", color='lightcoral', bottom=nutau)
+	plt.bar(ind, nutau, width=0.8, label=r"$\nu_{\tau}$", color='seagreen')
 
 	plt.xticks(ind, currents)
 	plt.ylabel("Weighted Event Rates")
 	plt.xlabel("Interaction Types")
 	plt.legend(loc="upper right")
-	plt.title("Weighted Event Rates Make Up (True Energy)")
+	plt.title("Weighted Event Rates Make Up (True Energy)", y = 1.08)
 	plt.ticklabel_format(axis='y', style='sci', scilimits=None,\
                      useOffset=None, useLocale=None, useMathText=None)
 	plt.savefig("Weighted_Event_Rates_Make_Up(True_Energy).png")
