@@ -1,8 +1,6 @@
-import matplotlib as mpl
 import nuSQuIDS as nsq
-import matplotlib.pyplot as plt
 import nuSQUIDSTools
-import numpy as np
+
 
 def SMOsc(nuSQ,flavor,in_state,th13,th23,th12,dm21,dm32,dcp,mh):
 # Mixing angles in radians
@@ -10,8 +8,6 @@ def SMOsc(nuSQ,flavor,in_state,th13,th23,th12,dm21,dm32,dcp,mh):
 	nuSQ.Set_MixingAngle(0,2,th13)
 	nuSQ.Set_MixingAngle(1,2,th23)
 	nuSQ.Set_SquareMassDifference(1,dm21)
-	nuSQ.Set_CPPhase(0,2,dcp)
-	nuSQ.Set_initial_state(in_state,nsq.Basis.flavor)
 
 	if mh==1:
 		nuSQ.Set_SquareMassDifference(2,dm32)
@@ -21,6 +17,9 @@ def SMOsc(nuSQ,flavor,in_state,th13,th23,th12,dm21,dm32,dcp,mh):
 		print('No valid MH value, setting MH to Normal')
 		nuSQ.Set_SquareMassDifference(2,dm32)
 
+	nuSQ.Set_CPPhase(0,2,dcp)
+
+	nuSQ.Set_initial_state(in_state,nsq.Basis.flavor)
 	nuSQ.EvolveState()
 
 	j = int(abs(flavor) / 2) % 6
