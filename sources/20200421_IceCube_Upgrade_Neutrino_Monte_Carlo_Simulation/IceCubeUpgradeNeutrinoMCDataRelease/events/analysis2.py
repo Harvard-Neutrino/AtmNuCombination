@@ -99,11 +99,11 @@ for i in range(len(rate_weight)):
     rate_weight[i] = input_data["weight"][i]*nsq_atm.EvalFlavor(neuflavor,
                                                                 np.cos(input_data["true_zenith"][i]),
                                                                 input_data["true_energy"][i]*\
-                                                                units.GeV,neutype)*lifetime*meter_to_cm_sq
+                                                                units.GeV,neutype)#*lifetime*meter_to_cm_sq
     unosci_rate_weight[i] = input_data["weight"][i]*unosci_nsq_atm.EvalFlavor(neuflavor,
                                                                 np.cos(input_data["true_zenith"][i]),
                                                                 input_data["true_energy"][i]*\
-                                                                units.GeV,neutype)*lifetime*meter_to_cm_sq
+                                                                units.GeV,neutype)#*lifetime*meter_to_cm_sq
 
 '''
 This next part compares different methods of calculating the flux
@@ -172,31 +172,31 @@ def plot_rate_true_energy(rate_weight):
     fig, ax = plt.subplots(figsize=(7,6))
     fig.suptitle("True Energy Rated Weight")
     ax.hist(input_data["true_energy"][nue_cc_mask], bins=energy_bins_fine, \
-          weights=(1e3)*input_data["rate_weight"][nue_cc_mask], \
+          weights=input_data["rate_weight"][nue_cc_mask], \
           label=r"$\nu_{e,CC}$", color="blue", histtype="step")
     ax.hist(input_data["true_energy"][numu_cc_mask], bins=energy_bins_fine, \
-          weights=(1e3)*input_data["rate_weight"][numu_cc_mask], \
+          weights=input_data["rate_weight"][numu_cc_mask], \
           label=r"$\nu_{\mu,CC}$", color="red", histtype="step")
     ax.hist(input_data["true_energy"][nutau_cc_mask], bins=energy_bins_fine, \
-          weights=(1e3)*input_data["rate_weight"][nutau_cc_mask], \
+          weights=input_data["rate_weight"][nutau_cc_mask], \
           label=r"$\nu_{\tau,CC}$", color="green", histtype="step")
     ax.hist(input_data["true_energy"][nc_mask], bins=energy_bins_fine, \
-          weights=(1e3)*input_data["rate_weight"][nc_mask], \
+          weights=input_data["rate_weight"][nc_mask], \
           label=r"$\nu_{NC}$", color="grey", histtype="step")
     
-    print("Total neutrino rate = %0.3g mHz" % (np.nansum(rate_weight) * 1e3) )
+    print("Total neutrino rate = %0.3g Hz" % (np.nansum(rate_weight) * 1e3) )
     
     ax.set_xscale("log")
     ax.set_xlabel(r"$E_{\nu,\rm{true}}$ [GeV]")
     ax.set_xlim(10, 100)
     ax.ticklabel_format(axis='y', style='sci', scilimits=None,\
                      useOffset=None, useLocale=None, useMathText=None)
-    ax.set_ylabel("Rate [mHz]")
+    ax.set_ylabel("Rate [Hz]")
     ax.grid(True)
     _ = ax.legend()
     fig.savefig("rated_weight_distribution_true_energy(mHz).png")
 
-# plot_rate_true_energy(rate_weight)
+plot_rate_true_energy(rate_weight)
 	
 	
 	
@@ -208,32 +208,32 @@ def plot_rate_reconstructed_energy(rate_weight):
     fig, ax = plt.subplots(figsize=(7,6))
     fig.suptitle("Reconstructed Energy Rated Weight")
     ax.hist(input_data["reco_energy"][nue_cc_mask], bins=energy_bins_fine, \
-          weights=(1e-4)*input_data["rate_weight"][nue_cc_mask], \
+          weights=input_data["rate_weight"][nue_cc_mask], \
           label=r"$\nu_{e,CC}$", color="blue", histtype="step")
     ax.hist(input_data["reco_energy"][numu_cc_mask], bins=energy_bins_fine, \
-          weights=(1e-4)*input_data["rate_weight"][numu_cc_mask], \
+          weights=input_data["rate_weight"][numu_cc_mask], \
           label=r"$\nu_{\mu,CC}$", color="red", histtype="step")
     ax.hist(input_data["reco_energy"][nutau_cc_mask], bins=energy_bins_fine, \
-          weights=(1e-4)*input_data["rate_weight"][nutau_cc_mask], \
+          weights=input_data["rate_weight"][nutau_cc_mask], \
           label=r"$\nu_{\tau,CC}$", color="green", histtype="step")
     ax.hist(input_data["reco_energy"][nc_mask], bins=energy_bins_fine, \
-          weights=(1e-4)*input_data["rate_weight"][nc_mask], \
+          weights=input_data["rate_weight"][nc_mask], \
           label=r"$\nu_{NC}$", color="grey", histtype="step")
     
-    print("Total neutrino rate = %0.3g mHz" % (np.nansum(rate_weight) * 1e3) )
+    print("Total neutrino rate = %0.3g Hz" % (np.nansum(rate_weight) * 1e3) )
     
     ax.set_xscale("log")
     ax.set_xlabel(r"$E_{\nu,\rm{true}}$ [GeV]")
     ax.set_xlim(10, 100)
     ax.ticklabel_format(axis='y', style='sci', scilimits=None,\
                      useOffset=None, useLocale=None, useMathText=None)
-    ax.set_ylabel("Rate [mHz]")
+    ax.set_ylabel("Rate [Hz]")
     ax.grid(True)
     ax.legend()
     fig.savefig("rated_weight_distribution_reco_energy(mHz).png")
 
 	
-# plot_rate_reconstructed_energy(rate_weight)
+plot_rate_reconstructed_energy(rate_weight)
 
 def plot_rate_comparison(rate_weight):
 	input_data["rate_weight"] = rate_weight
@@ -266,19 +266,19 @@ def plot_rate_comparison(rate_weight):
                      useOffset=None, useLocale=None, useMathText=None)
 	plt.savefig("Weighted_Event_Rates_Make_Up(True_Energy).png")
 
-# plot_rate_comparison(rate_weight)
+plot_rate_comparison(rate_weight)
 
 
 def plot_unosci_rate_comparison(rate_weight):
 	input_data["rate_weight"] = unosci_rate_weight
 	
 	# Get cumulative rates
-	nueCC = 1e3 * np.nansum(input_data["rate_weight"][nue_cc_mask])
-	nueNC = 1e3 * np.nansum(input_data["rate_weight"][nue_nc_mask])
-	numuCC = 1e3 * np.nansum(input_data["rate_weight"][numu_cc_mask])
-	numuNC = 1e3 * np.nansum(input_data["rate_weight"][numu_nc_mask])
-	nutauCC = 1e3 * np.nansum(input_data["rate_weight"][nutau_cc_mask])
-	nutauNC = 1e3 * np.nansum(input_data["rate_weight"][nutau_nc_mask])
+	nueCC = np.nansum(input_data["rate_weight"][nue_cc_mask])
+	nueNC = np.nansum(input_data["rate_weight"][nue_nc_mask])
+	numuCC = np.nansum(input_data["rate_weight"][numu_cc_mask])
+	numuNC = np.nansum(input_data["rate_weight"][numu_nc_mask])
+	nutauCC = np.nansum(input_data["rate_weight"][nutau_cc_mask])
+	nutauNC = np.nansum(input_data["rate_weight"][nutau_nc_mask])
 	
 	currents = ['CC', 'NC']
 	nue = np.array([nueCC, nueNC])
@@ -292,7 +292,7 @@ def plot_unosci_rate_comparison(rate_weight):
 	plt.bar(ind, nutau, width=0.8, label=r"$\nu_{\tau}$", color='seagreen')
 
 	plt.xticks(ind, currents)
-	plt.ylabel("Weighted Event Rates (mHz)")
+	plt.ylabel("Weighted Event Rates (Hz)")
 	plt.xlabel("Interaction Types")
 	plt.legend(loc="upper right")
 	plt.title("Unoscillated Weighted Event Rates Composition", y = 1.08)
@@ -307,12 +307,12 @@ def plot_rate_comparison_2(rate_weight):
 	input_data["rate_weight"] = rate_weight
 	
 	# Get cumulative rates
-	nueCC = 1e3 * np.nansum(input_data["rate_weight"][nue_cc_mask])
-	nueNC = 1e3 * np.nansum(input_data["rate_weight"][nue_nc_mask])
-	numuCC = 1e3 * np.nansum(input_data["rate_weight"][numu_cc_mask])
-	numuNC = 1e3 * np.nansum(input_data["rate_weight"][numu_nc_mask])
-	nutauCC = 1e3 * np.nansum(input_data["rate_weight"][nutau_cc_mask])
-	nutauNC = 1e3 * np.nansum(input_data["rate_weight"][nutau_nc_mask])
+	nueCC = np.nansum(input_data["rate_weight"][nue_cc_mask])
+	nueNC = np.nansum(input_data["rate_weight"][nue_nc_mask])
+	numuCC = np.nansum(input_data["rate_weight"][numu_cc_mask])
+	numuNC = np.nansum(input_data["rate_weight"][numu_nc_mask])
+	nutauCC = np.nansum(input_data["rate_weight"][nutau_cc_mask])
+	nutauNC = np.nansum(input_data["rate_weight"][nutau_nc_mask])
 	
 	flavors = ['nue', 'numu', "nutau"]
 	CC = np.array([nueCC, numuCC, nutauCC])
@@ -324,7 +324,7 @@ def plot_rate_comparison_2(rate_weight):
 	plt.bar(ind, NC, width=0.8, label="NC", color='dimgrey')
 
 	plt.xticks(ind, flavors)
-	plt.ylabel("Weighted Event Rates (mHz)")
+	plt.ylabel("Weighted Event Rates (Hz)")
 	plt.xlabel("(Anti-)Neutrino Flavors")
 	plt.legend(loc="upper right")
 	plt.title("Weighted Event Rates Make Up", y = 1.08)
@@ -332,7 +332,7 @@ def plot_rate_comparison_2(rate_weight):
                      useOffset=None, useLocale=None, useMathText=None)
 	plt.savefig("Weighted_Event_Rates_Make_Up2.png")
 
-#plot_rate_comparison_2(rate_weight)
+plot_rate_comparison_2(rate_weight)
 
 
 
