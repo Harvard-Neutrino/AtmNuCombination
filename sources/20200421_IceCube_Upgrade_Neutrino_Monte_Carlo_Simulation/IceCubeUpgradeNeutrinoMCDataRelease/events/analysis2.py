@@ -28,6 +28,11 @@ nue_cc_mask = nue_mask & cc_mask
 numu_cc_mask = numu_mask & cc_mask
 nutau_cc_mask = nutau_mask & cc_mask 
 
+# Define some energy bins (used throughout this notebook)
+energy_bins_fine = np.logspace(0., 2., num=21)
+energy_bins_course = np.logspace(0., 2., num=11)
+
+
 units = nsq.Const()
 
 interactions = False
