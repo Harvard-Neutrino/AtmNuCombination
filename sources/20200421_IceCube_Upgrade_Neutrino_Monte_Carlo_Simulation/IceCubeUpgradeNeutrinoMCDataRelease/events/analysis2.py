@@ -91,10 +91,71 @@ for i in range(len(rate_weight)):
     rate_weight[i] = input_data["weight"][i]*nsq_atm.EvalFlavor(neuflavor,
                                                                 np.cos(input_data["true_zenith"][i]),
                                                                 input_data["true_energy"][i]*\
-                                                                units.GeV,neutype)*lifetime*meter_to_cm_sq
-input_data["rate_weight"] = rate_weight
+                                                                units.GeV,neutype)
 
-def plot_rate():
+'''
+This next part compares different methods of calculating the flux
+'''
+#################################################################################
+# The example flux                                                              #
+# Function to generate a toy atmopsheric neutrino flux                          #   
+def atmo_nu_flux(true_energy) :                                                 #
+    numu_flux = 5e2 * np.power(true_energy, -3.5)                               #
+    nue_flux = numu_flux / 2.                                                   #
+    return nue_flux, numu_flux                                                  #
+#################################################################################
+
+
+#########################################################################################
+# The single-energy mode calculated flux                                                #
+def get_rate_single(nu_energy, nu_cos_zenith, pdg, weight):                             #
+	# Set the propagation                                                               #
+	nu = nsq.nuSQUIDS(3, nsq.NeutrinoType.neutrino)                                     #
+	nu.Set_E(nu_energy*units.GeV)     rate_weight[i]                                                  #
+	nu.Set_Body(nsq.EarthAtm())                                                         #
+	nu.Set_Track(nsq.EarthAtm.Track(np.arccos(nu_cos_zenith)))                          #
+	# Grab the flux                                                                     #
+	nueflux = flux.getFlux(nuflux.NuE,nu_energy,nu_cos_zenith) # nue                    #
+	#print(nueflux)                                                                     #
+	#nuebflux = flux.getFlux(nuflux.NuEBar,nu_energy,nu_cos_zenith) # nue               #
+	numuflux = flux.getFlux(nuflux.NuMu,nu_energy,nu_cos_zenith) # numu                 #
+	#numubflux = flux.getFlux(nuflux.NuMuBar,nu_energy,nu_cos_zenith) # numu bar        #
+	nutauflux = flux.getFlux(nuflux.NuTau,nu_energy,nu_cos_zenith) # nutau              #
+	#nutaubflux = flux.getFlux(nuflux.NuTauBar,nu_energy,nu_cos_zenith) # nutau bar     #
+	# Set the initial Flux                                                              #
+	nu.Set_initial_state(np.array([nueflux, numuflux, nutauflux]), nsq.Basis.flavor)    #
+	#print(nu.EvalFlavor(0))                                                            #
+	nu.EvolveState()                                                                    #
+	# Get the oscillated flux                                                           #
+	oscillatedNuE = nu.EvalFlavor(0)                                                    #
+	oscillatedNuMu = nu.EvalFlavor(1)                                                   #
+	oscillatedNuTau = nu.EvalFlavor(2)                                                  #
+	#print(oscillatedNuE, oscillatedNuMu, oscillatedNuTau)                              #
+	# now get the rate                                                                  #
+	if pdg == 12:                                                                       #
+		return weight * oscillatedNuE                                                   #
+	if pdg == 14:                                                                       #
+		return weight * oscillatedNuMu                                                  #
+	if pdg == 16:                                                                       #
+		return weight * oscillatedNuTau                                                 #
+	else:                                                                               #
+		print("Not a Neutrino Event Selected")                                          #
+		return oscillatedNuE, oscillatedNuMu, oscillatedNuTau                           #
+#########################################################################################
+
+
+#########################################################################
+# multiple-energy mode calculated flux                                  #
+def get_rate_multiple(i):                                               #
+    return rate_weight[i]                                               #
+#########################################################################
+
+
+
+def plot_rate(rate_weight):
+    # First multiply by lifetime and conversion
+    rate_weight[i] *= lifetime*meter_to_cm_sq
+    input_data["rate_weight"] = rate_weight
     # Note that converting to mHz for the rate, as this is a more suitable unit for the IceCube Upgrade 
     fig, ax = plt.subplots(figsize=(7,6))
     ax.hist(input_data["true_energy"][nue_cc_mask], bins=energy_bins_fine, \
@@ -122,7 +183,7 @@ def plot_rate():
     _ = ax.legend()
     fig.savefig("rated_weight_distribution_true_energy(mHz).png")
 
-plot_rate()
+plot_rate(rate_weight)
 
 
 
