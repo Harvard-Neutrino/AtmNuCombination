@@ -241,7 +241,7 @@ def plot_rate_comparison_true_energy(rate_weight):
 	ind = [x for x, _ in enumerate(currents)]
 	
 	plt.subplots(figsize=(7,6))
-	plt.bar(ind, nue, width=0.8, label='r"$\nu_{e}$"', color='blue', bottom=numu+nutau)
+	plt.bar(ind, nue, width=0.8, label=r"$\nu_{e}$", color='blue', bottom=numu+nutau)
 	plt.bar(ind, numu, width=0.8, label=r"$\nu_{\mu}$", color='red', bottom=nutau)
 	plt.bar(ind, nutau, width=0.8, label=r"$\nu_{\tau}$", color='green')
 
