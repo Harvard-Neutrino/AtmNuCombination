@@ -226,7 +226,7 @@ def plot_rate_reconstructed_energy(rate_weight):
 	
 # plot_rate_reconstructed_energy(rate_weight)
 
-def plot_rate_comparison_true_energy(rate_weight):
+def plot_rate_comparison(rate_weight):
 	input_data["rate_weight"] = rate_weight
 	
 	# Get cumulative rates
@@ -257,10 +257,39 @@ def plot_rate_comparison_true_energy(rate_weight):
                      useOffset=None, useLocale=None, useMathText=None)
 	plt.savefig("Weighted_Event_Rates_Make_Up(True_Energy).png")
 
-plot_rate_comparison_true_energy(rate_weight)
+# plot_rate_comparison(rate_weight)
 	
 
+def plot_rate_comparison_2(rate_weight):
+	input_data["rate_weight"] = rate_weight
+	
+	# Get cumulative rates
+	nueCC = 1e3 * np.nansum(input_data["rate_weight"][nue_cc_mask])
+	nueNC = 1e3 * np.nansum(input_data["rate_weight"][nue_nc_mask])
+	numuCC = 1e3 * np.nansum(input_data["rate_weight"][numu_cc_mask])
+	numuNC = 1e3 * np.nansum(input_data["rate_weight"][numu_nc_mask])
+	nutauCC = 1e3 * np.nansum(input_data["rate_weight"][nutau_cc_mask])
+	nutauNC = 1e3 * np.nansum(input_data["rate_weight"][nutau_nc_mask])
+	
+	flavors = ['nue', 'numu', "nutau"]
+	CC = np.array([nueCC, numuCC, nutauCC])
+	NC = np.array([nueNC, numuNCm nutauNC])
+	ind = [x for x, _ in enumerate(flavors)]
+	
+	plt.subplots(figsize=(7,6))
+	plt.bar(ind, CC, width=0.8, label="CC", color='steelblue', bottom=NC)
+	plt.bar(ind, NC, width=0.8, label="NC", color='dimgrey')
 
+	plt.xticks(ind, currents)
+	plt.ylabel("Weighted Event Rates (mHz)")
+	plt.xlabel("(Anti-)Neutrino Flavors")
+	plt.legend(loc="upper right")
+	plt.title("Weighted Event Rates Make Up", y = 1.08)
+	plt.ticklabel_format(axis='y', style='sci', scilimits=None,\
+                     useOffset=None, useLocale=None, useMathText=None)
+	plt.savefig("Weighted_Event_Rates_Make_Up2.png")
+
+plot_rate_comparison2(rate_weight)
 
 
 
