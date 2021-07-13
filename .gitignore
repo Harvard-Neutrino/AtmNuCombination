@@ -136,3 +136,7 @@ src/*/*/figs
 src/*/*/data
 utils/*.hdf5
 utils/*.root
+src/*/*/figs
+src/*/*/data
+utils/*.hdf5
+utils/*.root
