@@ -2,7 +2,6 @@ import numpy as np
 from math import sqrt, asin, atan, sin, cos
 from applications import RodRot, RndVector, CrossProduct
 from particle import Particle
-import phasespace as ps
 
 def MesonProduction(ip,mode):
     flag = 0

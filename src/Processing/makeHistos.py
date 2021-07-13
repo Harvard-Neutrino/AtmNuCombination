@@ -4,11 +4,14 @@ import matplotlib as mpl
 #mpl.rcParams['text.usetex'] = True
 import matplotlib.pyplot as plt
 
-with h5py.File('../Simulation/SuperK/testfcmc.hdf5', 'r') as hf:
+with h5py.File('../Simulation/SuperK/data/testfcmc.hdf5', 'r') as hf:
 	evis = np.array(hf['evis'][()])
 	cz = np.array(hf['recodirZ'][()])
+	# cz = np.array(hf['dirnuZ'][()])
 	mode = np.array(hf['mode'][()])
 	ipnu = np.array(hf['ipnu'][()])
+	pnu = np.array(hf['pnu'][()])
+	oscw = np.array(hf['oscw'][()])
 	itype = np.array(hf['itype'][()])
 
 # SK results ugly part
@@ -33,10 +36,13 @@ sgm_bins = sge_bins
 mrpi_bins = np.array([0.125, 0.2, 0.325, 0.515, 0.98])
 
 # Livetime normalizations
-years=14.58
-livetime = years*365.25
-total = np.size(itype)
-norm = livetime / (total / 8.3)
+# years=14.58
+# entries = 10266.1 + 1150.7 + 2824.3 + 8008.7 + 687.0 + 571.8 + 1728.4 + 671.3 + 2193.7 + 2573.8 + 915.5 + 773.8 + 2294.0 + 1772.6
+entries = np.sum(sksge0) + np.sum(sksge1) + np.sum(sksrpi) + np.sum(sksgm0) + np.sum(sksgm1) + np.sum(sksgm2) + np.sum(skmrpi) + np.sum(skmge) + np.sum(skmgeb) + np.sum(skmgm) + np.sum(skmre) + np.sum(skmreb) + np.sum(skmrm) + np.sum(skmro)
+# livetime = years*365.25
+total = np.sum(oscw)
+# norm = livetime / (total / 8.3)
+norm = entries / total
 
 # Energy bining
 sge_ebins = np.array([0.1, 0.25, 0.4, 0.63, 1.0, 1.33])
@@ -71,10 +77,13 @@ skflag = 0
 
 for it in range(14):
 	cc = np.extract((abs(mode)<30) & (itype==it), evis)
+	wcc = np.extract((abs(mode)<30) & (itype==it), oscw)
 	nc = np.extract((abs(mode)>30) & (itype==it), evis)
+	wnc = np.extract((abs(mode)>30) & (itype==it), oscw)
 	nu = np.extract((abs(mode)<30) & (itype==it), ipnu)
 	series = [cc[nu==12], cc[nu==-12], cc[abs(nu)==14], cc[abs(nu)==16], nc]
-	weights = [np.ones(np.size(cc[nu==12]))*norm, np.ones(np.size(cc[nu==-12]))*norm, np.ones(np.size(cc[abs(nu)==14]))*norm, np.ones(np.size(cc[abs(nu)==16]))*norm, np.ones(np.size(nc))*norm]
+	weights = [wcc[nu==12]*norm, wcc[nu==-12]*norm, wcc[abs(nu)==14]*norm, wcc[abs(nu)==16]*norm, wnc]
+	# weights = [np.ones(np.size(cc[nu==12]))*norm, np.ones(np.size(cc[nu==-12]))*norm, np.ones(np.size(cc[abs(nu)==14]))*norm, np.ones(np.size(cc[abs(nu)==16]))*norm, np.ones(np.size(nc))*norm]
 	if it<2:
 		bins = sge_ebins
 		if it==1: skflag = 1
@@ -127,10 +136,13 @@ axis[13].plot(zbins, skmro, 'ko')
 
 for it in range(14):
 	cc = np.extract((abs(mode)<30) & (itype==it), cz)
+	wcc = np.extract((abs(mode)<30) & (itype==it), oscw)
+	wnc = np.extract((abs(mode)>30) & (itype==it), oscw)
 	nc = np.extract((abs(mode)>30) & (itype==it), cz)
 	nu = np.extract((abs(mode)<30) & (itype==it), ipnu)
 	series = [cc[nu==12], cc[nu==-12], cc[abs(nu)==14], cc[abs(nu)==16], nc]
-	weights = [np.ones(np.size(cc[nu==12]))*norm, np.ones(np.size(cc[nu==-12]))*norm, np.ones(np.size(cc[abs(nu)==14]))*norm, np.ones(np.size(cc[abs(nu)==16]))*norm, np.ones(np.size(nc))*norm]
+	weights = [wcc[nu==12]*norm, wcc[nu==-12]*norm, wcc[abs(nu)==14]*norm, wcc[abs(nu)==16]*norm, wnc]
+	# weights = [np.ones(np.size(cc[nu==12]))*norm, np.ones(np.size(cc[nu==-12]))*norm, np.ones(np.size(cc[abs(nu)==14]))*norm, np.ones(np.size(cc[abs(nu)==16]))*norm, np.ones(np.size(nc))*norm]
 	if it==2 or it==1 or it==6 or it==5:
 		bins = z1bins
 		skflag = 0
@@ -148,3 +160,19 @@ plt.show()
 # plt.savefig('RecoZenith_Hists_Unosc.png')
 plt.clf()
 
+fig, axes = plt.subplots(nrows=2, ncols=2)
+fig.tight_layout(h_pad=1)
+axis = axes.flat
+
+
+axis[0].hist(np.log10(pnu[itype < 2]) ,50,  weights=oscw[itype < 2], ec='red', fc='none')
+axis[0].hist(np.log10(pnu[(itype > 6) & (itype < 9)]), 50, weights=oscw[(itype > 6) & (itype < 9)], ec='blue', fc='none')
+axis[0].hist(np.log10(pnu[(itype>9) & (itype!=12)]),50, weights=oscw[(itype>9) & (itype!=12)], ec='green', fc='none' )
+axis[0].legend(labels = ('SuGeV e-like', 'MultiGeV e-like', 'MultiRing e-like'), loc = 'upper right')
+
+axis[1].hist(np.log10(pnu[(itype>2) & (itype<6)]) ,50, weights=oscw[(itype>2) & (itype<6)], ec='red', fc='none')
+axis[1].hist(np.log10(pnu[(itype == 9)]), 50, weights=oscw[(itype == 9)], ec='blue', fc='none')
+axis[1].hist(np.log10(pnu[(itype == 12)]),50, weights=oscw[(itype == 12)], ec='green', fc='none' )
+axis[1].legend(labels = ('SuGeV mu-like', 'MultiGeV mu-like', 'MultiRing mu-like'), loc = 'upper right')
+
+plt.show()

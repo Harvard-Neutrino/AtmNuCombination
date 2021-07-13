@@ -1,6 +1,29 @@
 import h5py
 import numpy as np
 import nuflux
+import nuSQuIDS as nsq
+import nuSQUIDSTools
+import math
+
+import sys
+
+def FluxFactor(i, flavor, nue, nueb, numu, numub):
+    j = int(abs(flavor) / 2) % 6
+    factor = 1.0
+    if i==j or i==1 and j==2:
+        factor = 1.0
+    elif i==0 and j>=1:
+        if flavor>0:
+            factor = nue / numu
+        else:
+            factor = nueb / numub
+    elif i==1 and j==0:
+        if flavor>0:
+            factor = numu / nue
+        else:
+            factor = numub / nueb
+    
+    return factor
 
 
 class GenieSimulation:
@@ -45,10 +68,15 @@ class GenieSimulation:
 			self.Pyhad = np.array(np.array(hf['pyf'][()]))
 			self.Pzhad = np.array(np.array(hf['pzf'][()]))
 
-			self.Flux()
+		self.Flux()
+		self.PointOsc()
+		# self.MRPCUMflag()
+
+	def MRPCUMflag(self):
+		pass
 
 	def Azimuth(self):
-		self.Azi = np.arcsin(self.Dirynu/(np.sqrt(1-self.Cz**2)))
+		self.Azi = np.arcsin(self.Dirynu/(np.sqrt(1-self.Cz**2))) + math.pi
 
 	def GetLeptonPDG(self, ipnu):
 		lep_pdg = ipnu
@@ -58,7 +86,7 @@ class GenieSimulation:
 	def Flux(self): # To be implemented with IC's NuFlux
 		# Try other fluxes, may need to tune nuflux to extend energy regions and include fluxes at SK location
 		# flux = nuflux.makeFlux('honda2006')
-		flux = nuflux.makeFlux('IPSGhonda2006_sno_solmin')
+		flux = nuflux.makeFlux('IPhonda2014_sk_solmin')
 		numu = nuflux.NuMu
 		numub = nuflux.NuMuBar
 		nue = nuflux.NuE
@@ -70,6 +98,10 @@ class GenieSimulation:
 		flux_numub = np.array([])
 
 		for i,E in enumerate(self.Enu):
+			# flux_numu  = np.append(flux_numu, flux.getFlux(numu, E, self.Azi[i], self.Cz[i]))
+			# flux_numub = np.append(flux_numub, flux.getFlux(numub, E, self.Azi[i], self.Cz[i]))
+			# flux_nue   = np.append(flux_nue, flux.getFlux(nue, E, self.Azi[i], self.Cz[i]))
+			# flux_nueb  = np.append(flux_nueb, flux.getFlux(nueb, E, self.Azi[i], self.Cz[i]))
 			flux_numu  = np.append(flux_numu, flux.getFlux(numu, E, self.Cz[i]))
 			flux_numub = np.append(flux_numub, flux.getFlux(numub, E, self.Cz[i]))
 			flux_nue   = np.append(flux_nue, flux.getFlux(nue, E, self.Cz[i]))
@@ -79,5 +111,47 @@ class GenieSimulation:
 		self.Flux_numub = flux_numub
 		self.Flux_nue = flux_nue
 		self.Flux_nueb = flux_nueb
+
+	def PointOsc(self):
+		self.oscw = np.array([])
+		units = nsq.Const()
+
+		for k,(nu,E,cz,mod) in enumerate(zip(self.Ipnu, self.Enu, self.Cz, self.Mode)):
+		# Get P_{x->ipnu} probabilities
+			weight = 0.0
+			if nu>0:
+				nuSQ = nsq.nuSQUIDS(3,nsq.NeutrinoType.neutrino)
+			elif nu<0:
+				nuSQ = nsq.nuSQUIDS(3,nsq.NeutrinoType.antineutrino)
+			else:
+				print('What?! No identified neutrino flavour')
+			nuSQ.Set_E(E*units.GeV)
+			zenith = np.arccos(cz)
+			nuSQ.Set_Track(nsq.EarthAtm().Track(zenith))
+			nuSQ.Set_Body(nsq.EarthAtm())
+			nuSQ.Set_rel_error(1.0e-4);
+			nuSQ.Set_abs_error(1.0e-4);
+			nuSQ.Set_MixingAngle(0,1,0.563942)
+			nuSQ.Set_MixingAngle(0,2,math.asin(math.sqrt(0.018)))
+			nuSQ.Set_MixingAngle(1,2,math.asin(math.sqrt(0.5)))
+			nuSQ.Set_SquareMassDifference(1,7.65e-05)
+			nuSQ.Set_SquareMassDifference(2,0.00247)
+			nuSQ.Set_CPPhase(0,2,0)
+
+			if abs(mod) < 30:
+				for i in range(2):
+					in_state = np.zeros(3)
+					in_state[i] = 1
+					Ffactor = FluxFactor(i, nu, self.Flux_nue[k], self.Flux_nueb[k], self.Flux_numu[k], self.Flux_numub[k])
+					nuSQ.Set_initial_state(in_state,nsq.Basis.flavor)
+					nuSQ.EvolveState()
+					j = int(abs(nu) / 2) % 6
+					prob = nuSQ.EvalFlavor(j)
+					weight += prob*Ffactor
+			else:
+				weight = 1.0
+
+			self.oscw = np.append(self.oscw,weight)
+		print('Done with oscillations')
 
 

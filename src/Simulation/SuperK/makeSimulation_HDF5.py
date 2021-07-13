@@ -6,6 +6,7 @@ from TrueRing import *
 from RecoRing import *
 from RandomGenerator import RecoDists
 from GenieHDF5 import *
+from pythiaDecay import *
 
 import time
 
@@ -43,6 +44,7 @@ fluxho_numu = np.array([], dtype=np.double)
 fluxho_nue  = np.array([], dtype=np.double)
 fluxho_numub= np.array([], dtype=np.double)
 fluxho_nueb = np.array([], dtype=np.double)
+oscw       = np.array([], dtype=np.double)
 plep       = np.array([], dtype=np.double)
 dirlep_x   = np.array([], dtype=np.double)
 dirlep_y   = np.array([], dtype=np.double)
@@ -56,21 +58,24 @@ reco_dir_z = np.array([], dtype=np.double)
 ip         = np.array([], dtype=np.double)
 nring      = np.array([], dtype=np.double)
 muedk      = np.array([], dtype=np.double)
+neutron    = np.array([], dtype=np.double)
 itype      = np.array([], dtype=np.double)
 mode       = np.array([], dtype=np.double)
 
+# Enable decays of unstable particles
+pd = pythiaDecay()
 
 # Start loop over Genie simulated
 start_time = time.time()
 
 for i, nu in enumerate(event.Ipnu):
 
-	if i>1000: continue
+	# if i>10000: continue
 	
-	if verbose:
-	    print('----------------------------------------------------')
-	    print('----------- Event number ',i,'--------------------')
-	    print('----------------------------------------------------')
+	# if verbose:
+	print('----------------------------------------------------')
+	print('----------- Event number ',i,'--------------------')
+	print('----------------------------------------------------')
 
 # Get variables from Genie Simulation
 # Neutrino
@@ -85,11 +90,42 @@ for i, nu in enumerate(event.Ipnu):
 	pdg_fp = event.PDGhad[i] # PDG IDs
 	E_fp = event.Ehad[i] # Energies
 
+# Merge all interaction products
+	pdgs = np.append(event.PDGlep[i], pdg_fp)
+	Es = np.append(event.Elep[i], E_fp)
+	Ps = np.append(event.Plep[i], P_fp)
+	Pvs = np.vstack((Plep_v, P_fp_v))
+
+	# print(pdgs)
+	# print(Es)
+	# print(Ps)
+
+# Anything to decay?
+	decayed = np.array([], dtype='int32')
+	for k, particle in enumerate(pdgs):
+		if pd.canDecay(particle):
+			decayed = np.append(decayed, k)
+			daug_id, daug_E, daug_p, daug_pv = pd.decay(particle, Es[k], Pvs[k])
+			if daug_id.size>0:
+				pdgs = np.append(pdgs,daug_id)
+				Es = np.append(Es,daug_E)
+				Pvs = np.vstack((Pvs,daug_pv))
+				Ps = np.append(Ps, daug_p)
+	# Remove decayed particles
+	pdgs = np.delete(pdgs, decayed)
+	Es = np.delete(Es, decayed)
+	Ps = np.delete(Ps, decayed)
+	Pvs = np.delete(Pvs, decayed, 0)
+
+	if verbose:
+		print('Event particle IDs', pdgs)
+		print('Particle energies', Es)
+		print('Particle momenta', Ps)
+	# 	print('Particle 3-momenta', Pvs)
+
 	
 # True Ring constructor, baseline for reconstructing the event
-	TrueNRing, TrueRingPDG, TrueRingIP, TrueRingE, TrueRingP, TrueRingDir = TrueRingConstructor(event.PDGlep[i], pdg_fp, event.Elep[i], E_fp, event.Plep[i], P_fp, Plep_v, P_fp_v)
-
-	# print('True Ring:', time.time() - start_time, 'seconds')
+	TrueNRing, TrueRingPDG, TrueRingIP, TrueRingE, TrueRingP, TrueRingDir = TrueRingConstructor(pdgs, Es, Ps, Pvs)
 
 	if TrueNRing == 0:
 		if verbose:
@@ -98,11 +134,6 @@ for i, nu in enumerate(event.Ipnu):
 
 
 # Reconstructing rings
-	# print(TrueNRing)
-	# print(TrueRingPDG)
-	# print(TrueRingIP)
-	# print(TrueRingE)
-
 	# start_time = time.time()
 
 	RRing = RecoRing(TrueNRing, TrueRingPDG, TrueRingIP, TrueRingE, TrueRingP, TrueRingDir, rd, event.Mode[i])
@@ -118,57 +149,62 @@ for i, nu in enumerate(event.Ipnu):
 		del RRing
 		continue
 
-	# if verbose:
-	# 	if RRing.RecoNring == 1:
+	if verbose:
+	# 	if RRing.Nring == 1:
 	# 		print('Single Ring event')
 	# 		print('Visible energy is ', RRing.Evis, ' GeV')
 	# 		print('Event IP is ', RRing.IP)
 	# 		print('Number of Michel electrons: ', RRing.MuEdk)
-	# 	elif RRing.RecoNring > 1:
-	# 		print('Multi Ring event')
+		if RRing.NRing > 1:
+			print('Multi Ring event')
+			print('Event with ', RRing.NRing, ' reco rings')
+			print('Visible energy is ', RRing.Evis, ' GeV')
+			print('Event IP is ', RRing.IP)
+			print('Event MER IP is ', RRing.MERIP)
+			print('Event type is ', RRing.Type)
+		# else:
 	# 		print('Event with ', RRing.RecoNring, ' reco rings')
 	# 		print('Event with ', RRing.TrueNring, ' true rings')
-	# 		print('Visible energy is ', RRing.Evis, ' GeV')
-	# 		print('Event IP is ', RRing.IP)
-	# 	else:
-	# 		print('Event with ', RRing.RecoNring, ' reco rings')
-	# 		print('Event with ', RRing.TrueNring, ' true rings')
 
-	# # Event verbosity
-	# if verbose:
-	# 	print('Neutrino energy: ',nu.Energy,' GeV')
-	# 	print('Neutrino flavour: ',nu.Flavour)
-	# 	print('Lepton ID: ',event.LeptonPDG)
-	# 	print('Lepton momentum: ',event.LeptonMomentum, 'GeV')
-	# 	if abs(nu.Mode)<30:
-	# 		print('Interacting CC with code: ', nu.Mode)
-	# 	else:
-	# 		print('Interacting NC with code: ', nu.Mode)
+	# Event verbosity
+	if verbose:
+		print('Neutrino energy: ',event.Enu[i],' GeV')
+		print('Neutrino flavour: ',event.Ipnu[i])
+		print('Lepton ID: ',event.PDGlep)
+		# print('Lepton momentum: ',event.LeptonMomentum, 'GeV')
+		if abs(event.Mode[i])<30:
+			print('Interacting CC with code: ', event.Mode[i])
+		else:
+			print('Interacting NC with code: ', event.Mode[i])
 
-	# mp_flux.join()
-	
-	# start_time = time.time()
+	# Fine tuning
+	RRing.mendSGE()
+	RRing.mendSGM(event.Ipnu[i])
+	RRing.mendMG(event.Ipnu[i])
+	RRing.mendMR(event.Ipnu[i])
 
+	if RRing.Type<0:
+		continue
+
+
+# Fill variables
 	ipnu       = np.append(ipnu, event.Ipnu[i])
 	pnu        = np.append(pnu, event.Enu[i])
 	dirnu_x    = np.append(dirnu_x, Pnu_v[0] / event.Enu[i])
 	dirnu_y    = np.append(dirnu_y, Pnu_v[1] / event.Enu[i])
 	dirnu_z    = np.append(dirnu_z, Pnu_v[2] / event.Enu[i])
 	azi        = np.append(azi, event.Azi[i])
-	cz        = np.append(cz, event.Cz[i])
-	# print(event.Flux_nue[i])
-	# print(event.Flux_nueb[i])
-	# print(event.Flux_numu[i])
-	# print(event.Flux_numub[i])
+	cz         = np.append(cz, event.Cz[i])
 	fluxho_nue  = np.append(fluxho_nue, event.Flux_nue[i])
 	fluxho_nueb  = np.append(fluxho_nueb, event.Flux_nueb[i])
 	fluxho_numu  = np.append(fluxho_numu, event.Flux_numu[i])
 	fluxho_numub  = np.append(fluxho_numub, event.Flux_numub[i])
+	oscw       = np.append(oscw, event.oscw[i])
 	plep       = np.append(plep, event.Plep[i])
 	dirlep_x   = np.append(dirlep_x, event.Pxlep[i] / event.Plep[i])
 	dirlep_y   = np.append(dirlep_y, event.Pylep[i] / event.Plep[i])
 	dirlep_z   = np.append(dirlep_z, event.Pzlep[i] / event.Plep[i])
-	## reco variables
+	# reco variables
 	reco_pmax  = np.append(reco_pmax, RRing.MERMomentum)
 	evis       = np.append(evis, RRing.Evis)
 	reco_dir_x = np.append(reco_dir_x, RRing.TotDir[0])
@@ -177,14 +213,14 @@ for i, nu in enumerate(event.Ipnu):
 	ip         = np.append(ip, RRing.MERIP)
 	nring      = np.append(nring, RRing.NRing)
 	muedk      = np.append(muedk, RRing.MuEdk)
+	neutron    = np.append(neutron, numberOfNeutrons(pdgs))
 	itype      = np.append(itype, RRing.Type)
 	mode       = np.append(mode, event.Mode[i])
 
 
 	del RRing
 
-print('Fill arrays:', time.time() - start_time, 'seconds')
-
+# Save data
 with h5py.File(output, 'w') as hf:
 	hf.create_dataset('ipnu', data=ipnu, compression='gzip')
 	hf.create_dataset('pnu', data=pnu, compression='gzip')
@@ -209,6 +245,8 @@ with h5py.File(output, 'w') as hf:
 	hf.create_dataset('ip', data=ip, compression='gzip')
 	hf.create_dataset('nring', data=nring, compression='gzip')
 	hf.create_dataset('muedk', data=muedk, compression='gzip')
+	hf.create_dataset('neutron', data=neutron, compression='gzip')
+	hf.create_dataset('oscw', data=oscw, compression='gzip')
 	hf.create_dataset('itype', data=itype, compression='gzip')
 	hf.create_dataset('mode', data=mode, compression='gzip')
 

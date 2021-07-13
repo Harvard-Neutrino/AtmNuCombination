@@ -7,7 +7,7 @@ import random
 import applications as ap
 
 class RecoRing:
-	AngResoThr = 0.9 #math.cos(25.*pi/180.)
+	AngResoThr = 0.95 #math.cos(25.*pi/180.)
 	MeVtoGeV = 0.001
 	def __init__(self, TrueNRing, TrueRingPDG, TrueRingIP, TrueRingE, TrueRingP, TrueRingDir, distros, mode):
 		
@@ -15,10 +15,10 @@ class RecoRing:
 
 		self.NRing = TrueNRing
 		# self.IP = TrueRingIP
-		CC = True if abs(mode)<30 else False
+		self.CC = True if abs(mode)<30 else False
 
 		self.RecoLabels = np.ones(TrueNRing)
-		self.PiPlusWA(TrueRingPDG, TrueRingP)
+		self.HeavyChargedWA(TrueRingPDG, TrueRingP)
 
 		# Ring IP reconstruction
 		self.ReconSRIP(TrueRingIP, TrueRingP)
@@ -31,11 +31,19 @@ class RecoRing:
 
 
 		if self.NRing >1: # Oh, the multi-ringers! Special care needed
-			self.ReconMRIP(TrueRingIP, CC, TrueRingPDG)
+			mer = np.where(self.Momentum == np.amax(self.Momentum))
+			self.ReconMRIP(mer, TrueRingIP[mer], TrueRingPDG[mer])
+			# self.ReconMRIP(mer, TrueRingIP[mer], nu)
 			mTrueRingPDG, mTrueRingP, mTrueRingDir = self.TooClose(TrueRingPDG, TrueRingP, TrueRingDir) # Put labels on rings which won't be reconstructed due to poor angular resolution
 			# print(mTrueRingP)
 			# print(mTrueRingPDG)
 			# print(self.RecoLabels)
+			excessRing = self.NRing - 5
+			if excessRing > 0:
+				# print(self.RecoLabels, mTrueRingP)
+				for index in np.argsort(mTrueRingP)[:excessRing]:
+					self.RecoLabels[index] = 0
+				# print(self.RecoLabels, mTrueRingP)
 			if np.any(self.RecoLabels==0):
 				self.ReconMomentum(mTrueRingPDG, mTrueRingP)
 				self.ReconDirection(mTrueRingDir)
@@ -47,10 +55,55 @@ class RecoRing:
 		self.MuEdk = 0
 
 
+	def mendSGM(self, nu):
+		mis0 = np.random.rand()
+		if self.Type == 5 and abs(nu)==12:
+			self.Type == 3
 
-	def PiPlusWA(self, pdg, p):
+
+	def mendSGE(self):
+		mis0 = np.random.rand()
+		if not self.CC:
+			if self.Type==0:
+				if mis0>0.33:
+					self.Type = -1
+			elif self.Type==1:
+				if mis0>0.5:
+					self.Type = -1
+
+	def mendMG(self, nu):
+		mis0 = np.random.rand()
+		if not self.CC:
+			if self.Type==7:
+				if mis0>0.27:
+					self.Type = -1
+			elif self.Type==8:
+				if mis0>0.21:
+					self.Type = -1
+			elif self.Type==9:
+				if mis0>0.013:
+					self.Type = -1
+		else:
+			if (self.Type==7 or self.Type==8) and abs(nu)==14:
+				if mis0>0.3:
+					self.Type = -1
+
+	def mendMR(self, nu):
+		mis0 = np.random.rand()
+		if self.Type == 10 and abs(nu)==14:
+			if mis0>0.27:
+				self.Type = -1
+		elif self.Type == 11 and abs(nu)==14:
+			if mis0>0.10:
+				self.Type = -1
+
+
+
+	def HeavyChargedWA(self, pdg, p):
 		for i,part in enumerate(pdg):
-			if abs(part)>=211 and p[i]<0.3:
+			if abs(part)==211 and p[i]<0.3:
+				self.RecoLabels[i] = 0
+			elif abs(part)==2212 and p[i]<2.3:
 				self.RecoLabels[i] = 0
 
 		# self.MER = np.argmax(self.RecoMomentum)
@@ -67,13 +120,9 @@ class RecoRing:
 					ip_n = self.distros.Random('mre_nunubar_ccnue')
 				else:
 					ip_n = self.distros.Random('mre_nunubar_ccnuebar')
-				# ip_r = other.GetRandom()
-				# ip_n = nunub.GetRandom()
 			else:
 				ip_r = self.distros.Random('other_nc')
 				ip_n = self.distros.Random('mre_nunubar_nc')
-				# ip_r = other.GetRandom()
-				# ip_n = nunub.GetRandom()
 
 		if self.NRing==1 and self.MERIP==2:
 			pi0m_r = 0.
@@ -176,7 +225,7 @@ class RecoRing:
 						itype=11
 				else:
 					itype=13
-			elif self.MERIP==3 and self.Evis>0.6 and self.MERMomentum>0.6:
+			elif self.MERIP==3 and self.MERMomentum>0.6:
 				itype=12
 
 		if self.NRing==2:
@@ -327,7 +376,7 @@ class RecoRing:
 				# elif ip==3 and self.RecoMomentum[i]>=1.3 and self.NRing==1: # MGM
 				elif ip==3 and self.Momentum[i]>=1.3:
 					ang = self.distros.Random('ang_mgm')
-
+				print('Angular difference:', ang)
 				ang=ang*pi/180.
 				# Rodrigues way
 				u = ap.RndVector()
@@ -342,7 +391,7 @@ class RecoRing:
 	def ReconMomentum(self, pdg, P):
 		self.Momentum = P
 		for i, p in enumerate(P):
-			if  self.RecoLabels[i]==1:
+			if  self.RecoLabels[i]==1 and p>0:
 				if self.IP[i] == 2:
 					reso = 0.01*(0.6+2.6/math.sqrt(p))
 					bias = 0.0048 * p - 0.00072
@@ -365,18 +414,18 @@ class RecoRing:
 
 
 
-	def ReconMRIP(self, ip, cc, pdg):
-		self.IP = ip
-		for i,part in enumerate(ip):
-			# if ((part==2 and P[i]>1.33) or (part==3 and P[i]>0.6)):
-			if cc and abs(pdg[i])==14:
-				pid = self.distros.Random('mr_mer_pid_ccmu')
-			else:
-				pid = self.distros.Random('mr_mer_pid_rest')
-			if pid>0:
-				self.IP[i]=3
-			else:
-				self.IP[i]=2
+	def ReconMRIP(self, mer, ip, pdg):
+		# self.IP[mer] = ip
+		# print('True ip:', ip)
+		# if ((part==2 and P[i]>1.33) or (part==3 and P[i]>0.6)):
+		if self.CC and abs(pdg)==13:
+			pid = self.distros.Random('mr_mer_pid_ccmu')
+		else:
+			pid = self.distros.Random('mr_mer_pid_rest')
+		if pid>0:
+			self.IP[mer]=3
+		else:
+			self.IP[mer]=2
 
 
 	def ReconSRIP(self, ip, P):

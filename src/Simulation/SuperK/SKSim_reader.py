@@ -20,8 +20,10 @@ for key in f1.keys():
     ds = f1[key]
     data = np.array(ds[()])
 #    print(data)
-    plt.hist(data, bins=100, density=True)
+    plt.hist(data, bins=100, density=False)
     print('Histogram saved to ', 'figs/'+key+'.png')
     plt.savefig('figs/'+key+'.png')
+    plt.yscale('log')
+    plt.savefig('figs/'+key+'_log.png')
     plt.clf()
 

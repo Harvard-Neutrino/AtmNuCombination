@@ -134,6 +134,3 @@ for k,(nu,E,cz,mod) in enumerate(zip(neu, Enu, dirnuZ, mode)):
                         w[j][k][l][m][n] = weight
 
     # print(w)
-
-
-
