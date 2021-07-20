@@ -40,7 +40,7 @@ units = nsq.Const()
 
 interactions = False
 
-E_min = 10.0*units.GeV
+E_min = 9.0*units.GeV
 E_max = 1.0e3*units.PeV
 E_nodes = 100
 energy_nodes = nsq.logspace(E_min,E_max,E_nodes)
@@ -196,7 +196,7 @@ def plot_rate_true_energy(rate_weight):
     _ = ax.legend()
     fig.savefig("rated_weight_distribution_true_energy(mHz).png")
 
-plot_rate_true_energy(rate_weight)
+#plot_rate_true_energy(rate_weight)
 	
 	
 	
@@ -233,7 +233,7 @@ def plot_rate_reconstructed_energy(rate_weight):
     fig.savefig("rated_weight_distribution_reco_energy(mHz).png")
 
 	
-plot_rate_reconstructed_energy(rate_weight)
+#plot_rate_reconstructed_energy(rate_weight)
 
 def plot_rate_comparison(rate_weight):
 	input_data["rate_weight"] = rate_weight
@@ -266,7 +266,7 @@ def plot_rate_comparison(rate_weight):
                      useOffset=None, useLocale=None, useMathText=None)
 	plt.savefig("Weighted_Event_Rates_Make_Up(True_Energy).png")
 
-plot_rate_comparison(rate_weight)
+#plot_rate_comparison(rate_weight)
 
 
 def plot_unosci_rate_comparison(rate_weight):
@@ -300,7 +300,7 @@ def plot_unosci_rate_comparison(rate_weight):
                      useOffset=None, useLocale=None, useMathText=None)
 	plt.savefig("Unoscillated_Weighted_Event_Rates_Make_Up(True_Energy).png")
 
-plot_unosci_rate_comparison(rate_weight)
+#plot_unosci_rate_comparison(rate_weight)
 	
 
 def plot_rate_comparison_2(rate_weight):
@@ -332,7 +332,7 @@ def plot_rate_comparison_2(rate_weight):
                      useOffset=None, useLocale=None, useMathText=None)
 	plt.savefig("Weighted_Event_Rates_Make_Up2.png")
 
-plot_rate_comparison_2(rate_weight)
+#plot_rate_comparison_2(rate_weight)
 
 
 
