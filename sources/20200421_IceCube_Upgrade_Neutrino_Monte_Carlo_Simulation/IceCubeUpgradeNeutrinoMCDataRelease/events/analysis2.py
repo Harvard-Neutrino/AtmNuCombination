@@ -21,6 +21,10 @@ nue_mask = (np.abs(input_data["pdg"]) == 12)
 numu_mask = (np.abs(input_data["pdg"]) == 14)
 nutau_mask = (np.abs(input_data["pdg"]) == 16)
 
+# Define masks to identify interaction species
+cascade_mask = (np.abs(input_data["pid"]) == 0)
+track_mask = (np.abs(input_data["pdg"]) == 1)
+
 # Define masks to identify different flavor/interaction combinations.
 nc_mask = input_data["current_type"] == 0
 cc_mask = input_data["current_type"] == 1
@@ -30,6 +34,12 @@ nutau_cc_mask = nutau_mask & cc_mask
 nue_nc_mask = nue_mask & nc_mask
 numu_nc_mask = numu_mask & nc_mask
 nutau_nc_mask = nutau_mask & nc_mask 
+nue_cascade_mask = nue_mask & cascade_mask
+nue_track_mask = nue_mask & track_mask
+nutau_cascade_mask = nutau_mask & cascade_mask
+nutau_track_mask = nutau_mask & track_mask
+numu_cascade_mask = numu_mask & cascade_mask
+numu_track_mask = numu_mask & track_mask
 
 # Define some energy bins (used throughout this notebook)
 energy_bins_fine = np.logspace(0., 2., num=21)
@@ -224,7 +234,7 @@ def plot_rate_reconstructed_energy(rate_weight):
     
     ax.set_xscale("log")
     ax.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
-    ax.set_xlim(10, 100)
+    ax.set_xlim(1, 100)
     ax.ticklabel_format(axis='y', style='sci', scilimits=None,\
                      useOffset=None, useLocale=None, useMathText=None)
     ax.set_ylabel("Rate [Year]")
@@ -233,8 +243,10 @@ def plot_rate_reconstructed_energy(rate_weight):
     fig.savefig("rated_weight_distribution_reco_energy(mHz).png")
 
 	
-#plot_rate_reconstructed_energy(rate_weight)
+plot_rate_reconstructed_energy(rate_weight)
 
+
+# Plots the composition of CC and NC wrt neutrino flavors
 def plot_rate_comparison(rate_weight):
 	input_data["rate_weight"] = rate_weight
 	
@@ -302,7 +314,7 @@ def plot_unosci_rate_comparison(rate_weight):
 
 #plot_unosci_rate_comparison(rate_weight)
 	
-
+# Plot composition of different flavors wrt current type
 def plot_rate_comparison_2(rate_weight):
 	input_data["rate_weight"] = rate_weight
 	
@@ -334,8 +346,37 @@ def plot_rate_comparison_2(rate_weight):
 
 #plot_rate_comparison_2(rate_weight)
 
+#Plot composition of different flavors wrt event topology
+def plot_rate_comparison_3(rate_weight):
+	input_data["rate_weight"] = rate_weight
+	
+	# Get cumulative rates
+	nueCas = np.nansum(input_data["rate_weight"][nue_cascade_mask])
+	nueTra = np.nansum(input_data["rate_weight"][nue_track_mask])
+	numuCas = np.nansum(input_data["rate_weight"][numu_cascade_mask])
+	numuTra = np.nansum(input_data["rate_weight"][numu_track_mask])
+	nutauCas = np.nansum(input_data["rate_weight"][nutau_cascade_mask])
+	nutauTra = np.nansum(input_data["rate_weight"][nutau_track_mask])
+	
+	flavors = ['nue', 'numu', "nutau"]
+	Cas = np.array([nueCas, numuCas, nutauCas])
+	Tra = np.array([nueTra, numuTra, nutauTra])
+	ind = [x for x, _ in enumerate(flavors)]
+	
+	plt.subplots(figsize=(7,6))
+	plt.bar(ind, Cas, width=0.8, label="Cascade", color='steelblue', bottom=Tra)
+	plt.bar(ind, Tra, width=0.8, label="Track", color='dimgrey')
 
+	plt.xticks(ind, flavors)
+	plt.ylabel("Weighted Event Rates (Year)")
+	plt.xlabel("(Anti-)Neutrino Flavors")
+	plt.legend(loc="upper right")
+	plt.title("Weighted Event Rates Composition", y = 1.08)
+	plt.ticklabel_format(axis='y', style='sci', scilimits=None,\
+                     useOffset=None, useLocale=None, useMathText=None)
+	plt.savefig("Weighted_Event_Rates_Make_Up_Event_Topology.png")
 
+plot_rate_comparison_3(rate_weight)
 
 
 
