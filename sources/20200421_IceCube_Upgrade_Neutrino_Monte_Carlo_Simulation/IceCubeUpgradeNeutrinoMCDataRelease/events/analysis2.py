@@ -23,7 +23,7 @@ nutau_mask = (np.abs(input_data["pdg"]) == 16)
 
 # Define masks to identify interaction species
 cascade_mask = (np.abs(input_data["pid"]) == 0)
-track_mask = (np.abs(input_data["pdg"]) == 1)
+track_mask = (np.abs(input_data["pid"]) == 1)
 
 # Define masks to identify different flavor/interaction combinations.
 nc_mask = input_data["current_type"] == 0
