@@ -47,11 +47,15 @@ energy_bins_course = np.logspace(0., 2., num=11)
 
 # List of theta13 and theta23 numeric values to probe
 t13l = [.2, .3, .4, .5, .6, .7, .8]
+t23l = [.5, .6, .7, .8, .9, 1, 1.1]
 
 # Prepare comparison values for flavor composition
 nuel_13 = []
 numul_13 = []
 nutaul_13 = []
+nuel_23 = []
+numul_23 = []
+nutaul_23 = []
 
 units = nsq.Const()
 
@@ -70,7 +74,7 @@ cth_nodes = nsq.linspace(cth_min,cth_max,cth_nodes)
 neutrino_flavors = 3
 
 
-for t13 in t13l:
+for t23 in t23l:
     nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,neutrino_flavors,nsq.NeutrinoType.both,interactions)
 
     AtmInitialFlux = np.zeros((len(cth_nodes),len(energy_nodes),2,neutrino_flavors))
@@ -86,7 +90,7 @@ for t13 in t13l:
             AtmInitialFlux[ic][ie][0][2] = flux.getFlux(nuflux.NuTau,nu_energy,nu_cos_zenith) # nutau
             AtmInitialFlux[ic][ie][1][2] = flux.getFlux(nuflux.NuTauBar,nu_energy,nu_cos_zenith) # nutau bar
 
-    nsq_atm.Set_MixingAngle(0, 2, t13)
+    nsq_atm.Set_MixingAngle(1, 2, t23)
     nsq_atm.Set_initial_state(AtmInitialFlux,nsq.Basis.flavor)
     nsq_atm.Set_ProgressBar(True) # progress bar will be printed on terminal
     nsq_atm.EvolveState()
@@ -119,13 +123,13 @@ for t13 in t13l:
     nue = np.nansum(input_data["rate_weight"][nue_mask])
     numu = np.nansum(input_data["rate_weight"][numu_mask])
     nutau = np.nansum(input_data["rate_weight"][nutau_mask])
-    nuel_13.append(nue)
-    numul_13.append(numu)
-    nutaul_13.append(nutau)
+    nuel_23.append(nue)
+    numul_23.append(numu)
+    nutaul_23.append(nutau)
     
-print(nuel_13)
-print(numul_13)
-print(nutaul_13)
+print(nuel_23)
+print(numul_23)
+print(nutaul_23)
 
 chisq = [0, 0, 0, 0, 0, 0, 0]
 
@@ -141,12 +145,12 @@ print(chisq)
 fig,ax = plt.subplots(1)
 
 # create some x data and some integers for the y axis
-x = np.array(nuel13)
+x = np.array(nuel_23)
 y = np.array(chisq)
 
 # plot the data
 ax.plot(x,y)
 
-fig.savefig(theta13_sensitivity.jpg)
+fig.savefig(theta23_sensitivity.jpg)
 
 
