@@ -109,7 +109,6 @@ for t13 in t13l:
 
         if input_data["true_energy"][i]*units.GeV < E_min or input_data["true_energy"][i]*units.GeV > E_max:
             rate_weight[i] = 0
-            unosci_rate_weight[i] = 0
             continue
         rate_weight[i] = input_data["weight"][i]*nsq_atm.EvalFlavor(neuflavor,
                                                                     np.cos(input_data["true_zenith"][i]),
