@@ -94,7 +94,6 @@ for t13 in t13l:
     lifetime = 365*24*60*60
     meter_to_cm_sq = 1e4
     rate_weight = np.zeros_like(input_data["weight"])
-    unosci_rate_weight = np.zeros_like(input_data["weight"])
     for i in range(len(rate_weight)):
         if input_data["pdg"][i] > 0 :
             neutype = 0
@@ -113,10 +112,6 @@ for t13 in t13l:
             unosci_rate_weight[i] = 0
             continue
         rate_weight[i] = input_data["weight"][i]*nsq_atm.EvalFlavor(neuflavor,
-                                                                    np.cos(input_data["true_zenith"][i]),
-                                                                    input_data["true_energy"][i]*\
-                                                                    units.GeV,neutype)*lifetime*meter_to_cm_sq
-        unosci_rate_weight[i] = input_data["weight"][i]*unosci_nsq_atm.EvalFlavor(neuflavor,
                                                                     np.cos(input_data["true_zenith"][i]),
                                                                     input_data["true_energy"][i]*\
                                                                     units.GeV,neutype)*lifetime*meter_to_cm_sq
