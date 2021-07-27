@@ -135,7 +135,8 @@ def chisq(nuel, numul, nutaul):
                     + (numul[3] ** 2 - numul[i] ** 2) / numul[i] ** 2 \
                     + (nutaul[3] ** 2 - nutaul[i] ** 2) / nutaul[i] ** 2
         chisq[i] = res
-   
+
+print(chisq)
     
 
 
