@@ -138,6 +138,7 @@ def chisq(nuel, numul, nutaul):
         res = (nuel[3] ** 2 - nuel[i] ** 2) / nuel[i] ** 2 \
                     + (numul[3] ** 2 - numul[i] ** 2) / numul[i] ** 2 \
                     + (nutaul[3] ** 2 - nutaul[i] ** 2) / nutaul[i] ** 2
+        print("HAHAHAHAHAH", res)
         chisq[i] = res
 
     
@@ -145,8 +146,6 @@ fig,ax = plt.subplots(1)
 
 # create some x data and some integers for the y axis
 x = np.array(nuel_23)
-print("x has shape", x.shape())
-print("y has shape", chisq.shape())
 
 # plot the data
 ax.plot(x,chisq)
