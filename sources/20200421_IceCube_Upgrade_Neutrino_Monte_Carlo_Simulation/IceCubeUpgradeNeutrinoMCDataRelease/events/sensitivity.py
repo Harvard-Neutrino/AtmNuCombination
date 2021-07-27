@@ -45,12 +45,19 @@ numu_track_mask = numu_mask & track_mask
 energy_bins_fine = np.logspace(0., 2., num=21)
 energy_bins_course = np.logspace(0., 2., num=11)
 
+# List of theta13 and theta23 numeric values to probe
+t13l = [.2, .3, .4, .5, .6, .7, .8]
+
+# Prepare comparison values for flavor composition
+nuel_13 = []
+numul_13 = []
+nutaul_13 = []
 
 units = nsq.Const()
 
 interactions = False
 
-E_min = 9.0*units.GeV
+E_min = 10.0*units.GeV
 E_max = 1.0e3*units.PeV
 E_nodes = 100
 energy_nodes = nsq.logspace(E_min,E_max,E_nodes)
@@ -62,55 +69,66 @@ cth_nodes = nsq.linspace(cth_min,cth_max,cth_nodes)
 
 neutrino_flavors = 3
 
-nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,neutrino_flavors,nsq.NeutrinoType.both,interactions)
-unosci_nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,neutrino_flavors,nsq.NeutrinoType.both,interactions)
 
-AtmInitialFlux = np.zeros((len(cth_nodes),len(energy_nodes),2,neutrino_flavors))
-flux = nuflux.makeFlux('honda2006')
-for ic,cth in enumerate(nsq_atm.GetCosthRange()):
-    for ie,E in enumerate(nsq_atm.GetERange()):
-        nu_energy = E/units.GeV
-        nu_cos_zenith = cth
-        AtmInitialFlux[ic][ie][0][0] = flux.getFlux(nuflux.NuE,nu_energy,nu_cos_zenith) # nue
-        AtmInitialFlux[ic][ie][1][0] = flux.getFlux(nuflux.NuEBar,nu_energy,nu_cos_zenith) # nue bar
-        AtmInitialFlux[ic][ie][0][1] = flux.getFlux(nuflux.NuMu,nu_energy,nu_cos_zenith) # numu
-        AtmInitialFlux[ic][ie][1][1] = flux.getFlux(nuflux.NuMuBar,nu_energy,nu_cos_zenith) # numu bar
-        AtmInitialFlux[ic][ie][0][2] = flux.getFlux(nuflux.NuTau,nu_energy,nu_cos_zenith) # nutau
-        AtmInitialFlux[ic][ie][1][2] = flux.getFlux(nuflux.NuTauBar,nu_energy,nu_cos_zenith) # nutau bar
+for t13 in t13l:
+    nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,neutrino_flavors,nsq.NeutrinoType.both,interactions)
 
+    AtmInitialFlux = np.zeros((len(cth_nodes),len(energy_nodes),2,neutrino_flavors))
+    flux = nuflux.makeFlux('honda2006')
+    for ic,cth in enumerate(nsq_atm.GetCosthRange()):
+        for ie,E in enumerate(nsq_atm.GetERange()):
+            nu_energy = E/units.GeV
+            nu_cos_zenith = cth
+            AtmInitialFlux[ic][ie][0][0] = flux.getFlux(nuflux.NuE,nu_energy,nu_cos_zenith) # nue
+            AtmInitialFlux[ic][ie][1][0] = flux.getFlux(nuflux.NuEBar,nu_energy,nu_cos_zenith) # nue bar
+            AtmInitialFlux[ic][ie][0][1] = flux.getFlux(nuflux.NuMu,nu_energy,nu_cos_zenith) # numu
+            AtmInitialFlux[ic][ie][1][1] = flux.getFlux(nuflux.NuMuBar,nu_energy,nu_cos_zenith) # numu bar
+            AtmInitialFlux[ic][ie][0][2] = flux.getFlux(nuflux.NuTau,nu_energy,nu_cos_zenith) # nutau
+            AtmInitialFlux[ic][ie][1][2] = flux.getFlux(nuflux.NuTauBar,nu_energy,nu_cos_zenith) # nutau bar
 
-nsq_atm.Set_initial_state(AtmInitialFlux,nsq.Basis.flavor)
-nsq_atm.Set_ProgressBar(True) # progress bar will be printed on terminal
-nsq_atm.EvolveState()
+    nsq_atm.Set_MixingAngle(0, 2, t13)
+    nsq_atm.Set_initial_state(AtmInitialFlux,nsq.Basis.flavor)
+    nsq_atm.Set_ProgressBar(True) # progress bar will be printed on terminal
+    nsq_atm.EvolveState()
 
-unosci_nsq_atm.Set_initial_state(AtmInitialFlux,nsq.Basis.flavor)
+    lifetime = 365*24*60*60
+    meter_to_cm_sq = 1e4
+    rate_weight = np.zeros_like(input_data["weight"])
+    unosci_rate_weight = np.zeros_like(input_data["weight"])
+    for i in range(len(rate_weight)):
+        if input_data["pdg"][i] > 0 :
+            neutype = 0
+        else:
+            neutype = 1
 
-lifetime = 365*24*60*60
-meter_to_cm_sq = 1e4
-rate_weight = np.zeros_like(input_data["weight"])
-unosci_rate_weight = np.zeros_like(input_data["weight"])
-for i in range(len(rate_weight)):
-    if input_data["pdg"][i] > 0 :
-        neutype = 0
-    else:
-        neutype = 1
-        
-    if np.abs(input_data["pdg"][i]) == 12:
-        neuflavor = 0
-    elif np.abs(input_data["pdg"][i]) == 14:
-        neuflavor = 1
-    elif np.abs(input_data["pdg"][i]) == 16:
-        neuflavor = 2
-        
-    if input_data["true_energy"][i]*units.GeV < E_min or input_data["true_energy"][i]*units.GeV > E_max:
-        rate_weight[i] = 0
-        unosci_rate_weight[i] = 0
-        continue
-    rate_weight[i] = input_data["weight"][i]*nsq_atm.EvalFlavor(neuflavor,
-                                                                np.cos(input_data["true_zenith"][i]),
-                                                                input_data["true_energy"][i]*\
-                                                                units.GeV,neutype)*lifetime*meter_to_cm_sq
-    unosci_rate_weight[i] = input_data["weight"][i]*unosci_nsq_atm.EvalFlavor(neuflavor,
-                                                                np.cos(input_data["true_zenith"][i]),
-                                                                input_data["true_energy"][i]*\
-                                                                units.GeV,neutype)*lifetime*meter_to_cm_sq
+        if np.abs(input_data["pdg"][i]) == 12:
+            neuflavor = 0
+        elif np.abs(input_data["pdg"][i]) == 14:
+            neuflavor = 1
+        elif np.abs(input_data["pdg"][i]) == 16:
+            neuflavor = 2
+
+        if input_data["true_energy"][i]*units.GeV < E_min or input_data["true_energy"][i]*units.GeV > E_max:
+            rate_weight[i] = 0
+            unosci_rate_weight[i] = 0
+            continue
+        rate_weight[i] = input_data["weight"][i]*nsq_atm.EvalFlavor(neuflavor,
+                                                                    np.cos(input_data["true_zenith"][i]),
+                                                                    input_data["true_energy"][i]*\
+                                                                    units.GeV,neutype)*lifetime*meter_to_cm_sq
+        unosci_rate_weight[i] = input_data["weight"][i]*unosci_nsq_atm.EvalFlavor(neuflavor,
+                                                                    np.cos(input_data["true_zenith"][i]),
+                                                                    input_data["true_energy"][i]*\
+                                                                    units.GeV,neutype)*lifetime*meter_to_cm_sq
+
+    nue = np.nansum(input_data["rate_weight"][nue_mask])
+    numu = np.nansum(input_data["rate_weight"][numu_mask])
+    nutau = np.nansum(input_data["rate_weight"][nutau_mask])
+    nuel_13.append(nue)
+    numul_13.append(numu)
+    nutau_13.append(nutau)
+    
+print(nuel_13)
+print(numul_13)
+print(nutaul_13)
+
