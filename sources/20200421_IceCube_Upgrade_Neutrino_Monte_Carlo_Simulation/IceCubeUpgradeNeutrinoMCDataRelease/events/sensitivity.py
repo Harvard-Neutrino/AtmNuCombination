@@ -131,7 +131,7 @@ print(nuel_23)
 print(numul_23)
 print(nutaul_23)
 
-chisq = [0, 0, 0, 0, 0, 0, 0]
+chisq = np.array([0, 0, 0, 0, 0, 0, 0])
 
 def chisq(nuel, numul, nutaul):
     for i in range(0,6):
@@ -140,16 +140,16 @@ def chisq(nuel, numul, nutaul):
                     + (nutaul[3] ** 2 - nutaul[i] ** 2) / nutaul[i] ** 2
         chisq[i] = res
 
-print(chisq)
     
 fig,ax = plt.subplots(1)
 
 # create some x data and some integers for the y axis
 x = np.array(nuel_23)
-y = np.array(chisq)
+print("x has shape", x.shape())
+print("y has shape", chisq.shape())
 
 # plot the data
-ax.plot(x,y)
+ax.plot(x,chisq)
 
 fig.savefig(theta23_sensitivity.jpg)
 
