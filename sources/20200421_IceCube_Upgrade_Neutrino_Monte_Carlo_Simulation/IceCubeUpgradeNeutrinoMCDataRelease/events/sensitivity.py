@@ -128,12 +128,14 @@ print(numul_13)
 print(nutaul_13)
 
 chisq = [0, 0, 0, 0, 0, 0, 0]
-for i in len(nuel_13):
-    chisq[i] = (nuel_13[3] ** 2 - nuel_13[i] ** 2) / nuel_13[i] ** 2 \
-                + (numul_13[3] ** 2 - numul_13[i] ** 2) / numul_13[i] ** 2 \
-                + (nutaul_13[3] ** 2 - nutaul_13[i] ** 2) / nutaul_13[i] ** 2 \
+
+def chisq(nuel, numul, nutaul):
+    for i in range(0,6):
+        res = (nuel[3] ** 2 - nuel[i] ** 2) / nuel[i] ** 2 \
+                    + (numul[3] ** 2 - numul[i] ** 2) / numul[i] ** 2 \
+                    + (nutaul[3] ** 2 - nutaul[i] ** 2) / nutaul[i] ** 2
+        chisq[i] = res
    
-print(chisq)
     
 
 
