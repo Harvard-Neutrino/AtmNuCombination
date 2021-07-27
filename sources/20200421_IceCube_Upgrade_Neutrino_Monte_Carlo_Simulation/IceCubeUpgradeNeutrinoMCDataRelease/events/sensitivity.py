@@ -138,6 +138,15 @@ def chisq(nuel, numul, nutaul):
 
 print(chisq)
     
+fig,ax = plt.subplots(1)
 
+# create some x data and some integers for the y axis
+x = np.array(nuel13)
+y = np.array(chisq)
+
+# plot the data
+ax.plot(x,y)
+
+fig.savefig(theta13_sensitivity.jpg)
 
 
