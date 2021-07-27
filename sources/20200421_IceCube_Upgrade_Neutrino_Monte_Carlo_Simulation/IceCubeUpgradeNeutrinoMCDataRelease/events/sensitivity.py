@@ -115,7 +115,7 @@ for t13 in t13l:
                                                                     input_data["true_energy"][i]*\
                                                                     units.GeV,neutype)*lifetime*meter_to_cm_sq
 
-    input_data("rate_weight") = rate_weight
+    input_data["rate_weight"] = rate_weight
     nue = np.nansum(input_data["rate_weight"][nue_mask])
     numu = np.nansum(input_data["rate_weight"][numu_mask])
     nutau = np.nansum(input_data["rate_weight"][nutau_mask])
