@@ -121,9 +121,11 @@ for t13 in t13l:
     nutau = np.nansum(input_data["rate_weight"][nutau_mask])
     nuel_13.append(nue)
     numul_13.append(numu)
-    nutau_13.append(nutau)
+    nutaul_13.append(nutau)
     
 print(nuel_13)
 print(numul_13)
 print(nutaul_13)
+
+
 
