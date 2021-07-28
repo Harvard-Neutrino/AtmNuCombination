@@ -74,6 +74,7 @@ E_bin_max = 1000 * units.GeV
 E_n_bins = 10
 
 # Set up chi squared bins
+print("the shape of t23l is", t23l.shape[0])
 bins = np.zeros_like(t23l.shape[0], E_n_bins)
 
 # Set up parameters as in nu-fit5.0
