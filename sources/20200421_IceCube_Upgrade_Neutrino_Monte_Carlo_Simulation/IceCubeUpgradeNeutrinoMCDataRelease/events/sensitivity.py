@@ -75,7 +75,7 @@ E_n_bins = 10
 
 # Set up chi squared bins
 print("the shape of t23l is", t23l.shape[0])
-bins = np.zeros_like(t23l.shape[0], E_n_bins)
+bins = np.zeros((t23l.shape[0], E_n_bins))
 
 # Set up parameters as in nu-fit5.0
 theta12 = 0.185778
