@@ -69,12 +69,18 @@ t23step = 0.1
 t23l = np.arange(t23min, t23max + t23step, t23step)
 
 # Set the chi squared bins limits
-E_bin_min = 10 * units.GeV
-E_bin_max = 1000 * units.GeV
-E_n_bins = 10
+E_bin_min = 1 * units.GeV
+E_bin_max = 100 * units.GeV
+E_n_bins = 20
+E_bin_plot = nsq.logspace(E_bin_min, E_bin_max, E_n_bins)
+
+cos_bin_min = -1
+cos_bin_max = 1
+cos_n_bins = 10
+cos_bin_plot = nsq.linspace(cos_bin_min, cos_bin_max, cos_n_bins)
 
 # Set up chi squared bins
-print("the shape of t23l is", t23l.shape[0])
+# print("the shape of t23l is", t23l.shape[0])
 bins = np.zeros((t23l.shape[0], E_n_bins))
 
 # Set up parameters as in nu-fit5.0
@@ -139,15 +145,16 @@ for i in range(len(rate_weight)):
                                                                 units.GeV,neutype)*lifetime*meter_to_cm_sq
 
 input_data["rate_weight"] = rate_weight
-# Note that converting to mHz for the rate, as this is a more suitable unit for the IceCube Upgrade 
+
+# Plot the energy distribution
 fig, ax = plt.subplots(figsize=(7,6))
-fig.suptitle("Reconstructed Energy Rated Weight")
-ax.hist(input_data["reco_energy"], bins=energy_bins_fine, \
+fig.suptitle("Reco Energy Rated Distribution")
+ax.hist(input_data["reco_energy"], bins=E_bin_plot, \
       weights=input_data["rate_weight"], \
-      label=r"$\nu_{e,CC}$", color="blue", histtype="step")
+      label=r"$\nu_{All}$", color="blue", histtype="step")
 ax.set_xscale("log")
 ax.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
-ax.set_xlim(1, 1000)
+ax.set_xlim(1, 100)
 ax.ticklabel_format(axis='y', style='sci', scilimits=None,\
                  useOffset=None, useLocale=None, useMathText=None)
 ax.set_ylabel("Rate [Year]")
@@ -155,5 +162,19 @@ ax.grid(True)
 ax.legend()
 fig.savefig("Rate_For_Sensitivity.png")
 
+# Plot the angle distribution
+fig, ax = plt.subplots(figsize=(7,6))
+fig.suptitle("Reco Zenith Rated Distribution")
+ax.hist(np.cos(input_data["reco_zenith"]), bins=cos_bin_plot, \
+      weights=input_data["rate_weight"], \
+      label=r"$\nu_{All}$", color="blue", histtype="step")
+ax.set_xlabel(r"$\cos{\theta, \rm{reco}}$")
+ax.set_xlim(-1, 1)
+ax.ticklabel_format(axis='y', style='sci', scilimits=None,\
+                 useOffset=None, useLocale=None, useMathText=None)
+ax.set_ylabel("Rate [Year]")
+ax.grid(True)
+ax.legend()
+fig.savefig("Zenith_Rate_For_Sensitivity.png")
 
 
