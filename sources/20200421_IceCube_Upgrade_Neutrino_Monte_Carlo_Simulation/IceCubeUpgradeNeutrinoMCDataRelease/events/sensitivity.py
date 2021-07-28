@@ -144,7 +144,7 @@ fig.suptitle("Reconstructed Energy Rated Weight")
 ax.hist(input_data["reco_energy"], bins=energy_bins_fine, \
       weights=input_data["rate_weight"][nue_cc_mask], \
       label=r"$\nu_{e,CC}$", color="blue", histtype="step")
-
+fig.savefig("Rate_For_Sensitivity.png")
 
 
 
