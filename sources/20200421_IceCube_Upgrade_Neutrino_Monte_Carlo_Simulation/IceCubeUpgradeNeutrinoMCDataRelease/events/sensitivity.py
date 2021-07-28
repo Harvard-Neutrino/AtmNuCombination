@@ -143,8 +143,16 @@ input_data["rate_weight"] = rate_weight
 fig, ax = plt.subplots(figsize=(7,6))
 fig.suptitle("Reconstructed Energy Rated Weight")
 ax.hist(input_data["reco_energy"], bins=energy_bins_fine, \
-      weights=input_data["rate_weight"][nue_cc_mask], \
+      weights=input_data["rate_weight"], \
       label=r"$\nu_{e,CC}$", color="blue", histtype="step")
+ax.set_xscale("log")
+ax.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
+ax.set_xlim(1, 1000)
+ax.ticklabel_format(axis='y', style='sci', scilimits=None,\
+                 useOffset=None, useLocale=None, useMathText=None)
+ax.set_ylabel("Rate [Year]")
+ax.grid(True)
+ax.legend()
 fig.savefig("Rate_For_Sensitivity.png")
 
 
