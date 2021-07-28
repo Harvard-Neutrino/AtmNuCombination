@@ -106,8 +106,8 @@ for ic,cth in enumerate(nsq_atm.GetCosthRange()):
 nsq_atm.Set_MixingAngle(0, 1, 0.185778)
 nsq_atm.Set_MixingAngle(0, 2, 0.047611)
 nsq_atm.Set_MixingAngle(1, 2, theta23)
-nsq_atm.Set_SquaremassDifference(1, 7.42e-5)
-nsq_atm.Set_SquaremassDifference(2, 2.517e-3)
+nsq_atm.Set_SquareMassDifference(1, 7.42e-5)
+nsq_atm.Set_SquareMassDifference(2, 2.517e-3)
 
 
 nsq_atm.Set_initial_state(AtmInitialFlux,nsq.Basis.flavor)
