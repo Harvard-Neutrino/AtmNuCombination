@@ -279,6 +279,7 @@ def get_energy_bins(theta23in, m31in):
     # Now first obtain  the energy binned event rate distributions 1-100GeV
     energy_hist, energy_bins = np.histogram(input_data["reco_energy"], bins = energy_bins_fine, weights = input_data["rate_weight"])
     
+    
     return energy_hist
 
 energy_hist_theta23 = np.zeros((len(t23l.tolist()), len(energy_bins_fine.tolist()) - 1)).tolist()
@@ -303,7 +304,7 @@ for i in range(len(t23l.tolist())):
 print(chisq)
 
 # plot un-normalized chisq for NH, probing values of t23
-x = theta_bin_plot
+x = t23l
 y = chisq
 plt.title("Line graph")
 plt.xlabel("X axis")
