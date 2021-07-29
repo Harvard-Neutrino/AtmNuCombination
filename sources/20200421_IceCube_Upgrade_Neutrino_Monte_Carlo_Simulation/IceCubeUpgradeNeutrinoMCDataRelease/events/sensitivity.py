@@ -68,9 +68,9 @@ t23max = 1.1
 t23step = 0.1
 t23l = np.arange(t23min, t23max + t23step, t23step)
 
-# Set the chi squared bins limits
-E_bin_min = 1 * units.GeV
-E_bin_max = 100 * units.GeV
+# Set the chi squared plotting bins limits
+E_bin_min = 0
+E_bin_max = 2
 E_n_bins = 20
 E_bin_plot = nsq.logspace(E_bin_min, E_bin_max, E_n_bins)
 
@@ -176,5 +176,8 @@ ax.set_ylabel("Rate [Year]")
 ax.grid(True)
 ax.legend()
 fig.savefig("Zenith_Rate_For_Sensitivity.png")
+
+# Plot the overall distribution
+
 
 
