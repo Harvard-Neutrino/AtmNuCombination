@@ -145,22 +145,32 @@ for i in range(len(rate_weight)):
 input_data["rate_weight"] = rate_weight
 
 # Plot the energy distribution
-fig, ax = plt.subplots(figsize=(7,6))
-fig.suptitle("Reco Energy Rated Distribution")
+# fig, ax = plt.subplots(figsize=(7,6))
+# fig.suptitle("Reco Energy Rated Distribution")
 # ax.hist(input_data["reco_energy"], bins=E_bin_plot, \
 #       weights=input_data["rate_weight"], \
 #       label=r"$\nu_{All}$", color="blue", histtype="step")
 # ax.set_xscale("log")
-sns.histplot(data = input_data, x = "reco_energy", weights=input_data["rate_weight"], bins = E_bin_plot, binrange = (1, 100), log_scale = True)
-# ax.set_xscale("log")
-ax.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
-ax.set_xlim(1, 100)
-ax.ticklabel_format(axis='y', style='sci', scilimits=None,\
+fig_sns, ax_sns = plt.subplots(figsize=(7,6))
+fig_sns.suptitle("Reco Energy Rated Distribution")
+sns.histplot(data = input_data, x = "reco_energy", weights=input_data["rate_weight"], bins = [1, 2, 4, 8, 16, 32, 64, 128], bin_range = [1, 128])
+ax_sns.set_xscale("log")
+ax_sns.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
+ax_sns.set_xlim(1, 100)
+ax_sns.ticklabel_format(axis='y', style='sci', scilimits=None,\
                  useOffset=None, useLocale=None, useMathText=None)
-ax.set_ylabel("Rate [Year]")
-ax.grid(True)
-ax.legend()
-fig.savefig("Rate_For_Sensitivity.png")
+ax_sns.set_ylabel("Rate [Year]")
+ax_sns.grid(True)
+ax_sns.legend()
+fig_sns.savefig("Rate_For_Sensitivity.png")
+# ax.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
+# ax.set_xlim(1, 100)
+# ax.ticklabel_format(axis='y', style='sci', scilimits=None,\
+#                  useOffset=None, useLocale=None, useMathText=None)
+# ax.set_ylabel("Rate [Year]")
+# ax.grid(True)
+# ax.legend()
+# fig.savefig("Rate_For_Sensitivity.png")
 
 # Plot the angle distribution
 fig, ax = plt.subplots(figsize=(7,6))
@@ -188,6 +198,7 @@ ax.set_ylabel(r"$\cos{\theta, \rm{reco}}$")
 ax.set_xlim(1, 100)
 ax.set_ylim(-1, 1)
 ax.legend()
+fig.colorbar()
 fig.savefig("2D_Rate_For_Sensitivity.png")
 
 
