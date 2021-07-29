@@ -153,7 +153,7 @@ input_data["rate_weight"] = rate_weight
 # ax.set_xscale("log")
 fig_sns, ax_sns = plt.subplots(figsize=(7,6))
 fig_sns.suptitle("Reco Energy Rated Distribution")
-sns.histplot(data = input_data, x = "reco_energy", weights=input_data["rate_weight"], bins = [1, 2, 4, 8, 16, 32, 64, 128], bin_range = [1, 128])
+sns.histplot(data = input_data, x = "reco_energy", weights=input_data["rate_weight"], bins = [1, 2, 4, 8, 16, 32, 64, 128], binrange = (1, 128))
 ax_sns.set_xscale("log")
 ax_sns.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
 ax_sns.set_xlim(1, 100)
