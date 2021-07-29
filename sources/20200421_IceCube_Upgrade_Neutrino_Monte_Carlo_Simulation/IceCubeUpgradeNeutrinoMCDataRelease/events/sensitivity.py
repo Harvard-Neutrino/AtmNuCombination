@@ -81,7 +81,7 @@ cos_n_bins = 10
 cos_bin_plot = nsq.linspace(cos_bin_min, cos_bin_max, cos_n_bins)
 
 theta_bin_min = np.pi
-theta_bim_max = 2 * np.pi
+theta_bin_max = 2 * np.pi
 theta_n_bins = 10
 theta_bin_plot = nsq.linspace(theta_bin_min, theta_bin_max, theta_n_bins)
 
