@@ -149,7 +149,8 @@ for i in range(len(rate_weight)):
 
 input_data["rate_weight"] = rate_weight
 
-energy_hist_truth, energy_bins_truth = np.hist(input_data["reco_energy"], bins = energy_bins_fine, weights = input_data["rate_weight"])
+energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"], bins = energy_bins_fine, weights = input_data["rate_weight"])
+
 
 def sanity_plots():
     print("plotting sanity check distributions")
@@ -274,7 +275,7 @@ def get_energy_bins(theta23in, m31in):
     input_data["rate_weight"] = rate_weight
     
     # Now first obtain  the energy binned event rate distributions 1-100GeV
-    energy_hist, energy_bins = np.hist(input_data["reco_energy"], bins = energy_bins_fine, weight = input_data["rate_weight"])
+    energy_hist, energy_bins = np.histogram(input_data["reco_energy"], bins = energy_bins_fine, weight = input_data["rate_weight"])
     
     return energy_hist
 
