@@ -169,7 +169,7 @@ def sanity_plots():
     ax.set_ylabel("Rate [Year]")
     ax.grid(True)
     ax.legend()
-    fig.savefig("Rate_For_Sensitivity.png")
+    fig.savefig("Rate_For_Sensitivity.png", bbox_inches='tight')
 #     fig_sns, ax_sns = plt.subplots(figsize=(7,6))
 #     fig_sns.suptitle("Reco Energy Rated Distribution")
 #     sns.histplot(data = input_data, x = "reco_energy", weights=input_data["rate_weight"], bins = energy_bins_fine.tolist(), binrange = (1, 100))
@@ -197,7 +197,7 @@ def sanity_plots():
     ax.set_ylabel("Rate [Year]")
     ax.grid(True)
     ax.legend()
-    fig.savefig("Zenith_Rate_For_Sensitivity.png")
+    fig.savefig("Zenith_Rate_For_Sensitivity.png", bbox_inches='tight')
 
     # Plot the overall distribution
     counts, _, _ = np.histogram2d(input_data["reco_energy"], np.cos(input_data["reco_zenith"]), bins=[energy_bins_fine, cos_bin_plot], \
@@ -219,7 +219,7 @@ def sanity_plots():
 #     ax.set_xscale("log")
 #     ax.set_ylim(np.pi, 2 * np.pi)
 #     ax.legend()
-    fig.savefig("2D_Rate_For_Sensitivity.png")
+    fig.savefig("2D_Rate_For_Sensitivity.png", bbox_inches='tight')
 
 sanity_plots()
 
@@ -310,9 +310,10 @@ def plot_t23_chi():
     fig2, ax2 = plt.subplots(figsize=(7,6))
     fig2.suptitle("Chi-Sq NH")
     ax2.set_xlabel(r"$\theta_{23}$")
-    ax2.set_ylabel(r"$\chi^2_{NH}")
+    ax2.set_ylabel(r"$\chi^2_{NH}$")
     ax2.plot(x, y, color ="green")
-    fig2.savefig("t23_chi_sq(non-normal).png")
+    ax2.grid(True)
+    fig2.savefig("t23_chi_sq(non-normal).png", bbox_inches='tight')
 plot_t23_chi()
 
     
