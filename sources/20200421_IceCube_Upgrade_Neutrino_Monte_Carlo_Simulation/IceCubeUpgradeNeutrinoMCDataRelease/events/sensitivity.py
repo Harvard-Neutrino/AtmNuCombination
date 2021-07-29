@@ -304,13 +304,15 @@ for i in range(len(t23l.tolist())):
 print(chisq)
 
 # plot un-normalized chisq for NH, probing values of t23
-x = t23l
-y = chisq
-plt.title("Line graph")
-plt.xlabel("X axis")
-plt.ylabel("Y axis")
-plt.plot(x, y, color ="green")
-plt.savefig("t23_chi_sq(non-normal).png")
-                 
+def plot_t23_chi():
+    x = t23l
+    y = chisq
+    fig, ax = plt.subplots(figsize=(7,6))
+    fig.suptitle("Chi-Sq NH")
+    ax.set_xlabel(r"$\theta_{23}$")
+    ax.set_ylabel(r"$\chi^2_{NH}")
+    ax.plot(x, y, color ="green")
+    fig.savefig("t23_chi_sq(non-normal).png")
+
     
     
