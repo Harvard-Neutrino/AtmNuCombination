@@ -287,8 +287,9 @@ for i in range(len(t23l.tolist())):
     print(i)
     energy_bins = get_energy_bins(t23l[i], m31).tolist()
     for j in range(len(energy_bins_fine.tolist())):
-        print(j)        
-        energy_hist_theta23[i][j] = energy_bins[j]
+        print(j)  
+        energy = energy_bins[j]
+        energy_hist_theta23[i][j] = energy
 print(energy_hist_truth)
 print(energy_hist_theta23)
 
