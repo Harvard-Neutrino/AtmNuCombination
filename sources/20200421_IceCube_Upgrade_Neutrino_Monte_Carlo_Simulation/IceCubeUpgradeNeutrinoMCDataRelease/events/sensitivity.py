@@ -158,7 +158,7 @@ fig.suptitle("Reco Energy Rated Distribution")
 # ax.set_ylabel("Rate [Year]")
 # ax.grid(True)
 # ax.legend()
-sns.histplot(input_data["reco_energy"], bins=E_bin_plot, weights=input_data["rate_weight"], ax = ax[0], log_scale = True)
+sns.histplot(input_data["reco_energy"], bins=E_bin_plot, weights=input_data["rate_weight"], log_scale = True)
 ax.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
 ax.set_xlim(1, 100)
 ax.ticklabel_format(axis='y', style='sci', scilimits=None,\
