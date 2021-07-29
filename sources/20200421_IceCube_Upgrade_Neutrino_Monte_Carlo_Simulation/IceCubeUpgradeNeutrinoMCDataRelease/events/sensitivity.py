@@ -73,7 +73,7 @@ t23l = np.arange(t23min, t23max + t23step, t23step)
 E_bin_min = 0
 E_bin_max = 2
 E_n_bins = 20
-E_bin_plot = nsq.logspace(E_bin_min, E_bin_max, E_n_bins)
+E_bin_plot = np.logspace(E_bin_min, E_bin_max, E_n_bins)
 
 cos_bin_min = -1
 cos_bin_max = 1
