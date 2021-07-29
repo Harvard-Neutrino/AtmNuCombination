@@ -147,24 +147,17 @@ input_data["rate_weight"] = rate_weight
 # Plot the energy distribution
 fig, ax = plt.subplots(figsize=(7,6))
 fig.suptitle("Reco Energy Rated Distribution")
-# ax.hist(input_data["reco_energy"], bins=E_bin_plot, \
-#       weights=input_data["rate_weight"], \
-#       label=r"$\nu_{All}$", color="blue", histtype="step")
-# ax.set_xscale("log")
-# ax.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
-# ax.set_xlim(1, 100)
-# ax.ticklabel_format(axis='y', style='sci', scilimits=None,\
-#                  useOffset=None, useLocale=None, useMathText=None)
-# ax.set_ylabel("Rate [Year]")
-# ax.grid(True)
-# ax.legend()
-sns.histplot(input_data["reco_energy"], bins=E_bin_plot, weights=input_data["rate_weight"], log_scale = True)
+ax.hist(input_data["reco_energy"], bins=E_bin_plot, \
+      weights=input_data["rate_weight"], \
+      label=r"$\nu_{All}$", color="blue", histtype="step")
+ax.set_xscale("log")
 ax.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
 ax.set_xlim(1, 100)
 ax.ticklabel_format(axis='y', style='sci', scilimits=None,\
                  useOffset=None, useLocale=None, useMathText=None)
 ax.set_ylabel("Rate [Year]")
-fig.legend(labels = [r"$\nu_{All}$"])
+ax.grid(True)
+ax.legend()
 fig.savefig("Rate_For_Sensitivity.png")
 
 # Plot the angle distribution
@@ -183,6 +176,7 @@ ax.legend()
 fig.savefig("Zenith_Rate_For_Sensitivity.png")
 
 # Plot the overall distribution
+
 
 
 
