@@ -307,12 +307,13 @@ print(chisq)
 def plot_t23_chi():
     x = t23l
     y = chisq
-    fig, ax = plt.subplots(figsize=(7,6))
-    fig.suptitle("Chi-Sq NH")
-    ax.set_xlabel(r"$\theta_{23}$")
-    ax.set_ylabel(r"$\chi^2_{NH}")
-    ax.plot(x, y, color ="green")
-    fig.savefig("t23_chi_sq(non-normal).png")
+    fig2, ax2 = plt.subplots(figsize=(7,6))
+    fig2.suptitle("Chi-Sq NH")
+    ax2.set_xlabel(r"$\theta_{23}$")
+    ax2.set_ylabel(r"$\chi^2_{NH}")
+    ax2.plot(x, y, color ="green")
+    fig2.savefig("t23_chi_sq(non-normal).png")
+plot_t23_chi()
 
     
     
