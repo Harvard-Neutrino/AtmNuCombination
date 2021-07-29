@@ -4,6 +4,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import nuSQUIDSpy as nsq
 import nuflux
+import seaborn as sns
 
 matplotlib.rcParams.update({'font.size': 16})
 matplotlib.rcParams.update({'lines.linewidth': 3})
@@ -91,9 +92,6 @@ theta23 = 0.272222
 
 
 
-
-
-
 nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,neutrino_flavors,nsq.NeutrinoType.both,interactions)
 
 AtmInitialFlux = np.zeros((len(cth_nodes),len(energy_nodes),2,neutrino_flavors))
@@ -149,17 +147,24 @@ input_data["rate_weight"] = rate_weight
 # Plot the energy distribution
 fig, ax = plt.subplots(figsize=(7,6))
 fig.suptitle("Reco Energy Rated Distribution")
-ax.hist(input_data["reco_energy"], bins=E_bin_plot, \
-      weights=input_data["rate_weight"], \
-      label=r"$\nu_{All}$", color="blue", histtype="step")
-ax.set_xscale("log")
+# ax.hist(input_data["reco_energy"], bins=E_bin_plot, \
+#       weights=input_data["rate_weight"], \
+#       label=r"$\nu_{All}$", color="blue", histtype="step")
+# ax.set_xscale("log")
+# ax.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
+# ax.set_xlim(1, 100)
+# ax.ticklabel_format(axis='y', style='sci', scilimits=None,\
+#                  useOffset=None, useLocale=None, useMathText=None)
+# ax.set_ylabel("Rate [Year]")
+# ax.grid(True)
+# ax.legend()
+sns.hist(input_data["reco_energy"], bins=E_bin_plot, weights=input_data["rate_weight"], ax = ax[0], log_scale = True)
 ax.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
 ax.set_xlim(1, 100)
 ax.ticklabel_format(axis='y', style='sci', scilimits=None,\
                  useOffset=None, useLocale=None, useMathText=None)
 ax.set_ylabel("Rate [Year]")
-ax.grid(True)
-ax.legend()
+fig.legend(labels = [r"$\nu_{All}$"])
 fig.savefig("Rate_For_Sensitivity.png")
 
 # Plot the angle distribution
