@@ -64,9 +64,9 @@ cth_nodes = nsq.linspace(cth_min,cth_max,cth_nodes)
 neutrino_flavors = 3
 
 # theta23 numeric values to probe sensitivity
-t23min = 0.5
-t23max = 1.1
-t23step = 0.1
+t23min = 0.1
+t23max = 0.45
+t23step = 0.05
 t23l = np.arange(t23min, t23max + t23step, t23step)
 
 # Set the chi squared plotting bins limits
@@ -93,7 +93,7 @@ bins = np.zeros((t23l.shape[0], E_n_bins))
 # Set up parameters as in nu-fit5.0
 theta12 = 0.185778
 theta13 = 0.047611
-theta23 = 0.272222
+theta23 = 0.273333
 m21 = 7.42e-5
 m31 = 2.517e-3
 
@@ -284,7 +284,9 @@ def get_energy_bins(theta23in, m31in):
 energy_hist_theta23 = np.zeros((len(t23l.tolist()), len(energy_bins_fine.tolist()))).tolist()
 print("energy_hist_theta23 initialization", energy_hist_theta23)
 for i in range(len(t23l.tolist())):
+    print(i)
     for j in range(len(energy_bins_fine.tolist())):
+        print(j)
         energy_bins = get_energy_bins(t23l[i], m31).tolist()
         energy_hist_theta23[i][j] = energy_bins[j]
 print(energy_hist_truth)
@@ -298,6 +300,8 @@ for i in range(len(t23l.tolist())):
         chisq[i] += chisqplus
 
 print(chisq)
+
+# plot un-normalized chisq for NH, probing values of 
         
                  
     
