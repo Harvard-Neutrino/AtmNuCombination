@@ -45,7 +45,7 @@ numu_track_mask = numu_mask & track_mask
 # Define some energy bins (used throughout this notebook)
 energy_bins_fine = np.logspace(0., 2., num=21)
 energy_bins_course = np.logspace(0., 2., num=11)
-print(energy_bins_fine)
+# print(energy_bins_fine)
 units = nsq.Const()
 
 interactions = False
@@ -151,7 +151,7 @@ fig.suptitle("Reco Energy Rated Distribution")
 #       weights=input_data["rate_weight"], \
 #       label=r"$\nu_{All}$", color="blue", histtype="step")
 # ax.set_xscale("log")
-sns.histplot(data = input_data, x = "reco_energy", weights=input_data["rate_weight"], bins = 20, binrange = (1, 100), log_scale = True)
+sns.histplot(data = input_data, x = "reco_energy", weights=input_data["rate_weight"], bins = E_bin_plot, binrange = (1, 100), log_scale = True)
 # ax.set_xscale("log")
 ax.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
 ax.set_xlim(1, 100)
