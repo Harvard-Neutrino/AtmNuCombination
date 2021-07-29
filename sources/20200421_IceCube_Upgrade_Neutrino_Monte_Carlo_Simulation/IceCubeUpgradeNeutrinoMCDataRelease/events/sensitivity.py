@@ -153,7 +153,7 @@ input_data["rate_weight"] = rate_weight
 # ax.set_xscale("log")
 fig_sns, ax_sns = plt.subplots(figsize=(7,6))
 fig_sns.suptitle("Reco Energy Rated Distribution")
-sns.histplot(data = input_data, x = "reco_energy", weights=input_data["rate_weight"], bins = [1, 2, 4, 8, 16, 32, 64, 128], binrange = (1, 128))
+sns.histplot(data = input_data, x = "reco_energy", weights=input_data["rate_weight"], bins = energy_bins_fine.tolist(), binrange = (1, 128))
 ax_sns.set_xscale("log")
 ax_sns.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
 ax_sns.set_xlim(1, 100)
@@ -190,7 +190,7 @@ fig.savefig("Zenith_Rate_For_Sensitivity.png")
 # Plot the overall distribution
 fig, ax = plt.subplots(figsize=(7,6))
 fig.suptitle("Reco Energy and Zenith Rated Distribution")
-ax.hist2d(input_data["reco_energy"], np.cos(input_data["reco_zenith"]), bins=[E_bin_plot, cos_bin_plot], \
+ax.hist2d(input_data["reco_energy"], np.cos(input_data["reco_zenith"]), bins=[energy_bins_fine, cos_bin_plot], \
       weights=input_data["rate_weight"], \
       label=r"$\nu_{All}$")
 ax.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
