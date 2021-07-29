@@ -178,7 +178,17 @@ ax.legend()
 fig.savefig("Zenith_Rate_For_Sensitivity.png")
 
 # Plot the overall distribution
-
+fig, ax = plt.subplots(figsize=(7,6))
+fig.suptitle("Reco Energy and Zenith Rated Distribution")
+ax.hist2d(input_data["reco_energy"], np.cos(input_data["reco_zenith"]), bins=[E_bin_plot, cos_bin_plot], \
+      weights=input_data["rate_weight"], \
+      label=r"$\nu_{All}$")
+ax.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
+ax.set_ylabel(r"$\cos{\theta, \rm{reco}}$")
+ax.set_xlim(1, 100)
+ax.set_ylim(-1, 1)
+ax.legend()
+fig.savefig("2D_Rate_For_Sensitivity.png")
 
 
 
