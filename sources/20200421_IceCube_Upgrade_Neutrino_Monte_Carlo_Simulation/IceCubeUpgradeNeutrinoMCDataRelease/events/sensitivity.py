@@ -296,7 +296,7 @@ print(energy_hist_theta23)
 # Calculate non-normalized chi squared
 chisq = np.zeros((len(t23l.tolist()),))
 for i in range(len(t23l.tolist())):
-    for j in range(len(energy_bins_fine.tolist() - 1)):
+    for j in range(len(energy_bins_fine.tolist())-1):
         chisqplus = (energy_hist_theta23[i][j] - energy_hist_truth[j]) ** 2 /  energy_hist_truth[j] ** 2
         chisq[i] += chisqplus
 
