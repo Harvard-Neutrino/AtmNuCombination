@@ -147,10 +147,13 @@ input_data["rate_weight"] = rate_weight
 # Plot the energy distribution
 fig, ax = plt.subplots(figsize=(7,6))
 fig.suptitle("Reco Energy Rated Distribution")
-ax.hist(input_data["reco_energy"], bins=E_bin_plot, \
-      weights=input_data["rate_weight"], \
-      label=r"$\nu_{All}$", color="blue", histtype="step")
-ax.set_xscale("log")
+# ax.hist(input_data["reco_energy"], bins=E_bin_plot, \
+#       weights=input_data["rate_weight"], \
+#       label=r"$\nu_{All}$", color="blue", histtype="step")
+# ax.set_xscale("log")
+sns.histplot(input_data["reco_energy"], bins=E_bin_plot, \
+      hist_kws = {"weights": input_data["rate_weight"]}, \
+      label=r"$\nu_{All}$")
 ax.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
 ax.set_xlim(1, 100)
 ax.ticklabel_format(axis='y', style='sci', scilimits=None,\
