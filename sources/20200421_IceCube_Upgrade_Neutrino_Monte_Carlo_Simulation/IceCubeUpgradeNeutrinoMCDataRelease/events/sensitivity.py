@@ -320,7 +320,7 @@ def plot_t23_chi():
     ax2.plot(x, y, color ="green")
     ax2.grid(True)
     fig2.savefig("t23_chi_sq(non-normal).png", bbox_inches='tight')
-plot_t23_chi()
+# plot_t23_chi()
 
 
 # Probe chi squared around truth value of m31
@@ -355,7 +355,7 @@ def plot_m31_chi():
     ax3.set_ylabel(r"$\chi^2_{NH}$")
     ax3.plot(x, y, color ="green")
     ax3.grid(True)
-    fig2.savefig("m31_chi_sq(non-normal).png", bbox_inches='tight')
+    fig3.savefig("m31_chi_sq(non-normal).png", bbox_inches='tight')
 plot_m31_chi()
 
     
