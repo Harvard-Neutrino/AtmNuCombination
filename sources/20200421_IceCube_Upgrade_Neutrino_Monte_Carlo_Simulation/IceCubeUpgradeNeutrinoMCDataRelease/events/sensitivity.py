@@ -80,6 +80,12 @@ cos_bin_max = 1
 cos_n_bins = 10
 cos_bin_plot = nsq.linspace(cos_bin_min, cos_bin_max, cos_n_bins)
 
+theta_bin_min = np.pi
+theta_bim_max = 2 * np.pi
+theta_n_bins = 10
+theta_bin_plot = nsq.linspace(theta_bin_min, theta_bin_max, theta_n_bins)
+
+
 # Set up chi squared bins
 # print("the shape of t23l is", t23l.shape[0])
 bins = np.zeros((t23l.shape[0], E_n_bins))
@@ -199,12 +205,12 @@ fig.suptitle("Reco Energy and Zenith Rated Distribution")
 # ax.set_xscale("log")
 # ax.set_ylim(-1, 1)
 # ax.legend()
-sns.histplot(data = input_data, x="reco_energy", y=np.cos("reco_zenith"), weights = "rate_weight", bins=(energy_bins_fine.tolist(), cos_bin_plot.tolist()), cbar=True)
+sns.histplot(data = input_data, x="reco_energy", y="reco_zenith", weights = "rate_weight", bins=(energy_bins_fine.tolist(), theta_bin_plot.tolist()), cbar=True)
 ax.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
-ax.set_ylabel(r"$\cos{\theta, \rm{reco}}$")
+ax.set_ylabel(r"$\theta_{\rm{reco}}$")
 ax.set_xlim(1, 100)
 ax.set_xscale("log")
-ax.set_ylim(-1, 1)
+ax.set_ylim(np.pi, 2 * np.pi)
 ax.legend()
 fig.savefig("2D_Rate_For_Sensitivity.png")
 
