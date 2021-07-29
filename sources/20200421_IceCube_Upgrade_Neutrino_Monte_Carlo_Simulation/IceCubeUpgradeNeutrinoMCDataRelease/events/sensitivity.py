@@ -200,16 +200,16 @@ def sanity_plots():
     fig.savefig("Zenith_Rate_For_Sensitivity.png")
 
     # Plot the overall distribution
+    counts, _, _ = np.histogram2d(input_data["reco_energy"], np.cos(input_data["reco_zenith"]), bins=[energy_bins_fine, cos_bin_plot], \
+          weights=input_data["rate_weight"])
+
     fig, ax = plt.subplots(figsize=(7,6))
     fig.suptitle("Reco Energy and Zenith Rated Distribution")
-    h, xedges, yedges, image = ax.hist2d(input_data["reco_energy"], np.cos(input_data["reco_zenith"]), bins=[energy_bins_fine, cos_bin_plot], \
-          weights=input_data["rate_weight"], \
-          label=r"$\nu_{All}$")
-    print(xedges)
+    ax.pcolormesh(energy_bins_fine, cos_bin_plot, counts.T)
+    ax.set_xscale('log')
     ax.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
     ax.set_ylabel(r"$\cos{\theta, \rm{reco}}$")
     ax.set_xlim(1, 100)
-    ax.set_xscale("log")
     ax.set_ylim(-1, 1)
     ax.legend()
 #     sns.histplot(data = input_data, x="reco_energy", y="reco_zenith", weights = "rate_weight", bins=(energy_bins_fine.tolist(), theta_bin_plot.tolist()), cbar=True)
@@ -281,7 +281,7 @@ def get_energy_bins(theta23in, m31in):
     
     return energy_hist
 
-energy_hist_theta23 = np.array((len(t23l.tolist()),))
+energy_hist_theta23 = np.array((len(t23l.tolist()), len(energy_bins_fine.tolist())))
 for i in range(len(t23l.tolist())):
     energy_hist_theta23[i] = get_energy_bins(t23l[i], m31)
 print(energy_hist_truth)
