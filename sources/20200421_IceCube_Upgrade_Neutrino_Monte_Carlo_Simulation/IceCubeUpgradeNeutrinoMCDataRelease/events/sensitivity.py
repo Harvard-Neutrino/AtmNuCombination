@@ -69,6 +69,11 @@ t23max = 0.45
 t23step = 0.05
 t23l = np.arange(t23min, t23max + t23step, t23step)
 
+m31min = 1.5e-3
+m31max = 3.5e-3
+m31step = 0.1e-3
+m31l = np.arange(m31min, m31max + m31step, m31step)
+
 # Set the chi squared plotting bins limits
 E_bin_min = 0
 E_bin_max = 2
@@ -282,6 +287,7 @@ def get_energy_bins(theta23in, m31in):
     
     return energy_hist
 
+# Probe chi squared around truth value of theta23
 energy_hist_theta23 = np.zeros((len(t23l.tolist()), len(energy_bins_fine.tolist()) - 1)).tolist()
 print("energy_hist_theta23 initialization", energy_hist_theta23)
 for i in range(len(t23l.tolist())):
@@ -315,6 +321,42 @@ def plot_t23_chi():
     ax2.grid(True)
     fig2.savefig("t23_chi_sq(non-normal).png", bbox_inches='tight')
 plot_t23_chi()
+
+
+# Probe chi squared around truth value of m31
+energy_hist_m31 = np.zeros((len(m31l.tolist()), len(energy_bins_fine.tolist()) - 1)).tolist()
+print("energy_hist_theta23 initialization", energy_hist_m31)
+for i in range(len(m31l.tolist())):
+    print(i)
+    energy_bins = get_energy_bins(theta23, m31l[i]).tolist()
+    for j in range(len(energy_bins_fine.tolist()) - 1):
+        print(j)  
+        energy = energy_bins[j]
+        energy_hist_m31[i][j] = energy
+print(energy_hist_truth)
+print(energy_hist_m31)
+
+# Calculate non-normalized chi squared
+chisq2 = np.zeros((len(m31l.tolist()),))
+for i in range(len(m31l.tolist())):
+    for j in range(len(energy_bins_fine.tolist())-1):
+        chisqplus = (energy_hist_m31[i][j] - energy_hist_truth[j]) ** 2 /  energy_hist_truth[j] ** 2
+        chisq2[i] += chisqplus
+
+print(chisq)
+
+# plot un-normalized chisq for NH, probing values of t23
+def plot_m31_chi():
+    x = m31l
+    y = chisq2
+    fig3, ax3 = plt.subplots(figsize=(7,6))
+    fig3.suptitle("Chi-Sq NH")
+    ax3.set_xlabel(r"$m^2_{31}$")
+    ax3.set_ylabel(r"$\chi^2_{NH}$")
+    ax3.plot(x, y, color ="green")
+    ax3.grid(True)
+    fig2.savefig("m31_chi_sq(non-normal).png", bbox_inches='tight')
+plot_m31_chi()
 
     
     
