@@ -45,7 +45,7 @@ numu_track_mask = numu_mask & track_mask
 # Define some energy bins (used throughout this notebook)
 energy_bins_fine = np.logspace(0., 2., num=21)
 energy_bins_course = np.logspace(0., 2., num=11)
-
+print(energy_bins_fine)
 units = nsq.Const()
 
 interactions = False
