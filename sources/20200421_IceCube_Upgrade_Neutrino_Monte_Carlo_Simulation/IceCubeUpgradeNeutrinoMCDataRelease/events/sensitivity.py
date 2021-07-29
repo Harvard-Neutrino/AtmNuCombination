@@ -151,8 +151,8 @@ fig.suptitle("Reco Energy Rated Distribution")
 #       weights=input_data["rate_weight"], \
 #       label=r"$\nu_{All}$", color="blue", histtype="step")
 # ax.set_xscale("log")
-sns.histplot(data = input_data, x = "reco_energy", weights=input_data["rate_weight"], bins = 20, binrange = (1, 100))
-ax.set_xscale("log")
+sns.histplot(data = input_data, x = "reco_energy", weights=input_data["rate_weight"], bins = 20, binrange = (1, 100), logscale = True)
+# ax.set_xscale("log")
 ax.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
 ax.set_xlim(1, 100)
 ax.ticklabel_format(axis='y', style='sci', scilimits=None,\
