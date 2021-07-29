@@ -283,8 +283,20 @@ def get_energy_bins(theta23in, m31in):
 
 energy_hist_theta23 = np.array((len(t23l.tolist()), len(energy_bins_fine.tolist())))
 for i in range(len(t23l.tolist())):
-    energy_hist_theta23[i] = get_energy_bins(t23l[i], m31)
+    for j in range(len(energy_bins_fine.tolist())):
+        energy_hist_theta23[i][j] = get_energy_bins(t23l[i], m31)[j]
 print(energy_hist_truth)
 print(energy_hist_theta23)
+
+# Calculate non-normalized chi squared
+chisq = np.zeros((len(t23l.tolist()),))
+for i in range(len(t23l.tolist())):
+    for j in range(len(energy_bins_fine.tolist())):
+        chisqplus = (energy_hist_theta23[i][j] - energy_hist_truth[j]) ** 2 /  energy_hist_truth[j] ** 2
+        chisq[i] += chisqplus
+
+print(chisq)
+        
+                 
     
     
