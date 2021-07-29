@@ -286,7 +286,7 @@ print("energy_hist_theta23 initialization", energy_hist_theta23)
 for i in range(len(t23l.tolist())):
     print(i)
     energy_bins = get_energy_bins(t23l[i], m31).tolist()
-    for j in range(len(energy_bins_fine.tolist())):
+    for j in range(len(energy_bins_fine.tolist()) - 1):
         print(j)  
         energy = energy_bins[j]
         energy_hist_theta23[i][j] = energy
@@ -302,7 +302,7 @@ for i in range(len(t23l.tolist())):
 
 print(chisq)
 
-# plot un-normalized chisq for NH, probing values of 
+# plot un-normalized chisq for NH, probing values of t23
         
                  
     
