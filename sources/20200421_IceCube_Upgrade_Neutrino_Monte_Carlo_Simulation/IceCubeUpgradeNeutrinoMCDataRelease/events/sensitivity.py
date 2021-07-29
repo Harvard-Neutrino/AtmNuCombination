@@ -198,7 +198,7 @@ ax.set_ylabel(r"$\cos{\theta, \rm{reco}}$")
 ax.set_xlim(1, 100)
 ax.set_ylim(-1, 1)
 ax.legend()
-fig.colorbar()
+fig.colorbar(ax)
 fig.savefig("2D_Rate_For_Sensitivity.png")
 
 
