@@ -281,10 +281,12 @@ def get_energy_bins(theta23in, m31in):
     
     return energy_hist
 
-energy_hist_theta23 = np.array((len(t23l.tolist()), len(energy_bins_fine.tolist())))
+energy_hist_theta23 = np.zeros((len(t23l.tolist()), len(energy_bins_fine.tolist()))).tolist()
+print("energy_hist_theta23 initialization", energy_hist_theta23)
 for i in range(len(t23l.tolist())):
     for j in range(len(energy_bins_fine.tolist())):
-        energy_hist_theta23[i][j] = get_energy_bins(t23l[i], m31)[j]
+        energy_bins = get_energy_bins(t23l[i], m31).tolist
+        energy_hist_theta23[i][j] = energy_bins(t23l[i], m31)[j]
 print(energy_hist_truth)
 print(energy_hist_theta23)
 
