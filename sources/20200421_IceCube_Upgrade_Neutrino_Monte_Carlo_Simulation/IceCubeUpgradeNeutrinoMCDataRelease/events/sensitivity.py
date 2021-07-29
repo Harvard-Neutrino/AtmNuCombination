@@ -281,7 +281,7 @@ def get_energy_bins(theta23in, m31in):
     
     return energy_hist
 
-energy_hist_theta23 = np.zeros((len(t23l.tolist()), len(energy_bins_fine.tolist()))).tolist()
+energy_hist_theta23 = np.zeros((len(t23l.tolist()), len(energy_bins_fine.tolist()) - 1)).tolist()
 print("energy_hist_theta23 initialization", energy_hist_theta23)
 for i in range(len(t23l.tolist())):
     print(i)
@@ -296,14 +296,20 @@ print(energy_hist_theta23)
 # Calculate non-normalized chi squared
 chisq = np.zeros((len(t23l.tolist()),))
 for i in range(len(t23l.tolist())):
-    for j in range(len(energy_bins_fine.tolist())):
+    for j in range(len(energy_bins_fine.tolist() - 1)):
         chisqplus = (energy_hist_theta23[i][j] - energy_hist_truth[j]) ** 2 /  energy_hist_truth[j] ** 2
         chisq[i] += chisqplus
 
 print(chisq)
 
 # plot un-normalized chisq for NH, probing values of t23
-        
+x = theta_bin_plot
+y = chisq
+plt.title("Line graph")
+plt.xlabel("X axis")
+plt.ylabel("Y axis")
+plt.plot(x, y, color ="green")
+plt.savefig("t23_chi_sq(non-normal).png")
                  
     
     
