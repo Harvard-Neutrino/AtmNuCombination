@@ -120,7 +120,7 @@ nsq_atm.Set_SquareMassDifference(2, 2.517e-3)
 
 
 nsq_atm.Set_initial_state(AtmInitialFlux,nsq.Basis.flavor)
-nsq_atm.Set_ProgressBar(True) # progress bar will be printed on terminal
+nsq_atm.Set_ProgressBar(False) # progress bar will be printed on terminal
 nsq_atm.EvolveState()
 
 lifetime = 365*24*60*60
@@ -202,9 +202,10 @@ def sanity_plots():
     # Plot the overall distribution
     fig, ax = plt.subplots(figsize=(7,6))
     fig.suptitle("Reco Energy and Zenith Rated Distribution")
-    ax.hist2d(input_data["reco_energy"], np.cos(input_data["reco_zenith"]), bins=[energy_bins_fine, cos_bin_plot], \
+    h, xedges, yedges, image = ax.hist2d(input_data["reco_energy"], np.cos(input_data["reco_zenith"]), bins=[energy_bins_fine, cos_bin_plot], \
           weights=input_data["rate_weight"], \
           label=r"$\nu_{All}$")
+    print(xedges)
     ax.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
     ax.set_ylabel(r"$\cos{\theta, \rm{reco}}$")
     ax.set_xlim(1, 100)
@@ -247,7 +248,7 @@ def get_energy_bins(theta23in, m31in):
     nsq_atm.Set_SquareMassDifference(2, m31in)
 
     nsq_atm.Set_initial_state(AtmInitialFlux,nsq.Basis.flavor)
-    nsq_atm.Set_ProgressBar(True) # progress bar will be printed on terminal
+    nsq_atm.Set_ProgressBar(False) # progress bar will be printed on terminal
     nsq_atm.EvolveState()
 
     lifetime = 365*24*60*60
@@ -280,8 +281,10 @@ def get_energy_bins(theta23in, m31in):
     
     return energy_hist
 
-check = get_energy_bins(theta23, m31)
+energy_hist_theta23 = np.array((len(t23l.tolist()),))
+for i in range(len(t23l.tolist())):
+    energy_hist_theta23[i] = get_energy_bins(t23l[i], m31)
 print(energy_hist_truth)
-print(check)
+print(energy_hist_theta23)
     
     
