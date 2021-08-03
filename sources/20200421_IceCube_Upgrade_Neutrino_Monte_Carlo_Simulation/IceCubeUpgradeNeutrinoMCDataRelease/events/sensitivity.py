@@ -64,13 +64,13 @@ cth_nodes = nsq.linspace(cth_min,cth_max,cth_nodes)
 neutrino_flavors = 3
 
 # theta23 numeric values to probe sensitivity
-t23min = 0.1 * np.pi
-t23max = 0.45 * np.pi
+t23min = 0.0 * np.pi
+t23max = 0.75 * np.pi
 t23step = 0.05 * np.pi
 t23l = np.arange(t23min, t23max + t23step, t23step)
 
-m31min = 1.5e-3
-m31max = 3.5e-3
+m31min = 0.5e-3
+m31max = 5.5e-3
 m31step = 0.1e-3
 m31l = np.arange(m31min, m31max + m31step, m31step)
 
@@ -312,7 +312,7 @@ for i in range(len(t23l.tolist())):
     for j in range(len(energy_bins_fine.tolist())-1):
         chisqplus = (energy_hist_theta23[i][j] - energy_hist_truth[j]) ** 2 /  energy_hist_truth[j]
         chisq[i] += chisqplus
-
+w
 # print(chisq)
 
 # plot un-normalized chisq for NH, probing values of t23
@@ -323,6 +323,7 @@ def plot_t23_chi():
     fig2.suptitle("Chi-Sq NH")
     ax2.set_xlabel(r"$\theta_{23}$")
     ax2.set_ylabel(r"$\chi^2_{NH}$")
+    ax2.set_yscale("log")
     ax2.plot(x, y, color ="green")
     ax2.grid(True)
     fig2.savefig("t23_chi_sq(non-normal).png", bbox_inches='tight')
@@ -339,8 +340,8 @@ for i in range(len(m31l.tolist())):
         print(j)  
         energy = energy_bins[j]
         energy_hist_m31[i][j] = energy
-print(energy_hist_truth)
-print(energy_hist_m31)
+# print(energy_hist_truth)
+# print(energy_hist_m31)
 
 # Calculate non-normalized chi squared
 chisq2 = np.zeros((len(m31l.tolist()),))
