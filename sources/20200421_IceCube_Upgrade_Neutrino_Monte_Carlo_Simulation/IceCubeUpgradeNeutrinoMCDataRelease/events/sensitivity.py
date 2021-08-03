@@ -64,9 +64,9 @@ cth_nodes = nsq.linspace(cth_min,cth_max,cth_nodes)
 neutrino_flavors = 3
 
 # theta23 numeric values to probe sensitivity
-t23min = 0.1
-t23max = 0.45
-t23step = 0.05
+t23min = 0.1 * np.pi
+t23max = 0.45 * np.pi
+t23step = 0.05 * np.pi
 t23l = np.arange(t23min, t23max + t23step, t23step)
 
 m31min = 1.5e-3
@@ -150,7 +150,7 @@ for i in range(len(rate_weight)):
     rate_weight[i] = input_data["weight"][i]*nsq_atm.EvalFlavor(neuflavor,
                                                                 np.cos(input_data["true_zenith"][i]),
                                                                 input_data["true_energy"][i]*\
-                                                                units.GeV,neutype)*lifetime*meter_to_cm_sq
+                                                                units.GeV,neutype)*lifetime*meter_to_cm_sq*5
 
 input_data["rate_weight"] = rate_weight
 
@@ -174,7 +174,7 @@ def sanity_plots():
     ax.set_xlim(1, 100)
     ax.ticklabel_format(axis='y', style='sci', scilimits=None,\
                      useOffset=None, useLocale=None, useMathText=None)
-    ax.set_ylabel("Rate [Year]")
+    ax.set_ylabel("Rate [5Years]")
     ax.grid(True)
     ax.legend()
     fig.savefig("Rate_For_Sensitivity.png", bbox_inches='tight')
@@ -205,7 +205,7 @@ def sanity_plots():
     ax.set_xlim(-1, 1)
     ax.ticklabel_format(axis='y', style='sci', scilimits=None,\
                      useOffset=None, useLocale=None, useMathText=None)
-    ax.set_ylabel("Rate [Year]")
+    ax.set_ylabel("Rate [5Years]")
     ax.grid(True)
     ax.legend()
     fig.savefig("Zenith_Rate_For_Sensitivity.png", bbox_inches='tight')
@@ -284,7 +284,7 @@ def get_energy_bins(theta23in, m31in):
         rate_weight[i] = input_data["weight"][i]*nsq_atm.EvalFlavor(neuflavor,
                                                                     np.cos(input_data["true_zenith"][i]),
                                                                     input_data["true_energy"][i]*\
-                                                                    units.GeV,neutype)*lifetime*meter_to_cm_sq
+                                                                    units.GeV,neutype)*lifetime*meter_to_cm_sq*5
     input_data["rate_weight"] = rate_weight
     
     # Now first obtain  the energy binned event rate distributions 1-100GeV
@@ -326,7 +326,7 @@ def plot_t23_chi():
     ax2.plot(x, y, color ="green")
     ax2.grid(True)
     fig2.savefig("t23_chi_sq(non-normal).png", bbox_inches='tight')
-# plot_t23_chi()
+plot_t23_chi()
 
 
 # Probe chi squared around truth value of m31
@@ -362,7 +362,7 @@ def plot_m31_chi():
     ax3.plot(x, y, color ="green")
     ax3.grid(True)
     fig3.savefig("m31_chi_sq(non-normal).png", bbox_inches='tight')
-# plot_m31_chi()
+plot_m31_chi()
 
     
     
