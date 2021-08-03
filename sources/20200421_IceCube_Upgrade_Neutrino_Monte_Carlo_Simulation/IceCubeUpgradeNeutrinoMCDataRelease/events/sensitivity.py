@@ -96,9 +96,9 @@ theta_bin_plot = nsq.linspace(theta_bin_min, theta_bin_max, theta_n_bins)
 bins = np.zeros((t23l.shape[0], E_n_bins))
 
 # Set up parameters as in nu-fit5.0
-theta12 = 0.185778
-theta13 = 0.047611
-theta23 = 0.273333
+theta12 = np.arcsin(np.sqrt(0.304))
+theta13 = np.arcsin(np.sqrt(0.02221))
+theta23 = np.arcsin(np.sqrt(0.570))
 m21 = 7.42e-5
 m31 = 2.517e-3
 
@@ -320,7 +320,7 @@ def plot_t23_chi():
     ax2.plot(x, y, color ="green")
     ax2.grid(True)
     fig2.savefig("t23_chi_sq(non-normal).png", bbox_inches='tight')
-# plot_t23_chi()
+plot_t23_chi()
 
 
 # Probe chi squared around truth value of m31
