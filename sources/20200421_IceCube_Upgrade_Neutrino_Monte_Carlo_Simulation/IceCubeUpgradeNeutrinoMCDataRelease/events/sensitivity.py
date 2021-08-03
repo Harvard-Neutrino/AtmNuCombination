@@ -164,10 +164,10 @@ def sanity_plots():
     fig, ax = plt.subplots(figsize=(7,6))
     fig.suptitle("Reco Energy Rated Distribution")
     ax.hist(input_data["reco_energy"][cascade_mask], bins=E_bin_plot, \
-          weights=input_data["rate_weight"], \
+          weights=input_data["rate_weight"][cascade_mask], \
           label=r"$\nu_{All, Cascade}$", color="blue", histtype="step")
     ax.hist(input_data["reco_energy"][track_mask], bins=E_bin_plot, \
-          weights=input_data["rate_weight"], \
+          weights=input_data["rate_weight"][track_mask], \
           label=r"$\nu_{All, Track}$", color="red", histtype="step")
     ax.set_xscale("log")
     ax.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
@@ -195,10 +195,10 @@ def sanity_plots():
     fig, ax = plt.subplots(figsize=(7,6))
     fig.suptitle("Reco Zenith Rated Distribution")
     ax.hist(np.cos(input_data["reco_zenith"][cascade_mask]), bins=cos_bin_plot, \
-          weights=input_data["rate_weight"], \
+          weights=input_data["rate_weight"][cascade_mask], \
           label=r"$\nu_{All, Cascade}$", color="blue", histtype="step")
     ax.hist(np.cos(input_data["reco_zenith"][track_mask]), bins=cos_bin_plot, \
-          weights=input_data["rate_weight"], \
+          weights=input_data["rate_weight"][track_mask], \
           label=r"$\nu_{All, Track}$", color="red", histtype="step")
 #     sns.histplot(data = "input_data", x = "reco_zenith", weights = "rate_weight", bins = theta_bin_plot.tolist(), cbar = True)
     ax.set_xlabel(r"$\cos{\theta, \rm{reco}}$")
