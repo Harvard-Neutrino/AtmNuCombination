@@ -52,7 +52,7 @@ interactions = False
 
 # Set propagation bins
 E_min = 10.0*units.GeV
-E_max = 1.0e3*units.PeV
+E_max = 1.0e3*units.GeV
 E_nodes = 100
 energy_nodes = nsq.logspace(E_min,E_max,E_nodes)
 
@@ -163,9 +163,12 @@ def sanity_plots():
     # Plot the energy distribution
     fig, ax = plt.subplots(figsize=(7,6))
     fig.suptitle("Reco Energy Rated Distribution")
-    ax.hist(input_data["reco_energy"], bins=E_bin_plot, \
+    ax.hist(input_data["reco_energy"][cascade_mask], bins=E_bin_plot, \
           weights=input_data["rate_weight"], \
-          label=r"$\nu_{All}$", color="blue", histtype="step")
+          label=r"$\nu_{All, Cascade}$", color="blue", histtype="step")
+    ax.hist(input_data["reco_energy"][track_mask], bins=E_bin_plot, \
+          weights=input_data["rate_weight"], \
+          label=r"$\nu_{All, Track}$", color="red", histtype="step")
     ax.set_xscale("log")
     ax.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
     ax.set_xlim(1, 100)
@@ -191,9 +194,12 @@ def sanity_plots():
     # Plot the angle distribution
     fig, ax = plt.subplots(figsize=(7,6))
     fig.suptitle("Reco Zenith Rated Distribution")
-    ax.hist(np.cos(input_data["reco_zenith"]), bins=cos_bin_plot, \
+    ax.hist(np.cos(input_data["reco_zenith"][cascade_mask]), bins=cos_bin_plot, \
           weights=input_data["rate_weight"], \
-          label=r"$\nu_{All}$", color="blue", histtype="step")
+          label=r"$\nu_{All, Cascade}$", color="blue", histtype="step")
+    ax.hist(np.cos(input_data["reco_zenith"][track_mask]), bins=cos_bin_plot, \
+          weights=input_data["rate_weight"], \
+          label=r"$\nu_{All, Track}$", color="red", histtype="step")
 #     sns.histplot(data = "input_data", x = "reco_zenith", weights = "rate_weight", bins = theta_bin_plot.tolist(), cbar = True)
     ax.set_xlabel(r"$\cos{\theta, \rm{reco}}$")
     ax.set_xlim(-1, 1)
@@ -297,8 +303,8 @@ for i in range(len(t23l.tolist())):
         print(j)  
         energy = energy_bins[j]
         energy_hist_theta23[i][j] = energy
-print(energy_hist_truth)
-print(energy_hist_theta23)
+# print(energy_hist_truth)
+# print(energy_hist_theta23)
 
 # Calculate non-normalized chi squared
 chisq = np.zeros((len(t23l.tolist()),))
@@ -307,7 +313,7 @@ for i in range(len(t23l.tolist())):
         chisqplus = (energy_hist_theta23[i][j] - energy_hist_truth[j]) ** 2 /  energy_hist_truth[j] ** 2
         chisq[i] += chisqplus
 
-print(chisq)
+# print(chisq)
 
 # plot un-normalized chisq for NH, probing values of t23
 def plot_t23_chi():
@@ -320,12 +326,12 @@ def plot_t23_chi():
     ax2.plot(x, y, color ="green")
     ax2.grid(True)
     fig2.savefig("t23_chi_sq(non-normal).png", bbox_inches='tight')
-plot_t23_chi()
+# plot_t23_chi()
 
 
 # Probe chi squared around truth value of m31
 energy_hist_m31 = np.zeros((len(m31l.tolist()), len(energy_bins_fine.tolist()) - 1)).tolist()
-print("energy_hist_theta23 initialization", energy_hist_m31)
+# print("energy_hist_theta23 initialization", energy_hist_m31)
 for i in range(len(m31l.tolist())):
     print(i)
     energy_bins = get_energy_bins(theta23, m31l[i]).tolist()
@@ -343,7 +349,7 @@ for i in range(len(m31l.tolist())):
         chisqplus = (energy_hist_m31[i][j] - energy_hist_truth[j]) ** 2 /  energy_hist_truth[j] ** 2
         chisq2[i] += chisqplus
 
-print(chisq)
+# print(chisq)
 
 # plot un-normalized chisq for NH, probing values of t23
 def plot_m31_chi():
@@ -356,7 +362,7 @@ def plot_m31_chi():
     ax3.plot(x, y, color ="green")
     ax3.grid(True)
     fig3.savefig("m31_chi_sq(non-normal).png", bbox_inches='tight')
-plot_m31_chi()
+# plot_m31_chi()
 
     
     
