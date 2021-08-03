@@ -310,7 +310,7 @@ for i in range(len(t23l.tolist())):
 chisq = np.zeros((len(t23l.tolist()),))
 for i in range(len(t23l.tolist())):
     for j in range(len(energy_bins_fine.tolist())-1):
-        chisqplus = (energy_hist_theta23[i][j] - energy_hist_truth[j]) ** 2 /  energy_hist_truth[j] ** 2
+        chisqplus = (energy_hist_theta23[i][j] - energy_hist_truth[j]) ** 2 /  energy_hist_truth[j]
         chisq[i] += chisqplus
 
 # print(chisq)
@@ -346,7 +346,7 @@ print(energy_hist_m31)
 chisq2 = np.zeros((len(m31l.tolist()),))
 for i in range(len(m31l.tolist())):
     for j in range(len(energy_bins_fine.tolist())-1):
-        chisqplus = (energy_hist_m31[i][j] - energy_hist_truth[j]) ** 2 /  energy_hist_truth[j] ** 2
+        chisqplus = (energy_hist_m31[i][j] - energy_hist_truth[j]) ** 2 /  energy_hist_truth[j]
         chisq2[i] += chisqplus
 
 # print(chisq)
