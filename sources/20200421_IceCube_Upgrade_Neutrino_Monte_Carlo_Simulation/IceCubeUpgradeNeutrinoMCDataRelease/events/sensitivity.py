@@ -66,7 +66,7 @@ neutrino_flavors = 3
 # theta23 numeric values to probe sensitivity
 t23min = 0.0 * np.pi
 t23max = 0.75 * np.pi
-t23step = 0.05 * np.pi
+t23step = 0.025 * np.pi
 t23l = np.arange(t23min, t23max + t23step, t23step)
 
 m31min = 0.5e-3
@@ -312,7 +312,7 @@ for i in range(len(t23l.tolist())):
     for j in range(len(energy_bins_fine.tolist())-1):
         chisqplus = (energy_hist_theta23[i][j] - energy_hist_truth[j]) ** 2 /  energy_hist_truth[j]
         chisq[i] += chisqplus
-w
+
 # print(chisq)
 
 # plot un-normalized chisq for NH, probing values of t23
@@ -361,6 +361,7 @@ def plot_m31_chi():
     ax3.set_xlabel(r"$m^2_{31}$")
     ax3.set_ylabel(r"$\chi^2_{NH}$")
     ax3.plot(x, y, color ="green")
+    ax3.set_yscale("log")
     ax3.grid(True)
     fig3.savefig("m31_chi_sq(non-normal).png", bbox_inches='tight')
 plot_m31_chi()
