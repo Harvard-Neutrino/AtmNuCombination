@@ -65,7 +65,7 @@ neutrino_flavors = 3
 
 # theta23 numeric values to probe sensitivity
 t23min = 0.0 * np.pi
-t23max = 0.75 * np.pi
+t23max = 0.5 * np.pi
 t23step = 0.025 * np.pi
 t23l = np.arange(t23min, t23max + t23step, t23step)
 
@@ -317,11 +317,11 @@ for i in range(len(t23l.tolist())):
 
 # plot un-normalized chisq for NH, probing values of t23
 def plot_t23_chi():
-    x = t23l
+    x = np.sin(t23l) ** 2
     y = chisq
     fig2, ax2 = plt.subplots(figsize=(7,6))
     fig2.suptitle("Chi-Sq NH")
-    ax2.set_xlabel(r"$\theta_{23}$")
+    ax2.set_xlabel(r"$\sin^2{\theta_{23}}$")
     ax2.set_ylabel(r"$\chi^2_{NH}$")
     ax2.set_yscale("log")
     ax2.plot(x, y, color ="green")
