@@ -2,6 +2,9 @@ import numpy as np
 import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
+import nuSQUIDSpy as nsq
+import nuflux
+import seaborn as sns
 
 # Define path to file (you may need to change this to match your system)
 input_file = "neutrino_mc.csv"
