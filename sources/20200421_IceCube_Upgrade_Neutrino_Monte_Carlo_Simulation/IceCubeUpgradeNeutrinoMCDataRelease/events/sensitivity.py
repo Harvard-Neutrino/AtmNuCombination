@@ -293,27 +293,30 @@ def get_energy_bins(theta23in, m31in):
     
     return energy_hist
 
-# Probe chi squared around truth value of theta23
-energy_hist_theta23 = np.zeros((len(t23l.tolist()), len(energy_bins_fine.tolist()) - 1)).tolist()
-print("energy_hist_theta23 initialization", energy_hist_theta23)
-for i in range(len(t23l.tolist())):
-    print(i)
-    energy_bins = get_energy_bins(t23l[i], m31).tolist()
-    for j in range(len(energy_bins_fine.tolist()) - 1):
-        print(j)  
-        energy = energy_bins[j]
-        energy_hist_theta23[i][j] = energy
-# print(energy_hist_truth)
-# print(energy_hist_theta23)
+t23sensitivity = True
 
-# Calculate non-normalized chi squared
-chisq = np.zeros((len(t23l.tolist()),))
-for i in range(len(t23l.tolist())):
-    for j in range(len(energy_bins_fine.tolist())-1):
-        chisqplus = (energy_hist_theta23[i][j] - energy_hist_truth[j]) ** 2 /  energy_hist_truth[j]
-        chisq[i] += chisqplus
+if t23sensitivity:
+    # Probe chi squared around truth value of theta23
+    energy_hist_theta23 = np.zeros((len(t23l.tolist()), len(energy_bins_fine.tolist()) - 1)).tolist()
+    print("energy_hist_theta23 initialization", energy_hist_theta23)
+    for i in range(len(t23l.tolist())):
+        print(i)
+        energy_bins = get_energy_bins(t23l[i], m31).tolist()
+        for j in range(len(energy_bins_fine.tolist()) - 1):
+            print(j)  
+            energy = energy_bins[j]
+            energy_hist_theta23[i][j] = energy
+    # print(energy_hist_truth)
+    # print(energy_hist_theta23)
 
-# print(chisq)
+    # Calculate non-normalized chi squared
+    chisq = np.zeros((len(t23l.tolist()),))
+    for i in range(len(t23l.tolist())):
+        for j in range(len(energy_bins_fine.tolist())-1):
+            chisqplus = (energy_hist_theta23[i][j] - energy_hist_truth[j]) ** 2 /  energy_hist_truth[j]
+            chisq[i] += chisqplus
+
+    # print(chisq)
 
 # plot un-normalized chisq for NH, probing values of t23
 def plot_t23_chi():
@@ -330,27 +333,29 @@ def plot_t23_chi():
 plot_t23_chi()
 
 
-# Probe chi squared around truth value of m31
-energy_hist_m31 = np.zeros((len(m31l.tolist()), len(energy_bins_fine.tolist()) - 1)).tolist()
-# print("energy_hist_theta23 initialization", energy_hist_m31)
-for i in range(len(m31l.tolist())):
-    print(i)
-    energy_bins = get_energy_bins(theta23, m31l[i]).tolist()
-    for j in range(len(energy_bins_fine.tolist()) - 1):
-        print(j)  
-        energy = energy_bins[j]
-        energy_hist_m31[i][j] = energy
-# print(energy_hist_truth)
-# print(energy_hist_m31)
+m31sensitivity = True
+if m31sensitivity:
+    # Probe chi squared around truth value of m31
+    energy_hist_m31 = np.zeros((len(m31l.tolist()), len(energy_bins_fine.tolist()) - 1)).tolist()
+    # print("energy_hist_theta23 initialization", energy_hist_m31)
+    for i in range(len(m31l.tolist())):
+        print(i)
+        energy_bins = get_energy_bins(theta23, m31l[i]).tolist()
+        for j in range(len(energy_bins_fine.tolist()) - 1):
+            print(j)  
+            energy = energy_bins[j]
+            energy_hist_m31[i][j] = energy
+    # print(energy_hist_truth)
+    # print(energy_hist_m31)
 
-# Calculate non-normalized chi squared
-chisq2 = np.zeros((len(m31l.tolist()),))
-for i in range(len(m31l.tolist())):
-    for j in range(len(energy_bins_fine.tolist())-1):
-        chisqplus = (energy_hist_m31[i][j] - energy_hist_truth[j]) ** 2 /  energy_hist_truth[j]
-        chisq2[i] += chisqplus
+    # Calculate non-normalized chi squared
+    chisq2 = np.zeros((len(m31l.tolist()),))
+    for i in range(len(m31l.tolist())):
+        for j in range(len(energy_bins_fine.tolist())-1):
+            chisqplus = (energy_hist_m31[i][j] - energy_hist_truth[j]) ** 2 /  energy_hist_truth[j]
+            chisq2[i] += chisqplus
 
-# print(chisq)
+    # print(chisq)
 
 # plot un-normalized chisq for NH, probing values of t23
 def plot_m31_chi():
@@ -366,5 +371,7 @@ def plot_m31_chi():
     fig3.savefig("m31_chi_sq(non-normal).png", bbox_inches='tight')
 plot_m31_chi()
 
+# normalization is here
+# first normalize the m31 bins
     
     
