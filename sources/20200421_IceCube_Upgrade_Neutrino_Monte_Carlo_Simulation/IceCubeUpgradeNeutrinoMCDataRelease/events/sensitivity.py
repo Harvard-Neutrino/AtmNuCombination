@@ -6,233 +6,66 @@ import nuSQUIDSpy as nsq
 import nuflux
 import seaborn as sns
 
+from params import *
+
 matplotlib.rcParams.update({'font.size': 16})
 matplotlib.rcParams.update({'lines.linewidth': 3})
 matplotlib.rcParams.update({'patch.linewidth': 3})
 
-# Define path to file (you may need to change this to match your system)
-input_file = "neutrino_mc.csv"
+# Obtain the rated weight of each event
+def get_rated_weight():
+    nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,neutrino_flavors,nsq.NeutrinoType.both,interactions)
 
-# Load the file using pandas
-input_data = pd.read_csv(input_file)
+    AtmInitialFlux = np.zeros((len(cth_nodes),len(energy_nodes),2,neutrino_flavors))
+    flux = nuflux.makeFlux('honda2006')
+    for ic,cth in enumerate(nsq_atm.GetCosthRange()):
+        for ie,E in enumerate(nsq_atm.GetERange()):
+            nu_energy = E/units.GeV
+            nu_cos_zenith = cth
+            AtmInitialFlux[ic][ie][0][0] = flux.getFlux(nuflux.NuE,nu_energy,nu_cos_zenith) # nue
+            AtmInitialFlux[ic][ie][1][0] = flux.getFlux(nuflux.NuEBar,nu_energy,nu_cos_zenith) # nue bar
+            AtmInitialFlux[ic][ie][0][1] = flux.getFlux(nuflux.NuMu,nu_energy,nu_cos_zenith) # numu
+            AtmInitialFlux[ic][ie][1][1] = flux.getFlux(nuflux.NuMuBar,nu_energy,nu_cos_zenith) # numu bar
+            AtmInitialFlux[ic][ie][0][2] = flux.getFlux(nuflux.NuTau,nu_energy,nu_cos_zenith) # nutau
+            AtmInitialFlux[ic][ie][1][2] = flux.getFlux(nuflux.NuTauBar,nu_energy,nu_cos_zenith) # nutau bar
 
+    nsq_atm.Set_MixingAngle(0, 1, 0.185778)
+    nsq_atm.Set_MixingAngle(0, 2, 0.047611)
+    nsq_atm.Set_MixingAngle(1, 2, theta23)
+    nsq_atm.Set_SquareMassDifference(1, 7.42e-5)
+    nsq_atm.Set_SquareMassDifference(2, 2.517e-3)
 
-# Define masks to identify different neutrino flavors
-nue_mask = (np.abs(input_data["pdg"]) == 12)
-numu_mask = (np.abs(input_data["pdg"]) == 14)
-nutau_mask = (np.abs(input_data["pdg"]) == 16)
+    nsq_atm.Set_initial_state(AtmInitialFlux,nsq.Basis.flavor)
+    nsq_atm.Set_ProgressBar(False) # progress bar will be printed on terminal
+    nsq_atm.EvolveState()
 
-# Define masks to identify interaction species
-cascade_mask = (np.abs(input_data["pid"]) == 0)
-track_mask = (np.abs(input_data["pid"]) == 1)
+    lifetime = 365*24*60*60
+    meter_to_cm_sq = 1e4
+    rate_weight = np.zeros_like(input_data["weight"])
+    for i in range(len(rate_weight)):
+        if input_data["pdg"][i] > 0 :
+            neutype = 0
+        else:
+            neutype = 1
 
-# Define masks to identify different flavor/interaction combinations.
-nc_mask = input_data["current_type"] == 0
-cc_mask = input_data["current_type"] == 1
-nue_cc_mask = nue_mask & cc_mask
-numu_cc_mask = numu_mask & cc_mask
-nutau_cc_mask = nutau_mask & cc_mask
-nue_nc_mask = nue_mask & nc_mask
-numu_nc_mask = numu_mask & nc_mask
-nutau_nc_mask = nutau_mask & nc_mask 
-nue_cascade_mask = nue_mask & cascade_mask
-nue_track_mask = nue_mask & track_mask
-nutau_cascade_mask = nutau_mask & cascade_mask
-nutau_track_mask = nutau_mask & track_mask
-numu_cascade_mask = numu_mask & cascade_mask
-numu_track_mask = numu_mask & track_mask
+        if np.abs(input_data["pdg"][i]) == 12:
+            neuflavor = 0
+        elif np.abs(input_data["pdg"][i]) == 14:
+            neuflavor = 1
+        elif np.abs(input_data["pdg"][i]) == 16:
+            neuflavor = 2
 
-# Define some energy bins (used throughout this notebook)
-energy_bins_fine = np.logspace(0., 2., num=21)
-energy_bins_course = np.logspace(0., 2., num=11)
-# print(energy_bins_fine)
-units = nsq.Const()
+        if input_data["true_energy"][i]*units.GeV < E_min or input_data["true_energy"][i]*units.GeV > E_max:
+            rate_weight[i] = 0
+            continue
+        rate_weight[i] = input_data["weight"][i]*nsq_atm.EvalFlavor(neuflavor,
+                                                                    np.cos(input_data["true_zenith"][i]),
+                                                                    input_data["true_energy"][i]*\
+                                                                    units.GeV,neutype)*lifetime*meter_to_cm_sq*5
+    return rate_weight
 
-interactions = False
-
-# Set propagation bins
-E_min = 10.0*units.GeV
-E_max = 1.0e3*units.GeV
-E_nodes = 100
-energy_nodes = nsq.logspace(E_min,E_max,E_nodes)
-
-cth_min = -1.0
-cth_max = 1.0
-cth_nodes = 40
-cth_nodes = nsq.linspace(cth_min,cth_max,cth_nodes)
-
-neutrino_flavors = 3
-
-# theta23 numeric values to probe sensitivity
-t23min = 0.0 * np.pi
-t23max = 0.5 * np.pi
-t23step = 0.025 * np.pi
-t23l = np.arange(t23min, t23max + t23step, t23step)
-
-m31min = 0.5e-3
-m31max = 5.5e-3
-m31step = 0.1e-3
-m31l = np.arange(m31min, m31max + m31step, m31step)
-
-# Set the chi squared plotting bins limits
-E_bin_min = 0
-E_bin_max = 2
-E_n_bins = 20
-E_bin_plot = np.logspace(E_bin_min, E_bin_max, E_n_bins)
-
-cos_bin_min = -1
-cos_bin_max = 1
-cos_n_bins = 10
-cos_bin_plot = nsq.linspace(cos_bin_min, cos_bin_max, cos_n_bins)
-
-theta_bin_min = np.pi
-theta_bin_max = 2 * np.pi
-theta_n_bins = 10
-theta_bin_plot = nsq.linspace(theta_bin_min, theta_bin_max, theta_n_bins)
-
-
-# Set up chi squared bins
-# print("the shape of t23l is", t23l.shape[0])
-bins = np.zeros((t23l.shape[0], E_n_bins))
-
-# Set up parameters as in nu-fit5.0
-theta12 = np.arcsin(np.sqrt(0.304))
-theta13 = np.arcsin(np.sqrt(0.02221))
-theta23 = np.arcsin(np.sqrt(0.570))
-m21 = 7.42e-5
-m31 = 2.517e-3
-
-nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,neutrino_flavors,nsq.NeutrinoType.both,interactions)
-
-AtmInitialFlux = np.zeros((len(cth_nodes),len(energy_nodes),2,neutrino_flavors))
-flux = nuflux.makeFlux('honda2006')
-for ic,cth in enumerate(nsq_atm.GetCosthRange()):
-    for ie,E in enumerate(nsq_atm.GetERange()):
-        nu_energy = E/units.GeV
-        nu_cos_zenith = cth
-        AtmInitialFlux[ic][ie][0][0] = flux.getFlux(nuflux.NuE,nu_energy,nu_cos_zenith) # nue
-        AtmInitialFlux[ic][ie][1][0] = flux.getFlux(nuflux.NuEBar,nu_energy,nu_cos_zenith) # nue bar
-        AtmInitialFlux[ic][ie][0][1] = flux.getFlux(nuflux.NuMu,nu_energy,nu_cos_zenith) # numu
-        AtmInitialFlux[ic][ie][1][1] = flux.getFlux(nuflux.NuMuBar,nu_energy,nu_cos_zenith) # numu bar
-        AtmInitialFlux[ic][ie][0][2] = flux.getFlux(nuflux.NuTau,nu_energy,nu_cos_zenith) # nutau
-        AtmInitialFlux[ic][ie][1][2] = flux.getFlux(nuflux.NuTauBar,nu_energy,nu_cos_zenith) # nutau bar
-
-nsq_atm.Set_MixingAngle(0, 1, 0.185778)
-nsq_atm.Set_MixingAngle(0, 2, 0.047611)
-nsq_atm.Set_MixingAngle(1, 2, theta23)
-nsq_atm.Set_SquareMassDifference(1, 7.42e-5)
-nsq_atm.Set_SquareMassDifference(2, 2.517e-3)
-
-
-nsq_atm.Set_initial_state(AtmInitialFlux,nsq.Basis.flavor)
-nsq_atm.Set_ProgressBar(False) # progress bar will be printed on terminal
-nsq_atm.EvolveState()
-
-lifetime = 365*24*60*60
-meter_to_cm_sq = 1e4
-rate_weight = np.zeros_like(input_data["weight"])
-for i in range(len(rate_weight)):
-    if input_data["pdg"][i] > 0 :
-        neutype = 0
-    else:
-        neutype = 1
-
-    if np.abs(input_data["pdg"][i]) == 12:
-        neuflavor = 0
-    elif np.abs(input_data["pdg"][i]) == 14:
-        neuflavor = 1
-    elif np.abs(input_data["pdg"][i]) == 16:
-        neuflavor = 2
-
-    if input_data["true_energy"][i]*units.GeV < E_min or input_data["true_energy"][i]*units.GeV > E_max:
-        rate_weight[i] = 0
-        continue
-    rate_weight[i] = input_data["weight"][i]*nsq_atm.EvalFlavor(neuflavor,
-                                                                np.cos(input_data["true_zenith"][i]),
-                                                                input_data["true_energy"][i]*\
-                                                                units.GeV,neutype)*lifetime*meter_to_cm_sq*5
-
-input_data["rate_weight"] = rate_weight
-
+input_data["rate_weight"] = get_rated_weight()
 energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"], bins = energy_bins_fine, weights = input_data["rate_weight"])
-
-
-def sanity_plots():
-    print("plotting sanity check distributions")
-    
-    # Plot the energy distribution
-    fig, ax = plt.subplots(figsize=(7,6))
-    fig.suptitle("Reco Energy Rated Distribution")
-    ax.hist(input_data["reco_energy"][cascade_mask], bins=E_bin_plot, \
-          weights=input_data["rate_weight"][cascade_mask], \
-          label=r"$\nu_{All, Cascade}$", color="blue", histtype="step")
-    ax.hist(input_data["reco_energy"][track_mask], bins=E_bin_plot, \
-          weights=input_data["rate_weight"][track_mask], \
-          label=r"$\nu_{All, Track}$", color="red", histtype="step")
-    ax.set_xscale("log")
-    ax.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
-    ax.set_xlim(1, 100)
-    ax.ticklabel_format(axis='y', style='sci', scilimits=None,\
-                     useOffset=None, useLocale=None, useMathText=None)
-    ax.set_ylabel("Rate [5Years]")
-    ax.grid(True)
-    ax.legend()
-    fig.savefig("Rate_For_Sensitivity.png", bbox_inches='tight')
-#     fig_sns, ax_sns = plt.subplots(figsize=(7,6))
-#     fig_sns.suptitle("Reco Energy Rated Distribution")
-#     sns.histplot(data = input_data, x = "reco_energy", weights=input_data["rate_weight"], bins = energy_bins_fine.tolist(), binrange = (1, 100))
-#     ax_sns.set_xscale("log")
-#     ax_sns.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
-#     ax_sns.set_xlim(1, 100)
-#     ax_sns.ticklabel_format(axis='y', style='sci', scilimits=None,\
-#                      useOffset=None, useLocale=None, useMathText=None)
-#     ax_sns.set_ylabel("Rate [Year]")
-#     ax_sns.grid(True)
-#     ax_sns.legend()
-#     fig_sns.savefig("Rate_For_Sensitivity.png")
-
-    # Plot the angle distribution
-    fig, ax = plt.subplots(figsize=(7,6))
-    fig.suptitle("Reco Zenith Rated Distribution")
-    ax.hist(np.cos(input_data["reco_zenith"][cascade_mask]), bins=cos_bin_plot, \
-          weights=input_data["rate_weight"][cascade_mask], \
-          label=r"$\nu_{All, Cascade}$", color="blue", histtype="step")
-    ax.hist(np.cos(input_data["reco_zenith"][track_mask]), bins=cos_bin_plot, \
-          weights=input_data["rate_weight"][track_mask], \
-          label=r"$\nu_{All, Track}$", color="red", histtype="step")
-#     sns.histplot(data = "input_data", x = "reco_zenith", weights = "rate_weight", bins = theta_bin_plot.tolist(), cbar = True)
-    ax.set_xlabel(r"$\cos{\theta, \rm{reco}}$")
-    ax.set_xlim(-1, 1)
-    ax.ticklabel_format(axis='y', style='sci', scilimits=None,\
-                     useOffset=None, useLocale=None, useMathText=None)
-    ax.set_ylabel("Rate [5Years]")
-    ax.grid(True)
-    ax.legend()
-    fig.savefig("Zenith_Rate_For_Sensitivity.png", bbox_inches='tight')
-
-    # Plot the overall distribution
-    counts, _, _ = np.histogram2d(input_data["reco_energy"], np.cos(input_data["reco_zenith"]), bins=[energy_bins_fine, cos_bin_plot], \
-          weights=input_data["rate_weight"])
-
-    fig, ax = plt.subplots(figsize=(7,6))
-    fig.suptitle("Reco Energy and Zenith Rated Distribution")
-    ax.pcolormesh(energy_bins_fine, cos_bin_plot, counts.T)
-    ax.set_xscale('log')
-    ax.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
-    ax.set_ylabel(r"$\cos{\theta, \rm{reco}}$")
-    ax.set_xlim(1, 100)
-    ax.set_ylim(-1, 1)
-    ax.legend()
-#     sns.histplot(data = input_data, x="reco_energy", y="reco_zenith", weights = "rate_weight", bins=(energy_bins_fine.tolist(), theta_bin_plot.tolist()), cbar=True)
-#     ax.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
-#     ax.set_ylabel(r"$\theta_{\rm{reco}}$")
-#     ax.set_xlim(1, 100)
-#     ax.set_xscale("log")
-#     ax.set_ylim(np.pi, 2 * np.pi)
-#     ax.legend()
-    fig.savefig("2D_Rate_For_Sensitivity.png", bbox_inches='tight')
-
-sanity_plots()
 
 
 def get_energy_bins(theta23in, m31in):
@@ -293,7 +126,7 @@ def get_energy_bins(theta23in, m31in):
     
     return energy_hist
 
-t23sensitivity = True
+t23sensitivity = False
 
 if t23sensitivity:
     # Probe chi squared around truth value of theta23
@@ -330,10 +163,10 @@ def plot_t23_chi():
     ax2.plot(x, y, color ="green")
     ax2.grid(True)
     fig2.savefig("t23_chi_sq(non-normal).png", bbox_inches='tight')
-plot_t23_chi()
+# plot_t23_chi()
 
 
-m31sensitivity = True
+m31sensitivity = False
 if m31sensitivity:
     # Probe chi squared around truth value of m31
     energy_hist_m31 = np.zeros((len(m31l.tolist()), len(energy_bins_fine.tolist()) - 1)).tolist()
@@ -369,7 +202,7 @@ def plot_m31_chi():
     ax3.set_yscale("log")
     ax3.grid(True)
     fig3.savefig("m31_chi_sq(non-normal).png", bbox_inches='tight')
-plot_m31_chi()
+# plot_m31_chi()
 
 # normalization is here
 # first normalize the m31 bins
