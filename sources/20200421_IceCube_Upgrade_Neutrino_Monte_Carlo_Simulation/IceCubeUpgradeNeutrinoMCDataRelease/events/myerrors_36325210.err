@@ -1,2 +1,0 @@
-/var/slurmd/spool/slurmd/job36325210/slurm_script: line 8: 260308 Killed                  python3 sensitivity.py
-slurmstepd: error: Detected 1 oom-kill event(s) in StepId=36325210.batch cgroup. Some of your processes may have been killed by the cgroup out-of-memory handler.
