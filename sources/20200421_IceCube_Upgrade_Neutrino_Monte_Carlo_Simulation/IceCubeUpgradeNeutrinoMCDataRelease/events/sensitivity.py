@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
+from matplotlib.colors import LogNorm
 import nuSQUIDSpy as nsq
 import nuflux
 import seaborn as sns
@@ -69,6 +70,8 @@ def get_rated_weight_truth():
 
     return rate_weight, energy_hist_truth, energy_bins_truth
 
+rate_weight_truth, energy_hist_truth, energy_bins_truth = get_rated_weight_truth()
+
 # Obtain binned energy given theta23 and m31 values
 def get_energy_bins(theta23in, m31in):
     nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,neutrino_flavors,nsq.NeutrinoType.both,interactions)
@@ -126,7 +129,7 @@ def get_energy_bins(theta23in, m31in):
     
     return energy_hist
 
-t23sensitivity = True
+t23sensitivity = False
 
 if t23sensitivity:
     # Probe chi squared around truth value of theta23
@@ -160,10 +163,10 @@ def plot_t23_chi():
     ax2.grid(True)
     fig2.savefig("t23_chi_sq(non-normal).png", bbox_inches='tight')
 
-plot_t23_chi()
+# plot_t23_chi()
 
 
-m31sensitivity = True
+m31sensitivity = False
 
 if m31sensitivity:
     # Probe chi squared around truth value of m31
@@ -191,19 +194,45 @@ def plot_m31_chi():
     fig3, ax3 = plt.subplots(figsize=(7,6))
     fig3.suptitle("Chi-Sq NH")
     ax3.set_xlabel(r"$m^2_{31}$")
-    ax3.set_ylabel(r"$\chi^2_{NH}$")
+    ax3.set_ylabel(r"$\sin^2{\theta_{23}}$")
     ax3.plot(x, y, color ="green")
     ax3.set_yscale("log")
     ax3.grid(True)
     fig3.savefig("m31_chi_sq(non-normal).png", bbox_inches='tight')
-plot_m31_chi()
+# plot_m31_chi()
 
 
 
 
-t23outfile = "t12bins.npy"
-m31outfile = "m31bins.npy"
-np.save(t23outfile, energy_hist_theta23)
-np.save(m31outfile, energy_hist_m31)
+# t23outfile = "t12bins.npy"
+# m31outfile = "m31bins.npy"
+# np.save(t23outfile, energy_hist_theta23)
+# np.save(m31outfile, energy_hist_m31)
+
+# Get chisq for the contour plot
+def get_chisq(t23, m31):
+    energy_bins = get_energy_bins(t23, m31)
+    chisq = 0
+    for i in len(energy_bins):
+        chisqplus = (energy_bins[i] - energy_hist_truth[i]) ** 2 /  energy_hist_truth[i]
+        chisq += chisqplus
+    return chisq
 
 
+def plot_contour_chi():
+    t23 = np.arange(t23min, t23max + t23step, t23step)
+    m31 = np.arange(m31min, m31max + m31step, m31step)
+
+    X, Y = np.meshgrid(np.sin(t23) ** 2, m31)
+    Z = get_chisq(X, Y)
+
+    fig4, ax4  = plt.subplots(figsize=(7,6))
+    fig4.suptitle("Chi-Sq Contour NH")
+    ax3.set_xlabel(r"$\sin^2{\theta_{23}}$")
+    ax4.set_ylabel(r"$m^2_{31}$")
+    axim = ax4.contourf(X,Y,Z,levels=[1e0,1e1,1e2,1e3],cmap=plt.cm.jet,norm = LogNorm())
+    cb   = fig.colorbar(axim)
+
+    fig4.savefig("Chisq Contour.png", bbox_inches="tight")
+
+plot_contour_chi()
