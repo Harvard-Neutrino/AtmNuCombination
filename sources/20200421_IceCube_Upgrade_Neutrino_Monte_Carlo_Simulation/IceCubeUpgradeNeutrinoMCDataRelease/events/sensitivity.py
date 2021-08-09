@@ -129,7 +129,7 @@ def get_energy_bins(theta23in, m31in):
     
     return energy_hist
 
-t23sensitivity = False
+t23sensitivity = True
 
 if t23sensitivity:
     # Probe chi squared around truth value of theta23
@@ -163,10 +163,10 @@ def plot_t23_chi():
     ax2.grid(True)
     fig2.savefig("t23_chi_sq(non-normal).png", bbox_inches='tight')
 
-# plot_t23_chi()
+plot_t23_chi()
 
 
-m31sensitivity = False
+m31sensitivity = True
 
 if m31sensitivity:
     # Probe chi squared around truth value of m31
@@ -199,7 +199,7 @@ def plot_m31_chi():
     ax3.set_yscale("log")
     ax3.grid(True)
     fig3.savefig("m31_chi_sq(non-normal).png", bbox_inches='tight')
-# plot_m31_chi()
+plot_m31_chi()
 
 
 
