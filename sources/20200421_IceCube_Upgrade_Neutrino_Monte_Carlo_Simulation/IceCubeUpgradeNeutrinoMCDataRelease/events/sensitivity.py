@@ -65,7 +65,7 @@ def get_rated_weight_truth():
                                                                     units.GeV,neutype)*lifetime*meter_to_cm_sq*5
 
     # Set the input rate weight and get the energy-binned fluxes for the ground truth
-    input_data["rate_weight"] = get_rated_weight()
+    input_data["rate_weight"] = get_rated_weight_truth()
     energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"], bins = energy_bins_fine, weights = input_data["rate_weight"])
 
     return rate_weight, energy_hist_truth, energy_bins_truth
