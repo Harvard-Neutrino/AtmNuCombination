@@ -13,7 +13,7 @@ matplotlib.rcParams.update({'lines.linewidth': 3})
 matplotlib.rcParams.update({'patch.linewidth': 3})
 
 # Obtain the rated weight of each event
-def get_rated_weight():
+def get_rated_weight_truth():
     nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,neutrino_flavors,nsq.NeutrinoType.both,interactions)
 
     AtmInitialFlux = np.zeros((len(cth_nodes),len(energy_nodes),2,neutrino_flavors))
@@ -62,14 +62,15 @@ def get_rated_weight():
                                                                     np.cos(input_data["true_zenith"][i]),
                                                                     input_data["true_energy"][i]*\
                                                                     units.GeV,neutype)*lifetime*meter_to_cm_sq*5
-    return rate_weight
 
-input_data["rate_weight"] = get_rated_weight()
-energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"], bins = energy_bins_fine, weights = input_data["rate_weight"])
+    # Set the input rate weight and get the energy-binned fluxes for the ground truth
+    input_data["rate_weight"] = get_rated_weight()
+    energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"], bins = energy_bins_fine, weights = input_data["rate_weight"])
 
+    return rate_weight, energy_hist_truth, energy_bins_truth
 
+# Obtain binned energy given theta23 and m31 values
 def get_energy_bins(theta23in, m31in):
-    
     nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,neutrino_flavors,nsq.NeutrinoType.both,interactions)
 
     AtmInitialFlux = np.zeros((len(cth_nodes),len(energy_nodes),2,neutrino_flavors))
@@ -123,15 +124,13 @@ def get_energy_bins(theta23in, m31in):
     # Now first obtain  the energy binned event rate distributions 1-100GeV
     energy_hist, energy_bins = np.histogram(input_data["reco_energy"], bins = energy_bins_fine, weights = input_data["rate_weight"])
     
-    
     return energy_hist
 
-t23sensitivity = False
+t23sensitivity = True
 
 if t23sensitivity:
     # Probe chi squared around truth value of theta23
     energy_hist_theta23 = np.zeros((len(t23l.tolist()), len(energy_bins_fine.tolist()) - 1)).tolist()
-    print("energy_hist_theta23 initialization", energy_hist_theta23)
     for i in range(len(t23l.tolist())):
         print(i)
         energy_bins = get_energy_bins(t23l[i], m31).tolist()
@@ -139,8 +138,6 @@ if t23sensitivity:
             print(j)  
             energy = energy_bins[j]
             energy_hist_theta23[i][j] = energy
-    # print(energy_hist_truth)
-    # print(energy_hist_theta23)
 
     # Calculate non-normalized chi squared
     chisq = np.zeros((len(t23l.tolist()),))
@@ -149,7 +146,6 @@ if t23sensitivity:
             chisqplus = (energy_hist_theta23[i][j] - energy_hist_truth[j]) ** 2 /  energy_hist_truth[j]
             chisq[i] += chisqplus
 
-    # print(chisq)
 
 # plot un-normalized chisq for NH, probing values of t23
 def plot_t23_chi():
@@ -163,10 +159,12 @@ def plot_t23_chi():
     ax2.plot(x, y, color ="green")
     ax2.grid(True)
     fig2.savefig("t23_chi_sq(non-normal).png", bbox_inches='tight')
-# plot_t23_chi()
+
+plot_t23_chi()
 
 
-m31sensitivity = False
+m31sensitivity = True
+
 if m31sensitivity:
     # Probe chi squared around truth value of m31
     energy_hist_m31 = np.zeros((len(m31l.tolist()), len(energy_bins_fine.tolist()) - 1)).tolist()
@@ -178,8 +176,6 @@ if m31sensitivity:
             print(j)  
             energy = energy_bins[j]
             energy_hist_m31[i][j] = energy
-    # print(energy_hist_truth)
-    # print(energy_hist_m31)
 
     # Calculate non-normalized chi squared
     chisq2 = np.zeros((len(m31l.tolist()),))
@@ -188,9 +184,7 @@ if m31sensitivity:
             chisqplus = (energy_hist_m31[i][j] - energy_hist_truth[j]) ** 2 /  energy_hist_truth[j]
             chisq2[i] += chisqplus
 
-    # print(chisq)
-
-# plot un-normalized chisq for NH, probing values of t23
+# plot un-normalized chisq for NH, probing values of m31
 def plot_m31_chi():
     x = m31l
     y = chisq2
@@ -202,9 +196,14 @@ def plot_m31_chi():
     ax3.set_yscale("log")
     ax3.grid(True)
     fig3.savefig("m31_chi_sq(non-normal).png", bbox_inches='tight')
-# plot_m31_chi()
+plot_m31_chi()
 
-# normalization is here
-# first normalize the m31 bins
-    
-    
+
+
+
+t23outfile = "t12bins.npy"
+m31outfile = "m31bins.npy"
+np.save(t23outfile, energy_hist_theta23)
+np.save(m31outfile, energy_hist_m31)
+
+

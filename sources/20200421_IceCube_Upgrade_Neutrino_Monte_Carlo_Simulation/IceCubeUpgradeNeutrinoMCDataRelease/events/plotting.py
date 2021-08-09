@@ -10,6 +10,9 @@ from sensitivity import *
 
 def distribution_plots():
     print("plotting sanity check distributions")
+
+    rate_weight_truth, energy_hist_truth, energy_bins_truth = get_rated_weight_truth()
+    input_data["rate_weight"] = rate_weight_truth
     
     # Plot the energy distribution
     fig, ax = plt.subplots(figsize=(7,6))
