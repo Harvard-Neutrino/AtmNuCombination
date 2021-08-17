@@ -129,63 +129,44 @@ def get_energy_bins(theta23in, m31in):
     
     return energy_hist
 
-t23sensitivity = True
 
-if t23sensitivity:
-    # Probe chi squared around truth value of theta23
-    energy_hist_theta23 = np.zeros((len(t23l.tolist()), len(energy_bins_fine.tolist()) - 1)).tolist()
+# Get chisq for the contour plot
+def get_chisq(t23, m31):
+    # Get the energy bins for the given t23, m31 and truth
+    energy_bins = get_energy_bins(t23, m31)
+    rate_weight_truth, energy_hist_truth, energy_bins_truth = get_rated_weight_truth()
+    chisq = 0
+    for i in len(energy_bins):
+        chisqplus = (energy_bins[i] - energy_hist_truth[i]) ** 2 /  energy_hist_truth[i]
+        chisq += chisqplus
+    return chisq
+
+# Get the t23 chi sq raw profile (not minimizing over m31, set automatically to truth)
+def get_t23_chi_profile(m31 = m31):
+    profile = np.zeros(len(t23l.tolist())).tolist()
     for i in range(len(t23l.tolist())):
-        print(i)
-        energy_bins = get_energy_bins(t23l[i], m31).tolist()
-        for j in range(len(energy_bins_fine.tolist()) - 1):
-            print(j)  
-            energy = energy_bins[j]
-            energy_hist_theta23[i][j] = energy
-
-    # Calculate non-normalized chi squared
-    chisq = np.zeros((len(t23l.tolist()),))
-    for i in range(len(t23l.tolist())):
-        for j in range(len(energy_bins_fine.tolist())-1):
-            chisqplus = (energy_hist_theta23[i][j] - energy_hist_truth[j]) ** 2 /  energy_hist_truth[j]
-            chisq[i] += chisqplus
+        profile[i] = get_chisq(t23l[i], m31)
+    return profile
 
 
-# plot un-normalized chisq for NH, probing values of t23
-def plot_t23_chi():
-    x = np.sin(t23l) ** 2
-    y = chisq
-    fig2, ax2 = plt.subplots(figsize=(7,6))
-    fig2.suptitle("Chi-Sq NH")
-    ax2.set_xlabel(r"$\sin^2{\theta_{23}}$")
-    ax2.set_ylabel(r"$\chi^2_{NH}$")
-    ax2.set_yscale("log")
-    ax2.plot(x, y, color ="green")
-    ax2.grid(True)
-    fig2.savefig("t23_chi_sq(non-normal).png", bbox_inches='tight')
+# if m31sensitivity:
+#     # Probe chi squared around truth value of m31
+#     energy_hist_m31 = np.zeros((len(m31l.tolist()), len(energy_bins_fine.tolist()) - 1)).tolist()
+#     # print("energy_hist_theta23 initialization", energy_hist_m31)
+#     for i in range(len(m31l.tolist())):
+#         print(i)
+#         energy_bins = get_energy_bins(theta23, m31l[i]).tolist()
+#         for j in range(len(energy_bins_fine.tolist()) - 1):
+#             print(j)  
+#             energy = energy_bins[j]
+#             energy_hist_m31[i][j] = energy
 
-plot_t23_chi()
-
-
-m31sensitivity = True
-
-if m31sensitivity:
-    # Probe chi squared around truth value of m31
-    energy_hist_m31 = np.zeros((len(m31l.tolist()), len(energy_bins_fine.tolist()) - 1)).tolist()
-    # print("energy_hist_theta23 initialization", energy_hist_m31)
-    for i in range(len(m31l.tolist())):
-        print(i)
-        energy_bins = get_energy_bins(theta23, m31l[i]).tolist()
-        for j in range(len(energy_bins_fine.tolist()) - 1):
-            print(j)  
-            energy = energy_bins[j]
-            energy_hist_m31[i][j] = energy
-
-    # Calculate non-normalized chi squared
-    chisq2 = np.zeros((len(m31l.tolist()),))
-    for i in range(len(m31l.tolist())):
-        for j in range(len(energy_bins_fine.tolist())-1):
-            chisqplus = (energy_hist_m31[i][j] - energy_hist_truth[j]) ** 2 /  energy_hist_truth[j]
-            chisq2[i] += chisqplus
+#     # Calculate non-normalized chi squared
+#     chisq2 = np.zeros((len(m31l.tolist()),))
+#     for i in range(len(m31l.tolist())):
+#         for j in range(len(energy_bins_fine.tolist())-1):
+#             chisqplus = (energy_hist_m31[i][j] - energy_hist_truth[j]) ** 2 /  energy_hist_truth[j]
+#             chisq2[i] += chisqplus
 
 # plot un-normalized chisq for NH, probing values of m31
 def plot_m31_chi():
@@ -199,7 +180,6 @@ def plot_m31_chi():
     ax3.set_yscale("log")
     ax3.grid(True)
     fig3.savefig("m31_chi_sq(non-normal).png", bbox_inches='tight')
-plot_m31_chi()
 
 
 
@@ -209,30 +189,5 @@ plot_m31_chi()
 # np.save(t23outfile, energy_hist_theta23)
 # np.save(m31outfile, energy_hist_m31)
 
-# Get chisq for the contour plot
-def get_chisq(t23, m31):
-    energy_bins = get_energy_bins(t23, m31)
-    chisq = 0
-    for i in len(energy_bins):
-        chisqplus = (energy_bins[i] - energy_hist_truth[i]) ** 2 /  energy_hist_truth[i]
-        chisq += chisqplus
-    return chisq
 
 
-def plot_contour_chi():
-    t23 = np.arange(t23min, t23max + t23step, t23step)
-    m31 = np.arange(m31min, m31max + m31step, m31step)
-
-    X, Y = np.meshgrid(np.sin(t23) ** 2, m31)
-    Z = get_chisq(X, Y)
-
-    fig4, ax4  = plt.subplots(figsize=(7,6))
-    fig4.suptitle("Chi-Sq Contour NH")
-    ax3.set_xlabel(r"$\sin^2{\theta_{23}}$")
-    ax4.set_ylabel(r"$m^2_{31}$")
-    axim = ax4.contourf(X,Y,Z,levels=[1e0,1e1,1e2,1e3],cmap=plt.cm.jet,norm = LogNorm())
-    cb   = fig.colorbar(axim)
-
-    fig4.savefig("Chisq Contour.png", bbox_inches="tight")
-
-plot_contour_chi()

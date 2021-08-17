@@ -66,3 +66,36 @@ def distribution_plots():
     ax.set_ylim(-1, 1)
     ax.legend()
     fig.savefig("2D_Rate_For_Sensitivity.png", bbox_inches='tight')
+
+
+
+# Plots contour of t23 and m31 chi-sq for NH
+def plot_contour_chi():
+    t23 = np.arange(t23min, t23max + t23step, t23step)
+    m31 = np.arange(m31min, m31max + m31step, m31step)
+
+    X, Y = np.meshgrid(np.sin(t23) ** 2, m31)
+    Z = get_chisq(X, Y)
+
+    fig4, ax4  = plt.subplots(figsize=(7,6))
+    fig4.suptitle("Chi-Sq Contour NH")
+    ax3.set_xlabel(r"$\sin^2{\theta_{23}}$")
+    ax4.set_ylabel(r"$m^2_{31}$")
+    axim = ax4.contourf(X,Y,Z,levels=[1e0,1e1,1e2,1e3],cmap=plt.cm.jet,norm = LogNorm())
+    cb   = fig.colorbar(axim)
+
+    fig4.savefig("Chisq Contour.png", bbox_inches="tight")
+
+
+# plot un-normalized chisq for NH, probing values of t23, not minimizing over m31
+def plot_t23_chi_raw_profile():
+    x = np.sin(t23l) ** 2
+    y = get_t23_chi_profile()
+    fig2, ax2 = plt.subplots(figsize=(7,6))
+    fig2.suptitle(r"$\theta_{23} \chi^2$ profile (raw)")
+    ax2.set_xlabel(r"$\sin^2{\theta_{23}}$")
+    ax2.set_ylabel(r"$\chi^2_{NH}$")
+    ax2.set_yscale("log")
+    ax2.plot(x, y, color ="green")
+    ax2.grid(True)
+    fig2.savefig("t23_chi_sq(non-normal).png", bbox_inches='tight')
