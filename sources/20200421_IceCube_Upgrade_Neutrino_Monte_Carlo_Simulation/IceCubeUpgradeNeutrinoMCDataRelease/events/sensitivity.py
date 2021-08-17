@@ -145,7 +145,7 @@ def get_t23_chi_profile(m31 = m31):
     return profile
 
 # Get the m31 chi sq raw profile (not minimizing over t23, set automatically to truth)
-def get_m31_chi_profile(t23 = t23):
+def get_m31_chi_profile(t23 = theta23):
     profile = np.zeros(len(m31l.tolist())).tolist()
     for i in range(len(m31l.tolist())):
         profile[i] = get_chisq(t23, m31l[i])
