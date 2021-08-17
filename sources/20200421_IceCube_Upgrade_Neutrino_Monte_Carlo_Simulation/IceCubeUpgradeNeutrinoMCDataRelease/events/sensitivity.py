@@ -63,11 +63,11 @@ def get_rated_weight_truth():
                                                                     np.cos(input_data["true_zenith"][i]),
                                                                     input_data["true_energy"][i]*\
                                                                     units.GeV,neutype)*lifetime*meter_to_cm_sq*5
-        # input_data["rate_weight"] = rate_weight
-        # energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"], \
-        #     bins = energy_bins_fine, weights = input_data["rate_weight"])
+        input_data["rate_weight"] = rate_weight
+        energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"], \
+            bins = energy_bins_fine, weights = input_data["rate_weight"])
 
-    return rate_weight #, energy_hist_truth, energy_bins_truth
+    return rate_weight , energy_hist_truth, energy_bins_truth
 
 # rate_weight_truth, energy_hist_truth, energy_bins_truth = get_rated_weight_truth()
 
