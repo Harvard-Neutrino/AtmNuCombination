@@ -37,7 +37,7 @@ def get_rated_weight_truth():
     nsq_atm.Set_SquareMassDifference(2, 2.517e-3)
 
     nsq_atm.Set_initial_state(AtmInitialFlux,nsq.Basis.flavor)
-    nsq_atm.Set_ProgressBar(False) # progress bar will be printed on terminal
+    nsq_atm.Set_ProgressBar(True) # progress bar will be printed on terminal
     nsq_atm.EvolveState()
 
     lifetime = 365*24*60*60
@@ -70,7 +70,7 @@ def get_rated_weight_truth():
 
     return rate_weight, energy_hist_truth, energy_bins_truth
 
-rate_weight_truth, energy_hist_truth, energy_bins_truth = get_rated_weight_truth()
+# rate_weight_truth, energy_hist_truth, energy_bins_truth = get_rated_weight_truth()
 
 # Obtain binned energy given theta23 and m31 values
 def get_energy_bins(theta23in, m31in):
