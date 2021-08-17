@@ -64,10 +64,6 @@ def get_rated_weight_truth():
                                                                     input_data["true_energy"][i]*\
                                                                     units.GeV,neutype)*lifetime*meter_to_cm_sq*5
 
-    # Set the input rate weight and get the energy-binned fluxes for the ground truth
-    input_data["rate_weight"] = get_rated_weight_truth()
-    energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"], bins = energy_bins_fine, weights = input_data["rate_weight"])
-
     return rate_weight, energy_hist_truth, energy_bins_truth
 
 # rate_weight_truth, energy_hist_truth, energy_bins_truth = get_rated_weight_truth()
@@ -148,38 +144,12 @@ def get_t23_chi_profile(m31 = m31):
         profile[i] = get_chisq(t23l[i], m31)
     return profile
 
-
-# if m31sensitivity:
-#     # Probe chi squared around truth value of m31
-#     energy_hist_m31 = np.zeros((len(m31l.tolist()), len(energy_bins_fine.tolist()) - 1)).tolist()
-#     # print("energy_hist_theta23 initialization", energy_hist_m31)
-#     for i in range(len(m31l.tolist())):
-#         print(i)
-#         energy_bins = get_energy_bins(theta23, m31l[i]).tolist()
-#         for j in range(len(energy_bins_fine.tolist()) - 1):
-#             print(j)  
-#             energy = energy_bins[j]
-#             energy_hist_m31[i][j] = energy
-
-#     # Calculate non-normalized chi squared
-#     chisq2 = np.zeros((len(m31l.tolist()),))
-#     for i in range(len(m31l.tolist())):
-#         for j in range(len(energy_bins_fine.tolist())-1):
-#             chisqplus = (energy_hist_m31[i][j] - energy_hist_truth[j]) ** 2 /  energy_hist_truth[j]
-#             chisq2[i] += chisqplus
-
-# plot un-normalized chisq for NH, probing values of m31
-def plot_m31_chi():
-    x = m31l
-    y = chisq2
-    fig3, ax3 = plt.subplots(figsize=(7,6))
-    fig3.suptitle("Chi-Sq NH")
-    ax3.set_xlabel(r"$m^2_{31}$")
-    ax3.set_ylabel(r"$\sin^2{\theta_{23}}$")
-    ax3.plot(x, y, color ="green")
-    ax3.set_yscale("log")
-    ax3.grid(True)
-    fig3.savefig("m31_chi_sq(non-normal).png", bbox_inches='tight')
+# Get the m31 chi sq raw profile (not minimizing over t23, set automatically to truth)
+def get_m31_chi_profile(t23 = t23):
+    profile = np.zeros(len(m31l.tolist())).tolist()
+    for i in range(len(m31l.tolist())):
+        profile[i] = get_chisq(t23, m31l[i])
+    return profile
 
 
 

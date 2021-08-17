@@ -15,6 +15,7 @@ def distribution_plots():
     input_data["rate_weight"] = rate_weight_truth
     
     # Plot the energy distribution
+    print("plotting energy distributions")
     fig, ax = plt.subplots(figsize=(7,6))
     fig.suptitle("Reco Energy Rated Distribution")
     ax.hist(input_data["reco_energy"][cascade_mask], bins=E_bin_plot, \
@@ -35,6 +36,7 @@ def distribution_plots():
 
 
     # Plot the angle distribution
+    print("plotting zenith distributions")
     fig, ax = plt.subplots(figsize=(7,6))
     fig.suptitle("Reco Zenith Rated Distribution")
     ax.hist(np.cos(input_data["reco_zenith"][cascade_mask]), bins=cos_bin_plot, \
@@ -53,6 +55,7 @@ def distribution_plots():
     fig.savefig("Zenith_Rate_For_Sensitivity.png", bbox_inches='tight')
 
     # Plot the overall distribution
+    print("plotting 2D distributions")
     counts, _, _ = np.histogram2d(input_data["reco_energy"], np.cos(input_data["reco_zenith"]), bins=[energy_bins_fine, cos_bin_plot], \
           weights=input_data["rate_weight"])
 
@@ -86,7 +89,6 @@ def plot_contour_chi():
 
     fig4.savefig("Chisq Contour.png", bbox_inches="tight")
 
-
 # plot un-normalized chisq for NH, probing values of t23, not minimizing over m31
 def plot_t23_chi_raw_profile():
     x = np.sin(t23l) ** 2
@@ -98,4 +100,17 @@ def plot_t23_chi_raw_profile():
     ax2.set_yscale("log")
     ax2.plot(x, y, color ="green")
     ax2.grid(True)
-    fig2.savefig("t23_chi_sq(non-normal).png", bbox_inches='tight')
+    fig2.savefig("t23_chi_sq_profile_raw.png", bbox_inches='tight')
+
+# plot un-normalized chisq for NH, probing values of t23, not minimizing over m31
+def plot_m31_chi_raw_profile():
+    x = m31l
+    y = get_m31_chi_profile()
+    fig2, ax2 = plt.subplots(figsize=(7,6))
+    fig2.suptitle(r"$\m_{31} \chi^2$ profile (raw)")
+    ax2.set_xlabel(r"$\m_{31}$")
+    ax2.set_ylabel(r"$\chi^2_{NH}$")
+    ax2.set_yscale("log")
+    ax2.plot(x, y, color ="green")
+    ax2.grid(True)
+    fig2.savefig("m31_chi_sq_profile_raw.png", bbox_inches='tight')
