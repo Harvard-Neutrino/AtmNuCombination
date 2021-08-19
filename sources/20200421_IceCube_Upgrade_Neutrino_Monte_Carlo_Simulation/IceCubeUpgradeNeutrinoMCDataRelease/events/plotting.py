@@ -10,130 +10,139 @@ import sensitivity as sst
 from params import *
 
 def distribution_plots():
-    print("plotting sanity check distributions")
+	print("plotting sanity check distributions")
 
-    rate_weight_truth, energy_hist_truth, energy_bins_truth = sst.get_rated_weight_truth()
-    input_data["rate_weight"] = rate_weight_truth
-    
-    # Plot the energy distribution
-    print("plotting energy distributions")
-    fig, ax = plt.subplots(figsize=(7,6))
-    fig.suptitle("Reco Energy Rated Distribution")
-    ax.hist(input_data["reco_energy"][cascade_mask], bins=E_bin_plot, \
-          weights=input_data["rate_weight"][cascade_mask], \
-          label=r"$\nu_{All, Cascade}$", color="blue", histtype="step")
-    ax.hist(input_data["reco_energy"][track_mask], bins=E_bin_plot, \
-          weights=input_data["rate_weight"][track_mask], \
-          label=r"$\nu_{All, Track}$", color="red", histtype="step")
-    ax.set_xscale("log")
-    ax.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
-    ax.set_xlim(1, 100)
-    ax.ticklabel_format(axis='y', style='sci', scilimits=None,\
-                     useOffset=None, useLocale=None, useMathText=None)
-    ax.set_ylabel("Rate [5Years]")
-    ax.grid(True)
-    ax.legend()
-    fig.savefig("Rate_For_Sensitivity.png", bbox_inches='tight')
+	rate_weight_truth, energy_hist_truth, energy_bins_truth = sst.get_rated_weight_truth()
+	input_data["rate_weight"] = rate_weight_truth
+	
+	# Plot the energy distribution
+	print("plotting energy distributions")
+	fig, ax = plt.subplots(figsize=(7,6))
+	fig.suptitle("Reco Energy Rated Distribution")
+	ax.hist(input_data["reco_energy"][cascade_mask], bins=E_bin_plot, \
+		  weights=input_data["rate_weight"][cascade_mask], \
+		  label=r"$\nu_{All, Cascade}$", color="blue", histtype="step")
+	ax.hist(input_data["reco_energy"][track_mask], bins=E_bin_plot, \
+		  weights=input_data["rate_weight"][track_mask], \
+		  label=r"$\nu_{All, Track}$", color="red", histtype="step")
+	ax.set_xscale("log")
+	ax.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
+	ax.set_xlim(1, 100)
+	ax.ticklabel_format(axis='y', style='sci', scilimits=None,\
+					 useOffset=None, useLocale=None, useMathText=None)
+	ax.set_ylabel("Rate [5Years]")
+	ax.grid(True)
+	ax.legend()
+	fig.savefig("Rate_For_Sensitivity.png", bbox_inches='tight')
 
 
-    # Plot the angle distribution
-    print("plotting zenith distributions")
-    fig, ax = plt.subplots(figsize=(7,6))
-    fig.suptitle("Reco Zenith Rated Distribution")
-    ax.hist(np.cos(input_data["reco_zenith"][cascade_mask]), bins=cos_bin_plot, \
-          weights=input_data["rate_weight"][cascade_mask], \
-          label=r"$\nu_{All, Cascade}$", color="blue", histtype="step")
-    ax.hist(np.cos(input_data["reco_zenith"][track_mask]), bins=cos_bin_plot, \
-          weights=input_data["rate_weight"][track_mask], \
-          label=r"$\nu_{All, Track}$", color="red", histtype="step")
-    ax.set_xlabel(r"$\cos{\theta, \rm{reco}}$")
-    ax.set_xlim(-1, 1)
-    ax.ticklabel_format(axis='y', style='sci', scilimits=None,\
-                     useOffset=None, useLocale=None, useMathText=None)
-    ax.set_ylabel("Rate [5Years]")
-    ax.grid(True)
-    ax.legend()
-    fig.savefig("Zenith_Rate_For_Sensitivity.png", bbox_inches='tight')
+	# Plot the angle distribution
+	print("plotting zenith distributions")
+	fig, ax = plt.subplots(figsize=(7,6))
+	fig.suptitle("Reco Zenith Rated Distribution")
+	ax.hist(np.cos(input_data["reco_zenith"][cascade_mask]), bins=cos_bin_plot, \
+		  weights=input_data["rate_weight"][cascade_mask], \
+		  label=r"$\nu_{All, Cascade}$", color="blue", histtype="step")
+	ax.hist(np.cos(input_data["reco_zenith"][track_mask]), bins=cos_bin_plot, \
+		  weights=input_data["rate_weight"][track_mask], \
+		  label=r"$\nu_{All, Track}$", color="red", histtype="step")
+	ax.set_xlabel(r"$\cos{\theta, \rm{reco}}$")
+	ax.set_xlim(-1, 1)
+	ax.ticklabel_format(axis='y', style='sci', scilimits=None,\
+					 useOffset=None, useLocale=None, useMathText=None)
+	ax.set_ylabel("Rate [5Years]")
+	ax.grid(True)
+	ax.legend()
+	fig.savefig("Zenith_Rate_For_Sensitivity.png", bbox_inches='tight')
 
-    # Plot the overall distribution
-    print("plotting 2D distributions")
-    counts, _, _ = np.histogram2d(input_data["reco_energy"], np.cos(input_data["reco_zenith"]), bins=[energy_bins_fine, cos_bin_plot], \
-          weights=input_data["rate_weight"])
+	# Plot the overall distribution
+	print("plotting 2D distributions")
+	counts, _, _ = np.histogram2d(input_data["reco_energy"], np.cos(input_data["reco_zenith"]), bins=[energy_bins_fine, cos_bin_plot], \
+		  weights=input_data["rate_weight"])
 
-    fig, ax = plt.subplots(figsize=(7,6))
-    fig.suptitle("Reco Energy and Zenith Rated Distribution")
-    ax.pcolormesh(energy_bins_fine, cos_bin_plot, counts.T)
-    ax.set_xscale('log')
-    ax.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
-    ax.set_ylabel(r"$\cos{\theta, \rm{reco}}$")
-    ax.set_xlim(1, 100)
-    ax.set_ylim(-1, 1)
-    ax.legend()
-    fig.savefig("2D_Rate_For_Sensitivity.png", bbox_inches='tight')
+	fig, ax = plt.subplots(figsize=(7,6))
+	fig.suptitle("Reco Energy and Zenith Rated Distribution")
+	ax.pcolormesh(energy_bins_fine, cos_bin_plot, counts.T)
+	ax.set_xscale('log')
+	ax.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
+	ax.set_ylabel(r"$\cos{\theta, \rm{reco}}$")
+	ax.set_xlim(1, 100)
+	ax.set_ylim(-1, 1)
+	ax.legend()
+	fig.savefig("2D_Rate_For_Sensitivity.png", bbox_inches='tight')
 
 
 
 # Plots contour of t23 and m31 chi-sq for NH
 def plot_contour_chi(savename = "chi_sq_contour", top = 0):
-    print("plotting chi squared contour")
-    t23 = np.arange(t23min, t23max + t23step, t23step)
-    m31 = np.arange(m31min, m31max + m31step, m31step)
+	print("plotting chi squared contour")
+	t23 = np.arange(t23min, t23max + t23step, t23step)
+	m31 = np.arange(m31min, m31max + m31step, m31step)
 
-    X, Y = np.meshgrid(np.sin(t23) ** 2, m31)
-    Z = sst.get_chisq(X, Y, top)
+	X, Y = np.meshgrid(np.sin(t23) ** 2, m31)
+	Z = sst.get_chisq(X, Y, top)
 
-    fig4, ax4  = plt.subplots(figsize=(7,6))
-    fig4.suptitle("Chi-Sq Contour NH")
-    ax3.set_xlabel(r"$\sin^2{\theta_{23}}$")
-    ax4.set_ylabel(r"$m^2_{31}$")
-    axim = ax4.contourf(X,Y,Z,levels=[1e0,1e1,1e2,1e3],cmap=plt.cm.jet,norm = LogNorm())
-    cb   = fig.colorbar(axim)
+	fig4, ax4  = plt.subplots(figsize=(7,6))
+	fig4.suptitle("Chi-Sq Contour NH")
+	ax3.set_xlabel(r"$\sin^2{\theta_{23}}$")
+	ax4.set_ylabel(r"$m^2_{31}$")
+	axim = ax4.contourf(X,Y,Z,levels=[1e0,1e1,1e2,1e3],cmap=plt.cm.jet,norm = LogNorm())
+	cb   = fig.colorbar(axim)
 
-    fig4.savefig("{}.png".format(savename), bbox_inches="tight")
+	fig4.savefig("{}.png".format(savename), bbox_inches="tight")
 
 # plot un-normalized chisq for NH, probing values of t23, not minimizing over m31
 def plot_t23_chi_raw_profile(savename = "t23_chi_sq_profile_raw", top = 0):
-    print("plotting t23 chi profile")
-    x = np.sin(t23l) ** 2
-    y = sst.get_t23_chi_profile(top)
-    fig2, ax2 = plt.subplots(figsize=(7,6))
-    fig2.suptitle(r"$\theta_{23} \chi^2$ profile (raw)")
-    ax2.set_xlabel(r"$\sin^2{\theta_{23}}$")
-    ax2.set_ylabel(r"$\chi^2_{NH}$")
-    # ax2.set_yscale("log")
-    ax2.plot(x, y, color ="green")
-    ax2.grid(True)
-    fig2.savefig("{}.png".format(savename), bbox_inches='tight')
+	print("plotting t23 chi profile")
+	x = np.sin(t23l) ** 2
+	y = sst.get_t23_chi_profile(top)
+	fig2, ax2 = plt.subplots(figsize=(7,6))
+	fig2.suptitle(r"$\theta_{23} \chi^2$ profile (raw)")
+	ax2.set_xlabel(r"$\sin^2{\theta_{23}}$")
+	ax2.set_ylabel(r"$\chi^2_{NH}$")
+	# ax2.set_yscale("log")
+	ax2.plot(x, y, color ="green")
+	ax2.grid(True)
+	fig2.savefig("{}.png".format(savename), bbox_inches='tight')
 
 # plot un-normalized chisq for NH, probing values of t23, not minimizing over m31, but for all topologies
 def plot_t23_chi_raw_profile_all_top(savename = "t23_chi_sq_profile_raw_all_top"):
-    print("plotting t23 chi profile")
-    x = np.sin(t23l) ** 2
-    y0 = sst.get_t23_chi_profile(0)
-    y1 = sst.get_t23_chi_profile(1)
-    y2 = sst.get_t23_chi_profile(2)
-    fig2, ax2 = plt.subplots(figsize=(7,6))
-    fig2.suptitle(r"$\theta_{23} \chi^2$ profile (raw)")
-    ax2.set_xlabel(r"$\sin^2{\theta_{23}}$")
-    ax2.set_ylabel(r"$\chi^2_{NH}$")
-    # ax2.set_yscale("log")
-    ax2.plot(x, y0, color ="green", label = "cascades")
-    ax2.plot(x, y1, color ="red", label = "tracks")
-    ax2.plot(x, y2, color ="blue", label = "all")
-    ax2.grid(True)
-    ax2.legend()
-    fig2.savefig("{}.png".format(savename), bbox_inches='tight')
+	print("plotting t23 chi profile")
+	x = np.sin(t23l) ** 2
+	y0 = sst.get_t23_chi_profile(0)
+	y1 = sst.get_t23_chi_profile(1)
+	y2 = sst.get_t23_chi_profile(2)
+	fig2, ax2 = plt.subplots(figsize=(7,6))
+	fig2.suptitle(r"$\theta_{23} \chi^2$ profile (raw)")
+	ax2.set_xlabel(r"$\sin^2{\theta_{23}}$")
+	ax2.set_ylabel(r"$\chi^2_{NH}$")
+	# ax2.set_yscale("log")
+	ax2.plot(x, y0, color ="green", label = "cascades")
+	ax2.plot(x, y1, color ="red", label = "tracks")
+	ax2.plot(x, y2, color ="blue", label = "all")
+	ax2.grid(True)
+	ax2.legend()
+	fig2.savefig("{}.png".format(savename), bbox_inches='tight')
 
 # plot un-normalized chisq for NH, probing values of t23, not minimizing over m31
 def plot_m31_chi_raw_profile(savename = "m31_chi_sq_profile_raw", top = 0):
-    print("plotting m31 chi profile")
-    x = m31l
-    y = sst.get_m31_chi_profile(top)
-    fig2, ax2 = plt.subplots(figsize=(7,6))
-    fig2.suptitle(r"$m_{31} \chi^2$ profile (raw)")
-    ax2.set_xlabel(r"$m_{31}$")
-    ax2.set_ylabel(r"$\chi^2_{NH}$")
-    ax2.set_yscale("log")
-    ax2.plot(x, y, color ="green")
-    ax2.grid(True)
-    fig2.savefig("{}.png".format(savename), bbox_inches='tight')
+	print("plotting m31 chi profile")
+	x = m31l
+	y = sst.get_m31_chi_profile(top)
+	fig2, ax2 = plt.subplots(figsize=(7,6))
+	fig2.suptitle(r"$m_{31} \chi^2$ profile (raw)")
+	ax2.set_xlabel(r"$m_{31}$")
+	ax2.set_ylabel(r"$\chi^2_{NH}$")
+	ax2.set_yscale("log")
+	ax2.plot(x, y, color ="green")
+	ax2.grid(True)
+	fig2.savefig("{}.png".format(savename), bbox_inches='tight')
+
+# Plot the resolution
+def plot_resolution():
+	fig, ax = plt.subplots(figsize = (7,6))
+	fig.suptitle("Energy Resolution")
+	ax.set_xlabel("Reco Energy")
+	ax.set_ylabel("Normalized Rate")
+	sns.histplot(input_data[reso_mask0], x = "reco_energy", element = "step", ax = ax)
+	fig.savefig("resolution.png", bbox_inches = "tight")
