@@ -111,8 +111,8 @@ def plot_m31_chi_raw_profile(savename = "m31_chi_sq_profile_raw", top = 0):
     x = m31l
     y = sst.get_m31_chi_profile(top)
     fig2, ax2 = plt.subplots(figsize=(7,6))
-    fig2.suptitle(r"$\m_{31} \chi^2$ profile (raw)")
-    ax2.set_xlabel(r"$\m_{31}$")
+    fig2.suptitle(r"$m_{31} \chi^2$ profile (raw)")
+    ax2.set_xlabel(r"$m_{31}$")
     ax2.set_ylabel(r"$\chi^2_{NH}$")
     ax2.set_yscale("log")
     ax2.plot(x, y, color ="green")
