@@ -7,6 +7,7 @@ import nuflux
 import seaborn as sns
 
 import sensitivity as sst
+from params import *
 
 def distribution_plots():
     print("plotting sanity check distributions")
