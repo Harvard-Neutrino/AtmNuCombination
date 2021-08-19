@@ -74,6 +74,7 @@ def distribution_plots():
 
 # Plots contour of t23 and m31 chi-sq for NH
 def plot_contour_chi():
+    print("plotting chi squared contour")
     t23 = np.arange(t23min, t23max + t23step, t23step)
     m31 = np.arange(m31min, m31max + m31step, m31step)
 
@@ -91,6 +92,7 @@ def plot_contour_chi():
 
 # plot un-normalized chisq for NH, probing values of t23, not minimizing over m31
 def plot_t23_chi_raw_profile():
+    print("plotting t23 chi profile")
     x = np.sin(t23l) ** 2
     y = get_t23_chi_profile()
     fig2, ax2 = plt.subplots(figsize=(7,6))
@@ -104,6 +106,7 @@ def plot_t23_chi_raw_profile():
 
 # plot un-normalized chisq for NH, probing values of t23, not minimizing over m31
 def plot_m31_chi_raw_profile():
+    print("plotting m31 chi profile")
     x = m31l
     y = get_m31_chi_profile()
     fig2, ax2 = plt.subplots(figsize=(7,6))
