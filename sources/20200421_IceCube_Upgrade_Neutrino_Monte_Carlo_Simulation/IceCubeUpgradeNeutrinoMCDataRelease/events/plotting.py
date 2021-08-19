@@ -6,12 +6,12 @@ import nuSQUIDSpy as nsq
 import nuflux
 import seaborn as sns
 
-from sensitivity import *
+import sensitivity as sst
 
 def distribution_plots():
     print("plotting sanity check distributions")
 
-    rate_weight_truth, energy_hist_truth, energy_bins_truth= get_rated_weight_truth()
+    rate_weight_truth, energy_hist_truth, energy_bins_truth = sst.get_rated_weight_truth()
     input_data["rate_weight"] = rate_weight_truth
     
     # Plot the energy distribution
@@ -79,7 +79,7 @@ def plot_contour_chi():
     m31 = np.arange(m31min, m31max + m31step, m31step)
 
     X, Y = np.meshgrid(np.sin(t23) ** 2, m31)
-    Z = get_chisq(X, Y)
+    Z = sst.get_chisq(X, Y)
 
     fig4, ax4  = plt.subplots(figsize=(7,6))
     fig4.suptitle("Chi-Sq Contour NH")
@@ -94,7 +94,7 @@ def plot_contour_chi():
 def plot_t23_chi_raw_profile():
     print("plotting t23 chi profile")
     x = np.sin(t23l) ** 2
-    y = get_t23_chi_profile()
+    y = sst.get_t23_chi_profile()
     fig2, ax2 = plt.subplots(figsize=(7,6))
     fig2.suptitle(r"$\theta_{23} \chi^2$ profile (raw)")
     ax2.set_xlabel(r"$\sin^2{\theta_{23}}$")
@@ -108,7 +108,7 @@ def plot_t23_chi_raw_profile():
 def plot_m31_chi_raw_profile():
     print("plotting m31 chi profile")
     x = m31l
-    y = get_m31_chi_profile()
+    y = sst.get_m31_chi_profile()
     fig2, ax2 = plt.subplots(figsize=(7,6))
     fig2.suptitle(r"$\m_{31} \chi^2$ profile (raw)")
     ax2.set_xlabel(r"$\m_{31}$")
