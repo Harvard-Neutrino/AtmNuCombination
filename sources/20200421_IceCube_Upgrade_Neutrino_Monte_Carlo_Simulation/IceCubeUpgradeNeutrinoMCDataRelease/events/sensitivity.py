@@ -15,7 +15,7 @@ matplotlib.rcParams.update({'patch.linewidth': 3})
 
 # Obtain the rated weight of each event
 # event topology is cascade 0 or track 1
-def get_rated_weight_truth():
+def get_rated_weight_truth(top = 0):
     nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,neutrino_flavors,nsq.NeutrinoType.both,interactions)
 
     print("get_rated_weight_truth: propagating nu")
@@ -66,16 +66,21 @@ def get_rated_weight_truth():
                                                                     input_data["true_energy"][i]*\
                                                                     units.GeV,neutype)*lifetime*meter_to_cm_sq*5
 
-    print("truth debug: before hist")
+    # print("truth debug: before hist")
     input_data["rate_weight"] = rate_weight
-    energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"], bins = energy_bins_fine, weights = input_data["rate_weight"])
-    print("truth debug: after hist")
+    if top = 0:
+        energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"][cascade_mask], bins = energy_bins_fine, weights = input_data["rate_weight"])
+    elif top = 1:
+        energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"][track_mask], bins = energy_bins_fine, weights = input_data["rate_weight"])
+    else:
+        energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"], bins = energy_bins_fine, weights = input_data["rate_weight"])
+    # print("truth debug: after hist")
 
     return rate_weight , energy_hist_truth, energy_bins_truth
 
 
 # Obtain binned energy given theta23 and m31 values
-def get_energy_bins(theta23in, m31in):
+def get_energy_bins(theta23in, m31in, top = 0):
     nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,neutrino_flavors,nsq.NeutrinoType.both,interactions)
 
     AtmInitialFlux = np.zeros((len(cth_nodes),len(energy_nodes),2,neutrino_flavors))
@@ -128,19 +133,24 @@ def get_energy_bins(theta23in, m31in):
                                                                     units.GeV,neutype)*lifetime*meter_to_cm_sq*5
     input_data["rate_weight"] = rate_weight
     
-    print("get_energy_bins_debug: before hist")
+    # print("get_energy_bins_debug: before hist")
     # Now first obtain  the energy binned event rate distributions 1-100GeV
-    energy_hist, energy_bins = np.histogram(input_data["reco_energy"], bins = energy_bins_fine, weights = input_data["rate_weight"])
-    print("get_energy_bins_debug: after hist")
+    if top = 0:
+        energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"][cascade_mask], bins = energy_bins_fine, weights = input_data["rate_weight"])
+    elif top = 1:
+        energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"][track_mask], bins = energy_bins_fine, weights = input_data["rate_weight"])
+    else:
+        energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"], bins = energy_bins_fine, weights = input_data["rate_weight"])
+    # print("get_energy_bins_debug: after hist")
     
     return energy_hist
 
 
 # Get chisq for the contour plot
-def get_chisq(t23, m31):
+def get_chisq(t23, m31, top = 0):
     # Get the energy bins for the given t23, m31 and truth
-    energy_bins = get_energy_bins(t23, m31)
-    rate_weight_truth, energy_hist_truth, energy_bins_truth = get_rated_weight_truth()
+    energy_bins = get_energy_bins(t23, m31, top)
+    rate_weight_truth, energy_hist_truth, energy_bins_truth = get_rated_weight_truth(top)
     chisq = 0
     for i in range(len(energy_bins)):
         chisqplus = (energy_bins[i] - energy_hist_truth[i]) ** 2 /  energy_hist_truth[i]
@@ -148,17 +158,17 @@ def get_chisq(t23, m31):
     return chisq
 
 # Get the t23 chi sq raw profile (not minimizing over m31, set automatically to truth)
-def get_t23_chi_profile(m31 = m31):
+def get_t23_chi_profile(m31 = m31, top = 0):
     profile = np.zeros(len(t23l.tolist())).tolist()
     for i in range(len(t23l.tolist())):
-        profile[i] = get_chisq(t23l[i], m31)
+        profile[i] = get_chisq(t23l[i], m31, top)
     return profile
 
 # Get the m31 chi sq raw profile (not minimizing over t23, set automatically to truth)
-def get_m31_chi_profile(t23 = theta23):
+def get_m31_chi_profile(t23 = theta23, top = 0):
     profile = np.zeros(len(m31l.tolist())).tolist()
     for i in range(len(m31l.tolist())):
-        profile[i] = get_chisq(t23, m31l[i])
+        profile[i] = get_chisq(t23, m31l[i], top)
     return profile
 
 

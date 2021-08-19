@@ -74,13 +74,13 @@ def distribution_plots():
 
 
 # Plots contour of t23 and m31 chi-sq for NH
-def plot_contour_chi():
+def plot_contour_chi(savename = "chi_sq_contour", top = 0):
     print("plotting chi squared contour")
     t23 = np.arange(t23min, t23max + t23step, t23step)
     m31 = np.arange(m31min, m31max + m31step, m31step)
 
     X, Y = np.meshgrid(np.sin(t23) ** 2, m31)
-    Z = sst.get_chisq(X, Y)
+    Z = sst.get_chisq(X, Y, top)
 
     fig4, ax4  = plt.subplots(figsize=(7,6))
     fig4.suptitle("Chi-Sq Contour NH")
@@ -89,13 +89,13 @@ def plot_contour_chi():
     axim = ax4.contourf(X,Y,Z,levels=[1e0,1e1,1e2,1e3],cmap=plt.cm.jet,norm = LogNorm())
     cb   = fig.colorbar(axim)
 
-    fig4.savefig("Chisq Contour.png", bbox_inches="tight")
+    fig4.savefig("{}.png".format(savename), bbox_inches="tight")
 
 # plot un-normalized chisq for NH, probing values of t23, not minimizing over m31
-def plot_t23_chi_raw_profile():
+def plot_t23_chi_raw_profile(savename = "t23_chi_sq_profile_raw", top = 0):
     print("plotting t23 chi profile")
     x = np.sin(t23l) ** 2
-    y = sst.get_t23_chi_profile()
+    y = sst.get_t23_chi_profile(top)
     fig2, ax2 = plt.subplots(figsize=(7,6))
     fig2.suptitle(r"$\theta_{23} \chi^2$ profile (raw)")
     ax2.set_xlabel(r"$\sin^2{\theta_{23}}$")
@@ -103,13 +103,13 @@ def plot_t23_chi_raw_profile():
     ax2.set_yscale("log")
     ax2.plot(x, y, color ="green")
     ax2.grid(True)
-    fig2.savefig("t23_chi_sq_profile_raw.png", bbox_inches='tight')
+    fig2.savefig("{}.png".format(savename), bbox_inches='tight')
 
 # plot un-normalized chisq for NH, probing values of t23, not minimizing over m31
-def plot_m31_chi_raw_profile():
+def plot_m31_chi_raw_profile(savename = "m31_chi_sq_profile_raw", top = 0):
     print("plotting m31 chi profile")
     x = m31l
-    y = sst.get_m31_chi_profile()
+    y = sst.get_m31_chi_profile(top)
     fig2, ax2 = plt.subplots(figsize=(7,6))
     fig2.suptitle(r"$\m_{31} \chi^2$ profile (raw)")
     ax2.set_xlabel(r"$\m_{31}$")
@@ -117,4 +117,4 @@ def plot_m31_chi_raw_profile():
     ax2.set_yscale("log")
     ax2.plot(x, y, color ="green")
     ax2.grid(True)
-    fig2.savefig("m31_chi_sq_profile_raw.png", bbox_inches='tight')
+    fig2.savefig("{}.png".format(savename), bbox_inches='tight')
