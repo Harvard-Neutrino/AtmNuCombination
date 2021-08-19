@@ -95,3 +95,15 @@ theta13 = np.arcsin(np.sqrt(0.02221))
 theta23 = np.arcsin(np.sqrt(0.570))
 m21 = 7.42e-5
 m31 = 2.517e-3
+
+# Set up some more masks for plotting bias (resolution + unfolded)
+reso_mask0 = input_data["true_energy"] >= 10^(1.0) & input_data["true_energy"] < 10^(1.1)
+reso_mask1 = input_data["true_energy"] >= 10^(1.1) & input_data["true_energy"] < 10^(1.2)
+reso_mask2 = input_data["true_energy"] >= 10^(1.2) & input_data["true_energy"] < 10^(1.3)
+reso_mask3 = input_data["true_energy"] >= 10^(1.3) & input_data["true_energy"] < 10^(1.4)
+reso_mask4 = input_data["true_energy"] >= 10^(1.4) & input_data["true_energy"] < 10^(1.5)
+reso_mask5 = input_data["true_energy"] >= 10^(1.5) & input_data["true_energy"] < 10^(1.6)
+reso_mask6 = input_data["true_energy"] >= 10^(1.6) & input_data["true_energy"] < 10^(1.7)
+reso_mask7 = input_data["true_energy"] >= 10^(1.7) & input_data["true_energy"] < 10^(1.8)
+reso_mask8 = input_data["true_energy"] >= 10^(1.8) & input_data["true_energy"] < 10^(1.9)
+reso_mask9 = input_data["true_energy"] >= 10^(1.9) & input_data["true_energy"] < 10^(2.0)
