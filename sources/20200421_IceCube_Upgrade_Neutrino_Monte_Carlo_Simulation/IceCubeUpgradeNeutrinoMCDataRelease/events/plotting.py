@@ -140,14 +140,16 @@ def plot_m31_chi_raw_profile(savename = "m31_chi_sq_profile_raw", top = 0):
 
 # Plot the resolution
 def plot_resolution():
-	new_weight = np.zeros_like(input_data["weight"])
-	for i in range(len(input_data["weight"])):
-		if input_data["true_energy"][i] >= 10^(1.0) & input_data["true_energy"][i] < 10^(1.1):
-			new_weight[i] = 1
-	input_data["new_weight"] = new_weight
+	# new_weight = np.zeros_like(input_data["weight"])
+	# for i in range(len(input_data["weight"])):
+	# 	if input_data["true_energy"][i] >= 10^(1.0) & input_data["true_energy"][i] < 10^(1.1):
+	# 		new_weight[i] = 1
+	# input_data["new_weight"] = new_weight
 	fig, ax = plt.subplots(figsize = (7,6))
 	fig.suptitle("Energy Resolution")
 	ax.set_xlabel("Reco Energy")
 	ax.set_ylabel("Normalized Rate")
-	sns.histplot(input_data, x = "reco_energy", element = "step", weights = "new_weight", ax = ax)
+	ax.hist(input_data["reco_energy"][reso_mask0], bins=energy_bins_fine, \
+		  label=r"$\nu_{All, E_{True} \in (10^1, 10^{1.1}))]}$", color="blue", histtype="step")
+	# sns.histplot(input_data, x = "reco_energy", element = "step", weights = "new_weight", ax = ax)
 	fig.savefig("resolution.png", bbox_inches = "tight")
