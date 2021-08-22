@@ -14,4 +14,6 @@ from params import *
 
 # For debug purposes
 sensitivity.get_chisq(theta23, m31, top = 2)
+sensitivity.get_rated_weight_truth()
+sensitivity.get_energy_bins(theta23, m31)
 

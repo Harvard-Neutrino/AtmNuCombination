@@ -15,7 +15,7 @@ matplotlib.rcParams.update({'patch.linewidth': 3})
 
 # Obtain the rated weight of each event
 # event topology is cascade 0 or track 1
-def get_rated_weight_truth(top = 0):
+def get_rated_weight_truth(top = 2):
     nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,neutrino_flavors,nsq.NeutrinoType.both,interactions)
 
     print("get_rated_weight_truth: propagating nu")
@@ -35,8 +35,8 @@ def get_rated_weight_truth(top = 0):
     nsq_atm.Set_MixingAngle(0, 1, 0.185778)
     nsq_atm.Set_MixingAngle(0, 2, 0.047611)
     nsq_atm.Set_MixingAngle(1, 2, theta23)
-    nsq_atm.Set_SquareMassDifference(1, 7.42e-5)
-    nsq_atm.Set_SquareMassDifference(2, 2.517e-3)
+    nsq_atm.Set_SquareMassDifference(1, m31)
+    nsq_atm.Set_SquareMassDifference(2, m32)
 
     nsq_atm.Set_initial_state(AtmInitialFlux,nsq.Basis.flavor)
     nsq_atm.Set_ProgressBar(False) # progress bar will be printed on terminal
@@ -82,7 +82,7 @@ def get_rated_weight_truth(top = 0):
 
 
 # Obtain binned energy given theta23 and m31 values
-def get_energy_bins(theta23in, m31in, top = 0):
+def get_energy_bins(theta23in, m31in, top = 2):
     nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,neutrino_flavors,nsq.NeutrinoType.both,interactions)
 
     AtmInitialFlux = np.zeros((len(cth_nodes),len(energy_nodes),2,neutrino_flavors))
