@@ -1,5 +1,7 @@
 import plotting
 import sensitivity
+from params import *
+
 
 # plotting.distribution_plots()
 # plotting.plot_t23_chi_raw_profile("t23_raw_profile_cascade", 0)
