@@ -76,7 +76,7 @@ def get_rated_weight_truth(top = 0):
         energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"], bins = energy_bins_fine, weights = input_data["rate_weight"])
     # print("truth debug: after hist")
 
-    print("get_rated_weight_truth: energy rates: " energy_hist_truth)
+    print("get_rated_weight_truth: energy rates: ", energy_hist_truth)
 
     return rate_weight , energy_hist_truth, energy_bins_truth
 
