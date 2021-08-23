@@ -165,11 +165,12 @@ def get_chisq(t23, m31, truth, top = 0):
 def get_t23_chi_profile(m31 = m31, top = 0):
     profile = np.zeros(len(t23l.tolist())).tolist()
     rate_weight_truth, energy_hist_truth, energy_bins_truth = get_rated_weight_truth(top)
-    # print(t23l)
-    # print(profile)
+    print(t23l)
+    print(profile)
     for i in range(len(t23l.tolist())):
+        print("the t23 now is ", t23l[i])
         profile[i] = get_chisq(t23l[i], m31, energy_hist_truth, top)
-        # print(profile[i])
+        print(profile[i])
     return profile
 
 # Get the m31 chi sq raw profile (not minimizing over t23, set automatically to truth)
