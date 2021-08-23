@@ -163,6 +163,8 @@ def get_chisq(t23, m31, top = 0):
 # Get the t23 chi sq raw profile (not minimizing over m31, set automatically to truth)
 def get_t23_chi_profile(m31 = m31, top = 0):
     profile = np.zeros(len(t23l.tolist())).tolist()
+    print(t23l)
+    print(profile)
     for i in range(len(t23l.tolist())):
         profile[i] = get_chisq(t23l[i], m31, top)
     return profile
