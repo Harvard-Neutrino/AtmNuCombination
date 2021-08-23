@@ -150,23 +150,25 @@ def get_energy_bins(theta23in, m31in, top = 2):
 
 
 # Get chisq for the contour plot
-def get_chisq(t23, m31, top = 0):
+def get_chisq(t23, m31, truth, top = 0):
     # Get the energy bins for the given t23, m31 and truth
     energy_bins = get_energy_bins(t23, m31, top)
-    rate_weight_truth, energy_hist_truth, energy_bins_truth = get_rated_weight_truth(top)
+    # rate_weight_truth, energy_hist_truth, energy_bins_truth = get_rated_weight_truth(top)
     chisq = 0
     for i in range(len(energy_bins)):
-        chisqplus = (energy_bins[i] - energy_hist_truth[i]) ** 2 /  energy_hist_truth[i]
+        # chisqplus = (energy_bins[i] - energy_hist_truth[i]) ** 2 /  energy_hist_truth[i]
+        chisqplus = (energy_bins[i] - truth[i]) ** 2 /  truth[i]
         chisq += chisqplus
     return chisq
 
 # Get the t23 chi sq raw profile (not minimizing over m31, set automatically to truth)
 def get_t23_chi_profile(m31 = m31, top = 0):
     profile = np.zeros(len(t23l.tolist())).tolist()
+    rate_weight_truth, energy_hist_truth, energy_bins_truth = get_rated_weight_truth(top)
     print(t23l)
     print(profile)
     for i in range(len(t23l.tolist())):
-        profile[i] = get_chisq(t23l[i], m31, top)
+        profile[i] = get_chisq(t23l[i], m31, energy_hist_truth, top)
         print(profile[i])
     return profile
 
