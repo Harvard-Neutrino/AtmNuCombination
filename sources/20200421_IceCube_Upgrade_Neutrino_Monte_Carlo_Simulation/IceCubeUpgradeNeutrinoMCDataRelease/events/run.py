@@ -16,5 +16,5 @@ from params import *
 # print("chi-sq is", sensitivity.get_chisq(theta23, m31, top = 1))
 # sensitivity.get_rated_weight_truth(top = 1)
 # sensitivity.get_energy_bins(theta23, m31, top = 1)
-print(sensitivity.get_t23_chi_profile())
+print(sensitivity.get_t23_chi_profile(top = 2))
 
