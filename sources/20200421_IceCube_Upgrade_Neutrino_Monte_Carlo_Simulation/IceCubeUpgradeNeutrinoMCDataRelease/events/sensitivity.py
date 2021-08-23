@@ -32,8 +32,8 @@ def get_rated_weight_truth(top = 2):
             AtmInitialFlux[ic][ie][0][2] = flux.getFlux(nuflux.NuTau,nu_energy,nu_cos_zenith) # nutau
             AtmInitialFlux[ic][ie][1][2] = flux.getFlux(nuflux.NuTauBar,nu_energy,nu_cos_zenith) # nutau bar
 
-    nsq_atm.Set_MixingAngle(0, 1, 0.185778)
-    nsq_atm.Set_MixingAngle(0, 2, 0.047611)
+    nsq_atm.Set_MixingAngle(0, 1, theta12)
+    nsq_atm.Set_MixingAngle(0, 2, theta13)
     nsq_atm.Set_MixingAngle(1, 2, theta23)
     nsq_atm.Set_SquareMassDifference(1, m21)
     nsq_atm.Set_SquareMassDifference(2, m31)
