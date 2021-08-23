@@ -17,6 +17,7 @@ from params import *
 top = 0
 #print("for cascade")
 #print("first we get the literature value:")
+print("first define the truth values, should get into get_rated_weight_truth only")
 rate_weight_truth, energy_hist_truth, energy_bins_truth = sensitivity.get_rated_weight_truth(top)
 #print("chi-sq is", sensitivity.get_chisq(0.4487292288121, m31, energy_hist_truth, top))
 #sensitivity.get_rated_weight_truth(top = 1)
@@ -24,4 +25,8 @@ rate_weight_truth, energy_hist_truth, energy_bins_truth = sensitivity.get_rated_
 #print("now running same thing with get chi profile")
 #print(sensitivity.get_t23_chi_profile(top))
 
+print("now let us go into PROFILE function")
+sensitivity.get_t23_chi_profile(energy_hist_truth, m31 = m31, top = 0)
+
+print("see if this is the same as just calling the get_chisq function")
 sensitivity.get_chisq(t23l[0], m31, energy_hist_truth, top)

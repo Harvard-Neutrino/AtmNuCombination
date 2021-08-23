@@ -18,7 +18,7 @@ matplotlib.rcParams.update({'patch.linewidth': 3})
 def get_rated_weight_truth(top = 2):
     nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,neutrino_flavors,nsq.NeutrinoType.both,interactions)
 
-    print("get_rated_weight_truth: propagating nu")
+    print("in get_rated_weight_truth: propagating nu")
     AtmInitialFlux = np.zeros((len(cth_nodes),len(energy_nodes),2,neutrino_flavors))
     flux = nuflux.makeFlux('honda2006')
     for ic,cth in enumerate(nsq_atm.GetCosthRange()):
@@ -88,7 +88,7 @@ def get_energy_bins(theta23in, m31in, top = 2):
     AtmInitialFlux = np.zeros((len(cth_nodes),len(energy_nodes),2,neutrino_flavors))
     flux = nuflux.makeFlux('honda2006')
 
-    print("get_energy_bins: propagating nu")
+    print("in get_energy_bins: propagating nu")
     for ic,cth in enumerate(nsq_atm.GetCosthRange()):
         for ie,E in enumerate(nsq_atm.GetERange()):
             nu_energy = E/units.GeV
@@ -151,9 +151,10 @@ def get_energy_bins(theta23in, m31in, top = 2):
 
 # Get chisq for the contour plot
 def get_chisq(t23, m31, truth, top = 0):
+    print("in get chisq")
     # Get the energy bins for the given t23, m31 and truth
     energy_bins = get_energy_bins(t23, m31, top)
-    print("get_chisq: the t23 is now", t23)
+    print("back to get_chisq: the t23 is now", t23)
     # rate_weight_truth, energy_hist_truth, energy_bins_truth = get_rated_weight_truth(top)
     chisq = 0
     for i in range(len(energy_bins)):
@@ -163,15 +164,17 @@ def get_chisq(t23, m31, truth, top = 0):
     return chisq
 
 # Get the t23 chi sq raw profile (not minimizing over m31, set automatically to truth)
-def get_t23_chi_profile(m31 = m31, top = 0):
+def get_t23_chi_profile(truth, m31 = m31, top = 0):
+    print("in t23 chi profile")
     profile = np.zeros(len(t23l.tolist())).tolist()
-    rate_weight_truth, energy_hist_truth, energy_bins_truth = get_rated_weight_truth(top)
-    print(t23l)
-    print(profile)
+    # rate_weight_truth, energy_hist_truth, energy_bins_truth = get_rated_weight_truth(top)
+    energy_hist_truth = truth
+    print("the list of t23 to probe is ", t23l)
     for i in range(len(t23l.tolist())):
+        print("the position in list now is ", i)
         print("the t23 now is ", t23l[i])
-        profile[i] = get_chisq(t23l[i], m31, energy_hist_truth, top)
-        print(profile[i])
+        profile[i] = get_chisq(t23l[i], m31, truth, top)
+        print("back to t23 chi profile, the newest chisq is ", profile[i])
     return profile
 
 # Get the m31 chi sq raw profile (not minimizing over t23, set automatically to truth)
