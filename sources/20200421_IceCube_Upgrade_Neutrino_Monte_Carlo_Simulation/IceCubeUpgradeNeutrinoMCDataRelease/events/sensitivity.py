@@ -181,7 +181,7 @@ def get_t23_chi_profile_old(m31 = m31, top = 0):
     print("in t23 chi profile")
     profile = np.zeros(len(t23l.tolist())).tolist()
     rate_weight_truth, energy_hist_truth, energy_bins_truth = get_rated_weight_truth(top)
-    energy_hist_truth = truth
+    # energy_hist_truth = truth
     print("the list of t23 to probe is ", t23l)
     for i in range(len(t23l.tolist())):
         print("the position in list now is ", i)
