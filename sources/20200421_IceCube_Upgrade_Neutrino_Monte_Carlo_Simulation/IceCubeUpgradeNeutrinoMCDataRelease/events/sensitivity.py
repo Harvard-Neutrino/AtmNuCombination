@@ -153,6 +153,7 @@ def get_energy_bins(theta23in, m31in, top = 2):
 def get_chisq(t23, m31, truth, top = 0):
     # Get the energy bins for the given t23, m31 and truth
     energy_bins = get_energy_bins(t23, m31, top)
+    print("get_chisq: the t23 is now", t23)
     # rate_weight_truth, energy_hist_truth, energy_bins_truth = get_rated_weight_truth(top)
     chisq = 0
     for i in range(len(energy_bins)):

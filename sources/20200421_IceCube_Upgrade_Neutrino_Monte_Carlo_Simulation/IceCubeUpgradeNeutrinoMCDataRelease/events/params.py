@@ -59,10 +59,11 @@ cth_nodes = nsq.linspace(cth_min,cth_max,cth_nodes)
 neutrino_flavors = 3
 
 # Set theta23 numeric values to probe sensitivity
-t23min = np.sqrt(np.arcsin(0.2))
-t23max = np.sqrt(np.arcsin(0.9))
-t23step = 0.0025 * np.pi
-t23l = np.arange(t23min, t23max + t23step, t23step)
+#t23min = np.sqrt(np.arcsin(0.2))
+#t23max = np.sqrt(np.arcsin(0.9))
+#t23step = 0.0025 * np.pi
+#t23l = np.arange(t23min, t23max + t23step, t23step)
+t23l = np.array([0.44872923])
 
 m31min = 2e-3
 m31max = 4e-3

@@ -14,12 +14,14 @@ from params import *
 # plotting.plot_resolution()
 
 # For debug purposes
-top = 2
-print("for both")
-print("first we get the literature value:")
+top = 0
+#print("for cascade")
+#print("first we get the literature value:")
 rate_weight_truth, energy_hist_truth, energy_bins_truth = sensitivity.get_rated_weight_truth(top)
-print("chi-sq is", sensitivity.get_chisq(theta23, m31, energy_hist_truth, top))
+#print("chi-sq is", sensitivity.get_chisq(0.4487292288121, m31, energy_hist_truth, top))
 #sensitivity.get_rated_weight_truth(top = 1)
 #sensitivity.get_energy_bins(theta23, m31, top = 1)
-print(sensitivity.get_t23_chi_profile(top))
+#print("now running same thing with get chi profile")
+#print(sensitivity.get_t23_chi_profile(top))
 
+sensitivity.get_chisq(t23l[0], m31, energy_hist_truth, top)
