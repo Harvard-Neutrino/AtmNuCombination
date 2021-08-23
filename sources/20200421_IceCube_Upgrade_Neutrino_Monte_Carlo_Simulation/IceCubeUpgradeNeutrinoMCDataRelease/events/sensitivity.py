@@ -178,7 +178,7 @@ def get_t23_chi_profile(truth, m31 = m31, top = 0):
     return profile
 
 def get_t23_chi_profile_old(m31 = m31, top = 0):
-    print("in t23 chi profile")
+    print("in t23 chi profile old")
     profile = np.zeros(len(t23l.tolist())).tolist()
     rate_weight_truth, energy_hist_truth, energy_bins_truth = get_rated_weight_truth(top)
     # energy_hist_truth = truth
