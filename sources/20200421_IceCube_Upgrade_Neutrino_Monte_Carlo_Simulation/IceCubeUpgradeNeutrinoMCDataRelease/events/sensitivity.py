@@ -177,6 +177,19 @@ def get_t23_chi_profile(truth, m31 = m31, top = 0):
         print("back to t23 chi profile, the newest chisq is ", profile[i])
     return profile
 
+def get_t23_chi_profile_old(m31 = m31, top = 0):
+    print("in t23 chi profile")
+    profile = np.zeros(len(t23l.tolist())).tolist()
+    rate_weight_truth, energy_hist_truth, energy_bins_truth = get_rated_weight_truth(top)
+    energy_hist_truth = truth
+    print("the list of t23 to probe is ", t23l)
+    for i in range(len(t23l.tolist())):
+        print("the position in list now is ", i)
+        print("the t23 now is ", t23l[i])
+        profile[i] = get_chisq(t23l[i], m31, top)
+        print("back to t23 chi profile, the newest chisq is ", profile[i])
+    return profile
+
 # Get the m31 chi sq raw profile (not minimizing over t23, set automatically to truth)
 def get_m31_chi_profile(t23 = theta23, top = 0):
     profile = np.zeros(len(m31l.tolist())).tolist()

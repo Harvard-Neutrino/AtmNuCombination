@@ -30,3 +30,6 @@ sensitivity.get_t23_chi_profile(energy_hist_truth, m31 = m31, top = 0)
 
 print("see if this is the same as just calling the get_chisq function")
 sensitivity.get_chisq(t23l[0], m31, energy_hist_truth, top)
+
+print("now with the old script")
+sensitivity.get_t23_chi_profile_old(m31 = m31, top = 0)
