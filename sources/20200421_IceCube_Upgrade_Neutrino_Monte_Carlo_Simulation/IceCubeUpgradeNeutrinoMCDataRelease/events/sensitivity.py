@@ -35,8 +35,8 @@ def get_rated_weight_truth(top = 2):
     nsq_atm.Set_MixingAngle(0, 1, 0.185778)
     nsq_atm.Set_MixingAngle(0, 2, 0.047611)
     nsq_atm.Set_MixingAngle(1, 2, theta23)
-    nsq_atm.Set_SquareMassDifference(1, m31)
-    nsq_atm.Set_SquareMassDifference(2, m32)
+    nsq_atm.Set_SquareMassDifference(1, m21)
+    nsq_atm.Set_SquareMassDifference(2, m31)
 
     nsq_atm.Set_initial_state(AtmInitialFlux,nsq.Basis.flavor)
     nsq_atm.Set_ProgressBar(False) # progress bar will be printed on terminal
