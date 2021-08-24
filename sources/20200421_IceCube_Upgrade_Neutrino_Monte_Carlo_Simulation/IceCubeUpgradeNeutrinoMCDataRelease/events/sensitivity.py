@@ -185,7 +185,7 @@ def get_m31_chi_profile(t23 = theta23, top = 0):
     for i in range(len(m31l.tolist())):
         print("the position in list now is ", i)
         print("the m31 now is ", t23l[i])
-        profile[i] = get_chisq(t23, m31l[i], energy_hist_truth_top)
+        profile[i] = get_chisq(t23, m31l[i], energy_hist_truth, top)
         print("back to m31 chi profile, the newest chisq is ", profile[i])
     return profile
 
