@@ -15,11 +15,11 @@ from params import *
 plotting.plot_t23_chi_raw_profile(savename = "t23_chi_sq_profile_raw_new_new", top = 0)
 
 # For debug purposes
-# top = 0
+#top = 0
 #print("for cascade")
 #print("first we get the literature value:")
 # print("first define the truth values, should get into get_rated_weight_truth only")
-# rate_weight_truth, energy_hist_truth, energy_bins_truth = sensitivity.get_rated_weight_truth(top)
+#rate_weight_truth, energy_hist_truth, energy_bins_truth = sensitivity.get_rated_weight_truth(top)
 #print("chi-sq is", sensitivity.get_chisq(0.4487292288121, m31, energy_hist_truth, top))
 #sensitivity.get_rated_weight_truth(top = 1)
 #sensitivity.get_energy_bins(theta23, m31, top = 1)
@@ -27,7 +27,7 @@ plotting.plot_t23_chi_raw_profile(savename = "t23_chi_sq_profile_raw_new_new", t
 #print(sensitivity.get_t23_chi_profile(top))
 
 # print("now let us go into PROFILE function")
-# sensitivity.get_t23_chi_profile(energy_hist_truth, m31 = m31, top = 0)
+#sensitivity.get_t23_chi_profile(energy_hist_truth, m31 = m31, top = 0)
 
 # print("see if this is the same as just calling the get_chisq function")
 # sensitivity.get_chisq(t23l[0], m31, energy_hist_truth, top)
