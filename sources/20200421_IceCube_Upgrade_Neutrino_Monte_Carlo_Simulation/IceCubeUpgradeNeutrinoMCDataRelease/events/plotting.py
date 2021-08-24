@@ -176,7 +176,7 @@ def plot_m31_chi_raw_profile(savename = "m31_chi_sq_profile_raw_new", top = 0):
 # plot un-normalized chisq for NH, probing values of m31, not minimizing over t23, but for all topologies
 def plot_m31_chi_raw_profile_all_top(savename = "m31_chi_sq_profile_raw_all_top_new"):
 	print("plotting m31 chi profile all topologies")
-	x = np.sin(t23l) ** 2
+	x = m31l
 	y0 = sst.get_m31_chi_profile(top = 0)
 	y1 = sst.get_m31_chi_profile(top = 1)
 	y2 = sst.get_m31_chi_profile(top = 2)
