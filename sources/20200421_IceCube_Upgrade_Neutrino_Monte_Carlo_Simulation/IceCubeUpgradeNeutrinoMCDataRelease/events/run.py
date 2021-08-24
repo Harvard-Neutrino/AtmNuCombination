@@ -18,8 +18,8 @@ top = 0
 # plotting.plot_t23_chi_raw_profile_all_top(savename = "t23_chi_sq_profile_raw_all_top")
 # plotting.plot_resolution()\
 
-# plotting.plot_t23_chi_raw_profile(savename = "t23_chi_sq_profile_raw_CORRECT_2", top = top)
-plotting.plot_t23_chi_raw_profile_all_top(savename = "t23_chi_sq_profile_raw_all_top_CORRECT_2")
+plotting.plot_t23_chi_raw_profile(savename = "t23_chi_sq_profile_raw_CORRECT_2", top = top)
+# plotting.plot_t23_chi_raw_profile_all_top(savename = "t23_chi_sq_profile_raw_all_top_CORRECT_2")
 
 
 
