@@ -173,7 +173,7 @@ def get_t23_chi_profile(truth, m31 = m31, top = 0):
     for i in range(len(t23l.tolist())):
         print("the position in list now is ", i)
         print("the t23 now is ", t23l[i])
-        profile[i] = get_chisq(t23l[i], m31, truth, top)
+        profile[i] = get_chisq(t23l[i], m31, energy_hist_truth, top)
         print("back to t23 chi profile, the newest chisq is ", profile[i])
     return profile
 
