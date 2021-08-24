@@ -18,6 +18,7 @@ rate_weight_truth, energy_hist_truth, energy_bins_truth = sensitivity.get_rated_
 # plotting.plot_t23_chi_raw_profile_all_top(savename = "t23_chi_sq_profile_raw_all_top")
 # plotting.plot_resolution()
 plotting.plot_t23_chi_raw_profile(energy_hist_truth, savename = "t23_chi_sq_profile_raw_new_new", top = 0)
+plotting.plot_t23_chi_raw_profile(energy_hist_truth, savename = "t23_chi_sq_profile_raw_new_new", top = 0)
 
 # For debug purposes
 #top = 0
