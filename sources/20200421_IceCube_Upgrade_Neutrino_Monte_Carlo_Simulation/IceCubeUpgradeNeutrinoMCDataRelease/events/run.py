@@ -28,7 +28,7 @@ plotting.plot_t23_chi_raw_profile(energy_hist_truth, savename = "t23_chi_sq_prof
 #sensitivity.get_rated_weight_truth(top = 1)
 #sensitivity.get_energy_bins(theta23, m31, top = 1)
 print("now running same thing with get chi profile")
-print(sensitivity.get_t23_chi_profile(top))
+print(sensitivity.get_t23_chi_profile(energy_hist_truth, top = top))
 
 # print("now let us go into PROFILE function")
 #sensitivity.get_t23_chi_profile(energy_hist_truth, m31 = m31, top = 0)
