@@ -6,6 +6,14 @@ import nuSQUIDSpy as nsq
 import nuflux
 import seaborn as sns
 
+# Set up mixing parameters as in nu-fit5.0
+theta12 = np.arcsin(np.sqrt(0.304))
+theta13 = np.arcsin(np.sqrt(0.02221))
+theta23 = np.arcsin(np.sqrt(0.570))
+m21 = 7.42e-5
+m31 = 2.517e-3
+
+
 # Define path to file (you may need to change this to match your system)
 input_file = "neutrino_mc.csv"
 
@@ -90,12 +98,7 @@ theta_bin_plot = nsq.linspace(theta_bin_min, theta_bin_max, theta_n_bins)
 # Set up chi squared bins
 bins = np.zeros((t23l.shape[0], E_n_bins))
 
-# Set up mixing parameters as in nu-fit5.0
-theta12 = np.arcsin(np.sqrt(0.304))
-theta13 = np.arcsin(np.sqrt(0.02221))
-theta23 = np.arcsin(np.sqrt(0.570))
-m21 = 7.42e-5
-m31 = 2.517e-3
+
 
 # # Set up some more masks for plotting bias (resolution + unfolded)
 # reso_mask0 = input_data["true_energy"] >= 10^(1.0) & input_data["true_energy"] < 10^(1.1)
