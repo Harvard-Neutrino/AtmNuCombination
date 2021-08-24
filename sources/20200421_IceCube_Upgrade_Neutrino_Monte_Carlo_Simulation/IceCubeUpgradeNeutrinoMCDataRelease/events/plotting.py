@@ -76,11 +76,13 @@ def distribution_plots():
 # Plots contour of t23 and m31 chi-sq for NH
 def plot_contour_chi(savename = "chi_sq_contour", top = 0):
 	print("plotting chi squared contour")
+	rate_weight_truth, energy_hist_truth, energy_bins_truth = get_rated_weight_truth(top)
+
 	t23 = np.arange(t23min, t23max + t23step, t23step)
 	m31 = np.arange(m31min, m31max + m31step, m31step)
 
 	X, Y = np.meshgrid(np.sin(t23) ** 2, m31)
-	Z = sst.get_chisq(X, Y, top)
+	Z = sst.get_chisq(X, Y, energy_hist_truth, top = top)
 
 	fig4, ax4  = plt.subplots(figsize=(7,6))
 	fig4.suptitle("Chi-Sq Contour NH")

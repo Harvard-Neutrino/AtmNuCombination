@@ -165,9 +165,9 @@ def get_chisq(t23, m31, truth, top = 0):
 
 # Get chisq wrt t23 minimized by m31
 def get_chisq_min_t23(t23, truth, top = 0):
-    tomin = np.zeros_like(pfm31min).tolist()
+    tomin = np.zeros_like(pfm31l).tolist()
     for i in range(len(tomin)):
-        energy_bins = get_energy_bins(t23, pfm31min[i], top)
+        energy_bins = get_energy_bins(t23, pfm31l[i], top)
         chisq = 0
         for j in range(len(energy_bins)):
             chisqplus = (energy_bins[j] - truth[j]) ** 2 /  truth[j]
