@@ -73,9 +73,9 @@ t23step = 0.0025 * np.pi
 t23l = np.arange(t23min, t23max + t23step, t23step)
 # t23l = np.array([0.44872923, theta23])
 
-m31min = 2e-3
+m31min = 1.5e-3
 m31max = 4e-3
-m31step = 0.1e-3
+m31step = 0.05e-3
 m31l = np.arange(m31min, m31max + m31step, m31step)
 
 # Set the profile minimization probing limits
