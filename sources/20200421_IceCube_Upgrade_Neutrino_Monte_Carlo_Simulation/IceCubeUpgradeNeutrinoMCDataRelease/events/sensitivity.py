@@ -163,6 +163,19 @@ def get_chisq(t23, m31, truth, top = 0):
         chisq += chisqplus
     return chisq
 
+# Get chisq wrt t23 minimized by m31
+def get_chisq_min_t23(t23, truth, top = 0):
+    tomin = np.zeros_like(pfm31min).tolist()
+    for i in range(len(tomin)):
+        energy_bins = get_energy_bins(t23, pfm31min[i], top)
+        chisq = 0
+        for j in range(len(energy_bins)):
+            chisqplus = (energy_bins[j] - truth[j]) ** 2 /  truth[j]
+            chisq += chisqplus
+        tomin[i] = chisq
+    chisqmin = min(tomin)
+    return chisqmin
+
 # Get the t23 chi sq raw profile (not minimizing over m31, set automatically to truth)
 def get_t23_chi_profile(m31 = m31, top = 0):
     print("in t23 chi profile")
@@ -176,6 +189,16 @@ def get_t23_chi_profile(m31 = m31, top = 0):
         profile[i] = get_chisq(t23l[i], m31, energy_hist_truth, top)
         print("back to t23 chi profile, the newest chisq is ", profile[i])
     return profile
+
+# Get the minimized over m31 chisq profile of t23
+def get_t23_min_chi_profile(top = 0):
+    profile = np.zeros_like(t23l).tolist()
+    rate_weight_truth, energy_hist_truth, energy_bins_truth = get_rated_weight_truth(top)
+    for i in range(len(t23l.tolist())):
+        profile[i] = get_chisq_min_t23(t23l[i], energy_hist_truth, top)
+    return profile
+
+
 
 # Get the m31 chi sq raw profile (not minimizing over t23, set automatically to truth)
 def get_m31_chi_profile(t23 = theta23, top = 0):

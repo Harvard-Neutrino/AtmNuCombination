@@ -105,6 +105,20 @@ def plot_t23_chi_raw_profile(savename = "t23_chi_sq_profile_raw_new", top = 0):
 	ax2.grid(True)
 	fig2.savefig("{}.png".format(savename), bbox_inches='tight')
 
+# plot un-normalized chisq for NH, probing values of t23, minimizing over m31
+def plot_t23_min_chi_profile(savename = "t23_chi_sq_min_profile", top = 0):
+	print("plotting t23 min chi profile")
+	x = np.sin(t23l) ** 2
+	y = sst.get_t23_min_chi_profile(top = top)
+	fig2, ax2 = plt.subplots(figsize=(7,6))
+	fig2.suptitle(r"$\theta_{23} \chi^2$ profile (minimized)")
+	ax2.set_xlabel(r"$\sin^2{\theta_{23}}$")
+	ax2.set_ylabel(r"$\chi^2_{NH}$")
+	ax2.set_yscale("log")
+	ax2.plot(x, y, color ="green")
+	ax2.grid(True)
+	fig2.savefig("{}.png".format(savename), bbox_inches='tight')
+
 # plot un-normalized chisq for NH, probing values of t23, not minimizing over m31, but for all topologies
 def plot_t23_chi_raw_profile_all_top(savename = "t23_chi_sq_profile_raw_all_top"):
 	print("plotting t23 chi profile all topologies")
@@ -114,6 +128,25 @@ def plot_t23_chi_raw_profile_all_top(savename = "t23_chi_sq_profile_raw_all_top"
 	y2 = sst.get_t23_chi_profile(top = 2)
 	fig2, ax2 = plt.subplots(figsize=(7,6))
 	fig2.suptitle(r"$\theta_{23} \chi^2$ profile (raw)")
+	ax2.set_xlabel(r"$\sin^2{\theta_{23}}$")
+	ax2.set_ylabel(r"$\chi^2_{NH}$")
+	ax2.set_yscale("log")
+	ax2.plot(x, y0, color ="green", label = "cascades")
+	ax2.plot(x, y1, color ="red", label = "tracks")
+	ax2.plot(x, y2, color ="blue", label = "all")
+	ax2.grid(True)
+	ax2.legend()
+	fig2.savefig("{}.png".format(savename), bbox_inches='tight')
+
+# plot un-normalized chisq for NH, probing values of t23, not minimizing over m31, but for all topologies
+def plot_t23_min_chi_profile_all_top(savename = "t23_min_chi_sq_profile_all_top"):
+	print("plotting t23 chi profile all topologies")
+	x = np.sin(t23l) ** 2
+	y0 = sst.get_t23_min_chi_profile(top = 0)
+	y1 = sst.get_t23_min_chi_profile(top = 1)
+	y2 = sst.get_t23_min_chi_profile(top = 2)
+	fig2, ax2 = plt.subplots(figsize=(7,6))
+	fig2.suptitle(r"$\theta_{23} \chi^2$ profile (minimized)")
 	ax2.set_xlabel(r"$\sin^2{\theta_{23}}$")
 	ax2.set_ylabel(r"$\chi^2_{NH}$")
 	ax2.set_yscale("log")

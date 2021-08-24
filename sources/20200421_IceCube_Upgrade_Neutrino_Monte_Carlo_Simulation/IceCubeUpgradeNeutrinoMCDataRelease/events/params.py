@@ -78,6 +78,18 @@ m31max = 4e-3
 m31step = 0.1e-3
 m31l = np.arange(m31min, m31max + m31step, m31step)
 
+# Set the profile minimization probing limits
+pft23min = np.sqrt(np.arcsin(0.35))
+pft23max = np.sqrt(np.arcsin(0.7))
+pft23step = 0.005 * np.pi
+pft23l = np.arange(pft23min, pft23max + pft23step, pft23step)
+# t23l = np.array([0.44872923, theta23])
+
+pfm31min = 1.5e-3
+pfm31max = 4e-3
+pfm31step = 0.1e-3
+pfm31l = np.arange(pfm31min, pfm31max + pfm31step, pfm31step)
+
 # Set the chi squared plotting bins limits
 E_bin_min = 0
 E_bin_max = 2
