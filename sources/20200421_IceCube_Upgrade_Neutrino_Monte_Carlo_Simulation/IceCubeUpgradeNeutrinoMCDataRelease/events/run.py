@@ -24,6 +24,7 @@ rate_weight_truth, energy_hist_truth, energy_bins_truth = sensitivity.get_rated_
 
 # plotting.plot_t23_chi_raw_profile(energy_hist_truth, savename = "t23_chi_sq_profile_raw_new_new", top = 0)
 sensitivity.stupidity(energy_hist_truth, top)
+sensitivity.stupidity2(energy_hist_truth, top = top)
 
 # For debug purposes
 #top = 0
@@ -33,8 +34,8 @@ sensitivity.stupidity(energy_hist_truth, top)
 #rate_weight_truth, energy_hist_truth, energy_bins_truth = sensitivity.get_rated_weight_truth(top)
 #sensitivity.get_rated_weight_truth(top = 1)
 #sensitivity.get_energy_bins(theta23, m31, top = 1)
-print("now running same thing with get chi profile")
-print(sensitivity.get_t23_chi_profile(energy_hist_truth, top = top))
+# print("now running same thing with get chi profile")
+# print(sensitivity.get_t23_chi_profile(energy_hist_truth, top = top))
 
 # print("now let us go into PROFILE function")
 #sensitivity.get_t23_chi_profile(energy_hist_truth, m31 = m31, top = 0)

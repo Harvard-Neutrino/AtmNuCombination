@@ -208,3 +208,16 @@ def get_m31_chi_profile(t23 = theta23, top = 0):
 def stupidity(energy_hist_truth, top):
     get_t23_chi_profile(energy_hist_truth, top = top)
     return 
+
+def stupidity2(energy_hist_truth, savename = "t23_chi_sq_profile_raw_new", top = 0):
+    print("plotting t23 chi profile")
+    x = np.sin(t23l) ** 2
+    y = get_t23_chi_profile(energy_hist_truth, top)
+    fig2, ax2 = plt.subplots(figsize=(7,6))
+    fig2.suptitle(r"$\theta_{23} \chi^2$ profile (raw)")
+    ax2.set_xlabel(r"$\sin^2{\theta_{23}}$")
+    ax2.set_ylabel(r"$\chi^2_{NH}$")
+    # ax2.set_yscale("log")
+    ax2.plot(x, y, color ="green")
+    ax2.grid(True)
+    fig2.savefig("{}.png".format(savename), bbox_inches='tight')
