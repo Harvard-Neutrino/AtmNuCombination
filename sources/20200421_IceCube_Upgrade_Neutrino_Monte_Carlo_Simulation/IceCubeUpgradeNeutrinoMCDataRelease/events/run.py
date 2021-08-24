@@ -25,9 +25,6 @@ plotting.plot_t23_chi_raw_profile(energy_hist_truth, savename = "t23_chi_sq_prof
 #print("first we get the literature value:")
 # print("first define the truth values, should get into get_rated_weight_truth only")
 #rate_weight_truth, energy_hist_truth, energy_bins_truth = sensitivity.get_rated_weight_truth(top)
-
-print("chi-sq for truth t23 is", sensitivity.get_chisq(theta23, m31, energy_hist_truth, top))
-print("chi-sq for selected t23 is", sensitivity.get_chisq(0.4487292288121, m31, energy_hist_truth, top))
 #sensitivity.get_rated_weight_truth(top = 1)
 #sensitivity.get_energy_bins(theta23, m31, top = 1)
 print("now running same thing with get chi profile")
