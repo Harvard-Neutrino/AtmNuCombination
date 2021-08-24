@@ -164,11 +164,11 @@ def get_chisq(t23, m31, truth, top = 0):
     return chisq
 
 # Get the t23 chi sq raw profile (not minimizing over m31, set automatically to truth)
-def get_t23_chi_profile(truth, m31 = m31, top = 0):
+def get_t23_chi_profile(m31 = m31, top = 0):
     print("in t23 chi profile")
     profile = np.zeros(len(t23l.tolist())).tolist()
-    # rate_weight_truth, energy_hist_truth, energy_bins_truth = get_rated_weight_truth(top)
-    energy_hist_truth = truth
+    rate_weight_truth, energy_hist_truth, energy_bins_truth = get_rated_weight_truth(top)
+    # energy_hist_truth = truth
     print("the list of t23 to probe is ", t23l)
     for i in range(len(t23l.tolist())):
         print("the position in list now is ", i)
@@ -205,19 +205,3 @@ def get_m31_chi_profile(t23 = theta23, top = 0):
 # np.save(t23outfile, energy_hist_theta23)
 # np.save(m31outfile, energy_hist_m31)
 
-def stupidity(energy_hist_truth, top):
-    get_t23_chi_profile(energy_hist_truth, top = top)
-    return 
-
-def stupidity2(energy_hist_truth, savename = "t23_chi_sq_profile_raw_new", top = 0):
-    print("plotting t23 chi profile")
-    x = np.sin(t23l) ** 2
-    y = get_t23_chi_profile(energy_hist_truth, top)
-    fig2, ax2 = plt.subplots(figsize=(7,6))
-    fig2.suptitle(r"$\theta_{23} \chi^2$ profile (raw)")
-    ax2.set_xlabel(r"$\sin^2{\theta_{23}}$")
-    ax2.set_ylabel(r"$\chi^2_{NH}$")
-    # ax2.set_yscale("log")
-    ax2.plot(x, y, color ="green")
-    ax2.grid(True)
-    fig2.savefig("{}.png".format(savename), bbox_inches='tight')

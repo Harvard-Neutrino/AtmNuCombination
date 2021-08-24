@@ -6,7 +6,7 @@ from params import *
 top = 0
 
 # set the truth energy bins
-rate_weight_truth, energy_hist_truth, energy_bins_truth = sensitivity.get_rated_weight_truth(top)
+# rate_weight_truth, energy_hist_truth, energy_bins_truth = sensitivity.get_rated_weight_truth(top)
 
 # plotting.distribution_plots()
 #print("this is output file for both plot")
@@ -18,13 +18,13 @@ rate_weight_truth, energy_hist_truth, energy_bins_truth = sensitivity.get_rated_
 # plotting.plot_t23_chi_raw_profile_all_top(savename = "t23_chi_sq_profile_raw_all_top")
 # plotting.plot_resolution()\
 
-
+plot_t23_chi_raw_profile(savename = "t23_chi_sq_profile_raw_new", top = top)
 
 
 
 # plotting.plot_t23_chi_raw_profile(energy_hist_truth, savename = "t23_chi_sq_profile_raw_new_new", top = 0)
-sensitivity.stupidity(energy_hist_truth, top)
-sensitivity.stupidity2(energy_hist_truth, top = top)
+# sensitivity.stupidity(energy_hist_truth, top)
+# sensitivity.stupidity2(energy_hist_truth, top = top)
 
 # For debug purposes
 #top = 0

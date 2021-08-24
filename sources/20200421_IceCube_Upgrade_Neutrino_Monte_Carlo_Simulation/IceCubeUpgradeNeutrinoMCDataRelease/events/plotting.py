@@ -92,10 +92,10 @@ def plot_contour_chi(savename = "chi_sq_contour", top = 0):
 	fig4.savefig("{}.png".format(savename), bbox_inches="tight")
 
 # plot un-normalized chisq for NH, probing values of t23, not minimizing over m31
-def plot_t23_chi_raw_profile(truth, savename = "t23_chi_sq_profile_raw_new", top = 0):
+def plot_t23_chi_raw_profile(savename = "t23_chi_sq_profile_raw_new", top = 0):
 	print("plotting t23 chi profile")
 	x = np.sin(t23l) ** 2
-	y = sst.get_t23_chi_profile(truth, top)
+	y = sst.get_t23_chi_profile(top = top)
 	fig2, ax2 = plt.subplots(figsize=(7,6))
 	fig2.suptitle(r"$\theta_{23} \chi^2$ profile (raw)")
 	ax2.set_xlabel(r"$\sin^2{\theta_{23}}$")
