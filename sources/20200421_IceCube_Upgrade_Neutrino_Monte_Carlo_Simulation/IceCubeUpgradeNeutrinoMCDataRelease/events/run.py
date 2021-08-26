@@ -10,9 +10,9 @@ top = 0
 #plotting.plot_m31_chi_raw_profile(savename = "m31_chi_sq_profile_raw_CORRECT", top = top)
 # plotting.plot_m31_chi_raw_profile_all_top(savename = "m31_chi_sq_profile_raw_all_top_CORRECT")
 
-plotting.plot_t23_min_chi_profile(savename = "t23_chi_sq_min_profile", top = 0)
+#plotting.plot_t23_min_chi_profile(savename = "t23_chi_sq_min_profile", top = 0)
 #plotting.plot_t23_min_chi_profile_all_top(savename = "t23_min_chi_sq_profile_all_top")
 
-# plotting.plot_contour_chi(savename = "chi_sq_contour_cascade", top = 0)
+plotting.plot_contour_chi(savename = "chi_sq_contour_cascade", top = 0)
 # plotting.plot_contour_chi(savename = "chi_sq_contour_track", top = 1)
 # plotting.plot_contour_chi(savename = "chi_sq_contour_all", top = 2)
