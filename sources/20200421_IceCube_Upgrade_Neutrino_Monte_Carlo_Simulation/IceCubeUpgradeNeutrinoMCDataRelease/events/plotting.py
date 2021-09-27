@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
-import nuSQUIDSpy as nsq
+import nuSQuIDS as nsq
 import nuflux
 import seaborn as sns
 
@@ -27,10 +27,10 @@ def distribution_plots():
 		  label=r"$\nu_{All, Track}$", color="red", histtype="step")
 	ax.set_xscale("log")
 	ax.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
-	ax.set_xlim(1, 100)
+	ax.set_xlim(1, 1000)
 	ax.ticklabel_format(axis='y', style='sci', scilimits=None,\
 					 useOffset=None, useLocale=None, useMathText=None)
-	ax.set_ylabel("Rate [5Years]")
+	ax.set_ylabel("Rate [3 Years]")
 	ax.grid(True)
 	ax.legend()
 	fig.savefig("Rate_For_Sensitivity.png", bbox_inches='tight')
@@ -50,7 +50,7 @@ def distribution_plots():
 	ax.set_xlim(-1, 1)
 	ax.ticklabel_format(axis='y', style='sci', scilimits=None,\
 					 useOffset=None, useLocale=None, useMathText=None)
-	ax.set_ylabel("Rate [5Years]")
+	ax.set_ylabel("Rate [3 Years]")
 	ax.grid(True)
 	ax.legend()
 	fig.savefig("Zenith_Rate_For_Sensitivity.png", bbox_inches='tight')
@@ -74,22 +74,42 @@ def distribution_plots():
 
 
 # Plots contour of t23 and m31 chi-sq for NH
-def plot_contour_chi(savename = "chi_sq_contour", top = 0):
+def plot_contour_chi(savename = "chi_sq_contour"):
 	print("plotting chi squared contour")
-	rate_weight_truth, energy_hist_truth, energy_bins_truth = sst.get_rated_weight_truth(top)
+	rate_weight_truth_0, energy_hist_truth_0, energy_bins_truth_0 = sst.get_rated_weight_truth(top = 0)
+	rate_weight_truth_1, energy_hist_truth_1, energy_bins_truth_1 = sst.get_rated_weight_truth(top = 1)
 
-	t23 = np.arange(t23min, t23max + t23step, t23step)
+	
+	# try some bigger values for the step
+	bigstep = True
+	if bigstep:
+		t23step = 0.02 * np.pi
+		m31step = 0.20e-3
+
+	sin2t23 = np.arange(t23min, t23max + t23step, t23step)
+	for i in range(len(sin2t23)):
+		sin2t23[i] = np.sin(sin2t23[i]) ** 2
 	m31 = np.arange(m31min, m31max + m31step, m31step)
 
-	X, Y = np.meshgrid(np.sin(t23) ** 2, m31)
-	Z = sst.get_chisq(X, Y, energy_hist_truth, top = top)
+	X, Y = np.meshgrid(sin2t23, m31)
+	# Z = sst.get_chisq(X, Y, energy_hist_truth, top = top)
+
+	Z2 = np.ndarray((len(m31), len(sin2t23)))
+	for i in range(len(m31)):
+		for j in range(len(sin2t23)):
+			Z2[i][j] = sst.get_chisq(np.arcsin(np.sqrt(sin2t23[j])), m31[i],  energy_hist_truth_0, top = 0) \
+						+ sst.get_chisq(np.arcsin(np.sqrt(sin2t23[j])), m31[i],  energy_hist_truth_1, top = 1)
+			# print("m31, ", m31[i])
+			# print("t23, ", np.arcsin(np.sqrt(sin2t23[j])))
+			# print("sin2t23, ", sin2t23[j])
+			# print("chisq, ", Z2[i][j])
 
 	fig4, ax4  = plt.subplots(figsize=(7,6))
 	fig4.suptitle("Chi-Sq Contour NH")
-	ax3.set_xlabel(r"$\sin^2{\theta_{23}}$")
+	ax4.set_xlabel(r"$\sin^2{\theta_{23}}$")
 	ax4.set_ylabel(r"$m^2_{31}$")
-	axim = ax4.contourf(X,Y,Z,levels=[1e0,1e1,1e2,1e3],cmap=plt.cm.jet,norm = LogNorm())
-	cb   = fig.colorbar(axim)
+	axim = ax4.contour(X,Y,Z2,levels=[4.605, 5.991, 9.21],cmap=plt.cm.jet)
+	cb   = fig4.colorbar(axim)
 
 	fig4.savefig("{}.png".format(savename), bbox_inches="tight")
 
@@ -127,7 +147,10 @@ def plot_t23_chi_raw_profile_all_top(savename = "t23_chi_sq_profile_raw_all_top"
 	x = np.sin(t23l) ** 2
 	y0 = sst.get_t23_chi_profile(top = 0)
 	y1 = sst.get_t23_chi_profile(top = 1)
-	y2 = sst.get_t23_chi_profile(top = 2)
+	y2 = list()
+	y2[:] = y0[:]
+	for i in range(len(y2)):
+		y2[i] = y0[i] + y1[i]
 	fig2, ax2 = plt.subplots(figsize=(7,6))
 	fig2.suptitle(r"$\theta_{23} \chi^2$ profile (raw)")
 	ax2.set_xlabel(r"$\sin^2{\theta_{23}}$")
@@ -179,7 +202,10 @@ def plot_m31_chi_raw_profile_all_top(savename = "m31_chi_sq_profile_raw_all_top_
 	x = m31l
 	y0 = sst.get_m31_chi_profile(top = 0)
 	y1 = sst.get_m31_chi_profile(top = 1)
-	y2 = sst.get_m31_chi_profile(top = 2)
+	y2 = list()
+	y2[:] = y0[:]
+	for i in range(len(y2)):
+		y2[i] = y0[i] + y1[i]
 	fig2, ax2 = plt.subplots(figsize=(7,6))
 	fig2.suptitle(r"$m_{31} \chi^2$ profile (raw)")
 	ax2.set_xlabel(r"$m_{31}$")

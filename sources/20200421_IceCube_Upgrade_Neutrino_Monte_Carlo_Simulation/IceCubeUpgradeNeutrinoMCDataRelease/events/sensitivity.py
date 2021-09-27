@@ -3,9 +3,9 @@ import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
-import nuSQUIDSpy as nsq
+import nuSQuIDS as nsq
 import nuflux
-import seaborn as sns
+# import seaborn as sns
 
 from params import *
 
@@ -18,9 +18,9 @@ matplotlib.rcParams.update({'patch.linewidth': 3})
 def get_rated_weight_truth(top = 2):
     nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,neutrino_flavors,nsq.NeutrinoType.both,interactions)
 
-    print("in get_rated_weight_truth: propagating nu")
+    print("get_rated_weight_truth: propagating nu")
     AtmInitialFlux = np.zeros((len(cth_nodes),len(energy_nodes),2,neutrino_flavors))
-    flux = nuflux.makeFlux('honda2006')
+    flux = nuflux.makeFlux('IPhonda2014_spl_solmin')
     for ic,cth in enumerate(nsq_atm.GetCosthRange()):
         for ie,E in enumerate(nsq_atm.GetERange()):
             nu_energy = E/units.GeV
@@ -29,8 +29,8 @@ def get_rated_weight_truth(top = 2):
             AtmInitialFlux[ic][ie][1][0] = flux.getFlux(nuflux.NuEBar,nu_energy,nu_cos_zenith) # nue bar
             AtmInitialFlux[ic][ie][0][1] = flux.getFlux(nuflux.NuMu,nu_energy,nu_cos_zenith) # numu
             AtmInitialFlux[ic][ie][1][1] = flux.getFlux(nuflux.NuMuBar,nu_energy,nu_cos_zenith) # numu bar
-            AtmInitialFlux[ic][ie][0][2] = flux.getFlux(nuflux.NuTau,nu_energy,nu_cos_zenith) # nutau
-            AtmInitialFlux[ic][ie][1][2] = flux.getFlux(nuflux.NuTauBar,nu_energy,nu_cos_zenith) # nutau bar
+            AtmInitialFlux[ic][ie][0][2] = 0 # flux.getFlux(nuflux.NuTau,nu_energy,nu_cos_zenith) # nutau
+            AtmInitialFlux[ic][ie][1][2] = 0 # flux.getFlux(nuflux.NuTauBar,nu_energy,nu_cos_zenith) # nutau bar
 
     nsq_atm.Set_MixingAngle(0, 1, theta12)
     nsq_atm.Set_MixingAngle(0, 2, theta13)
@@ -64,7 +64,7 @@ def get_rated_weight_truth(top = 2):
         rate_weight[i] = input_data["weight"][i]*nsq_atm.EvalFlavor(neuflavor,
                                                                     np.cos(input_data["true_zenith"][i]),
                                                                     input_data["true_energy"][i]*\
-                                                                    units.GeV,neutype)*lifetime*meter_to_cm_sq*5
+                                                                    units.GeV,neutype)*lifetime*meter_to_cm_sq*3 #3 years flux
 
     # print("truth debug: before hist")
     input_data["rate_weight"] = rate_weight
@@ -76,7 +76,7 @@ def get_rated_weight_truth(top = 2):
         energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"], bins = energy_bins_fine, weights = input_data["rate_weight"])
     # print("truth debug: after hist")
 
-    print("get_rated_weight_truth: energy rates: ", energy_hist_truth)
+    print("get_rated_weight_truth: energy rates: \n", energy_hist_truth)
 
     return rate_weight , energy_hist_truth, energy_bins_truth
 
@@ -86,9 +86,9 @@ def get_energy_bins(theta23in, m31in, top = 2):
     nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,neutrino_flavors,nsq.NeutrinoType.both,interactions)
 
     AtmInitialFlux = np.zeros((len(cth_nodes),len(energy_nodes),2,neutrino_flavors))
-    flux = nuflux.makeFlux('honda2006')
+    flux = nuflux.makeFlux('IPhonda2014_spl_solmin')
 
-    print("in get_energy_bins: propagating nu")
+    print("get_energy_bins: propagating nu")
     for ic,cth in enumerate(nsq_atm.GetCosthRange()):
         for ie,E in enumerate(nsq_atm.GetERange()):
             nu_energy = E/units.GeV
@@ -97,8 +97,8 @@ def get_energy_bins(theta23in, m31in, top = 2):
             AtmInitialFlux[ic][ie][1][0] = flux.getFlux(nuflux.NuEBar,nu_energy,nu_cos_zenith) # nue bar
             AtmInitialFlux[ic][ie][0][1] = flux.getFlux(nuflux.NuMu,nu_energy,nu_cos_zenith) # numu
             AtmInitialFlux[ic][ie][1][1] = flux.getFlux(nuflux.NuMuBar,nu_energy,nu_cos_zenith) # numu bar
-            AtmInitialFlux[ic][ie][0][2] = flux.getFlux(nuflux.NuTau,nu_energy,nu_cos_zenith) # nutau
-            AtmInitialFlux[ic][ie][1][2] = flux.getFlux(nuflux.NuTauBar,nu_energy,nu_cos_zenith) # nutau bar
+            AtmInitialFlux[ic][ie][0][2] = 0 #flux.getFlux(nuflux.NuTau,nu_energy,nu_cos_zenith) # nutau
+            AtmInitialFlux[ic][ie][1][2] = 0 #flux.getFlux(nuflux.NuTauBar,nu_energy,nu_cos_zenith) # nutau bar
 
     nsq_atm.Set_MixingAngle(0, 1, theta12)
     nsq_atm.Set_MixingAngle(0, 2, theta13)
@@ -132,7 +132,7 @@ def get_energy_bins(theta23in, m31in, top = 2):
         rate_weight[i] = input_data["weight"][i]*nsq_atm.EvalFlavor(neuflavor,
                                                                     np.cos(input_data["true_zenith"][i]),
                                                                     input_data["true_energy"][i]*\
-                                                                    units.GeV,neutype)*lifetime*meter_to_cm_sq*5
+                                                                    units.GeV,neutype)*lifetime*meter_to_cm_sq*3 # 3 years flux
     input_data["rate_weight"] = rate_weight
     
     # print("get_energy_bins_debug: before hist")
@@ -144,23 +144,25 @@ def get_energy_bins(theta23in, m31in, top = 2):
     else:
         energy_hist, energy_bins = np.histogram(input_data["reco_energy"], bins = energy_bins_fine, weights = input_data["rate_weight"])
     # print("get_energy_bins_debug: after hist")
-    print("get_energy_bins: energy rates: ", energy_hist)
+    print("get_energy_bins: energy rates: \n", energy_hist)
     
     return energy_hist
 
 
 # Get chisq for the contour plot
 def get_chisq(t23, m31, truth, top = 0):
-    print("in get chisq")
+    print("get_chisq: in get chisq")
     # Get the energy bins for the given t23, m31 and truth
     energy_bins = get_energy_bins(t23, m31, top)
-    print("back to get_chisq: the t23 is now", t23)
+    print("get_chisq: t23, ", t23)
+    print("get_chisq: m31, ", m31)
     # rate_weight_truth, energy_hist_truth, energy_bins_truth = get_rated_weight_truth(top)
     chisq = 0
     for i in range(len(energy_bins)):
         # chisqplus = (energy_bins[i] - energy_hist_truth[i]) ** 2 /  energy_hist_truth[i]
         chisqplus = (energy_bins[i] - truth[i]) ** 2 /  truth[i]
         chisq += chisqplus
+    print("get_chisq: chisq, ", chisq)
     return chisq
 
 # Get chisq wrt t23 minimized by m31
@@ -178,16 +180,14 @@ def get_chisq_min_t23(t23, truth, top = 0):
 
 # Get the t23 chi sq raw profile (not minimizing over m31, set automatically to truth)
 def get_t23_chi_profile(m31 = m31, top = 0):
-    print("in t23 chi profile")
+    print("get_t23_chi_profile: in t23 chi profile")
     profile = np.zeros(len(t23l.tolist())).tolist()
     rate_weight_truth, energy_hist_truth, energy_bins_truth = get_rated_weight_truth(top)
     # energy_hist_truth = truth
-    print("the list of t23 to probe is ", t23l)
+    print("get_t23_chi_profile: the list of t23 to probe is \n", t23l)
     for i in range(len(t23l.tolist())):
-        print("the position in list now is ", i)
-        print("the t23 now is ", t23l[i])
+        print("get_t23_chi_profile: the position in list now is ", i)
         profile[i] = get_chisq(t23l[i], m31, energy_hist_truth, top)
-        print("back to t23 chi profile, the newest chisq is ", profile[i])
     return profile
 
 # Get the minimized over m31 chisq profile of t23
