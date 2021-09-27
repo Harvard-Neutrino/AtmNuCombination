@@ -81,7 +81,7 @@ def plot_contour_chi(savename = "chi_sq_contour"):
 
 	
 	# try some bigger values for the step
-	bigstep = True
+	bigstep = False
 	if bigstep:
 		t23step = 0.02 * np.pi
 		m31step = 0.20e-3
