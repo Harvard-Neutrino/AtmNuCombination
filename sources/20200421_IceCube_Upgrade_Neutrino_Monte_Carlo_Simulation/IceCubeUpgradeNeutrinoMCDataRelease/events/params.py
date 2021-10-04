@@ -11,8 +11,8 @@ theta12 = np.arcsin(np.sqrt(0.304))
 theta13 = np.arcsin(np.sqrt(0.02221))
 theta23 = np.arcsin(np.sqrt(0.570))
 m21 = 7.42e-5
-# m31 = 2.517e-3 # real Nu-Fit value
-m31 = 2.8e-3  # try some larger parameters
+m31 = 2.517e-3 # real Nu-Fit value
+# m31 = 2.8e-3  # try some larger parameters
 
 
 

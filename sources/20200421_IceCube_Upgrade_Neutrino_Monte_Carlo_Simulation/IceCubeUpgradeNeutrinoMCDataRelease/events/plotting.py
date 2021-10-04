@@ -80,11 +80,11 @@ def plot_contour_chi(savename = "chi_sq_contour"):
 	rate_weight_truth_1, energy_hist_truth_1, energy_bins_truth_1 = sst.get_rated_weight_truth(top = 1)
 
 	
-	# try some bigger values for the step
-	bigstep = True
-	if bigstep:
-		t23step = 0.02 * np.pi
-		m31step = 0.20e-3
+	# # try some bigger values for the step
+	# bigstep = True
+	# if bigstep:
+	# 	t23step = 0.02 * np.pi
+	# 	m31step = 0.20e-3
 
 	sin2t23 = np.arange(t23min, t23max + t23step, t23step)
 	for i in range(len(sin2t23)):
