@@ -57,7 +57,7 @@ interactions = False
 
 # Set propagation bins
 E_min = 1*units.GeV
-E_max = 1.0e5*units.GeV
+E_max = 1.0e3*units.GeV
 E_nodes = 100
 energy_nodes = nsq.logspace(E_min,E_max,E_nodes)
 
