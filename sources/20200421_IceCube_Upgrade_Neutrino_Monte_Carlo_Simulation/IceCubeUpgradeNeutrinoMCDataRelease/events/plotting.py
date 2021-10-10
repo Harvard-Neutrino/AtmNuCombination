@@ -10,7 +10,7 @@ import sensitivity as sst
 from params import *
 
 def hist_nuisance(dm, th, norm, nudelta):
-	rate_weight, energy_hist, energy_bins = sst.get_energy_bins()
+	rate_weight, energy_hist, energy_bins = sst.get_energy_bins(dm, th, top = 2, norm = norm, delta = nudelta)
 	input_data["rate_weight"] = rate_weight
 	
 	# Plot the energy distribution

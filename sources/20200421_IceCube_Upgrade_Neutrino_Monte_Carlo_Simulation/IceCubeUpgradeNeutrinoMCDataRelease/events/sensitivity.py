@@ -15,7 +15,7 @@ matplotlib.rcParams.update({'patch.linewidth': 3})
 
 # Obtain the rated weight of each event
 # event topology is cascade 0 or track 1
-def get_rated_weight_truth(top):
+def get_rated_weight_truth(top = 2):
     nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,neutrino_flavors,nsq.NeutrinoType.both,interactions)
 
     print("get_rated_weight_truth: propagating nu")
