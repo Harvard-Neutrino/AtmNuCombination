@@ -9,6 +9,30 @@ import seaborn as sns
 import sensitivity as sst
 from params import *
 
+def hist_nuisance(dm, th, norm, nudelta):
+	rate_weight, energy_hist, energy_bins = sst.get_energy_bins()
+	input_data["rate_weight"] = rate_weight
+	
+	# Plot the energy distribution
+	print("plotting energy distributions")
+	fig, ax = plt.subplots(figsize=(7,6))
+	fig.suptitle("DM = {}, s^2th = {}, norm = {}, delta = {}".format(dm, th, norm, nudelta))
+	ax.hist(input_data["reco_energy"][cascade_mask], bins=E_bin_plot, \
+		  weights=input_data["rate_weight"][cascade_mask], \
+		  label=r"$\nu_{All, Cascade}$", color="blue", histtype="step")
+	ax.hist(input_data["reco_energy"][track_mask], bins=E_bin_plot, \
+		  weights=input_data["rate_weight"][track_mask], \
+		  label=r"$\nu_{All, Track}$", color="red", histtype="step")
+	ax.set_xscale("log")
+	ax.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
+	ax.set_xlim(1, 1000)
+	ax.ticklabel_format(axis='y', style='sci', scilimits=None,\
+					 useOffset=None, useLocale=None, useMathText=None)
+	ax.set_ylabel("Rate [3 Years]")
+	ax.grid(True)
+	ax.legend()
+	fig.savefig("Hist(DM = {}, s^2th = {}, norm = {}, delta = {}).png".format(dm, th, norm, nudelta), bbox_inches='tight')
+
 def distribution_plots():
 	print("plotting sanity check distributions")
 
@@ -155,7 +179,7 @@ def plot_t23_chi_raw_profile_all_top(savename = "t23_chi_sq_profile_raw_all_top"
 	fig2.suptitle(r"$\theta_{23} \chi^2$ profile (raw)")
 	ax2.set_xlabel(r"$\sin^2{\theta_{23}}$")
 	ax2.set_ylabel(r"$\chi^2_{NH}$")
-	ax2.set_yscale("log")
+	# ax2.set_yscale("log")
 	ax2.plot(x, y0, color ="green", label = "cascades")
 	ax2.plot(x, y1, color ="red", label = "tracks")
 	ax2.plot(x, y2, color ="blue", label = "all")

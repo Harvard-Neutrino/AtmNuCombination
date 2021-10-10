@@ -72,8 +72,8 @@ neutrino_flavors = 3
 t23min = np.sqrt(np.arcsin(0.3))
 t23max = np.sqrt(np.arcsin(0.8))
 t23step = 0.0025 * np.pi
-# t23l = np.arange(t23min, t23max + t23step, t23step)
-t23l = np.array([0.44872923, theta23])
+t23l = np.arange(t23min, t23max + t23step, t23step)
+# t23l = np.array([0.44872923, theta23])
 
 m31min = 2.0e-3
 m31max = 3.5e-3
