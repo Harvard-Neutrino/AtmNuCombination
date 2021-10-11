@@ -18,6 +18,6 @@ from params import *
 # plotting.plot_contour_chi(savename = "chi_sq_contour_all_top_fine")
 # plotting.plot_contour_chi(savename = "chi_sq_contour_all", top = 2)
 
-plotting.hist_nuisance(m31, theta23, 1, 1)
-plotting.hist_nuisance(m31, theta23, 2, 1)
-plotting.hist_nuisance(m31, theta23, 1, 1.5)
+#plotting.hist_nuisance(m31, theta23, 4, 1)
+plotting.hist_nuisance(m31, theta23, 1, 1.25)
+#plotting.hist_nuisance(m31, theta23, 1, 1.5)
