@@ -9,6 +9,30 @@ import seaborn as sns
 import sensitivity as sst
 from params import *
 
+def hist_truth():
+	rate_weight_truth, energy_hist_truth, energy_bins_truth = sst.get_rated_weight_truth()
+	input_data["rate_weight"] = rate_weight_truth
+	
+	# Plot the energy distribution
+	print("plotting energy distributions")
+	fig, ax = plt.subplots(figsize=(7,6))
+	fig.suptitle("Reco Energy Rated Distribution")
+	ax.hist(input_data["reco_energy"][cascade_mask], bins=E_bin_plot, \
+		  weights=input_data["rate_weight"][cascade_mask], \
+		  label=r"$\nu_{All, Cascade}$", color="blue", histtype="step")
+	ax.hist(input_data["reco_energy"][track_mask], bins=E_bin_plot, \
+		  weights=input_data["rate_weight"][track_mask], \
+		  label=r"$\nu_{All, Track}$", color="red", histtype="step")
+	ax.set_xscale("log")
+	ax.set_xlabel(r"$E_{\nu,\rm{reco}}$ [GeV]")
+	ax.set_xlim(1, 1000)
+	ax.ticklabel_format(axis='y', style='sci', scilimits=None,\
+					 useOffset=None, useLocale=None, useMathText=None)
+	ax.set_ylabel("Rate [3 Years]")
+	ax.grid(True)
+	ax.legend()
+	fig.savefig("Hist(Truth, no nuisance).png", bbox_inches='tight')
+
 def hist_nuisance(dm, th, norm, nudelta):
 	rate_weight = sst.get_energy_bins(dm, th, top = 2, norm = norm, delta = nudelta)
 	input_data["rate_weight"] = rate_weight
