@@ -83,7 +83,7 @@ def get_rated_weight_truth(top = 2):
 # Obtain binned energy given theta23 and m31 values
 # norm: normalization factor
 # delta: nu/nubar factor, /tilde{w} = w(2 - delta) for nubar and w = w delta for nu
-def get_energy_bins(theta23in, m31in, top, norm = 1, delta = 1):
+def get_energy_bins(theta23in, m31in, top, norm, delta):
     nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,neutrino_flavors,nsq.NeutrinoType.both,interactions)
 
     AtmInitialFlux = np.zeros((len(cth_nodes),len(energy_nodes),2,neutrino_flavors))
