@@ -150,7 +150,7 @@ def get_energy_bins(theta23in, m31in, top, norm, delta):
     # print("get_energy_bins_debug: after hist")
     print("get_energy_bins: energy rates: \n", energy_hist)
     
-    return energy_hist
+    return rate_weight # energy_hist
 
 
 # Get chisq for the contour plot
