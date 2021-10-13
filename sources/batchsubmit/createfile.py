@@ -1,4 +1,4 @@
-import panda as pd
+import pandas as pd
 
 # first define some parameters
 xlo = 0
@@ -8,8 +8,8 @@ ylo = 0
 yhi = 10
 ystep = 1
 
-xlen = (xhi - xlo + 1)/xstep
-ylen = (yhi = ylo + 1)/ystep
+xlen = int((xhi - xlo + 1)/xstep)
+ylen = int((yhi - ylo + 1)/ystep)
 
 # create list of DM^2 for the dict
 x = []
@@ -24,6 +24,6 @@ for xi in range(xlen):
 
 d = {'X' : x, 'Y' : y}
 
-df = pd.Dataframe(d)
+df = pd.DataFrame(d)
 
 print(df.loc[df['X'] == 1])
