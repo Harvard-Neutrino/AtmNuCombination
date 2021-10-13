@@ -29,7 +29,6 @@ class RecoRing:
 		# Direction reconstruction of each ring
 		self.ReconDirection(TrueRingDir)
 
-
 		if self.NRing >1: # Oh, the multi-ringers! Special care needed
 			mer = np.where(self.Momentum == np.amax(self.Momentum))
 			self.ReconMRIP(mer, TrueRingIP[mer], TrueRingPDG[mer])
@@ -53,12 +52,13 @@ class RecoRing:
 		self.TotalVariables()
 
 		self.MuEdk = 0
+		self.Imass = 0
 
 
 	def mendSGM(self, nu):
 		mis0 = np.random.rand()
 		if self.Type == 5 and abs(nu)==12:
-			self.Type == 3
+			self.Type = 3
 
 
 	def mendSGE(self):
@@ -188,7 +188,7 @@ class RecoRing:
 					L_pi0d = math.log(abs(wd_cc)) - math.log(abs(wd_nc))
 					L_pi0s = math.log(abs(ws_cc)) - math.log(abs(ws_nc))
 					ll = L_pi0m + L_pi0d + L_pi0s
-					if ll>0:
+					if ll>0.1:
 						pi0=1
 					else:
 						pi0=0
@@ -229,8 +229,8 @@ class RecoRing:
 				itype=12
 
 		if self.NRing==2:
-			invMass = pp.InvariantMass(self.MERMomentum, self.sMERMomentum, self.MERDirection, self.sMERDirection)
-			if self.MERIP==2 and self.sMERIP==2 and invMass>=0.085 and invMass<=0.215:
+			self.Imass = pp.InvariantMass(self.MERMomentum, self.sMERMomentum, self.MERDirection, self.sMERDirection)
+			if self.MERIP==2 and self.sMERIP==2 and self.Imass>=0.085 and self.Imass<=0.215:
 				itype=6
 
 		self.Type = itype
@@ -376,7 +376,6 @@ class RecoRing:
 				# elif ip==3 and self.RecoMomentum[i]>=1.3 and self.NRing==1: # MGM
 				elif ip==3 and self.Momentum[i]>=1.3:
 					ang = self.distros.Random('ang_mgm')
-				print('Angular difference:', ang)
 				ang=ang*pi/180.
 				# Rodrigues way
 				u = ap.RndVector()

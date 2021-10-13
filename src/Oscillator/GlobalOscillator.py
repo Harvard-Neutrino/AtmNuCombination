@@ -50,6 +50,33 @@ with h5py.File(filename, 'r') as hf:
     recodirZ = np.array(hf['recodirZ'][()]) # reconstructed neutrino Z-direction
     itype = np.array(hf['itype'][()]) # reconstructed event type
 
+# Compute oscillation in (Enu,zenith) grid
+E_min = 1.0e-1*units.GeV
+E_max = 1.0e5*units.GeV
+E_nodes = 100
+energy_nodes = nsq.logspace(E_min,E_max,E_nodes)
+
+cth_min = -1.0
+cth_max = 1.0
+cth_nodes = 40
+cth_nodes = nsq.linspace(cth_min,cth_max,cth_nodes)
+
+neutrino_flavors = 3
+interactions = 'False'
+
+nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,neutrino_flavors,nsq.NeutrinoType.both,interactions)
+
+nsq_atm.Set_initial_state(AtmInitialFlux,nsq.Basis.flavor)
+nsq_atm.EvolveState()
+
+for k,(nu,E,cz) in enumerate(zip(neu, Enu, dirnuZ)):
+    if nu>0:
+        neutype = 0
+    else:
+        neutype = 1
+    neuflavor = int(abs(nu) / 2) % 6
+    nsq_atm.EvalFlavor(neuflavor, cz, E*units.GeV, neutype)
+
 
 ''' Oscillation parameters grid, to xml/card file? '''
 # Oscillation parameters
@@ -108,8 +135,8 @@ for k,(nu,E,cz,mod) in enumerate(zip(neu, Enu, dirnuZ, mode)):
     nuSQ.Set_Body(nsq.EarthAtm())
     zenith = np.arccos(cz)
     nuSQ.Set_Track(nsq.EarthAtm().Track(zenith))
-    nuSQ.Set_rel_error(1.0e-4);
-    nuSQ.Set_abs_error(1.0e-4);
+    nuSQ.Set_rel_error(1.0e-4)
+    nuSQ.Set_abs_error(1.0e-4)
 
     for j in range(nmh):
         mh=mh_0+j*mh_step

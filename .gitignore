@@ -132,7 +132,11 @@ dmypy.json
 utils/*png
 
 # Large files
-src/*/*/figs/*
-src/*/*/data/*
+src/Oscillator/figs/*
+src/Oscillator/data/*
+src/Processing/figs/*
+src/Processing/data/*
+src/Simulation/SuperK/figs/*
+src/Simulation/SuperK/data/*
 utils/*.hdf5
 utils/*.root

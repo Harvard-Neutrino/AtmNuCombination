@@ -1,18 +1,19 @@
 # Requirements
 import numpy as np
 import argparse
+import time
 # Local dependencies
 from TrueRing import *
 from RecoRing import *
 from RandomGenerator import RecoDists
 from GenieHDF5 import *
 from pythiaDecay import *
-
-import time
+from nonFC import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument("in_hdf5filename", type=str, nargs='?', default='../../../utils/atm_genie.root.hdf5')
 parser.add_argument("outfilename", type=str, nargs='?', default='data/testfcmc.hdf5')
+# parser.add_argument("-v", dest='verbo', default=True, action='store_true')
 parser.add_argument("-v", dest='verbo', default=False, action='store_true')
 
 args = parser.parse_args()
@@ -22,45 +23,45 @@ output = args.outfilename
 
 # Read GENIE GST file
 genie_input = '/home/pablofer/old.AtmNuCombination/utils/atm_genie.root.hdf5'
-start_time = time.time()
 event = GenieSimulation(genie_input)
-print('Event loading:', time.time() - start_time, 'seconds')
 
 # Read reco distributions
 start_time = time.time()
 rd = RecoDists()
-print('Reco. distros.:', time.time() - start_time, 'seconds')
+
+toposample = {'FC':0, 'PC-Stop':14, 'PC-Thru':15, 'UpMu-Stop':16, 'UpMu-Thru':17, 'UpMu-Show':18, 'None':-1}
 
 # Variable declaration for out tree
 # True variables
-ipnu       = np.array([], dtype=np.double)
-pnu        = np.array([], dtype=np.double)
-dirnu_x    = np.array([], dtype=np.double)
-dirnu_y    = np.array([], dtype=np.double)
-dirnu_z    = np.array([], dtype=np.double)
-cz         = np.array([], dtype=np.double)
-azi        = np.array([], dtype=np.double)
+ipnu        = np.array([], dtype=np.double)
+pnu         = np.array([], dtype=np.double)
+dirnu_x     = np.array([], dtype=np.double)
+dirnu_y     = np.array([], dtype=np.double)
+dirnu_z     = np.array([], dtype=np.double)
+cz          = np.array([], dtype=np.double)
+azi         = np.array([], dtype=np.double)
 fluxho_numu = np.array([], dtype=np.double)
 fluxho_nue  = np.array([], dtype=np.double)
 fluxho_numub= np.array([], dtype=np.double)
 fluxho_nueb = np.array([], dtype=np.double)
-oscw       = np.array([], dtype=np.double)
-plep       = np.array([], dtype=np.double)
-dirlep_x   = np.array([], dtype=np.double)
-dirlep_y   = np.array([], dtype=np.double)
-dirlep_z   = np.array([], dtype=np.double)
+oscw        = np.array([], dtype=np.double)
+plep        = np.array([], dtype=np.double)
+dirlep_x    = np.array([], dtype=np.double)
+dirlep_y    = np.array([], dtype=np.double)
+dirlep_z    = np.array([], dtype=np.double)
 ## Reco variables
-reco_pmax  = np.array([], dtype=np.double)
-evis       = np.array([], dtype=np.double)
-reco_dir_x = np.array([], dtype=np.double)
-reco_dir_y = np.array([], dtype=np.double)
-reco_dir_z = np.array([], dtype=np.double)
-ip         = np.array([], dtype=np.double)
-nring      = np.array([], dtype=np.double)
-muedk      = np.array([], dtype=np.double)
-neutron    = np.array([], dtype=np.double)
-itype      = np.array([], dtype=np.double)
-mode       = np.array([], dtype=np.double)
+reco_pmax   = np.array([], dtype=np.double)
+evis        = np.array([], dtype=np.double)
+reco_dir_x  = np.array([], dtype=np.double)
+reco_dir_y  = np.array([], dtype=np.double)
+reco_dir_z  = np.array([], dtype=np.double)
+ip          = np.array([], dtype=np.double)
+nring       = np.array([], dtype=np.double)
+muedk       = np.array([], dtype=np.double)
+neutron     = np.array([], dtype=np.double)
+itype       = np.array([], dtype=np.double)
+imass       = np.array([], dtype=np.double)
+mode        = np.array([], dtype=np.double)
 
 # Enable decays of unstable particles
 pd = pythiaDecay()
@@ -69,13 +70,11 @@ pd = pythiaDecay()
 start_time = time.time()
 
 for i, nu in enumerate(event.Ipnu):
-
-	# if i>10000: continue
-	
-	# if verbose:
-	print('----------------------------------------------------')
-	print('----------- Event number ',i,'--------------------')
-	print('----------------------------------------------------')
+	# if i>20000: break
+	if verbose:
+		print('----------------------------------------------------')
+		print('----------- Event number ',i,'----------------------')
+		print('----------------------------------------------------')
 
 # Get variables from Genie Simulation
 # Neutrino
@@ -96,10 +95,6 @@ for i, nu in enumerate(event.Ipnu):
 	Ps = np.append(event.Plep[i], P_fp)
 	Pvs = np.vstack((Plep_v, P_fp_v))
 
-	# print(pdgs)
-	# print(Es)
-	# print(Ps)
-
 # Anything to decay?
 	decayed = np.array([], dtype='int32')
 	for k, particle in enumerate(pdgs):
@@ -116,76 +111,75 @@ for i, nu in enumerate(event.Ipnu):
 	Es = np.delete(Es, decayed)
 	Ps = np.delete(Ps, decayed)
 	Pvs = np.delete(Pvs, decayed, 0)
-
-	if verbose:
-		print('Event particle IDs', pdgs)
-		print('Particle energies', Es)
-		print('Particle momenta', Ps)
-	# 	print('Particle 3-momenta', Pvs)
-
-	
+		
 # True Ring constructor, baseline for reconstructing the event
 	TrueNRing, TrueRingPDG, TrueRingIP, TrueRingE, TrueRingP, TrueRingDir = TrueRingConstructor(pdgs, Es, Ps, Pvs)
-
 	if TrueNRing == 0:
 		if verbose:
 			print('Zero Rings')
 		continue
 
+# SK topology classification: Detailed reconstruction only for FCs, the rest are much simpler
+	if event.TopologySample[i]=='FC':
 
-# Reconstructing rings
-	# start_time = time.time()
+	# Reconstructing rings
+		RRing = RecoRing(TrueNRing, TrueRingPDG, TrueRingIP, TrueRingE, TrueRingP, TrueRingDir, rd, event.Mode[i])
+		if RRing.NRing == 1:
+			RRing.DecayE(event.Ipnu[i], event.CC[i], event.Mode[i])
+		RRing.SKType(event.Ipnu[i], event.CC[i])
+		if RRing.NRing < 1 or RRing.Type < 0:
+			del RRing
+			continue
+		# Fine tuning
+		RRing.mendSGE()
+		RRing.mendSGM(event.Ipnu[i])
+		RRing.mendMG(event.Ipnu[i])
+		RRing.mendMR(event.Ipnu[i])
 
-	RRing = RecoRing(TrueNRing, TrueRingPDG, TrueRingIP, TrueRingE, TrueRingP, TrueRingDir, rd, event.Mode[i])
+	# Verbosity
+		if verbose:
+			if RRing.NRing == 1:
+				print('Single Ring event')
+				print('Visible energy is ', RRing.Evis, ' GeV')
+				print('Event IP is ', RRing.IP)
+				print('Number of Michel electrons: ', RRing.MuEdk)
+			if RRing.NRing > 1:
+				print('Multi Ring event')
+				print('Event with ', RRing.NRing, ' reco rings')
+				print('Visible energy is ', RRing.Evis, ' GeV')
+				print('Event IP is ', RRing.IP)
+				print('Event MER IP is ', RRing.MERIP)
+				print('Event type is ', RRing.Type)
 
-	if RRing.NRing == 1: RRing.DecayE(event.Ipnu[i], event.CC[i], event.Mode[i])
-
-	RRing.SKType(event.Ipnu[i], event.CC[i])
-
-	# print('Recos Ring:', time.time() - start_time, 'seconds')
-
-
-	if RRing.NRing < 1 or RRing.Type < 0:
-		del RRing
+	elif toposample[event.TopologySample[i]]>1:
+		nonfcType = toposample[event.TopologySample[i]]
+		if TrueNRing == 1:
+			RnonFC = nonFCReco(TrueRingPDG[0], nonfcType, rd, TrueRingDir, TrueRingP[0])
+		else:
+			maxP = np.argmax(TrueRingP)
+			RnonFC = nonFCReco(TrueRingPDG[maxP], nonfcType, rd, TrueRingDir[maxP], TrueRingP[maxP])
+		nonfcEvis = RnonFC.Momentum
+		nonfcTotXDir = RnonFC.Direction[0]
+		nonfcTotYDir = RnonFC.Direction[1]
+		nonfcTotZDir = RnonFC.Direction[2]
+	
+	else:
 		continue
 
+# Verbosity
 	if verbose:
-	# 	if RRing.Nring == 1:
-	# 		print('Single Ring event')
-	# 		print('Visible energy is ', RRing.Evis, ' GeV')
-	# 		print('Event IP is ', RRing.IP)
-	# 		print('Number of Michel electrons: ', RRing.MuEdk)
-		if RRing.NRing > 1:
-			print('Multi Ring event')
-			print('Event with ', RRing.NRing, ' reco rings')
-			print('Visible energy is ', RRing.Evis, ' GeV')
-			print('Event IP is ', RRing.IP)
-			print('Event MER IP is ', RRing.MERIP)
-			print('Event type is ', RRing.Type)
-		# else:
-	# 		print('Event with ', RRing.RecoNring, ' reco rings')
-	# 		print('Event with ', RRing.TrueNring, ' true rings')
-
-	# Event verbosity
-	if verbose:
+		print('Event particle IDs', pdgs)
+		print('Particle energies', Es)
+		print('Particle momenta', Ps)
 		print('Neutrino energy: ',event.Enu[i],' GeV')
 		print('Neutrino flavour: ',event.Ipnu[i])
 		print('Lepton ID: ',event.PDGlep)
-		# print('Lepton momentum: ',event.LeptonMomentum, 'GeV')
+		print('Lepton momentum: ',event.LeptonMomentum, 'GeV')
 		if abs(event.Mode[i])<30:
 			print('Interacting CC with code: ', event.Mode[i])
 		else:
 			print('Interacting NC with code: ', event.Mode[i])
-
-	# Fine tuning
-	RRing.mendSGE()
-	RRing.mendSGM(event.Ipnu[i])
-	RRing.mendMG(event.Ipnu[i])
-	RRing.mendMR(event.Ipnu[i])
-
-	if RRing.Type<0:
-		continue
-
+		print('To be reconstructed as ',event.TopologySample)
 
 # Fill variables
 	ipnu       = np.append(ipnu, event.Ipnu[i])
@@ -204,21 +198,33 @@ for i, nu in enumerate(event.Ipnu):
 	dirlep_x   = np.append(dirlep_x, event.Pxlep[i] / event.Plep[i])
 	dirlep_y   = np.append(dirlep_y, event.Pylep[i] / event.Plep[i])
 	dirlep_z   = np.append(dirlep_z, event.Pzlep[i] / event.Plep[i])
-	# reco variables
-	reco_pmax  = np.append(reco_pmax, RRing.MERMomentum)
-	evis       = np.append(evis, RRing.Evis)
-	reco_dir_x = np.append(reco_dir_x, RRing.TotDir[0])
-	reco_dir_y = np.append(reco_dir_y, RRing.TotDir[1])
-	reco_dir_z = np.append(reco_dir_z, RRing.TotDir[2])
-	ip         = np.append(ip, RRing.MERIP)
-	nring      = np.append(nring, RRing.NRing)
-	muedk      = np.append(muedk, RRing.MuEdk)
-	neutron    = np.append(neutron, numberOfNeutrons(pdgs))
-	itype      = np.append(itype, RRing.Type)
 	mode       = np.append(mode, event.Mode[i])
-
-
-	del RRing
+	# reco variables
+	if event.TopologySample[i]=='FC':
+		reco_pmax  = np.append(reco_pmax, RRing.MERMomentum)
+		evis       = np.append(evis, RRing.Evis)
+		reco_dir_x = np.append(reco_dir_x, RRing.TotDir[0])
+		reco_dir_y = np.append(reco_dir_y, RRing.TotDir[1])
+		reco_dir_z = np.append(reco_dir_z, RRing.TotDir[2])
+		ip         = np.append(ip, RRing.MERIP)
+		nring      = np.append(nring, RRing.NRing)
+		muedk      = np.append(muedk, RRing.MuEdk)
+		neutron    = np.append(neutron, numberOfNeutrons(pdgs))
+		itype      = np.append(itype, RRing.Type)
+		imass      = np.append(imass, RRing.Imass)
+		del RRing
+	else:
+		reco_pmax  = np.append(reco_pmax, -9999.)
+		evis       = np.append(evis, nonfcEvis)
+		reco_dir_x = np.append(reco_dir_x, nonfcTotXDir)
+		reco_dir_y = np.append(reco_dir_y, nonfcTotYDir)
+		reco_dir_z = np.append(reco_dir_z, nonfcTotZDir)
+		ip         = np.append(ip, 0)
+		nring      = np.append(nring, 0)
+		muedk      = np.append(muedk, 0)
+		neutron    = np.append(neutron, 0)
+		itype      = np.append(itype, nonfcType)
+		imass      = np.append(imass, -9999.)
 
 # Save data
 with h5py.File(output, 'w') as hf:
@@ -248,5 +254,5 @@ with h5py.File(output, 'w') as hf:
 	hf.create_dataset('neutron', data=neutron, compression='gzip')
 	hf.create_dataset('oscw', data=oscw, compression='gzip')
 	hf.create_dataset('itype', data=itype, compression='gzip')
+	hf.create_dataset('imass', data=imass, compression='gzip')
 	hf.create_dataset('mode', data=mode, compression='gzip')
-

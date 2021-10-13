@@ -68,9 +68,93 @@ class GenieSimulation:
 			self.Pyhad = np.array(np.array(hf['pyf'][()]))
 			self.Pzhad = np.array(np.array(hf['pzf'][()]))
 
+		self.TopologySample()
 		self.Flux()
 		self.PointOsc()
 		# self.MRPCUMflag()
+
+	def TopologySample(self):
+		# SK topologies to choose from
+		skTopology = np.array(['FC','PC-Stop','PC-Thru','UpMu-Stop','UpMu-Thru','UpMu-Show'])
+		dummySample = np.array([])
+
+		loge = np.zeros(60)
+		line = np.zeros(60)
+		fce  = np.zeros(60)
+		fcm  = np.zeros(60)
+		pcs  = np.zeros(60)
+		pct  = np.zeros(60)
+		ums  = np.zeros(60)
+		umt  = np.zeros(60)
+		umsh = np.zeros(60)
+		# Acquiring digitized data
+		with open('data/SKTopologyFraction.dat') as f:
+			lines = f.readlines()
+			for i,l in enumerate(lines):
+				loge[i], line[i], fce[i], fcm[i], pcs[i], pct[i], ums[i], umt[i], umsh[i] = l.split( )
+
+		# CC electronic
+		nue = fce + 0.116*pcs + 0.009*pct + 2*(0.011*ums + 0.003*umt + 0.001*umsh) # Factor x2 accounts for the upward-going cut of UpMus to be applied later
+		fc_nue   = fce / nue
+		pcs_nue  = 0.116*pcs / nue
+		pct_nue  = 0.009*pct / nue
+		ums_nue  = 2*0.011*ums / nue
+		umt_nue  = 2*0.003*umt / nue
+		umsh_nue = 2*0.001*umsh / nue
+		# CC muonic
+		numu = fcm + 0.829*pcs + 0.978*pct + 2*(0.986*ums + 0.996*umt + 0.998*umsh)
+		numu[numu==0]=1.
+		fc_numu   = fcm / numu
+		pcs_numu  = 0.829*pcs / numu
+		pct_numu  = 0.978*pct / numu
+		ums_numu  = 2*0.986*ums / numu
+		umt_numu  = 2*0.996*umt / numu
+		umsh_numu = 2*0.998*umsh / numu
+		# CC tauonic
+		nut = 0.0057*(fce+fcm) + 0.01*pcs + 0.007*pct + 2*(0.0*ums + 0.0*umt + 0.0*umsh)
+		nut[nut==0] = 1.
+		fc_nut   = 0.0057*(fce+fcm) / nut
+		pcs_nut  = 0.01*pcs / nut
+		pct_nut  = 0.007*pct / nut
+		ums_nut  = 2*0.0*ums / nut
+		umt_nut  = 2*0.0*umt / nut
+		umsh_nut = 2*0.0*umsh / nut
+		# NC allic
+		nc = 0.12*(fce+fcm) + 0.045*pcs + 0.006*pct + 2*(0.003*ums + 0.001*umt + 0.001*umsh)
+		fc_nc   = 0.12*(fce+fcm) / nc
+		pcs_nc  = 0.045*pcs / nc
+		pct_nc  = 0.006*pct / nc
+		ums_nc  = 2*0.003*ums / nc
+		umt_nc  = 2*0.001*umt / nc
+		umsh_nc = 2*0.001*umsh / nc
+
+		# UpMu: Later cut on reconstructed direction
+		for nu, E, cc in zip(self.Ipnu, self.Enu, self.CC):
+			# Number of energy bin
+			k = int((math.log10(E)+1)/0.1)
+			if cc:
+				if abs(nu)==12:
+					probTopo = np.array([fc_nue[k],pcs_nue[k],pct_nue[k],ums_nue[k],umt_nue[k],umsh_nue[k]])
+				elif abs(nu)==14:
+					probTopo = np.array([fc_numu[k],pcs_numu[k],pct_numu[k],ums_numu[k],umt_numu[k],umsh_numu[k]])
+				elif abs(nu)==16:
+					probTopo = np.array([fc_nut[k],pcs_nut[k],pct_nut[k],ums_nut[k],umt_nut[k],umsh_nut[k]])
+				else:
+					print('WTF!?')
+			else:
+				probTopo = np.array([fc_nut[k],pcs_nut[k],pct_nut[k],ums_nut[k],umt_nut[k],umsh_nut[k]])
+
+			if np.isnan(np.sum(probTopo)) or np.sum(probTopo)==0:
+				sample = 'None'
+			else:
+				sample = np.random.choice(skTopology,1,p=probTopo)
+			
+			# print(sample)
+			dummySample = np.append(dummySample, sample)
+
+		self.TopologySample = dummySample
+
+
 
 	def MRPCUMflag(self):
 		pass
@@ -135,7 +219,7 @@ class GenieSimulation:
 			nuSQ.Set_MixingAngle(0,2,math.asin(math.sqrt(0.018)))
 			nuSQ.Set_MixingAngle(1,2,math.asin(math.sqrt(0.5)))
 			nuSQ.Set_SquareMassDifference(1,7.65e-05)
-			nuSQ.Set_SquareMassDifference(2,0.00247)
+			nuSQ.Set_SquareMassDifference(2,0.0024)
 			nuSQ.Set_CPPhase(0,2,0)
 
 			if abs(mod) < 30:

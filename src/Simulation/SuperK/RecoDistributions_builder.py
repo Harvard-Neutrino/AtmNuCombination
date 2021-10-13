@@ -452,6 +452,48 @@ with h5py.File('data/defaultRecoDistributions.hdf5', 'w') as hf:
 	g.create_dataset('values', data=values)
 	g.create_dataset('weights', data=weights)
 
+	# PC angular distribution
+	g = hf.create_group('ang_pc')
+	nbins = 50
+	start = 0.1
+	end = 10
+	step = (end-start)/(nbins)
+	start = start + step/2
+	end = end + step/2
+	values = np.arange(start, end, step, 'float64')
+	weights = np.exp(-values*3.33) * values * values
+	weights = weights / np.sum(weights)
+	g.create_dataset('values', data=values)
+	g.create_dataset('weights', data=weights)
+
+	# UpMu-Stop angular distribution
+	g = hf.create_group('ang_upmustop')
+	nbins = 50
+	start = 0.1
+	end = 10
+	step = (end-start)/(nbins)
+	start = start + step/2
+	end = end + step/2
+	values = np.arange(start, end, step, 'float64')
+	weights = np.exp(-values*0.88) * values
+	weights = weights / np.sum(weights)
+	g.create_dataset('values', data=values)
+	g.create_dataset('weights', data=weights)
+
+	# UpMu Thru angular distribution
+	g = hf.create_group('ang_upmuthru')
+	nbins = 50
+	start = 0.1
+	end = 10
+	step = (end-start)/(nbins)
+	start = start + step/2
+	end = end + step/2
+	values = np.arange(start, end, step, 'float64')
+	weights = np.exp(-values*3.33) * values * values
+	weights = weights / np.sum(weights)
+	g.create_dataset('values', data=values)
+	g.create_dataset('weights', data=weights)
+
 	# Decay-e MultiGeV e-like CC nue
 	g = hf.create_group('mge_muedk_ccnue')
 	start = 0
@@ -480,7 +522,7 @@ with h5py.File('data/defaultRecoDistributions.hdf5', 'w') as hf:
 	end = 10
 	step = 1
 	values = np.arange(start, end, step, 'int32')
-	weights = np.array([8, 12, 7, 4, 2, 0, 0, 0, 0, 0])
+	weights = np.array([8, 12, 7, 4, 1, 0, 0, 0, 0, 0])
 	weights = weights / np.sum(weights)
 	g.create_dataset('values', data=values)
 	g.create_dataset('weights', data=weights)

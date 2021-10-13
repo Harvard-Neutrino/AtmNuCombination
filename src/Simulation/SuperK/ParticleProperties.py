@@ -30,62 +30,9 @@ def LeptonPDG(NC,nu_flavour):
     return l_id
 
 
-# # Quicly decaying particles (< 5 ns)
-# def DecayOf(PDG,E,p):
-
-# 	return 0.
-
-
-
-# Pi0 decay
-def Pi0Decay(e,p,dirv):
-    mpi0 = Particle.from_pdgid(111).mass * 0.001
-    sin_alpha_2 = 2
-    while abs(sin_alpha_2)>1:
-        E1 = np.random.rand() * e/2
-        E2 = e - E1
-        sin_alpha_2 = sqrt(mpi0**2 / (4*E1*E2)) # angle between photons
-    
-    alpha = 2 * asin(sin_alpha_2)
-
-    alpha1 = atan(sin(alpha) / (cos(alpha) - E1/E2))
-    alpha2 = alpha - alpha1
-
-    u = np.array([0.,0.,0.])
-    u = RndVector()
-    dir1 = RodRot(dirv,u,alpha1)
-    dir2 = RodRot(dirv,u,-alpha2)
-    dir1 = dir1 / np.linalg.norm(dir1)
-    dir2 = dir2 / np.linalg.norm(dir2)
-
-    Eboth = np.array([E1,E2])
-    dirboth = np.array([dir1,dir2])
-
-    return Eboth, dirboth
-
-# def Pi0Decay(e,p,dirv):
-#     MassPi0 = Particle.from_pdgid(111).mass
-#     MassGamma = 0.
-
-#     Momemtum4 = np.append(dirv * p, e) * 1000.
-
-#     decay = ps.nbody_decay(MassPi0, [MassGamma, MassGamma])
-#     weights, particles = decay.generate(n_events=1, boost_to=Momemtum4)
-
-#     p0 = particles['p_0'][:].numpy()
-#     p1 = particles['p_1'][:].numpy()
-
-#     dirboth = np.array([p0[0,0:3] / p0[0,3], p1[0,0:3] / p1[0,3]])
-#     Eboth = np.array([p0[0,3],p1[0,3]])
-
-#     return Eboth, dirboth
-
 
 def InvariantMass(p1, p2, u1, u2):
     cth = np.dot(u1, u2)
     if cth>1: cth=1
     elif cth<-1: cth=-1
     return sqrt(2 * p1 * p2 * (1 - cth))
-
-def ChargedKaonDecay():
-    pass
