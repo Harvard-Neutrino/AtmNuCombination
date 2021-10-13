@@ -2,10 +2,10 @@ import pandas as pd
 
 # first define some parameters
 xlo = 0
-xhi = 10
+xhi = 4
 xstep = 1
 ylo = 0
-yhi = 10
+yhi = 4
 ystep = 1
 
 xlen = int((xhi - xlo + 1)/xstep)
