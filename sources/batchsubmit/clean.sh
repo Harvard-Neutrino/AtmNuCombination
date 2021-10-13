@@ -1,4 +1,4 @@
 #!/bin/bash
-rm ./myout*
-rm ./myerr*
+rm ./*out*
+rm ./*err*
 rm *.pkl
