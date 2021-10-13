@@ -1,4 +1,4 @@
 #!/bin/bash
-rm ./*out*
+rm ./*.out*
 rm ./*err*
 rm *.pkl
