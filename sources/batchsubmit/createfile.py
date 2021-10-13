@@ -26,4 +26,5 @@ d = {'X' : x, 'Y' : y}
 
 df = pd.DataFrame(d)
 
-print(df.loc[df['X'] == 1])
+# print(df.loc[df['X'] == 1])
+df.to_pickle("./dummy.pkl")
