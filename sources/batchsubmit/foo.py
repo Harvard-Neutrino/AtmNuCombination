@@ -15,4 +15,4 @@ unpklY = unpkl['Y']
 currentX = unpklX.iloc[i]
 currentY = unpklY.iloc[i]
 
-print(foo(dm, th))
+print(foo(currentX, currentY))
