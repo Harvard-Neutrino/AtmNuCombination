@@ -4,8 +4,8 @@ import pandas as pd
 def foo(x, y):
     return x ** 2 + y ** 2
 
-pkl = sys.argv[1]
-i = int(sys.argv[2])
+pkl = "dummy.pkl" # sys.argv[1]
+i = int(sys.argv[1])
 
 unpkl = pd.read_pickle(pkl)
 
