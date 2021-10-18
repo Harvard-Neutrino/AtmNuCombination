@@ -2,21 +2,20 @@ import numpy as np
 import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
+from matplotlib.colors import LogNorm
 import nuSQuIDS as nsq
 import nuflux
-import seaborn as sns
+# import seaborn as sns
 
-import sensitivity as sst
 from params import *
 
-sst.get_rated_weight_truth(0)
-sst.get_rated_weight_truth(1)
+matplotlib.rcParams.update({'font.size': 16})
+matplotlib.rcParams.update({'lines.linewidth': 3})
+matplotlib.rcParams.update({'patch.linewidth': 3})
 
-exit(0)
-
-# these are for checking with Ivan
-
-def get_rated_weight_truth():
+# Obtain the rated weight of each event
+# event topology is cascade 0 or track 1
+def get_rated_weight_truth(top):
     nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,neutrino_flavors,nsq.NeutrinoType.both,interactions)
 
     print("get_rated_weight_truth: propagating nu")
@@ -33,18 +32,11 @@ def get_rated_weight_truth():
             AtmInitialFlux[ic][ie][0][2] = 0 # flux.getFlux(nuflux.NuTau,nu_energy,nu_cos_zenith) # nutau
             AtmInitialFlux[ic][ie][1][2] = 0 # flux.getFlux(nuflux.NuTauBar,nu_energy,nu_cos_zenith) # nutau bar
 
-    Radian = 180. / np.pi
     nsq_atm.Set_MixingAngle(0, 1, theta12)
     nsq_atm.Set_MixingAngle(0, 2, theta13)
     nsq_atm.Set_MixingAngle(1, 2, theta23)
     nsq_atm.Set_SquareMassDifference(1, m21)
     nsq_atm.Set_SquareMassDifference(2, m31)
-    # nsq_atm.Set_MixingAngle(0,1, 33.44 * Radian)
-    # nsq_atm.Set_MixingAngle(0,2, 8.57 * Radian)
-    # nsq_atm.Set_MixingAngle(1,2, 49.2 * Radian)
-
-    # nsq_atm.Set_SquareMassDifference(1,7.42e-5)
-    # nsq_atm.Set_SquareMassDifference(2,2.517e-3)
 
     nsq_atm.Set_initial_state(AtmInitialFlux,nsq.Basis.flavor)
     nsq_atm.Set_ProgressBar(False) # progress bar will be printed on terminal
@@ -52,29 +44,10 @@ def get_rated_weight_truth():
 
     lifetime = 365*24*60*60
     meter_to_cm_sq = 1e4
-
     rate_weight = np.zeros_like(input_data["weight"])
 
-    # These are from Ivan's Code, just to check
-    Time = 3.0*365*24*60*60
-    Erec_min = 1
-    Erec_max = 1000000
-    NErec = 60
-    erec = np.logspace(np.log10(Erec_min), np.log10(Erec_max), NErec+1, endpoint = True)
-
-    dlter = (np.log10(Erec_max) - np.log10(Erec_min))/NErec
-
-    Crec_min = -1
-    Crec_max = 1
-    Ncrec = 10
-    crec = np.linspace(Crec_min, Crec_max, Ncrec+1, endpoint = True)
-
-    dltcr = (Crec_max - Crec_min)/Ncrec
-
-    EventsBF = np.zeros((2, NErec, Ncrec))
-    EvBFEne = np.zeros((2, NErec))
-    EvBFCzen = np.zeros((2, Ncrec))
-
+    # for debugging
+    j = 0
 
     for i in range(len(rate_weight)):
         if input_data["pdg"][i] > 0 :
@@ -88,207 +61,168 @@ def get_rated_weight_truth():
             neuflavor = 1
         elif np.abs(input_data["pdg"][i]) == 16:
             neuflavor = 2
-        
-        if input_data["pid"][i] == 0 :
-            neuint = 0
-        elif input_data["pid"][i] == 1 :
-            neuint = 1
 
-        
-        if input_data["reco_energy"][i] * units.GeV > Erec_min  and input_data["true_energy"][i] * units.GeV > E_min and input_data["true_energy"][i] * units.GeV < E_max:
-
-            binr = int( (np.log10(input_data["reco_energy"][i]) - np.log10(Erec_min))/dlter)
-            binc = int((np.cos(input_data["reco_zenith"][i]) - Crec_min)/dltcr)
-
-            EventsBF[neuint][binr][binc] += input_data["weight"][i] * nsq_atm.EvalFlavor(neuflavor, np.cos(input_data["true_zenith"][i]), input_data["true_energy"][i] * units.GeV, neutype) * Time * meter_to_cm_sq
-
-            
-            EvBFEne[neuint][binr] += input_data["weight"][i] * nsq_atm.EvalFlavor(neuflavor, np.cos(input_data["true_zenith"][i]), input_data["true_energy"][i] * units.GeV, neutype) * Time * meter_to_cm_sq
-
-            EvBFCzen[neuint][binc] += input_data["weight"][i] * nsq_atm.EvalFlavor(neuflavor, np.cos(input_data["true_zenith"][i]), input_data["true_energy"][i] * units.GeV, neutype) * Time * meter_to_cm_sq
-
-    for e in range(NErec) :
-        print(erec[e], end="    ")
-        print(EvBFEne[0][e], end="   ")
-        print(EvBFEne[1][e], end="\n")
-        print(erec[e+1], end="    ")
-        print(EvBFEne[0][e], end="   ")
-        print(EvBFEne[1][e], end="\n")
-    
-    return
-
-get_rated_weight_truth()
-exit(0)
+        if input_data["true_energy"][i]*units.GeV > E_min and input_data["true_energy"][i]*units.GeV < E_max and input_data["reco_energy"][i] * units.GeV > 1:
+            rate_weight[i] = input_data["weight"][i]*nsq_atm.EvalFlavor(neuflavor,
+                                                                        np.cos(input_data["true_zenith"][i]),
+                                                                        input_data["true_energy"][i]*\
+                                                                        units.GeV,neutype)*lifetime*meter_to_cm_sq*3 #3 years flux
+            # these are for debugging
+            j+=rate_weight[i]
 
 
-# get_rated_weight_truth()
-units = nsq.Const()
-
-Time = 3.0*365*24*60*60
-meter_to_cm_sq = 1e4
-Radian = 180. / np.pi
-
-theta12 = np.arcsin(np.sqrt(0.304))
-theta13 = np.arcsin(np.sqrt(0.02221))
-theta23 = np.arcsin(np.sqrt(0.570))
-m21 = 7.42e-5
-m31 = 2.517e-3
-
-
-########################    DATA   #####################################
-
-# Define path to file (you may need to change this to match your system)
-input_file = "neutrino_mc.csv"
-
-# Load the file using pandas
-input_data = pd.read_csv(input_file)
-
-
-
-#######################  USE DATA    #####################################
-
-
-# Define some energy bins (used throughout this notebook)
-energy_bins_fine = np.logspace(1., 2., num=21)
-energy_bins_course = np.logspace(1., 2., num=11)
-
-# Define masks to identify different neutrino flavors
-nue_mask = (np.abs(input_data["pdg"]) == 12)
-numu_mask = (np.abs(input_data["pdg"]) == 14)
-nutau_mask = (np.abs(input_data["pdg"]) == 16)
-
-
-# Define masks to identify different flavor/interaction combinations.
-nc_mask = input_data["current_type"] == 0
-cc_mask = input_data["current_type"] == 1
-nue_cc_mask = nue_mask & cc_mask
-numu_cc_mask = numu_mask & cc_mask
-nutau_cc_mask = nutau_mask & cc_mask
-
-
-
-##################    Flux     ###########################
-
-flux = nuflux.makeFlux('IPhonda2014_spl_solmin')
-
-interactions = False
-
-E_min = 1.0*units.GeV
-E_max = 1.0e3*units.GeV
-E_nodes = 200
-energy_nodes = nsq.logspace(E_min,E_max,E_nodes)
-
-cth_min = -1.0
-cth_max = 1.0
-cth_nodes = 40
-cth_nodes = nsq.linspace(cth_min,cth_max,cth_nodes)
-
-neutrino_flavors = 3
-
-nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,neutrino_flavors,nsq.NeutrinoType.both,interactions)
-
-#Initialize the flux
-AtmInitialFlux = np.zeros((len(cth_nodes),len(energy_nodes),2,neutrino_flavors))
-flux = nuflux.makeFlux('IPhonda2014_spl_solmin')
-for ic,cth in enumerate(nsq_atm.GetCosthRange()):
-    for ie,E in enumerate(nsq_atm.GetERange()):
-        nu_energy = E/units.GeV
-        nu_cos_zenith = cth
-        AtmInitialFlux[ic][ie][0][0] = flux.getFlux(nuflux.NuE,nu_energy,nu_cos_zenith) # nue
-        AtmInitialFlux[ic][ie][1][0] = flux.getFlux(nuflux.NuEBar,nu_energy,nu_cos_zenith) # nue bar
-        AtmInitialFlux[ic][ie][0][1] = flux.getFlux(nuflux.NuMu,nu_energy,nu_cos_zenith) # numu
-        AtmInitialFlux[ic][ie][1][1] = flux.getFlux(nuflux.NuMuBar,nu_energy,nu_cos_zenith) # numu bar
-        AtmInitialFlux[ic][ie][0][2] = 0.  # nutau
-        AtmInitialFlux[ic][ie][1][2] = 0.  # nutau bar
-
-        #AtmInitialFlux[ic][ie][0][2] = flux.getFlux(nuflux.NuTau,nu_energy,nu_cos_zenith) # nutau
-        #AtmInitialFlux[ic][ie][1][2] = flux.getFlux(nuflux.NuTauBar,nu_energy,nu_cos_zenith) # nutau bar
-
-
-
-        
-
-######################### Evolution flux throught the Earth    ######################################
-# nsq_atm.Set_MixingAngle(0,1, 33.44 * Radian)
-# nsq_atm.Set_MixingAngle(0,2, 8.57 * Radian)
-# nsq_atm.Set_MixingAngle(1,2, 49.2 * Radian)
-
-# nsq_atm.Set_SquareMassDifference(1,7.42e-5)
-# nsq_atm.Set_SquareMassDifference(2,2.517e-3)
-nsq_atm.Set_MixingAngle(0, 1, theta12)
-nsq_atm.Set_MixingAngle(0, 2, theta13)
-nsq_atm.Set_MixingAngle(1, 2, theta23)
-nsq_atm.Set_SquareMassDifference(1, m21)
-nsq_atm.Set_SquareMassDifference(2, m31)
-
-nsq_atm.Set_initial_state(AtmInitialFlux,nsq.Basis.flavor)
-#nsq_atm.Set_ProgressBar(True) # progress bar will be printed on terminal
-nsq_atm.EvolveState()
-
-
-
-##################################### Event distribution    #####################################
-
-Erec_min = 1
-Erec_max = 1000000
-NErec = 60
-erec = np.logspace(np.log10(Erec_min), np.log10(Erec_max), NErec+1, endpoint = True)
-
-dlter = (np.log10(Erec_max) - np.log10(Erec_min))/NErec
-
-Crec_min = -1
-Crec_max = 1
-Ncrec = 10
-crec = np.linspace(Crec_min, Crec_max, Ncrec+1, endpoint = True)
-
-dltcr = (Crec_max - Crec_min)/Ncrec
-
-
-rate_weight = np.zeros_like(input_data["weight"])
-EventsBF = np.zeros((2, NErec, Ncrec))
-EvBFEne = np.zeros((2, NErec))
-EvBFCzen = np.zeros((2, Ncrec))
-
-for i in range(len(rate_weight)):
-
-    if input_data["pdg"][i] > 0 :
-        neutype = 0
+    # print("truth debug: before hist")
+    input_data["rate_weight"] = rate_weight
+    if top == 0:
+        energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"][cascade_mask], bins = energy_bins_fine, weights = input_data["rate_weight"][cascade_mask])
+    elif top == 1:
+        energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"][track_mask], bins = energy_bins_fine, weights = input_data["rate_weight"][track_mask])
     else:
-        neutype = 1
-                
-    if input_data["pid"][i] == 0 :
-        neuint = 0
-    elif input_data["pid"][i] == 1 :
-        neuint = 1
+        energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"], bins = energy_bins_fine, weights = input_data["rate_weight"])
+    # print("truth debug: after hist")
 
-    if np.abs(input_data["pdg"][i]) == 12:
-        neuflavor = 0
-    elif np.abs(input_data["pdg"][i]) == 14:
-        neuflavor = 1
-    elif np.abs(input_data["pdg"][i]) == 16:
-        neuflavor = 2
+    print("get_rated_weight_truth: energy bins: \n", energy_bins_truth)
+    print("get_rated_weight_truth: energy rates: \n", energy_hist_truth)
+    print(j)
+    return rate_weight , energy_hist_truth, energy_bins_truth
 
 
-    if input_data["reco_energy"][i] * units.GeV > Erec_min  and input_data["true_energy"][i] * units.GeV > E_min and input_data["true_energy"][i] * units.GeV < E_max:
+# Obtain binned energy given theta23 and m31 values
+def get_energy_bins(theta23in, m31in, top = 2):
+    nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,neutrino_flavors,nsq.NeutrinoType.both,interactions)
 
-        binr = int( (np.log10(input_data["reco_energy"][i]) - np.log10(Erec_min))/dlter)
-        binc = int((np.cos(input_data["reco_zenith"][i]) - Crec_min)/dltcr)
+    AtmInitialFlux = np.zeros((len(cth_nodes),len(energy_nodes),2,neutrino_flavors))
+    flux = nuflux.makeFlux('IPhonda2014_spl_solmin')
 
-        EventsBF[neuint][binr][binc] += input_data["weight"][i] * nsq_atm.EvalFlavor(neuflavor, np.cos(input_data["true_zenith"][i]), input_data["true_energy"][i] * units.GeV, neutype) * Time * meter_to_cm_sq
+    print("get_energy_bins: propagating nu")
+    for ic,cth in enumerate(nsq_atm.GetCosthRange()):
+        for ie,E in enumerate(nsq_atm.GetERange()):
+            nu_energy = E/units.GeV
+            nu_cos_zenith = cth
+            AtmInitialFlux[ic][ie][0][0] = flux.getFlux(nuflux.NuE,nu_energy,nu_cos_zenith) # nue
+            AtmInitialFlux[ic][ie][1][0] = flux.getFlux(nuflux.NuEBar,nu_energy,nu_cos_zenith) # nue bar
+            AtmInitialFlux[ic][ie][0][1] = flux.getFlux(nuflux.NuMu,nu_energy,nu_cos_zenith) # numu
+            AtmInitialFlux[ic][ie][1][1] = flux.getFlux(nuflux.NuMuBar,nu_energy,nu_cos_zenith) # numu bar
+            AtmInitialFlux[ic][ie][0][2] = 0 #flux.getFlux(nuflux.NuTau,nu_energy,nu_cos_zenith) # nutau
+            AtmInitialFlux[ic][ie][1][2] = 0 #flux.getFlux(nuflux.NuTauBar,nu_energy,nu_cos_zenith) # nutau bar
 
-        
-        EvBFEne[neuint][binr] += input_data["weight"][i] * nsq_atm.EvalFlavor(neuflavor, np.cos(input_data["true_zenith"][i]), input_data["true_energy"][i] * units.GeV, neutype) * Time * meter_to_cm_sq
+    nsq_atm.Set_MixingAngle(0, 1, theta12)
+    nsq_atm.Set_MixingAngle(0, 2, theta13)
+    nsq_atm.Set_MixingAngle(1, 2, theta23in)
+    nsq_atm.Set_SquareMassDifference(1, m21)
+    nsq_atm.Set_SquareMassDifference(2, m31in)
 
-        EvBFCzen[neuint][binc] += input_data["weight"][i] * nsq_atm.EvalFlavor(neuflavor, np.cos(input_data["true_zenith"][i]), input_data["true_energy"][i] * units.GeV, neutype) * Time * meter_to_cm_sq
+    nsq_atm.Set_initial_state(AtmInitialFlux,nsq.Basis.flavor)
+    nsq_atm.Set_ProgressBar(False) # progress bar will be printed on terminal
+    nsq_atm.EvolveState()
+
+    lifetime = 365*24*60*60
+    meter_to_cm_sq = 1e4
+    rate_weight = np.zeros_like(input_data["weight"])
+    for i in range(len(rate_weight)):
+        if input_data["pdg"][i] > 0 :
+            neutype = 0
+        else:
+            neutype = 1
+
+        if np.abs(input_data["pdg"][i]) == 12:
+            neuflavor = 0
+        elif np.abs(input_data["pdg"][i]) == 14:
+            neuflavor = 1
+        elif np.abs(input_data["pdg"][i]) == 16:
+            neuflavor = 2
+
+        if input_data["true_energy"][i]*units.GeV < E_min or input_data["true_energy"][i]*units.GeV > E_max:
+            rate_weight[i] = 0
+            continue
+        rate_weight[i] = input_data["weight"][i]*nsq_atm.EvalFlavor(neuflavor,
+                                                                    np.cos(input_data["true_zenith"][i]),
+                                                                    input_data["true_energy"][i]*\
+                                                                    units.GeV,neutype)*lifetime*meter_to_cm_sq*3 # 3 years flux
+    input_data["rate_weight"] = rate_weight
+    
+    # print("get_energy_bins_debug: before hist")
+    # Now first obtain  the energy binned event rate distributions 1-100GeV
+    if top == 0:
+        energy_hist, energy_bins = np.histogram(input_data["reco_energy"][cascade_mask], bins = energy_bins_fine, weights = input_data["rate_weight"][cascade_mask])
+    elif top == 1:
+        energy_hist, energy_bins = np.histogram(input_data["reco_energy"][track_mask], bins = energy_bins_fine, weights = input_data["rate_weight"][track_mask])
+    else:
+        energy_hist, energy_bins = np.histogram(input_data["reco_energy"], bins = energy_bins_fine, weights = input_data["rate_weight"])
+    # print("get_energy_bins_debug: after hist")
+    print("get_energy_bins: energy rates: \n", energy_hist)
+    
+    return energy_hist
+
+
+# Get chisq for the contour plot
+def get_chisq(t23, m31, truth, top = 0):
+    print("get_chisq: in get chisq")
+    # Get the energy bins for the given t23, m31 and truth
+    energy_bins = get_energy_bins(t23, m31, top)
+    print("get_chisq: t23, ", t23)
+    print("get_chisq: m31, ", m31)
+    # rate_weight_truth, energy_hist_truth, energy_bins_truth = get_rated_weight_truth(top)
+    chisq = 0
+    for i in range(len(energy_bins)):
+        # chisqplus = (energy_bins[i] - energy_hist_truth[i]) ** 2 /  energy_hist_truth[i]
+        chisqplus = (energy_bins[i] - truth[i]) ** 2 /  truth[i]
+        chisq += chisqplus
+    print("get_chisq: chisq, ", chisq)
+    return chisq
+
+# Get chisq wrt t23 minimized by m31
+def get_chisq_min_t23(t23, truth, top = 0):
+    tomin = np.zeros_like(pfm31l).tolist()
+    for i in range(len(tomin)):
+        energy_bins = get_energy_bins(t23, pfm31l[i], top)
+        chisq = 0
+        for j in range(len(energy_bins)):
+            chisqplus = (energy_bins[j] - truth[j]) ** 2 /  truth[j]
+            chisq += chisqplus
+        tomin[i] = chisq
+    chisqmin = min(tomin)
+    return chisqmin
+
+# Get the t23 chi sq raw profile (not minimizing over m31, set automatically to truth)
+def get_t23_chi_profile(m31 = m31, top = 0):
+    print("get_t23_chi_profile: in t23 chi profile")
+    profile = np.zeros(len(t23l.tolist())).tolist()
+    rate_weight_truth, energy_hist_truth, energy_bins_truth = get_rated_weight_truth(top)
+    # energy_hist_truth = truth
+    print("get_t23_chi_profile: the list of t23 to probe is \n", t23l)
+    for i in range(len(t23l.tolist())):
+        print("get_t23_chi_profile: the position in list now is ", i)
+        profile[i] = get_chisq(t23l[i], m31, energy_hist_truth, top)
+    return profile
+
+# Get the minimized over m31 chisq profile of t23
+def get_t23_min_chi_profile(top = 0):
+    profile = np.zeros_like(t23l).tolist()
+    rate_weight_truth, energy_hist_truth, energy_bins_truth = get_rated_weight_truth(top)
+    for i in range(len(t23l.tolist())):
+        profile[i] = get_chisq_min_t23(t23l[i], energy_hist_truth, top)
+    return profile
 
 
 
-for e in range(NErec) :
-    print(erec[e], end="    ")
-    print(EvBFEne[0][e], end="   ")
-    print(EvBFEne[1][e], end="\n")
-    print(erec[e+1], end="    ")
-    print(EvBFEne[0][e], end="   ")
-    print(EvBFEne[1][e], end="\n")
+# Get the m31 chi sq raw profile (not minimizing over t23, set automatically to truth)
+def get_m31_chi_profile(t23 = theta23, top = 0):
+    print("in m31 chi profile")
+    profile = np.zeros(len(m31l.tolist())).tolist()
+    rate_weight_truth, energy_hist_truth, energy_bins_truth = get_rated_weight_truth(top)
+    for i in range(len(m31l.tolist())):
+        print("the position in list now is ", i)
+        print("the m31 now is ", t23l[i])
+        profile[i] = get_chisq(t23, m31l[i], energy_hist_truth, top)
+        print("back to m31 chi profile, the newest chisq is ", profile[i])
+    return profile
 
-exit(0)
+
+
+
+# t23outfile = "t12bins.npy"
+# m31outfile = "m31bins.npy"
+# np.save(t23outfile, energy_hist_theta23)
+# np.save(m31outfile, energy_hist_m31)
+
