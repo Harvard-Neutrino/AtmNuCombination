@@ -20,4 +20,4 @@ from params import *
 
 #plotting.hist_nuisance(m31, theta23, 4, 1)
 # plotting.hist_truth()
-plotting.hist_nuisance(m31, theta23, 1, 0)
+plotting.hist_nuisance(m31, theta23, 1, 1)

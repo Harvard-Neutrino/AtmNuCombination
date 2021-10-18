@@ -31,6 +31,7 @@ def hist_truth():
 	ax.set_ylabel("Rate [3 Years]")
 	ax.grid(True)
 	ax.legend()
+	fig.show()
 	fig.savefig("Hist(Truth, no nuisance).png", bbox_inches='tight')
 
 def hist_nuisance(dm, th, norm, nudelta):
