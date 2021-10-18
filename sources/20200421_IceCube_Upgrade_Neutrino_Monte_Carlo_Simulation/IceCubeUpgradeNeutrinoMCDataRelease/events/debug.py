@@ -47,7 +47,7 @@ def get_rated_weight_truth(top):
     rate_weight = np.zeros_like(input_data["weight"])
 
     # for debugging
-    j = 0
+    # j = 0
 
     for i in range(len(rate_weight)):
         if input_data["pdg"][i] > 0 :
@@ -68,7 +68,7 @@ def get_rated_weight_truth(top):
                                                                         input_data["true_energy"][i]*\
                                                                         units.GeV,neutype)*lifetime*meter_to_cm_sq*3 #3 years flux
             # these are for debugging
-            j+=rate_weight[i]
+            # j+=rate_weight[i]
 
 
     # print("truth debug: before hist")
@@ -83,7 +83,7 @@ def get_rated_weight_truth(top):
 
     print("get_rated_weight_truth: energy bins: \n", energy_bins_truth)
     print("get_rated_weight_truth: energy rates: \n", energy_hist_truth)
-    print(j)
+    # print(j)
     return rate_weight , energy_hist_truth, energy_bins_truth
 
 

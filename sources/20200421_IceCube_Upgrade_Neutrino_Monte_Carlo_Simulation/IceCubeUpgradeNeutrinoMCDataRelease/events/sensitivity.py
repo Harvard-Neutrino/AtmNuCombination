@@ -15,7 +15,7 @@ matplotlib.rcParams.update({'patch.linewidth': 3})
 
 # Obtain the rated weight of each event
 # event topology is cascade 0 or track 1
-def get_rated_weight_truth(top = 2):
+def get_rated_weight_truth(top = 2, norm = 1, delta = 1, gamma = 0):
     nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,neutrino_flavors,nsq.NeutrinoType.both,interactions)
 
     print("get_rated_weight_truth: propagating nu")
@@ -41,6 +41,7 @@ def get_rated_weight_truth(top = 2):
     nsq_atm.Set_initial_state(AtmInitialFlux,nsq.Basis.flavor)
     nsq_atm.Set_ProgressBar(False) # progress bar will be printed on terminal
     nsq_atm.EvolveState()
+    print("get_rated_weight_truth: finished propagating")
 
     lifetime = 365*24*60*60
     meter_to_cm_sq = 1e4
@@ -64,6 +65,17 @@ def get_rated_weight_truth(top = 2):
                                                                         input_data["true_energy"][i]*\
                                                                         units.GeV,neutype)*lifetime*meter_to_cm_sq*3 #3 years flux
 
+            rate_weight[i] = rate_weight[i] * norm
+            if input_data["pdg"][i] > 0: # if it is neutrino
+                rate_weight[i] = rate_weight[i] * delta
+            if input_data["pdg"][i] > 0: # if it is antineutrino
+                rate_weight[i] = rate_weight[i] * (2 - delta)
+            
+            # now the gamma
+            current_energy = input_data["true_energy"][i]
+            current_e0 = min(energy_bins_fine, key=lambda x:abs(x-current_energy))
+            rate_weight[i] = rate_weight[i] * (current_energy / current_e0) ** (0 - gamma)
+            
     # print("truth debug: before hist")
     input_data["rate_weight"] = rate_weight
     if top == 0:
@@ -110,6 +122,7 @@ def get_energy_bins(theta23in, m31in, top, norm, delta):
     nsq_atm.Set_initial_state(AtmInitialFlux,nsq.Basis.flavor)
     nsq_atm.Set_ProgressBar(False) # progress bar will be printed on terminal
     nsq_atm.EvolveState()
+    print("get_energy_bins: finished propagation")
 
     lifetime = 365*24*60*60
     meter_to_cm_sq = 1e4

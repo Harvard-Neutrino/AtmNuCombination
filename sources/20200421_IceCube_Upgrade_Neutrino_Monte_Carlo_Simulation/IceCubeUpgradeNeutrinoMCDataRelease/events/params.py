@@ -48,7 +48,7 @@ numu_cascade_mask = numu_mask & cascade_mask
 numu_track_mask = numu_mask & track_mask
 
 # Define some energy bins (used throughout this notebook)
-energy_bins_fine = np.logspace(0., 2., num=21)
+energy_bins_fine = np.logspace(0., 3., num=31)
 energy_bins_course = np.logspace(0., 2., num=11)
 
 # Define the units and interaction mode

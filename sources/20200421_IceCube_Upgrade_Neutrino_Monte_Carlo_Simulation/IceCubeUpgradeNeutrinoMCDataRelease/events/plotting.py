@@ -10,7 +10,7 @@ import sensitivity as sst
 from params import *
 
 def hist_truth():
-	rate_weight_truth, energy_hist_truth, energy_bins_truth = sst.get_rated_weight_truth()
+	rate_weight_truth, energy_hist_truth, energy_bins_truth = sst.get_rated_weight_truth(gamma = -1)
 	input_data["rate_weight"] = rate_weight_truth
 	
 	# Plot the energy distribution
@@ -31,8 +31,10 @@ def hist_truth():
 	ax.set_ylabel("Rate [3 Years]")
 	ax.grid(True)
 	ax.legend()
-	fig.show()
-	fig.savefig("Hist(Truth, no nuisance).png", bbox_inches='tight')
+	# fig.show()
+	fig.savefig("TruthFit(norm = 1, gamma = -1).png", bbox_inches='tight')
+	
+	#fig.savefig("Hist(Truth, no nuisance).png", bbox_inches='tight')
 
 def hist_nuisance(dm, th, norm, nudelta):
 	rate_weight = sst.get_energy_bins(dm, th, top = 2, norm = norm, delta = nudelta)
@@ -56,6 +58,7 @@ def hist_nuisance(dm, th, norm, nudelta):
 	ax.set_ylabel("Rate [3 Years]")
 	ax.grid(True)
 	ax.legend()
+	# fig.show()
 	fig.savefig("Hist(DM = {}, s^2th = {}, norm = {}, delta = {}).png".format(dm, th, norm, nudelta), bbox_inches='tight')
 
 def distribution_plots():
