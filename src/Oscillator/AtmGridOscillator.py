@@ -3,17 +3,15 @@ import nuSQUIDSpy as nsq
 import nuflux
 
 def AtmOsc(ipnu, CosZenith, Enu, theta13, theta23, dm32, MO, theta12=0.563942, dm21=7.65e-05):
-	0.563942
-dm21 = 7.65e-05
-	E_min = 1.0e-1*units.GeV
-	E_max = 1.0e5*units.GeV
+	E_min = 1.0e-1
+	E_max = 4.0e2
 	E_nodes = 100
 	energy_nodes = nsq.geomspace(E_min,E_max,E_nodes)
 
 	cth_min = -1.0
 	cth_max = 1.0
 	cth_nodes = 40
-	cth_nodes = nsq.linspace(cth_min,cth_max,cth_nodes)
+	cz_nodes = nsq.linspace(cth_min,cth_max,cth_nodes)
 
 	neutrino_flavors = 3
 	interactions = 'False'
@@ -29,13 +27,11 @@ dm21 = 7.65e-05
     elif MO==-1:
         nuSQ.Set_SquareMassDifference(2,mh*dm32+dm21)
 
-	# nsq_atm.Set_SquareMassDifference(2, dm31)
-
     AtmInitialFlux = np.zeros((len(cth_nodes),len(energy_nodes),2,neutrino_flavors))
     flux = nuflux.makeFlux('IPhonda2014_sk_solmin')
-    for ic,cth in enumerate(nsq_atm.GetCosthRange()):
-        for ie,E in enumerate(nsq_atm.GetERange()):
-            nu_energy = E/units.GeV
+    for ic,cth in enumerate(cz_nodes):
+        for ie,E in enumerate(energy_nodes):
+            nu_energy = E*units.GeV
             nu_cos_zenith = cth
             AtmInitialFlux[ic][ie][0][0] = flux.getFlux(nuflux.NuE,nu_energy,nu_cos_zenith) # nue
             AtmInitialFlux[ic][ie][1][0] = flux.getFlux(nuflux.NuEBar,nu_energy,nu_cos_zenith) # nue bar

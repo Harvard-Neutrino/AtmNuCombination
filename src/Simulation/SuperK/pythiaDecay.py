@@ -6,7 +6,10 @@ class pythiaDecay:
 	def __init__(self):
 		self.UnstableParents = {15:"tau-",-15:"tau+",
 			  321:"k+",-321:"k-",211:"pi+",111:"pi0",
-			  221:"eta",411:"d+",-411:"d-",421:"d0"}
+			  221:"eta",411:"d+",-411:"d-",421:"d0",
+			  2224:"delta++",2214:"delta+",2114:"delta0",
+			  1114:"delta-",3122:"lambda",3222:"sigma+",
+			  3212:"sigma0",3112:"sigma-"}
 		self.pythia = pythia8.Pythia()
 		self.pythia.readString("ProcessLevel:all = off")
 		self.pythia.readString("Random:setSeed = on")

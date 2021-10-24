@@ -7,7 +7,7 @@ import random
 import applications as ap
 
 class RecoRing:
-	AngResoThr = 0.95 #math.cos(25.*pi/180.)
+	AngResoThr = 0.975 #math.cos(25.*pi/180.)
 	MeVtoGeV = 0.001
 	def __init__(self, TrueNRing, TrueRingPDG, TrueRingIP, TrueRingE, TrueRingP, TrueRingDir, distros, mode):
 		
@@ -30,7 +30,15 @@ class RecoRing:
 		self.ReconDirection(TrueRingDir)
 
 		if self.NRing >1: # Oh, the multi-ringers! Special care needed
-			mer = np.where(self.Momentum == np.amax(self.Momentum))
+			dmer = np.where(self.Momentum == np.amax(self.Momentum))
+			mer = dmer[0][0]
+			# print('here')
+			# print(dmer)
+			# print(dmer[0])
+			# print(dmer[0][0])
+			# print(mer)
+			# print(TrueRingIP[mer])
+			# print(TrueRingPDG[mer])
 			self.ReconMRIP(mer, TrueRingIP[mer], TrueRingPDG[mer])
 			# self.ReconMRIP(mer, TrueRingIP[mer], nu)
 			mTrueRingPDG, mTrueRingP, mTrueRingDir = self.TooClose(TrueRingPDG, TrueRingP, TrueRingDir) # Put labels on rings which won't be reconstructed due to poor angular resolution
@@ -50,53 +58,58 @@ class RecoRing:
 			# print(self.TrueDirection)
 
 		self.TotalVariables()
+		# print(TrueRingPDG)
+		# print(TrueRingP)
+		# print(self.Momentum)
+		# print(TrueRingDir)
+		# print(self.Direction)
+		print('Tot reco dir:',self.TotDir)
 
 		self.MuEdk = 0
 		self.Imass = 0
 
 
-	def mendSGM(self, nu):
-		mis0 = np.random.rand()
-		if self.Type == 5 and abs(nu)==12:
-			self.Type = 3
+	# def mendSGM(self, nu):
+	# 	mis0 = np.random.rand()
+	# 	if self.Type == 5 and abs(nu)==12:
+	# 		self.Type = 3
 
 
-	def mendSGE(self):
-		mis0 = np.random.rand()
-		if not self.CC:
-			if self.Type==0:
-				if mis0>0.33:
-					self.Type = -1
-			elif self.Type==1:
-				if mis0>0.5:
-					self.Type = -1
+	# def mendSGE(self):
+	# 	mis0 = np.random.rand()
+	# 	if not self.CC:
+	# 		if self.Type==0:
+	# 			if mis0>0.33:
+	# 				self.Type = -1
+	# 		elif self.Type==1:
+	# 			if mis0>0.5:
+	# 				self.Type = -1
 
-	def mendMG(self, nu):
-		mis0 = np.random.rand()
-		if not self.CC:
-			if self.Type==7:
-				if mis0>0.27:
-					self.Type = -1
-			elif self.Type==8:
-				if mis0>0.21:
-					self.Type = -1
-			elif self.Type==9:
-				if mis0>0.013:
-					self.Type = -1
-		else:
-			if (self.Type==7 or self.Type==8) and abs(nu)==14:
-				if mis0>0.3:
-					self.Type = -1
+	# def mendMG(self, nu):
+	# 	mis0 = np.random.rand()
+	# 	if not self.CC:
+	# 		if self.Type==7:
+	# 			if mis0>0.27:
+	# 				self.Type = -1
+	# 		elif self.Type==8:
+	# 			if mis0>0.21:
+	# 				self.Type = -1
+	# 		elif self.Type==9:
+	# 			if mis0>0.013:
+	# 				self.Type = -1
+	# 	else:
+	# 		if (self.Type==7 or self.Type==8) and abs(nu)==14:
+	# 			if mis0>0.3:
+	# 				self.Type = -1
 
-	def mendMR(self, nu):
-		mis0 = np.random.rand()
-		if self.Type == 10 and abs(nu)==14:
-			if mis0>0.27:
-				self.Type = -1
-		elif self.Type == 11 and abs(nu)==14:
-			if mis0>0.10:
-				self.Type = -1
-
+	# def mendMR(self, nu):
+	# 	mis0 = np.random.rand()
+	# 	if self.Type == 10 and abs(nu)==14:
+	# 		if mis0>0.27:
+	# 			self.Type = -1
+	# 	elif self.Type == 11 and abs(nu)==14:
+	# 		if mis0>0.10:
+	# 			self.Type = -1
 
 
 	def HeavyChargedWA(self, pdg, p):
@@ -106,10 +119,6 @@ class RecoRing:
 			elif abs(part)==2212 and p[i]<2.3:
 				self.RecoLabels[i] = 0
 
-		# self.MER = np.argmax(self.RecoMomentum)
-		# self.Evis = np.sum(self.RecoMomentum)
-
-		# if self.RecoRing == 1: self.Direction = self.RecoDirection
 
 	def SKType(self, ipnu, cc):
 		
@@ -323,9 +332,13 @@ class RecoRing:
 			self.sMERMomentum = self.Momentum[smer]
 			self.MERDirection = self.Direction[mer,:]
 			self.sMERDirection = self.Direction[smer,:]
-			self.TotDir = direc / np.linalg.norm(direc)
 			self.Evis = evis
-			self.NRing = nring
+			if np.linalg.norm(direc)==0:
+				self.NRing = 0
+				self.TotDir = np.zeros(3)
+			else:
+				self.NRing = nring
+				self.TotDir = direc / np.linalg.norm(direc)
 			self.MERIP = self.IP[mer]
 			self.sMERIP = self.IP[smer]
 
@@ -360,7 +373,7 @@ class RecoRing:
 				
 
 	def ReconDirection(self, dirv):
-		ang=4
+		ang=2
 		self.Direction = dirv
 		for i,ip in enumerate(self.IP):
 			# if ip==2 and self.RecoMomentum[i]<1.3 and self.NRing==1: # SGE
@@ -381,10 +394,17 @@ class RecoRing:
 				u = ap.RndVector()
 				if self.NRing == 1:
 					self.Direction = ap.RodRot(dirv,u,ang)
+					# print('True dir:', dirv)
+					# print('Shift angle:', ang)
+					# print('Reco direction:', self.Direction)
 				elif self.NRing > 1:
 					# print(u, self.RecoDirection[i])
 					self.Direction[i,:] = ap.RodRot(dirv[i,:],u,ang)
-					# print(self.RecoDirection[i] )
+					# print('True dir:', dirv[i])
+					# print('Shift angle:', ang)
+					# print('Reco direction:', self.Direction[i])
+				# else:
+				# 	self.Direction = 9999*np.ones(3)
 
 
 	def ReconMomentum(self, pdg, P):
