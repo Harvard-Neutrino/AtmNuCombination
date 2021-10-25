@@ -350,11 +350,8 @@ class RecoRing:
 		mergepdg = pdg
 		for i in range(self.NRing-1):
 			for j in range(i+1,self.NRing):
-
 				cos = np.dot(self.Direction[i],self.Direction[j])
-
 				if cos > self.AngResoThr:
-
 					if self.Momentum[j]<self.Momentum[i]: 
 						self.IP[j] = self.IP[i]
 						pdg[j] = pdg[i]
@@ -393,16 +390,21 @@ class RecoRing:
 				# Rodrigues way
 				u = ap.RndVector()
 				if self.NRing == 1:
-					self.Direction = ap.RodRot(dirv,u,ang)
+					recodir = ap.RodRot(dirv,u,ang)
+					self.Direction = recodir
 					# print('True dir:', dirv)
 					# print('Shift angle:', ang)
 					# print('Reco direction:', self.Direction)
 				elif self.NRing > 1:
 					# print(u, self.RecoDirection[i])
-					self.Direction[i,:] = ap.RodRot(dirv[i,:],u,ang)
+					recodir = ap.RodRot(dirv[i,:],u,ang)
+					self.Direction[i,:] = recodir
 					# print('True dir:', dirv[i])
 					# print('Shift angle:', ang)
 					# print('Reco direction:', self.Direction[i])
+				# print('ring ip', ip)
+				# print('true ring dir', dirv)
+				# print('reco ring dir', recodir)
 				# else:
 				# 	self.Direction = 9999*np.ones(3)
 
