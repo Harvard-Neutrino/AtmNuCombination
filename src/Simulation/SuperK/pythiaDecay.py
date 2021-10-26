@@ -25,7 +25,7 @@ class pythiaDecay:
 		mom = np.linalg.norm(p)
 		E = sqrt(mom**2 + mass**2) # re-compute energy as some mass values differ a little
 		p4vec = pythia8.Vec4(p[0],p[1],p[2],E)
-
+		
 		self.pythia.event.reset()
 		self.pythia.event.append(pid,91,0,0,p4vec,mass)
 		self.pythia.forceHadronLevel()
@@ -37,9 +37,10 @@ class pythiaDecay:
 
 		i = -1
 		for k in range(self.pythia.event.size()):
-			if self.pythia.event[k].isFinal() and self.pythia.event[k].tau()/300<250: #decay time cut
+			if (self.pythia.event[k].isFinal() and self.pythia.event[k].tau()<250) or abs(self.pythia.event[k].id())<15: 
+				# if self.pythia.event[k].tau()<250: #decay time cut
 				i += 1
-				dummyp = np.array([self.pythia.event[k].p()[0], self.pythia.event[k].p()[1], self.pythia.event[k].p()[2]])
+				dummyp = np.array([self.pythia.event[k].p()[1], self.pythia.event[k].p()[2], self.pythia.event[k].p()[3]])
 				dummymom = np.linalg.norm(dummyp)
 				final_E = np.append(final_E,self.pythia.event[k].e())
 				final_p = np.append(final_p,dummymom)
@@ -48,12 +49,15 @@ class pythiaDecay:
 					final_pv = dummyp
 				else:
 					final_pv = np.vstack((final_pv,dummyp))
+		if abs(E-np.sum(final_E))>1e-2:
+			print('NO energy conservation for ', pdgid, '. Take a look at pythiaDecay.')
+			print('Energy conservation violated by ', abs(E-np.sum(final_E)))
 
 		return final_pid, final_E, final_p, final_pv
 
 
 	def canDecay(self, pdgid):
-		if pdgid not in self.UnstableParents:
-			return False
-		else:
+		if pdgid in self.UnstableParents:
 			return True
+		else:
+			return False

@@ -11,8 +11,8 @@ with h5py.File('../Simulation/SuperK/data/testfcmc.hdf5', 'r') as hf:
 	mode = np.array(hf['mode'][()])
 	ipnu = np.array(hf['ipnu'][()])
 	pnu = np.array(hf['pnu'][()])
-	oscw = np.array(hf['oscw'][()])
-	weight = np.array(hf['weight'][()])
+	oscw = np.array(hf['weightOsc'][()])
+	weight = np.array(hf['weightReco'][()])
 	itype = np.array(hf['itype'][()])
 
 wght = oscw*weight
@@ -141,7 +141,7 @@ plt.show()
 plt.clf()
 
 # Third plot: Ration plot of the previous
-fig, axes = plt.subplots(nrows=4, ncols=5)
+fig, axes = plt.subplots(nrows=4, ncols=4)
 fig.tight_layout(h_pad=1)
 axis = axes.flat
 

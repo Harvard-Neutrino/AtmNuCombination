@@ -72,7 +72,6 @@ class GenieSimulation:
 		self.FluxWeight()
 		self.Flux()
 		self.PointOsc()
-		# self.MRPCUMflag()
 
 	def TopologySample(self):
 		# SK topologies to choose from
@@ -149,10 +148,7 @@ class GenieSimulation:
 				sample = 'None'
 			else:
 				sample = np.random.choice(skTopology,1,p=probTopo)
-			
-			# print(sample)
 			dummySample = np.append(dummySample, sample)
-
 		self.TopologySample = dummySample
 
 

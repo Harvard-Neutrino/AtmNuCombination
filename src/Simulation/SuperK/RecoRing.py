@@ -14,7 +14,6 @@ class RecoRing:
 		self.distros = distros
 
 		self.NRing = TrueNRing
-		# self.IP = TrueRingIP
 		self.CC = True if abs(mode)<30 else False
 
 		self.RecoLabels = np.ones(TrueNRing)
@@ -32,84 +31,19 @@ class RecoRing:
 		if self.NRing >1: # Oh, the multi-ringers! Special care needed
 			dmer = np.where(self.Momentum == np.amax(self.Momentum))
 			mer = dmer[0][0]
-			# print('here')
-			# print(dmer)
-			# print(dmer[0])
-			# print(dmer[0][0])
-			# print(mer)
-			# print(TrueRingIP[mer])
-			# print(TrueRingPDG[mer])
 			self.ReconMRIP(mer, TrueRingIP[mer], TrueRingPDG[mer])
-			# self.ReconMRIP(mer, TrueRingIP[mer], nu)
 			mTrueRingPDG, mTrueRingP, mTrueRingDir = self.TooClose(TrueRingPDG, TrueRingP, TrueRingDir) # Put labels on rings which won't be reconstructed due to poor angular resolution
-			# print(mTrueRingP)
-			# print(mTrueRingPDG)
-			# print(self.RecoLabels)
 			excessRing = self.NRing - 5
 			if excessRing > 0:
-				# print(self.RecoLabels, mTrueRingP)
 				for index in np.argsort(mTrueRingP)[:excessRing]:
 					self.RecoLabels[index] = 0
-				# print(self.RecoLabels, mTrueRingP)
 			if np.any(self.RecoLabels==0):
 				self.ReconMomentum(mTrueRingPDG, mTrueRingP)
 				self.ReconDirection(mTrueRingDir)
-			# print(self.RecoDirection)
-			# print(self.TrueDirection)
 
 		self.TotalVariables()
-		# print(TrueRingPDG)
-		# print(TrueRingP)
-		# print(self.Momentum)
-		# print(TrueRingDir)
-		# print(self.Direction)
-		print('Tot reco dir:',self.TotDir)
-
 		self.MuEdk = 0
 		self.Imass = 0
-
-
-	# def mendSGM(self, nu):
-	# 	mis0 = np.random.rand()
-	# 	if self.Type == 5 and abs(nu)==12:
-	# 		self.Type = 3
-
-
-	# def mendSGE(self):
-	# 	mis0 = np.random.rand()
-	# 	if not self.CC:
-	# 		if self.Type==0:
-	# 			if mis0>0.33:
-	# 				self.Type = -1
-	# 		elif self.Type==1:
-	# 			if mis0>0.5:
-	# 				self.Type = -1
-
-	# def mendMG(self, nu):
-	# 	mis0 = np.random.rand()
-	# 	if not self.CC:
-	# 		if self.Type==7:
-	# 			if mis0>0.27:
-	# 				self.Type = -1
-	# 		elif self.Type==8:
-	# 			if mis0>0.21:
-	# 				self.Type = -1
-	# 		elif self.Type==9:
-	# 			if mis0>0.013:
-	# 				self.Type = -1
-	# 	else:
-	# 		if (self.Type==7 or self.Type==8) and abs(nu)==14:
-	# 			if mis0>0.3:
-	# 				self.Type = -1
-
-	# def mendMR(self, nu):
-	# 	mis0 = np.random.rand()
-	# 	if self.Type == 10 and abs(nu)==14:
-	# 		if mis0>0.27:
-	# 			self.Type = -1
-	# 	elif self.Type == 11 and abs(nu)==14:
-	# 		if mis0>0.10:
-	# 			self.Type = -1
 
 
 	def HeavyChargedWA(self, pdg, p):
@@ -245,11 +179,8 @@ class RecoRing:
 		self.Type = itype
 
 
-
-
 	def DecayE(self, ipnu, cc, mode):
 		recmuedk = 0
-
 		meson_flag = pp.MesonProduction(self.MERIP,abs(mode))
 
 		if self.MERIP==2 and self.Evis<1.33:
@@ -266,7 +197,6 @@ class RecoRing:
 					recmuedk = 1
 				elif ipnu==-14 and cc and dummy<0.96:
 					recmuedk = 1
-
 		elif self.MERIP==2 and self.Evis>=1.33:
 			if cc and ipnu==12:
 				recmuedk = self.distros.Random('mge_muedk_ccnue')
@@ -276,7 +206,6 @@ class RecoRing:
 				recmuedk = self.distros.Random('mge_muedk_ccnumus')
 			else:
 				recmuedk = self.distros.Random('mge_muedk_nc')
-
 		elif self.MERIP==3 and self.Evis<1.33:
 			if cc and ipnu>0 and meson_flag:
 				recmuedk = self.distros.Random('sgm_muedk_ccnu_meson')
@@ -291,9 +220,7 @@ class RecoRing:
 					recmuedk = 1
 				elif ipnu==-14 and cc and dummy<0.96:
 					recmuedk = 1				
-
 		self.MuEdk = recmuedk
-
 
 
 	def TotalVariables(self):
@@ -343,7 +270,6 @@ class RecoRing:
 			self.sMERIP = self.IP[smer]
 
 
-
 	def TooClose(self, pdg, P, dirv):
 		mergeP = P
 		mergeDir = dirv
@@ -364,49 +290,32 @@ class RecoRing:
 					self.RecoLabels[i] = 0
 
 		return mergepdg, mergeP, mergeDir
-					# if abs(pdg[i]) < abs(pdg[j]): self.PDG[j] = self.PDG[i]
-
-
 				
 
 	def ReconDirection(self, dirv):
 		ang=2
 		self.Direction = dirv
 		for i,ip in enumerate(self.IP):
-			# if ip==2 and self.RecoMomentum[i]<1.3 and self.NRing==1: # SGE
 			if  self.RecoLabels[i]==1:
 				if ip==2 and self.Momentum[i]<1.3:
 					ang = self.distros.Random('ang_sge')
-				# elif ip==3 and self.RecoMomentum[i]<1.3 and self.NRing==1: # SGM
 				elif ip==3 and self.Momentum[i]<1.3:
 					ang = self.distros.Random('ang_sgm')
-				# elif ip==2 and self.RecoMomentum[i]>=1.3 and self.NRing==1: # MGE
 				elif ip==2 and self.Momentum[i]>=1.3:
 					ang = self.distros.Random('ang_mge')
-				# elif ip==3 and self.RecoMomentum[i]>=1.3 and self.NRing==1: # MGM
 				elif ip==3 and self.Momentum[i]>=1.3:
 					ang = self.distros.Random('ang_mgm')
 				ang=ang*pi/180.
-				# Rodrigues way
+			# Rodrigues way
 				u = ap.RndVector()
 				if self.NRing == 1:
 					recodir = ap.RodRot(dirv,u,ang)
 					self.Direction = recodir
-					# print('True dir:', dirv)
-					# print('Shift angle:', ang)
-					# print('Reco direction:', self.Direction)
 				elif self.NRing > 1:
-					# print(u, self.RecoDirection[i])
 					recodir = ap.RodRot(dirv[i,:],u,ang)
 					self.Direction[i,:] = recodir
-					# print('True dir:', dirv[i])
-					# print('Shift angle:', ang)
-					# print('Reco direction:', self.Direction[i])
-				# print('ring ip', ip)
-				# print('true ring dir', dirv)
-				# print('reco ring dir', recodir)
-				# else:
-				# 	self.Direction = 9999*np.ones(3)
+				else:
+					self.Direction = 9999*np.ones(3)
 
 
 	def ReconMomentum(self, pdg, P):
@@ -423,10 +332,7 @@ class RecoRing:
 					mHypothesis = Particle.from_pdgid(13).mass * self.MeVtoGeV
 				
 				p = (1-random.gauss(bias,reso)) * p
-
 				pCorrSq = p**2+(Particle.from_pdgid(pdg[i]).mass * self.MeVtoGeV)**2-mHypothesis**2
-				# print(mHypothesis)
-
 				if pCorrSq < 0:
 					self.RecoLabels[i] = 0
 					self.Momentum[i] = 0
@@ -434,11 +340,7 @@ class RecoRing:
 					self.Momentum[i] = math.sqrt(pCorrSq)
 
 
-
 	def ReconMRIP(self, mer, ip, pdg):
-		# self.IP[mer] = ip
-		# print('True ip:', ip)
-		# if ((part==2 and P[i]>1.33) or (part==3 and P[i]>0.6)):
 		if self.CC and abs(pdg)==13:
 			pid = self.distros.Random('mr_mer_pid_ccmu')
 		else:
@@ -530,4 +432,3 @@ class RecoRing:
 					self.IP[i]=3
 				else:
 					self.IP[i]=2
-

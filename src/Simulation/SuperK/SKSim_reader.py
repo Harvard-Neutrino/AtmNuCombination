@@ -15,8 +15,8 @@ if infile == 'NULL':
 f1 = h5py.File(infile, 'r')
 print(f1.keys())
 ds = f1['itype']
-dt = f1['oscw']
-du = f1['weight']
+dt = f1['weightOsc']
+du = f1['weightReco']
 dv = f1['ipnu']
 ityp = np.array(ds[()])
 osc = np.array(dt[()])
@@ -48,8 +48,10 @@ true_cz = np.array(ds[()])
 ds = f1['recodirZ']
 reco_cz = np.array(ds[()])
 for i in range(16):
-    for nu in [-16,-14,-12,12,14,16]:
-        cond = (ityp==i)*(np.absolute(true_cz)>0.8)*(neu==nu)
+    # for nu in [-16,-14,-12,12,14,16]:
+    for nu in [0]:
+        # cond = (ityp==i)*(np.absolute(true_cz)>0.8)*(neu==nu)
+        cond = (ityp==i)
         plt.hist(true_cz[cond]-reco_cz[cond], bins=20, density=False)
         plt.title(str(i)+str(nu))
         # plt.hist(true_cz[ityp==i-1], bins=10, weights=wo[ityp==i-1], density=False)

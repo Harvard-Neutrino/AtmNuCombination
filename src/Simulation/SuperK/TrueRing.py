@@ -32,19 +32,13 @@ def TrueRingConstructor(pdg, E, P, Pv):
 				if p > Ethr and p>0:
 					ring_pdg = np.append(ring_pdg, pdg[i])
 					ring_ip = np.append(ring_ip, SKIP(pdg[i]))
-					# print(pdg[i], '--', SKIP(pdg[i]))
 					ring_energy = np.append(ring_energy, E[i])
 					ring_momentum = np.append(ring_momentum, p)
-
 					if not nring:
 						ring_direction = Pv[i] / p
 					else:
 						ring_direction = np.vstack((ring_direction, Pv[i] / p))
-					# print('pdg',pdg[i])
-					# print('ring_3momentum',Pv[i])
-					# print('ring_direction',ring_direction)
 					nring += 1
-
 	return nring, ring_pdg, ring_ip, ring_energy, ring_momentum, ring_direction
 
 def numberOfNeutrons(pdgs):

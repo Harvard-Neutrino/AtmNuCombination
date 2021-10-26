@@ -9,42 +9,32 @@ def simMatrix(itype, nu, mode, oscw):
 	ccnumu  = (cc==1)*(abs(nu)==14)
 	ccnutau = (cc==1)*(abs(nu)==16)
 	nc      = (cc==0)
-	# print(nu)
-	# print(ccnue)
+
 	for t in range(16):
 		a = (itype==t)*(ccnue)
-		# print(np.sum(a))
 		matrix[t,0] = np.sum(oscw[a])
 		a = (itype==t)*(ccnueb)
-		# print(np.sum(a))
 		matrix[t,1] = np.sum(oscw[a])
 		a = (itype==t)*(ccnumu)
-		# print(np.sum(a))
 		matrix[t,2] = np.sum(oscw[a])
 		a = (itype==t)*(ccnutau)
-		# print(np.sum(a))
 		matrix[t,3] = np.sum(oscw[a])
 		a = (itype==t)*(nc)
-		# print(np.sum(a))
 		matrix[t,4] = np.sum(oscw[a])
 	a = itype>-1
-	# norm = np.sum(oscw[a])
-	# print(norm)
 	norm = np.sum(matrix)
 	if abs(np.sum(matrix)-norm)>0.0001:
 		print('WARNING: Check the reweighting, there is a potential error here.')
 
-	print(matrix)
-	matrix = matrix / norm
-	return matrix
+	return matrix / norm
 
 def SKMatrix():
 	matrix = np.array([[0.184519891405709,0.063822779733077,0.000514699836557,0.0,0.008492547303192],
 	[0.023220765775251,0.000548067763639,0.003115332551214,2.88456717704981E-05,0.001932660008623],
+	[0.001376049093042,0.000473016875733,0.000215007670788,0,0.012269771079626],
 	[0.002902774017588,0.000920391761674,0.053736719008513,7.07993662826259E-05,0.013168682128569],
 	[0.000200761563838,0,0.195140240050537,0,0.005420562223626],
 	[0,0,0.016860015642391,1.7221670727672E-05,0.000344433414553],
-	[0.001376049093042,0.000473016875733,0.000215007670788,0,0.012269771079626],
 	[0.002902936959159,0.001083185432522,0.00047660159031,0,0.038864693318894],
 	[0.010450252684776,0.001514529374605,0.001682810416228,0.000555327437355,0.002625184249316],
 	[0.030025373762898,0.020456848058238,0.000494923743344,0.000549915270383,0.003464466203411],

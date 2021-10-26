@@ -14,7 +14,6 @@ def MesonProduction(ip,mode):
     for i in modes:
         if i==mode:
             flag=1
-
     return flag
 
 
@@ -28,7 +27,6 @@ def LeptonPDG(NC,nu_flavour):
         l_id = (abs(nu_flavour) - 1) * np.sign(nu_flavour)
 
     return l_id
-
 
 
 def InvariantMass(p1, p2, u1, u2):
