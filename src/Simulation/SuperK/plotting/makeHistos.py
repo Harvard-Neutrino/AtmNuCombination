@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
-with h5py.File('../Simulation/SuperK/data/testfcmc.hdf5', 'r') as hf:
+with h5py.File('../data/output/combined.hdf5', 'r') as hf:
 	evis = np.array(hf['evis'][()])
 	cz = np.array(hf['recodirZ'][()])
 	# cz = np.array(hf['dirnuZ'][()])
@@ -113,8 +113,7 @@ for it in range(16):
 	nc = np.extract((abs(mode)>30) & (itype==it), cz)
 	nu = np.extract((abs(mode)<30) & (itype==it), ipnu)
 	series = [cc[nu==12], cc[nu==-12], cc[abs(nu)==14], cc[abs(nu)==16], nc]
-	weights = [wcc[nu==12]*norm, wcc[nu==-12]*norm, wcc[abs(nu)==14]*norm, wcc[abs(nu)==16]*norm, wnc]
-	# weights = [np.ones(np.size(cc[nu==12]))*norm, np.ones(np.size(cc[nu==-12]))*norm, np.ones(np.size(cc[abs(nu)==14]))*norm, np.ones(np.size(cc[abs(nu)==16]))*norm, np.ones(np.size(nc))*norm]
+	weights = [wcc[nu==12]*norm, wcc[nu==-12]*norm, wcc[abs(nu)==14]*norm, wcc[abs(nu)==16]*norm, wnc*norm]
 	if it==2 or it==1 or it==6 or it==5:
 		bins = z1bins
 		skflag = 1
@@ -133,10 +132,10 @@ for it in range(16):
 	else: axis[it].legend(labels = ('CCnue', 'CCnuebar', 'CCnumu', 'CCnutau', 'NC'), loc = 'upper right', ncol=2, prop={'size': 6})
 
 # plt.show()
-plt.savefig('figs/RecoZenith_Hists_Osc.png')
+plt.savefig('../figs/RecoZenith_Hists_Osc.png')
 plt.clf()
 
-# Third plot: Ration plot of the previous
+# Third plot: Ratio plots of the previous
 fig, axes = plt.subplots(nrows=4, ncols=4, figsize=(12,12))
 fig.tight_layout(h_pad=5)
 fig.subplots_adjust(bottom=0.1, top=0.9)
@@ -151,7 +150,7 @@ for it in range(16):
 		bins = z10bins
 		bins_mp = zbins
 		nbins=10
-	sim_hist , dummybins = np.histogram(cz[itype==it], bins=bins, weights=wght[itype==it])
+	sim_hist , dummybins = np.histogram(cz[itype==it], bins=bins, weights=wght[itype==it]*norm)
 	sim_entries , dummybins = np.histogram(cz[itype==it], bins=bins)
 	# print(sim_entries)
 	y_error = np.divide(sim_hist,np.sqrt(sim_entries))
@@ -164,7 +163,7 @@ for it in range(16):
 	axis[it].set_ylim([-0.5,0.5])
 
 # plt.show()
-plt.savefig('figs/RecoZenith_Ratios_Osc.png')
+plt.savefig('../figs/RecoZenith_Ratios_Osc.png')
 plt.clf()
 
 
@@ -199,7 +198,7 @@ axis[2].semilogx()
 axis[2].legend(labels = ('PC Stop', 'PC Thru'), loc = 'upper right')
 
 # plt.show()
-plt.savefig('figs/NeutrinoEnergy_Samples_Unosc.png')
+plt.savefig('../figs/NeutrinoEnergy_Samples_Unosc.png')
 plt.clf()
 
 
@@ -223,8 +222,7 @@ for it in range(16):
 	wnc = np.extract((abs(mode)>30) & (itype==it), wght)
 	nu = np.extract((abs(mode)<30) & (itype==it), ipnu)
 	series = [cc[nu==12], cc[nu==-12], cc[abs(nu)==14], cc[abs(nu)==16], nc]
-	weights = [wcc[nu==12]*norm, wcc[nu==-12]*norm, wcc[abs(nu)==14]*norm, wcc[abs(nu)==16]*norm, wnc]
-	# weights = [np.ones(np.size(cc[nu==12]))*norm, np.ones(np.size(cc[nu==-12]))*norm, np.ones(np.size(cc[abs(nu)==14]))*norm, np.ones(np.size(cc[abs(nu)==16]))*norm, np.ones(np.size(nc))*norm]
+	weights = [wcc[nu==12]*norm, wcc[nu==-12]*norm, wcc[abs(nu)==14]*norm, wcc[abs(nu)==16]*norm, wnc*norm]
 	if it<2:
 		bins = sge_ebins
 		if it==1: skflag = 1
@@ -261,4 +259,4 @@ for it in range(16):
 	if skflag: axis[it].legend(labels = ('SK official MC', 'CCnue', 'CCnuebar', 'CCnumu', 'CCnutau', 'NC'), loc = 'upper right', ncol=2, prop={'size': 6})
 	else: axis[it].legend(labels = ('CCnue', 'CCnuebar', 'CCnumu', 'CCnutau', 'NC'), loc = 'upper right', ncol=2, prop={'size': 6})
 # plt.show()
-plt.savefig('figs/RecoMomentum_Hists_Osc.png')
+plt.savefig('../figs/RecoMomentum_Hists_Osc.png')

@@ -12,7 +12,7 @@ umt = np.zeros(60)
 umsh = np.zeros(60)
 
 # Acquiring digitized data
-with open('../data/SKTopologyFraction.dat') as f:
+with open('../lib/SKTopologyFraction.dat') as f:
     lines = f.readlines()
     for i,l in enumerate(lines):
         loge[i], dummy, fce[i], fcm[i], pcs[i], pct[i], ums[i], umt[i], umsh[i] = l.split( )

@@ -6,57 +6,41 @@ import sys
 
 parser = argparse.ArgumentParser()
 parser.add_argument('fname', type=str, nargs='?', default='NULL')
+parser.add_argument('variable', type=str, nargs='?', default='ALL')
 args = parser.parse_args()
 infile = args.fname
+var = args.variable
+print(var)
 
 if infile == 'NULL':
     sys.exit('Please introduce your HDF5 file')
 
-f1 = h5py.File(infile, 'r')
-print(f1.keys())
-ds = f1['itype']
-dt = f1['weightOsc']
-du = f1['weightReco']
-dv = f1['ipnu']
-ityp = np.array(ds[()])
-osc = np.array(dt[()])
-wgh = np.array(du[()])
-neu = np.array(dv[()])
-wo = osc*wgh
-
-# for key in f1.keys():
-# #    print(key)
-#     ds = f1[key]
-#     dat = np.array(ds[()])
-# #    print(data)
-#     for i in range(16):
-#         for nu in [-16,-14,-12,12,14,16]:
-#             data = dat[neu==nu]
-#             w = wo[neu==nu]
-#             typ = ityp[neu==nu]
-#             # plt.hist(data[typ==i-1], weights=w[typ==i-1], bins=20, density=False, stacked=True, label=str(nu))
-#             plt.hist(data[typ==i-1], bins=50, density=False, stacked=True, label=str(nu))
-#         plt.legend()
-#         plt.savefig('figs/'+key+'_'+str(i-1)+'.png')
-#         print('Histogram saved to ', 'figs/'+key+'.png')
-#         # plt.yscale('log')
-#         # plt.savefig('figs/'+key+'_'+str(i-1)+'_log.png')
-#         plt.clf()
-
-ds = f1['dirnuZ']
-true_cz = np.array(ds[()])
-ds = f1['recodirZ']
-reco_cz = np.array(ds[()])
-for i in range(16):
-    # for nu in [-16,-14,-12,12,14,16]:
-    for nu in [0]:
-        # cond = (ityp==i)*(np.absolute(true_cz)>0.8)*(neu==nu)
-        cond = (ityp==i)
-        plt.hist(true_cz[cond]-reco_cz[cond], bins=20, density=False)
-        plt.title(str(i)+str(nu))
-        # plt.hist(true_cz[ityp==i-1], bins=10, weights=wo[ityp==i-1], density=False)
-        # plt.show()
-        # plt.clf()
-        # plt.hist(reco_cz[ityp==i-1], bins=10, weights=wo[ityp==i-1], density=False)
+if var != 'ALL':
+    f1 = h5py.File(infile, 'r')
+    ds = f1[var]
+    data = np.array(ds[()])
+    typ = np.array(f1['itype'][()])
+    for i in range(16):
+        plt.hist(data[typ==i], bins=50, density=False, stacked=True)
         plt.show()
         plt.clf()
+else:
+    for key in f1.keys():
+    #    print(key)
+        ds = f1[key]
+        dat = np.array(ds[()])
+    #    print(data)
+        for i in range(16):
+            for nu in [-16,-14,-12,12,14,16]:
+                data = dat[neu==nu]
+                w = wo[neu==nu]
+                typ = ityp[neu==nu]
+                # plt.hist(data[typ==i-1], weights=w[typ==i-1], bins=20, density=False, stacked=True, label=str(nu))
+                plt.hist(data[typ==i-1], bins=50, density=False, stacked=True, label=str(nu))
+            plt.legend()
+            plt.savefig('figs/'+key+'_'+str(i-1)+'.png')
+            print('Histogram saved to ', 'figs/'+key+'.png')
+            # plt.yscale('log')
+            # plt.savefig('figs/'+key+'_'+str(i-1)+'_log.png')
+            plt.clf()
+

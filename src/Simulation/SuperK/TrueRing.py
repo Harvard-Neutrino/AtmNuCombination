@@ -16,7 +16,6 @@ def SKIP(pdg):
 		return 3
 
 def TrueRingConstructor(pdg, E, P, Pv):
-
 	nring=0
 	ring_pdg = np.array([])
 	ring_ip = np.array([])

@@ -71,7 +71,8 @@ class GenieSimulation:
 		self.TopologySample()
 		self.FluxWeight()
 		self.Flux()
-		self.PointOsc()
+		self.PointOsc_SKTable()
+		self.PointOsc_SKBest()
 
 	def TopologySample(self):
 		# SK topologies to choose from
@@ -88,7 +89,7 @@ class GenieSimulation:
 		umt  = np.zeros(60)
 		umsh = np.zeros(60)
 		# Acquiring digitized data
-		with open('data/SKTopologyFraction.dat') as f:
+		with open('lib/SKTopologyFraction.dat') as f:
 			lines = f.readlines()
 			for i,l in enumerate(lines):
 				loge[i], line[i], fce[i], fcm[i], pcs[i], pct[i], ums[i], umt[i], umsh[i] = l.split( )
@@ -233,8 +234,8 @@ class GenieSimulation:
 		# nsq_atm.Set_Body(nsq.EarthAtm())
 		
 
-	def PointOsc(self):
-		self.weightOsc = np.array([])
+	def PointOsc_SKTable(self):
+		self.weightOsc_SKpaper = np.array([])
 		units = nsq.Const()
 
 		for k,(nu,E,cz,mod) in enumerate(zip(self.Ipnu, self.Enu, self.Cz, self.Mode)):
@@ -252,10 +253,10 @@ class GenieSimulation:
 			nuSQ.Set_Body(nsq.EarthAtm())
 			nuSQ.Set_rel_error(1.0e-4);
 			nuSQ.Set_abs_error(1.0e-4);
-			nuSQ.Set_MixingAngle(0,1,0.563942)
-			nuSQ.Set_MixingAngle(0,2,math.asin(math.sqrt(0.018)))
+			nuSQ.Set_MixingAngle(0,1,math.asin(math.sqrt(0.304)))
+			nuSQ.Set_MixingAngle(0,2,math.asin(math.sqrt(0.0219)))
 			nuSQ.Set_MixingAngle(1,2,math.asin(math.sqrt(0.5)))
-			nuSQ.Set_SquareMassDifference(1,7.65e-05)
+			nuSQ.Set_SquareMassDifference(1,7.53e-05)
 			nuSQ.Set_SquareMassDifference(2,0.0024)
 			nuSQ.Set_CPPhase(0,2,0)
 
@@ -272,7 +273,48 @@ class GenieSimulation:
 			else:
 				weight = 1.0
 
-			self.weightOsc = np.append(self.weightOsc,weight)
+			self.weightOsc_SKpaper = np.append(self.weightOsc_SKpaper,weight)
 		print('Done with oscillations')
 
 
+	def PointOsc_SKBest(self):
+		self.weightOsc_SKbest = np.array([])
+		units = nsq.Const()
+
+		for k,(nu,E,cz,mod) in enumerate(zip(self.Ipnu, self.Enu, self.Cz, self.Mode)):
+		# Get P_{x->ipnu} probabilities
+			weight = 0.0
+			if nu>0:
+				nuSQ = nsq.nuSQUIDS(3,nsq.NeutrinoType.neutrino)
+			elif nu<0:
+				nuSQ = nsq.nuSQUIDS(3,nsq.NeutrinoType.antineutrino)
+			else:
+				print('What?! No identified neutrino flavour')
+			nuSQ.Set_E(E*units.GeV)
+			zenith = np.arccos(cz)
+			nuSQ.Set_Track(nsq.EarthAtm().Track(zenith))
+			nuSQ.Set_Body(nsq.EarthAtm())
+			nuSQ.Set_rel_error(1.0e-4);
+			nuSQ.Set_abs_error(1.0e-4);
+			nuSQ.Set_MixingAngle(0,1,math.asin(math.sqrt(0.304)))
+			nuSQ.Set_MixingAngle(0,2,math.asin(math.sqrt(0.0219)))
+			nuSQ.Set_MixingAngle(1,2,math.asin(math.sqrt(0.588)))
+			nuSQ.Set_SquareMassDifference(1,7.53e-05)
+			nuSQ.Set_SquareMassDifference(2,0.0025)
+			nuSQ.Set_CPPhase(0,2,4.18)
+
+			if abs(mod) < 30:
+				for i in range(2):
+					in_state = np.zeros(3)
+					in_state[i] = 1
+					Ffactor = FluxFactor(i, nu, self.Flux_nue[k], self.Flux_nueb[k], self.Flux_numu[k], self.Flux_numub[k])
+					nuSQ.Set_initial_state(in_state,nsq.Basis.flavor)
+					nuSQ.EvolveState()
+					j = int(abs(nu) / 2) % 6
+					prob = nuSQ.EvalFlavor(j)
+					weight += prob*Ffactor
+			else:
+				weight = 1.0
+
+			self.weightOsc_SKbest = np.append(self.weightOsc_SKbest,weight)
+		print('Done with oscillations')

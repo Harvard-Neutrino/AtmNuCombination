@@ -1,4 +1,5 @@
 # Requirements
+import os
 import numpy as np
 import argparse
 import time
@@ -16,15 +17,16 @@ print('Super-Kamiokande atmospheric neutrino simulation')
 
 def main():
 	parser = argparse.ArgumentParser()
-	parser.add_argument("in_hdf5filename", type=str, nargs='?', default='/home/pablofer/old.AtmNuCombination/utils/atm_genie.root.hdf5')
-	# parser.add_argument("in_hdf5filename", type=str, nargs='?', default='/home/pablofer/IceCube-SuperK_AtmNu/SuperK/AtmNu_MC/atm_tau/genie_atm_tau_1p5Mlike.root.hdf5')
-	# parser.add_argument("in_hdf5filename", type=str, nargs='?', default='/home/pablofer/IceCube-SuperK_AtmNu/SuperK/AtmNu_MC/genie_atm_full_1p5M.root.hdf5')
-	parser.add_argument("outfilename", type=str, nargs='?', default='data/testfcmc.hdf5')
+	parser.add_argument("in_hdf5filename", type=str, nargs='?', default='NULL')
+	parser.add_argument("outfilename", type=str, nargs='?', default='NULL')
 	parser.add_argument("-v", dest='verbo', default=False, action='store_true')
 	args = parser.parse_args()
 	verbose = args.verbo
 	genie_input = args.in_hdf5filename
 	output = args.outfilename
+	if genie_input != 'NULL' and output == 'NULL':
+		indir, fname = os.path.split(genie_input)
+		output = 'data/output/sksim.'+fname
 
 	# Read GENIE GST file in hdf5 format
 	event = GenieSimulation(genie_input)
@@ -47,7 +49,8 @@ def main():
 	fluxho_nue  = np.array([], dtype=np.double)
 	fluxho_numub= np.array([], dtype=np.double)
 	fluxho_nueb = np.array([], dtype=np.double)
-	weightOsc   = np.array([], dtype=np.double)
+	weightOsc_SKpaper   = np.array([], dtype=np.double)
+	weightOsc_SKbest   = np.array([], dtype=np.double)
 	weightSim   = np.array([], dtype=np.double)
 	plep        = np.array([], dtype=np.double)
 	dirlep_x    = np.array([], dtype=np.double)
@@ -71,7 +74,7 @@ def main():
 	pd = pythiaDecay()
 
 	for i, nu in enumerate(event.Ipnu):
-		# if i>1000: break
+		if i>10000: break
 		# if verbose:
 		if i%1000 == 0:
 			print('----------------------------------------------------')
@@ -176,7 +179,8 @@ def main():
 		fluxho_numu  = np.append(fluxho_numu, event.Flux_numu[i])
 		fluxho_numub  = np.append(fluxho_numub, event.Flux_numub[i])
 		weightSim  = np.append(weightSim, event.FluxWeight[i])
-		weightOsc = np.append(weightOsc, event.weightOsc[i])
+		weightOsc_SKpaper = np.append(weightOsc_SKpaper, event.weightOsc_SKpaper[i])
+		weightOsc_SKbest = np.append(weightOsc_SKbest, event.weightOsc_SKbest[i])
 		plep       = np.append(plep, event.Plep[i])
 		dirlep_x   = np.append(dirlep_x, event.Pxlep[i] / event.Plep[i])
 		dirlep_y   = np.append(dirlep_y, event.Pylep[i] / event.Plep[i])
@@ -210,9 +214,9 @@ def main():
 			imass      = np.append(imass, -9999.)
 
 	# Applying weights to match SK's public event rate tables
-	W = simMatrix(itype, ipnu, mode, weightOsc) # Rate matrix from this simulation
+	W = simMatrix(itype, ipnu, mode, weightOsc_SKpaper) # Rate matrix from this simulation
 	W0= SKMatrix() # Rate matrix from SK's paper
-	weightReco = np.zeros(np.size(weightOsc))
+	weightReco = np.zeros(np.size(weightOsc_SKpaper))
 	for i,t in enumerate(itype):
 		ti = int(t)
 		j = modeIndex(ipnu[i], mode[i])
@@ -256,7 +260,8 @@ def main():
 		hf.create_dataset('imass', data=imass, compression='gzip')
 		hf.create_dataset('mode', data=mode, compression='gzip')
 		hf.create_dataset('weightSim', data=weightSim, compression='gzip')
-		hf.create_dataset('weightOsc', data=weightOsc, compression='gzip')
+		hf.create_dataset('weightOsc_SKpaper', data=weightOsc_SKpaper, compression='gzip')
+		hf.create_dataset('weightOsc_SKbest', data=weightOsc_SKbest, compression='gzip')
 		hf.create_dataset('weightReco', data=weightReco, compression='gzip')
 
 if __name__ == '__main__':

@@ -37,7 +37,7 @@ class pythiaDecay:
 
 		i = -1
 		for k in range(self.pythia.event.size()):
-			if (self.pythia.event[k].isFinal() and self.pythia.event[k].tau()<250) or abs(self.pythia.event[k].id())<15: 
+			if (self.pythia.event[k].isFinal() and self.pythia.event[k].tau()/300<250) or abs(self.pythia.event[k].id())<15 or self.pythia.event[k].id()==2112:
 				# if self.pythia.event[k].tau()<250: #decay time cut
 				i += 1
 				dummyp = np.array([self.pythia.event[k].p()[1], self.pythia.event[k].p()[2], self.pythia.event[k].p()[3]])
@@ -52,6 +52,10 @@ class pythiaDecay:
 		if abs(E-np.sum(final_E))>1e-2:
 			print('NO energy conservation for ', pdgid, '. Take a look at pythiaDecay.')
 			print('Energy conservation violated by ', abs(E-np.sum(final_E)))
+			print('initial energy:', E)
+			print('final pdgs:', final_pid)
+			print('final energy:', np.sum(final_E))
+			print('===============================')
 
 		return final_pid, final_E, final_p, final_pv
 

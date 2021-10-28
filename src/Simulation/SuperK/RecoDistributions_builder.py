@@ -1,7 +1,7 @@
 import h5py
 import numpy as np
 
-with h5py.File('data/defaultRecoDistributions.hdf5', 'w') as hf:
+with h5py.File('lib/defaultRecoDistributions.hdf5', 'w') as hf:
 	
 	# Multi-Ring CC numu PID
 	g = hf.create_group('mr_mer_pid_ccmu')
