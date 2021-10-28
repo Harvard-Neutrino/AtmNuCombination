@@ -19,9 +19,11 @@ class nonFCReco:
 
 	def ReconDirection(self):
 		ang=2.5
-		if self.itype == 14 or self.itype == 15: # PC-Stop, PC-Thru
+		# if self.itype == 14 or self.itype == 15: # PC-Stop, PC-Thru
+		if self.itype == 14: # PC-Stop, PC-Thru
 			ang = self.distros.Random('ang_pc')
-		elif self.itype == 16: # UpMu-Stop
+		# elif self.itype == 16: # UpMu-Stop
+		elif self.itype == 16 or self.itype == 15: # UpMu-Stop
 			ang = self.distros.Random('ang_upmustop')
 		elif self.itype == 17 or self.itype == 18: # UpMu-Thru
 			ang = self.distros.Random('ang_upmuthru')

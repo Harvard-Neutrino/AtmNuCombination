@@ -2,17 +2,31 @@ import h5py
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import applications as ap
+from math import pi
 
 with h5py.File('../data/output/combined.hdf5', 'r') as hf:
 	evis = np.array(hf['evis'][()])
 	cz = np.array(hf['recodirZ'][()])
 	# cz = np.array(hf['dirnuZ'][()])
+	dz = np.array(hf['dirnuZ'][()])
+	dx = np.array(hf['dirnuX'][()])
+	dy = np.array(hf['dirnuY'][()])
 	mode = np.array(hf['mode'][()])
 	ipnu = np.array(hf['ipnu'][()])
 	pnu = np.array(hf['pnu'][()])
 	oscw = np.array(hf['weightOsc_SKbest'][()])
 	weight = np.array(hf['weightReco'][()])
 	itype = np.array(hf['itype'][()])
+
+# for i, (x, y, z, it) in enumerate(zip(dx, dy, dz, itype)):
+# 	if it == 15:
+# 		ang = np.random.normal(0, 7, 1)
+# 		ang = ang*pi/180.
+# 		u = ap.RndVector()
+# 		di = ap.RodRot(np.array([x,y,z]),u,ang)
+# 		cz[i] = di[2]
+
 
 wght = oscw*weight
 
@@ -160,7 +174,7 @@ for it in range(16):
 	axis[it].set_ylabel("SKSim / SKOfficial")
 	axis[it].errorbar(bins_mp, np.ones(nbins)-np.divide(sim_hist,sk_zenith[it]), yerr=np.divide(y_error,sk_zenith[it]), fmt='o')
 	ymin, ymax = axis[it].get_ylim()
-	axis[it].set_ylim([-0.5,0.5])
+	axis[it].set_ylim([-0.25,0.25])
 
 # plt.show()
 plt.savefig('../figs/RecoZenith_Ratios_Osc.png')

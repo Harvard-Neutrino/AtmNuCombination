@@ -38,7 +38,7 @@ else:
                 # plt.hist(data[typ==i-1], weights=w[typ==i-1], bins=20, density=False, stacked=True, label=str(nu))
                 plt.hist(data[typ==i-1], bins=50, density=False, stacked=True, label=str(nu))
             plt.legend()
-            plt.savefig('figs/'+key+'_'+str(i-1)+'.png')
+            plt.savefig('../figs/'+key+'_'+str(i-1)+'.png')
             print('Histogram saved to ', 'figs/'+key+'.png')
             # plt.yscale('log')
             # plt.savefig('figs/'+key+'_'+str(i-1)+'_log.png')
