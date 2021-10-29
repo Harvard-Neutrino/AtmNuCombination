@@ -66,6 +66,7 @@ entries = np.sum(sksge0) + np.sum(sksge1) + np.sum(sksrpi) + np.sum(sksgm0) + np
 cond = (itype>-1)*(itype<16)
 total = np.sum(wght[cond])
 norm = entries / total
+print(norm)
 
 # Energy bining
 sge_ebins = np.array([0.1, 0.25, 0.4, 0.63, 1.0, 1.33])

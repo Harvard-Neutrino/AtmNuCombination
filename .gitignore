@@ -128,15 +128,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Images
-utils/*png
-
 # Large files
-src/Oscillator/figs/*
-src/Oscillator/data/*
-src/Processing/figs/*
-src/Processing/data/*
 src/Simulation/SuperK/figs/*
 src/Simulation/SuperK/data/*
-utils/*.hdf5
-utils/*.root
+src/utils/*.hdf5
+src/utils/*.png
+src/utils/*.root
