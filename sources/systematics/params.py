@@ -6,6 +6,9 @@ import nuSQuIDS as nsq
 import nuflux
 import seaborn as sns
 
+
+dir_name = "./1102TrialRun/"
+
 # Set up mixing parameters as in nu-fit5.0
 theta12 = np.arcsin(np.sqrt(0.304))
 theta13 = np.arcsin(np.sqrt(0.02221))
@@ -104,4 +107,3 @@ theta_bin_plot = nsq.linspace(theta_bin_min, theta_bin_max, theta_n_bins)
 # Set up chi squared bins
 bins = np.zeros((t23l.shape[0], E_n_bins))
 
-print("index should be ", len(t23l) * len(m31l))

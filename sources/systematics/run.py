@@ -9,12 +9,11 @@ from params import *
 # and then saves the physical parameters as well as the chi-sq into a file
 
 idx = int(sys.argv[1])
-dir_name = "./1102TrialRun/"
 
 # get the physical parameters
 t23val, m31val = util.id_to_param(idx)
 
-file_name = "{}_{}.txt".format(t23val, m31val)
+file_name = "idx.txt".format(t23val, m31val)
 complete_name = os.path.join(dir_name, file_name)
 
 truth0 = chi.get_truth(0)
