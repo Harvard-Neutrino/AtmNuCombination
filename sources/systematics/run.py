@@ -1,5 +1,6 @@
 import sys
 import os
+import numpy as np
 
 import chisq as chi
 import util
@@ -13,17 +14,21 @@ idx = int(sys.argv[1])
 # get the physical parameters
 t23val, m31val = util.id_to_param(idx)
 
-file_name = "idx.txt".format(t23val, m31val)
+file_name = "{}.txt".format(idx)
 complete_name = os.path.join(dir_name, file_name)
 
 truth0 = chi.get_truth(0)
 truth1 = chi.get_truth(1)
 chisqval = chi.get_chisq(t23val, m31val, truth0, 0) + chi.get_chisq(t23val, m31val, truth1, 1)
 
-file1 = open(complete_name, "a")
+saveres = np.array([idx, chisqval])
 
-L = ["{}\n".format(idx), "{}\n".format(t23val), "{}\n".format(m31val), str(chisqval)]
-file1.writelines(L) 
+np.savetxt(complete_name, saveres)
 
-file1.close()
+# file1 = open(complete_name, "a")
+
+# L = ["{}\n".format(idx), "{}\n".format(t23val), "{}\n".format(m31val), str(chisqval)]
+# file1.writelines(L) 
+
+# file1.close()
 
