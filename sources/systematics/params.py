@@ -69,15 +69,15 @@ cth_nodes = nsq.linspace(cth_min,cth_max,cth_nodes)
 neutrino_flavors = 3
 
 # Set theta23 numeric values to probe sensitivity
-t23min = np.sqrt(np.arcsin(0.3))
-t23max = np.sqrt(np.arcsin(0.8))
-t23step = 0.0025 * np.pi
+t23min = np.sqrt(np.arcsin(0.35))
+t23max = np.sqrt(np.arcsin(0.65))
+t23step = 0.005 * np.pi
 t23l = np.arange(t23min, t23max + t23step, t23step)
 # t23l = np.array([0.44872923, theta23])
 
-m31min = 2.0e-3
-m31max = 3.5e-3
-m31step = 0.025e-3
+m31min = 2.40e-3
+m31max = 2.60e-3
+m31step = 0.02e-3
 m31l = np.arange(m31min, m31max + m31step, m31step)
 
 
@@ -103,3 +103,5 @@ theta_bin_plot = nsq.linspace(theta_bin_min, theta_bin_max, theta_n_bins)
 
 # Set up chi squared bins
 bins = np.zeros((t23l.shape[0], E_n_bins))
+
+print("index should be ", len(t23l) * len(m31l))

@@ -1,23 +1,30 @@
-import plotting
-import sensitivity
+import sys
+import os
+
+import chisq as chi
+import util
 from params import *
 
-# top = 0
-# plotting.distribution_plots()
+# this file calculates a chi-squared value for a pair of physical parameters
+# and then saves the physical parameters as well as the chi-sq into a file
 
-# plotting.plot_t23_chi_raw_profile(savename = "t23_chi_sq_profile_raw_cascade", top = 0)
-# plotting.plot_t23_chi_raw_profile_all_top(savename = "t23_chi_sq_profile_raw_all_top_CORRECT")
+idx = int(sys.argv[1])
+dir_name = "./1102TrialRun/"
 
-#plotting.plot_m31_chi_raw_profile(savename = "m31_chi_sq_profile_raw_CORRECT", top = top)
-# plotting.plot_m31_chi_raw_profile_all_top(savename = "m31_chi_sq_profile_raw_all_top_CORRECT")
+# get the physical parameters
+t23val, m31val = util.id_to_param(idx)
 
-# plotting.plot_t23_min_chi_profile(savename = "t23_chi_sq_min_profile_cascade", top = 0)
-#plotting.plot_t23_min_chi_profile_all_top(savename = "t23_min_chi_sq_profile_all_top")
+file_name = "{}_{}.txt".format(t23val, m31val)
+complete_name = os.path.join(dir_name, file_name)
 
-# plotting.plot_contour_chi(savename = "chi_sq_contour_all_coarse_original_m")
-# plotting.plot_contour_chi(savename = "chi_sq_contour_all_top_fine")
-# plotting.plot_contour_chi(savename = "chi_sq_contour_all", top = 2)
+truth0 = chi.get_truth(0)
+truth1 = chi.get_truth(1)
+chisqval = chi.get_chisq(t23val, m31val, truth0, 0) + chi.get_chisq(t23val, m31val, truth1, 1)
 
-#plotting.hist_nuisance(m31, theta23, 4, 1)
-plotting.hist_truth()
-# plotting.hist_nuisance(m31, theta23, 1, 1)
+file1 = open(complete_name, "a")
+
+L = ["{}\n".format(idx), "{}\n".format(t23val), "{}\n".format(m31val), str(chisqval)]
+file1.writelines(L) 
+
+file1.close()
+

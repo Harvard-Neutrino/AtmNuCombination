@@ -10,7 +10,7 @@ import sensitivity as sst
 from params import *
 
 def hist_truth():
-	rate_weight_truth, energy_hist_truth, energy_bins_truth = sst.get_rated_weight_truth(gamma = -1)
+	rate_weight_truth, energy_hist_truth, energy_bins_truth = sst.get_rated_weight_truth()
 	input_data["rate_weight"] = rate_weight_truth
 	
 	# Plot the energy distribution

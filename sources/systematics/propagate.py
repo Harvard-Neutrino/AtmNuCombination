@@ -6,12 +6,11 @@ from matplotlib.colors import LogNorm
 import nuSQuIDS as nsq
 import nuflux
 
-import params as pm
+from params import *
 
-def get_rated_weight_truth():
+def propagate(theta23in, m31in, top):
     nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,neutrino_flavors,nsq.NeutrinoType.both,interactions)
 
-    print("get_rated_weight_truth: propagating nu")
     AtmInitialFlux = np.zeros((len(cth_nodes),len(energy_nodes),2,neutrino_flavors))
     flux = nuflux.makeFlux('IPhonda2014_spl_solmin')
     for ic,cth in enumerate(nsq_atm.GetCosthRange()):
@@ -27,14 +26,13 @@ def get_rated_weight_truth():
 
     nsq_atm.Set_MixingAngle(0, 1, theta12)
     nsq_atm.Set_MixingAngle(0, 2, theta13)
-    nsq_atm.Set_MixingAngle(1, 2, theta23)
+    nsq_atm.Set_MixingAngle(1, 2, theta23in)
     nsq_atm.Set_SquareMassDifference(1, m21)
-    nsq_atm.Set_SquareMassDifference(2, m31)
+    nsq_atm.Set_SquareMassDifference(2, m31in)
 
     nsq_atm.Set_initial_state(AtmInitialFlux,nsq.Basis.flavor)
     nsq_atm.Set_ProgressBar(False) # progress bar will be printed on terminal
     nsq_atm.EvolveState()
-    print("get_rated_weight_truth: finished propagating")
 
     lifetime = 365*24*60*60
     meter_to_cm_sq = 1e4
@@ -71,15 +69,12 @@ def get_rated_weight_truth():
             
     # print("truth debug: before hist")
     input_data["rate_weight"] = rate_weight
-    # if top == 0:
-    #     energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"][cascade_mask], bins = energy_bins_fine, weights = input_data["rate_weight"][cascade_mask])
-    # elif top == 1:
-    #     energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"][track_mask], bins = energy_bins_fine, weights = input_data["rate_weight"][track_mask])
-    # else:
-    energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"], bins = energy_bins_fine, weights = input_data["rate_weight"])
+    if top == 0:
+        energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"][cascade_mask], bins = energy_bins_fine, weights = input_data["rate_weight"][cascade_mask])
+    elif top == 1:
+        energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"][track_mask], bins = energy_bins_fine, weights = input_data["rate_weight"][track_mask])
+    else:
+        energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"], bins = energy_bins_fine, weights = input_data["rate_weight"])
     # print("truth debug: after hist")
-
-    print("get_rated_weight_truth: energy bins: \n", energy_bins_truth)
-    print("get_rated_weight_truth: energy rates: \n", energy_hist_truth)
 
     return rate_weight , energy_hist_truth, energy_bins_truth
