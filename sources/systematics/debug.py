@@ -11,8 +11,15 @@ from params import *
 import chisq as chi
 import util
 import plotting
+import propagate as prop
 
-# print(util.read_output())
-# print(len(t23l), t23l)
-# print(len(m31l), m31l)
-plotting.plot_contour("chisq_contour_1102TrialRun4_final")
+
+
+truth0 = chi.get_truth(0)
+# truth1 = chi.get_truth(1)
+# print(truth0)
+
+rate_weight = prop.propagate(theta23, m31)
+# print(rate_weight[0:3])
+
+chisqval = chi.min_chisq(rate_weight, truth0, 0) #+ chi.min_chisq(rate_weight, truth1, 1)

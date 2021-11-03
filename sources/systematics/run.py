@@ -19,7 +19,10 @@ complete_name = os.path.join(dir_name, file_name)
 
 truth0 = chi.get_truth(0)
 truth1 = chi.get_truth(1)
-chisqval = chi.min_chisq(t23val, m31val, truth0, 0) + chi.min_chisq(t23val, m31val, truth1, 1)
+
+rate_weight = prop.propagate(t23val, m31val)
+
+chisqval = chi.min_chisq(rate_weight, truth0, 0) + chi.min_chisq(rate_weight, truth1, 1)
 
 saveres = np.array([idx, chisqval])
 

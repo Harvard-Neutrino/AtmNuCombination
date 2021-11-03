@@ -5,23 +5,26 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
 import nuSQuIDS as nsq
 import nuflux
+pd.options.mode.chained_assignment = None  # default='warn'
 
-from params import *
+import params as pm
 import propagate as prop
 
-def add_systematics(theta23in, m31in, N0, top):
-    rate_weight = prop.propagate(theta23in, m31in)
+def add_systematics(W_r, N0, top):
     # apply normalization
+    
+    temp = W_r[:]
+    pm.input_data["rate_weight"] = temp[:]
+
     if N0 != 1:
-        for i in range(len(rate_weight)):
-            rate_weight[i] *= N0
-    
-    input_data["rate_weight"] = rate_weight
+        for i in range(len(pm.input_data["rate_weight"])):
+            pm.input_data["rate_weight"][i] = pm.input_data["rate_weight"][i] * N0
+            
     if top == 0:
-        energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"][cascade_mask], bins = energy_bins_fine, weights = input_data["rate_weight"][cascade_mask])
+        energy_hist_truth, energy_bins_truth = np.histogram(pm.input_data["reco_energy"][pm.cascade_mask], bins = pm.energy_bins_fine, weights = pm.input_data["rate_weight"][pm.cascade_mask])
     elif top == 1:
-        energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"][track_mask], bins = energy_bins_fine, weights = input_data["rate_weight"][track_mask])
+        energy_hist_truth, energy_bins_truth = np.histogram(pm.input_data["reco_energy"][pm.track_mask], bins = pm.energy_bins_fine, weights = pm.input_data["rate_weight"][pm.track_mask])
     else:
-        energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"], bins = energy_bins_fine, weights = input_data["rate_weight"])
+        energy_hist_truth, energy_bins_truth = np.histogram(pm.input_data["reco_energy"], bins = pm.energy_bins_fine, weights = pm.input_data["rate_weight"])
     
-    return rate_weight, energy_hist_truth, energy_bins_truth
+    return energy_hist_truth, energy_bins_truth
