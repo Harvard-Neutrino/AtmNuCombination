@@ -7,18 +7,18 @@ import nuflux
 import seaborn as sns
 
 
-dir_name = "./1102TrialRun4_final_wo_sys/"
+dir_name = "./1102_wo_sys/"
 
 # Set theta23 numeric values to probe sensitivity
 t23min = np.arcsin(np.sqrt(0.3))
-t23max = np.arcsin(np.sqrt(0.65))
-t23step = 0.004 * np.pi
+t23max = np.arcsin(np.sqrt(0.7))
+t23step = 0.002 * np.pi
 t23l = np.arange(t23min, t23max + t23step, t23step)
 # t23l = np.array([0.44872923, theta23])
 
-m31min = 2.20e-3
+m31min = 2.00e-3
 m31max = 3.00e-3
-m31step = 0.02e-3
+m31step = 0.01e-3
 m31l = np.arange(m31min, m31max + m31step, m31step)
 
 
