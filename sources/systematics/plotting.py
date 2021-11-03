@@ -14,14 +14,7 @@ matplotlib.rcParams.update({'lines.linewidth': 3})
 matplotlib.rcParams.update({'patch.linewidth': 3})
 def plot_contour(savename = "chi_sq_contour"):
 	sin2t23 = np.sin(t23l) ** 2
-	# np.arange(t23min, t23max + t23step, t23step)
-	# for i in range(len(sin2t23)):
-	# 	sin2t23[i] = np.sin(sin2t23[i]) ** 2
-	print(sin2t23)
-	
 	m31 = m31l
-	print(m31)
-	return
 
 	X, Y = np.meshgrid(sin2t23, m31)
 	Z = util.read_output()

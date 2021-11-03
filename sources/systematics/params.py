@@ -7,7 +7,7 @@ import nuflux
 import seaborn as sns
 
 
-dir_name = "./1102TrialRun3/"
+dir_name = "./1102TrialRun4_final_wo_sys/"
 
 # Set theta23 numeric values to probe sensitivity
 t23min = np.arcsin(np.sqrt(0.3))

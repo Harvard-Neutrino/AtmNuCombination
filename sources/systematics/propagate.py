@@ -8,7 +8,7 @@ import nuflux
 
 from params import *
 
-def propagate(theta23in, m31in, top):
+def propagate(theta23in, m31in):
     nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,neutrino_flavors,nsq.NeutrinoType.both,interactions)
 
     AtmInitialFlux = np.zeros((len(cth_nodes),len(energy_nodes),2,neutrino_flavors))
@@ -67,14 +67,14 @@ def propagate(theta23in, m31in, top):
             # current_e0 = min(energy_bins_fine, key=lambda x:abs(x-current_energy))
             # rate_weight[i] = rate_weight[i] * (current_energy / current_e0) ** (0 - gamma)
             
-    # print("truth debug: before hist")
-    input_data["rate_weight"] = rate_weight
-    if top == 0:
-        energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"][cascade_mask], bins = energy_bins_fine, weights = input_data["rate_weight"][cascade_mask])
-    elif top == 1:
-        energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"][track_mask], bins = energy_bins_fine, weights = input_data["rate_weight"][track_mask])
-    else:
-        energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"], bins = energy_bins_fine, weights = input_data["rate_weight"])
-    # print("truth debug: after hist")
 
-    return rate_weight , energy_hist_truth, energy_bins_truth
+    # input_data["rate_weight"] = rate_weight
+    # if top == 0:
+    #     energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"][cascade_mask], bins = energy_bins_fine, weights = input_data["rate_weight"][cascade_mask])
+    # elif top == 1:
+    #     energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"][track_mask], bins = energy_bins_fine, weights = input_data["rate_weight"][track_mask])
+    # else:
+    #     energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"], bins = energy_bins_fine, weights = input_data["rate_weight"])
+
+
+    return rate_weight
