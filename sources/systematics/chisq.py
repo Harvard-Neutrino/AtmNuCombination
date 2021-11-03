@@ -34,7 +34,7 @@ def get_chisq(W_r, N0, H_bf, top):
 def min_chisq(W_r, truth, top):
     ls = []
     for n in N0l:
-        ls.append(get_chisq(W_r, Hist, n, truth, top))
+        ls.append(get_chisq(W_r, n, truth, top))
     minidx = ls.index(min(ls))
     minchi = ls[minidx]
     return minchi

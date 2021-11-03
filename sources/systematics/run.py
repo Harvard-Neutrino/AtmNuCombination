@@ -4,6 +4,7 @@ import numpy as np
 
 import chisq as chi
 import util
+import propagate as prop
 from params import *
 
 # this file calculates a chi-squared value for a pair of physical parameters

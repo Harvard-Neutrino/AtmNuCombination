@@ -9,7 +9,6 @@ import nuflux
 from params import *
 
 def propagate(theta23in, m31in):
-    print("propagating")
     nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,neutrino_flavors,nsq.NeutrinoType.both,interactions)
 
     AtmInitialFlux = np.zeros((len(cth_nodes),len(energy_nodes),2,neutrino_flavors))
@@ -76,6 +75,6 @@ def propagate(theta23in, m31in):
     #     energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"][track_mask], bins = energy_bins_fine, weights = input_data["rate_weight"][track_mask])
     # else:
     #     energy_hist_truth, energy_bins_truth = np.histogram(input_data["reco_energy"], bins = energy_bins_fine, weights = input_data["rate_weight"])
-    print("finished propagating")
+
 
     return rate_weight
