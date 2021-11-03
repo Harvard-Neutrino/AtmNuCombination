@@ -5,20 +5,17 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
 import nuSQuIDS as nsq
 import nuflux
+import time
 pd.options.mode.chained_assignment = None  # default='warn'
 
 import params as pm
 import propagate as prop
 
-def add_systematics(W_r, N0, top):
+def add_systematics(W_r, top):
     # apply normalization
-    
+
     temp = W_r[:]
     pm.input_data["rate_weight"] = temp[:]
-
-    if N0 != 1:
-        for i in range(len(pm.input_data["rate_weight"])):
-            pm.input_data["rate_weight"][i] = pm.input_data["rate_weight"][i] * N0
             
     if top == 0:
         energy_hist_truth, energy_bins_truth = np.histogram(pm.input_data["reco_energy"][pm.cascade_mask], bins = pm.energy_bins_fine, weights = pm.input_data["rate_weight"][pm.cascade_mask])
