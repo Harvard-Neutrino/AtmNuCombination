@@ -13,4 +13,6 @@ import util
 import plotting
 
 # print(util.read_output())
-plotting.plot_contour("chisq_contour_1102TrialRun")
+# print(len(t23l), t23l)
+# print(len(m31l), m31l)
+plotting.plot_contour("chisq_contour_1102TrialRun2")
