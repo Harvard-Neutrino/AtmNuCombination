@@ -9,5 +9,8 @@ import nuflux
 
 from params import *
 import chisq as chi
+import util
+import plotting
 
-print(chi.get_chisq(theta23, m31, 2))
+# print(util.read_output())
+plotting.plot_contour("chisq_contour_1102TrialRun")

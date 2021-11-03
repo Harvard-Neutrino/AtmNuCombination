@@ -7,7 +7,20 @@ import nuflux
 import seaborn as sns
 
 
-dir_name = "./1102TrialRun/"
+dir_name = "./1102TrialRun2/"
+
+# Set theta23 numeric values to probe sensitivity
+t23min = np.sqrt(np.arcsin(0.3))
+t23max = np.sqrt(np.arcsin(0.7))
+t23step = 0.005 * np.pi
+t23l = np.arange(t23min, t23max + t23step, t23step)
+# t23l = np.array([0.44872923, theta23])
+
+m31min = 2.20e-3
+m31max = 3.00e-3
+m31step = 0.02e-3
+m31l = np.arange(m31min, m31max + m31step, m31step)
+
 
 # Set up mixing parameters as in nu-fit5.0
 theta12 = np.arcsin(np.sqrt(0.304))
@@ -70,22 +83,6 @@ cth_nodes = 40
 cth_nodes = nsq.linspace(cth_min,cth_max,cth_nodes)
 
 neutrino_flavors = 3
-
-# Set theta23 numeric values to probe sensitivity
-t23min = np.sqrt(np.arcsin(0.35))
-t23max = np.sqrt(np.arcsin(0.65))
-t23step = 0.005 * np.pi
-t23l = np.arange(t23min, t23max + t23step, t23step)
-# t23l = np.array([0.44872923, theta23])
-
-m31min = 2.40e-3
-m31max = 2.60e-3
-m31step = 0.02e-3
-m31l = np.arange(m31min, m31max + m31step, m31step)
-
-
-
-
 
 # Set the chi squared plotting bins limits
 E_bin_min = 0
