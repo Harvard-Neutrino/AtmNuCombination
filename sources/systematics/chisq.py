@@ -17,9 +17,11 @@ def get_truth(top):
     return res
 
 # Get chisq for the contour plot
-def get_chisq(W_r, N0, H_bf, top):
+def get_chisq(W_r, H, N0, H_bf, top):
     # Get the rated weight and energy bins for the given t23, m31 and truth
-    energy_bins, _ = syst.add_systematics(W_r, top)
+
+    # energy_bins, _ = syst.add_systematics(W_r, top)
+    energy_bins = H[:]
 
     chisq = 0
     for i in range(len(energy_bins)):
@@ -32,9 +34,13 @@ def get_chisq(W_r, N0, H_bf, top):
 
 # Find the minimum chisq with systematics
 def min_chisq(W_r, truth, top):
+
+    # this is for testing if code works on cluster
+    Hist, _ = syst.add_systematics(W_r, top)
+
     ls = []
     for n in N0l:
-        ls.append(get_chisq(W_r, n, truth, top))
+        ls.append(get_chisq(W_r, Hist, n, truth, top))
     minidx = ls.index(min(ls))
     minchi = ls[minidx]
     return minchi
