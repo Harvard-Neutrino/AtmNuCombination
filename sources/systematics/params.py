@@ -26,8 +26,8 @@ SigmaN0 = 0.4
 N0min = 0.6
 N0max = 1.4
 N0step = 0.05
-N0l = np.arange(N0min, N0max + N0step, N0step)
-# N0l = [1, 0.6, 1, 1.4]
+# N0l = np.arange(N0min, N0max + N0step, N0step)
+N0l = [1, 0.6, 1, 1.4]
 
 
 # Set up mixing parameters as in nu-fit5.0

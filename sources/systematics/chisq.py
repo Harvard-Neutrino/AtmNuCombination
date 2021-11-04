@@ -21,11 +21,12 @@ def get_chisq(W_r, H, N0, H_bf, top):
     # Get the rated weight and energy bins for the given t23, m31 and truth
 
     # energy_bins, _ = syst.add_systematics(W_r, top)
-    energy_bins = H[:]
+    # energy_bins = H[:]
 
     chisq = 0
-    for i in range(len(energy_bins)):
-        chisqplus = (N0 * energy_bins[i] - H_bf[i]) ** 2 /  H_bf[i]
+    for i in range(len(H)):
+        # chisqplus = (N0 * energy_bins[i] - H_bf[i]) ** 2 /  H_bf[i]
+        chisqplus = (N0 * H[i] - H_bf[i]) ** 2 /  H_bf[i]
         chisq += chisqplus
     # punishment for normalization
     normloss = ((N0 - 1) / SigmaN0) ** 2
@@ -43,4 +44,5 @@ def min_chisq(W_r, truth, top):
         ls.append(get_chisq(W_r, Hist, n, truth, top))
     minidx = ls.index(min(ls))
     minchi = ls[minidx]
+    print(ls)
     return minchi

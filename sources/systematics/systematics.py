@@ -14,8 +14,8 @@ import propagate as prop
 def add_systematics(W_r, top):
     # apply normalization
 
-    temp = W_r[:]
-    pm.input_data["rate_weight"] = temp[:]
+    # temp = W_r[:]
+    pm.input_data["rate_weight"] = W_r #temp[:]
             
     if top == 0:
         energy_hist_truth, energy_bins_truth = np.histogram(pm.input_data["reco_energy"][pm.cascade_mask], bins = pm.energy_bins_fine, weights = pm.input_data["rate_weight"][pm.cascade_mask])
