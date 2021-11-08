@@ -13,7 +13,7 @@ import systematics as syst
 
 def get_truth(top):
     W_r_bf = prop.propagate(theta23, m31)
-    res, _ = syst.add_systematics(W_r_bf, top)
+    res = syst.add_systematics(W_r_bf, top)
     return res
 
 # Get chisq for the contour plot
@@ -24,10 +24,11 @@ def get_chisq(W_r, H, N0, H_bf, top):
     # energy_bins = H[:]
 
     chisq = 0
-    for i in range(len(H)):
-        # chisqplus = (N0 * energy_bins[i] - H_bf[i]) ** 2 /  H_bf[i]
-        chisqplus = (N0 * H[i] - H_bf[i]) ** 2 /  H_bf[i]
-        chisq += chisqplus
+    (rows, cols) = H.shape
+    for i in range(rows):
+        for j in range(cols):
+            chisqplus = (N0 * H[i][j] - H_bf[i][j]) ** 2 /  H_bf[i][j]
+            chisq += chisqplus
     # punishment for normalization
     normloss = ((N0 - 1) / SigmaN0) ** 2
     chisq += normloss
@@ -37,7 +38,7 @@ def get_chisq(W_r, H, N0, H_bf, top):
 def min_chisq(W_r, truth, top):
 
     # this is for testing if code works on cluster
-    Hist, _ = syst.add_systematics(W_r, top)
+    Hist = syst.add_systematics(W_r, top)
 
     ls = []
     for n in N0l:
