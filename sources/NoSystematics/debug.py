@@ -32,4 +32,4 @@ print("propagate took {}".format(end - start))
 chisqval = chi.min_chisq(rate_weight, truth0, 0) #+ chi.min_chisq(rate_weight, truth1, 1)
 '''
 
-plotting.plot_contour("1108_sys_2D_trial")
+plotting.plot_contour("1108_sys_2D_trial2")
