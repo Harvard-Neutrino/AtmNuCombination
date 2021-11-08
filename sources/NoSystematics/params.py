@@ -7,7 +7,7 @@ import nuflux
 import seaborn as sns
 
 
-dir_name = "./1108_no_sys_2D_trial/"
+dir_name = "./1108_no_sys_2D_trial2/"
 
 # Set theta23 numeric values to probe sensitivity
 t23min = np.arcsin(np.sqrt(0.3))
@@ -18,14 +18,14 @@ t23l = np.arange(t23min, t23max + t23step, t23step)
 
 m31min = 2.00e-3
 m31max = 3.00e-3
-m31step = 0.02e-3
+m31step = 0.01e-3
 m31l = np.arange(m31min, m31max + m31step, m31step)
 
 # set up normalization range
 SigmaN0 = 0.4
 N0min = 0.6
 N0max = 1.4
-N0step = 0.05
+N0step = 0.03
 N0l = np.arange(N0min, N0max + N0step, N0step)
 # N0l = [1, 0.6, 1, 1.4]
 

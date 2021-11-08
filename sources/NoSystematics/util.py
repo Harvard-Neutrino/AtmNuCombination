@@ -31,13 +31,16 @@ def read_output():
     for filename in os.listdir(dir_name):
         if filename.endswith(".txt"):
             with open(os.path.join(dir_name, filename), "r") as file1:
-                temp = [line.rstrip('\n') for line in file1]
-                # print(temp)
-                # print(int(float(temp[0])))
-                # i = 0
-                # Lines = file1.readLines()
-                # for line in Lines:
-                #     temp[i] = float(line)
-                thidx, dmidx = id_to_2did(int(float(temp[0])))
-                res[dmidx][thidx] = float(temp[1])
+                try:
+                    temp = [line.rstrip('\n') for line in file1]
+                    # print(temp)
+                    # print(int(float(temp[0])))
+                    # i = 0
+                    # Lines = file1.readLines()
+                    # for line in Lines:
+                    #     temp[i] = float(line)
+                    thidx, dmidx = id_to_2did(int(float(temp[0])))
+                    res[dmidx][thidx] = float(temp[1])
+                except:
+                    print(filename)
     return res 
