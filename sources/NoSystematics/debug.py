@@ -14,7 +14,8 @@ import util
 import plotting
 import propagate as prop
 
-
+'''
+# This part is testing the time used 
 start = time.time()
 truth0 = chi.get_truth(0)
 end = time.time()
@@ -29,3 +30,6 @@ print("propagate took {}".format(end - start))
 # print(rate_weight[0:3])
 
 chisqval = chi.min_chisq(rate_weight, truth0, 0) #+ chi.min_chisq(rate_weight, truth1, 1)
+'''
+
+print(chi.get_chisq(theta23, m31, chi.get_truth(0), 0))

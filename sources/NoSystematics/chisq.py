@@ -11,17 +11,20 @@ from params import *
 import propagate as prop
 
 def get_truth(top):
-    _, H_bf, _ = prop.propagate(theta23, m31)
-    return res
+    _, H_bf = prop.propagate(theta23, m31, top)
+    print(H_bf)
+    return H_bf
 
 # Get chisq for the contour plot
 def get_chisq(t23, m31, H_bf, top):
     # Get the rated weight and energy bins for the given t23, m31 and truth
-    _, H, _ = prop.propagate(t23, m31, top)
+    _, H = prop.propagate(t23, m31, top)
     chisq = 0
-    for i in range(len(energy_bins)):
-        chisqplus = (H[i] - H_bf[i]) ** 2 /  H_bf[i]
-        chisq += chisqplus
+    (rows, cols) = H.shape
+    for i in range(rows):
+        for j in range(cols):
+            chisqplus = (H[i][j] - H_bf[i][j]) ** 2 /  H_bf[i][j]
+            chisq += chisqplus
 
     return chisq
 
