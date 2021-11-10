@@ -25,3 +25,20 @@ def plot_contour(savename = "chi_sq_contour"):
 	axim = ax.contour(X,Y,Z,levels=[4.605, 5.991, 9.21],cmap=plt.cm.jet)
 	cb   = fig.colorbar(axim)
 	fig.savefig("{}.png".format(savename), bbox_inches="tight")
+
+def plot_profile(var, savename = "profile"):
+	profile = util.read_output()[0]
+	if var == 0: #theta
+		x = np.sin(t23l) ** 2
+	if var == 1: #m
+		x = m31l
+	y = profile
+	fig2, ax2 = plt.subplots(figsize=(7,6))
+	fig2.suptitle(r"$\theta_{23} \chi^2$ profile (raw)")
+	ax2.set_xlabel(r"$\sin^2{\theta_{23}}$")
+	ax2.set_ylabel(r"$\chi^2_{NH}$")
+	ax2.set_xlim([0.35, 0.65])
+	ax2.set_ylim([0, 15])
+	ax2.plot(x, y, color ="green")
+	ax2.grid(True)
+	fig2.savefig("{}.png".format(savename), bbox_inches='tight')

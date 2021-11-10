@@ -25,6 +25,9 @@ rate_weight = prop.propagate(t23val, m31val)
 
 chisqval = chi.min_chisq(rate_weight, truth0, 0) + chi.min_chisq(rate_weight, truth1, 1)
 
+print(chisqval)
+exit(0)
+
 saveres = np.array([idx, chisqval])
 
 np.savetxt(complete_name, saveres)

@@ -7,28 +7,6 @@ import nuflux
 import seaborn as sns
 
 
-dir_name = "./1108_no_sys_2D_trial2/"
-
-# Set theta23 numeric values to probe sensitivity
-t23min = np.arcsin(np.sqrt(0.3))
-t23max = np.arcsin(np.sqrt(0.7))
-t23step = 0.004 * np.pi
-t23l = np.arange(t23min, t23max + t23step, t23step)
-# t23l = np.array([0.44872923, theta23])
-
-m31min = 2.00e-3
-m31max = 3.00e-3
-m31step = 0.01e-3
-m31l = np.arange(m31min, m31max + m31step, m31step)
-
-# set up normalization range
-SigmaN0 = 0.4
-N0min = 0.6
-N0max = 1.4
-N0step = 0.03
-N0l = np.arange(N0min, N0max + N0step, N0step)
-# N0l = [1, 0.6, 1, 1.4]
-
 
 # Set up mixing parameters as in nu-fit5.0
 theta12 = np.arcsin(np.sqrt(0.304))
@@ -38,6 +16,31 @@ m21 = 7.42e-5
 m31 = 2.517e-3 # real Nu-Fit value
 # m31 = 2.8e-3  # try some larger parameters
 
+
+dir_name = "./1109_no_sys_the_profile/"
+
+# Set theta23 numeric values to probe sensitivity
+t23min = np.arcsin(np.sqrt(0.33))
+t23max = np.arcsin(np.sqrt(0.67))
+t23step = 0.001 * np.pi
+t23l = np.arange(t23min, t23max + t23step, t23step)
+# t23l = np.array([0.44872923, theta23])
+
+# m31min = 2.00e-3
+# m31max = 3.00e-3
+# m31step = 0.01e-3
+m31min = m31
+m31max = m31
+m31step = 1
+m31l = np.arange(m31min, m31max + m31step, m31step)
+
+# set up normalization range
+SigmaN0 = 0.4
+N0min = 0.6
+N0max = 1.4
+N0step = 0.03
+N0l = np.arange(N0min, N0max + N0step, N0step)
+# N0l = [1, 0.6, 1, 1.4]
 
 
 # Define path to file (you may need to change this to match your system)

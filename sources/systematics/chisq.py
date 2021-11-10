@@ -6,6 +6,7 @@ from matplotlib.colors import LogNorm
 import nuSQuIDS as nsq
 import nuflux
 import time
+import scipy as scp
 
 from params import *
 import propagate as prop
@@ -40,10 +41,11 @@ def min_chisq(W_r, truth, top):
     # this is for testing if code works on cluster
     Hist = syst.add_systematics(W_r, top)
 
-    ls = []
-    for n in N0l:
-        ls.append(get_chisq(W_r, Hist, n, truth, top))
-    minidx = ls.index(min(ls))
-    minchi = ls[minidx]
-    print(ls)
-    return minchi
+    # define the function with only 1 variable to go through the minimization
+    def to_min(syst):
+        # syst := np.array([N0])
+        return get_chisq(W_r, Hist, syst[0], truth, top)
+    
+    res = scp.optimize.minimize(to_min, np.array([1]))
+
+    return res.fun

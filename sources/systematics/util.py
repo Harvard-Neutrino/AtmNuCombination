@@ -40,4 +40,5 @@ def read_output():
                 #     temp[i] = float(line)
                 thidx, dmidx = id_to_2did(int(float(temp[0])))
                 res[dmidx][thidx] = float(temp[1])
+    # print(res)
     return res 

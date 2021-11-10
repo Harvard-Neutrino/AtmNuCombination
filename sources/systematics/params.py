@@ -14,7 +14,7 @@ m21 = 7.42e-5
 m31 = 2.517e-3 # real Nu-Fit value
 # m31 = 2.8e-3  # try some larger parameters
 
-dir_name = "./1109_theta_profile_no_sys/"
+dir_name = "./1109_theta_profile_norm_min/"
 
 # Set theta23 numeric values to probe sensitivity
 t23min = np.arcsin(np.sqrt(0.33))
@@ -34,9 +34,9 @@ m31l = np.arange(m31min, m31max + m31step, m31step)
 
 # set up normalization range
 SigmaN0 = 0.4
-N0min = 0.6
-N0max = 1.4
-N0step = 0.05
+N0min = 0.9
+N0max = 1.1
+N0step = 0.001
 N0l = np.arange(N0min, N0max + N0step, N0step)
 # N0l = [1, 0.6, 1, 1.4]
 
