@@ -31,4 +31,4 @@ import propagate as prop
 # chisqval = chi.min_chisq(rate_weight, truth0, 0) #+ chi.min_chisq(rate_weight, truth1, 1)
 
 # plotting.plot_contour("1108_sys_2D_trial_2")
-plotting.plot_profile(0, "1109_theta_profile_norm_listprobe")
+plotting.plot_profile(0, "1109_theta_profile_norm_vs_no_sys")

@@ -30,15 +30,19 @@ def plot_profile(var, savename = "profile"):
 	profile = util.read_output()[0]
 	if var == 0: #theta
 		x = np.sin(t23l) ** 2
+		no_syst = util.read_output(dir_name = "../NoSystematics/1109_no_sys_the_profile")[0]
 	if var == 1: #m
 		x = m31l
 	y = profile
+	y_no_sys = no_syst
 	fig2, ax2 = plt.subplots(figsize=(7,6))
-	fig2.suptitle(r"$\theta_{23} \chi^2$ profile (raw)")
+	fig2.suptitle(r"$\theta_{23} \chi^2$ profile")
 	ax2.set_xlabel(r"$\sin^2{\theta_{23}}$")
 	ax2.set_ylabel(r"$\chi^2_{NH}$")
 	ax2.set_xlim([0.35, 0.65])
 	ax2.set_ylim([0, 15])
-	ax2.plot(x, y, color ="green")
+	ax2.plot(x, y, color ="green", label = "Norm")
+	ax2.plot(x, y_no_sys, '-.', color ="red", label = "No Syst")
 	ax2.grid(True)
+	ax2.legend()
 	fig2.savefig("{}.png".format(savename), bbox_inches='tight')

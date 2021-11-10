@@ -26,7 +26,7 @@ def local():
         file1 = open(complete_name, "a")
         file1.close()
     
-def read_output():
+def read_output(dir_name = dir_name):
     res = np.ndarray(shape = (len(m31l), len(t23l)))
     for filename in os.listdir(dir_name):
         if filename.endswith(".txt"):
