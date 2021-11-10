@@ -22,6 +22,8 @@ def plot_contour(savename = "chi_sq_contour"):
 	fig.suptitle("Chi-Sq Contour NH")
 	ax.set_xlabel(r"$\sin^2{\theta_{23}}$")
 	ax.set_ylabel(r"$m^2_{31}$")
+	ax.set_xlim([0.33, 0.67])
+	ax.set_ylim([0.0022, 0.0028])
 	axim = ax.contour(X,Y,Z,levels=[4.605, 5.991, 9.21],cmap=plt.cm.jet)
 	cb   = fig.colorbar(axim)
 	fig.savefig("{}.png".format(savename), bbox_inches="tight")
