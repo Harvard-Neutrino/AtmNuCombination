@@ -14,19 +14,19 @@ m21 = 7.42e-5
 m31 = 2.517e-3 # real Nu-Fit value
 # m31 = 2.8e-3  # try some larger parameters
 
-dir_name = "./1109_m_profile_norm_min/"
+dir_name = "./1109_contour_norm_min/"
 
 # Set theta23 numeric values to probe sensitivity
 t23min = np.arcsin(np.sqrt(0.33))
 t23max = np.arcsin(np.sqrt(0.67))
-t23step = 0.001 * np.pi
-# t23l = np.arange(t23min, t23max + t23step, t23step)
-t23l = np.array([theta23])
+t23step = 0.002 * np.pi
+t23l = np.arange(t23min, t23max + t23step, t23step)
+# t23l = np.array([theta23])
 # t23l = np.array([0.44872923, theta23])
 
 m31min = 2.20e-3
 m31max = 2.80e-3
-m31step = 0.005e-3
+m31step = 0.01e-3
 # m31min = m31
 # m31max = m31
 # m31step = 1
