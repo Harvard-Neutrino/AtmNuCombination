@@ -127,3 +127,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Large files
+src/Simulation/SuperK/figs/*
+src/Simulation/SuperK/data/*
+src/utils/*.hdf5
+src/utils/*.png
+src/utils/*.root
