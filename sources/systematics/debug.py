@@ -30,8 +30,8 @@ import propagate as prop
 
 # chisqval = chi.min_chisq(rate_weight, truth0, 0) #+ chi.min_chisq(rate_weight, truth1, 1)
 
-# plotting.plot_contour("1108_sys_2D_trial_2")
-plotting.plot_profile(1, "1109_m_profile_norm_vs_no_sys")
+plotting.plot_contour("1109_countour_norm_min")
+# plotting.plot_profile(1, "1109_m_profile_norm_vs_no_sys")
 
 
 # no_syst = util.read_output(dir_name = "../NoSystematics/1109_no_sys_the_profile")[0]
