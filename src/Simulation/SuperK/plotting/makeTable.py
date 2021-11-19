@@ -1,11 +1,11 @@
 import h5py
 import numpy as np
 
-with h5py.File('../data/output/testfcmc.hdf5', 'r') as hf:
+with h5py.File('../data/output/combined.hdf5', 'r') as hf:
 	mode = np.array(hf['mode'][()])
 	ipnu = np.array(hf['ipnu'][()])
-	oscw = np.array(hf['oscw'][()])
-	weight = np.array(hf['weight'][()])
+	oscw = np.array(hf['weightOsc_SKpaper'][()])
+	weight = np.array(hf['weightReco'][()])
 	itype = np.array(hf['itype'][()])
 
 wght = np.multiply(oscw,weight)
@@ -88,7 +88,7 @@ with open("TableOfContents.txt", "w") as table:
 	table.write("\\textbf{Partially Contained}\\\\\n")
 	table.write("\\text{  }PC Stopping\\\\\n")
 	table.write(str("%.3f" % ( ccnue[14]/totosc[14])) + " & " + str("%.3f" % ( ccnueb[14]/totosc[14])) + " & " + str("%.3f" % ( ccmu[14]/totosc[14])) + " & " + str("%.3f" % ( cctau[14]/totosc[14])) + " & " + str("%.3f" % ( nc[14]/totosc[14])) +  " & " + str("%.3f" % ( totosc[14]/tot)) + " \\\\\n")
-	table.write("\\text{  }PC Showering\\\\\n")
+	table.write("\\text{  }PC Through-going\\\\\n")
 	table.write(str("%.3f" % ( ccnue[15]/totosc[15])) + " & " + str("%.3f" % ( ccnueb[15]/totosc[15])) + " & " + str("%.3f" % ( ccmu[15]/totosc[15])) + " & " + str("%.3f" % ( cctau[15]/totosc[15])) + " & " + str("%.3f" % ( nc[15]/totosc[15])) +  " & " + str("%.3f" % ( totosc[15]/tot)) + " \\\\\n")
 	table.write("\\hline\n")
 	table.write("\\end{tabular}\n")

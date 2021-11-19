@@ -2,37 +2,42 @@
 <Analysis>
 
 <!--Anything common to a given neutrino source-->
-<NeutrinoSource>
-	<Atmospheric>
-		<name> Atmospheric </name>
-		<status> ON </status>
-		<systematics>
-			<flux_norm>
-				<name> Flux Normalization </name>
+	<NeutrinoSource name="Atmospheric">
+		<status name='status'> 1 </status>
+			<systematic name='Flux Normalization'>
+				<status> 1 </status>
+				<tofit> 1 </tofit>
 				<nuisance> 1.0 </nuisance>
-			</flux_norm>
-			<nu_nubar_ratio>
-				<name> Nu-Nubar Double Ratio </name>
-				<nuisance> 1.2 </nuisance>
-			</nu_nubar_ratio>
-		</systematics>
-	</Atmospheric>
+			</systematic>
+			<systematic name='Nu-Nubar Double Ratio'>
+				<status> 1 </status>
+				<tofit> 1 </tofit>
+				<nuisance> 1.0 </nuisance>
+			</systematic>
+	</NeutrinoSource>
+
+	<NeutrinoSource name="J-PARC Beam">
+		<status name='status'> 1 </status>
+			<systematic name='Flux Pi+-decay'>
+				<status> 1 </status>
+				<tofit> 0 </tofit>
+				<nuisance> 1.0 </nuisance>
+			</systematic>
+			<systematic name='Flux K+-decay'>
+				<status> 1 </status>
+				<tofit> 1 </tofit>
+				<nuisance> 3.2 </nuisance>
+			</systematic>
+	</NeutrinoSource>
+
 <!--
-	<Beam>
-		<name> J-PARC Beam </name>
-		<status> OFF </status>
-	</Beam>
--->
-</NeutrinoSource>
 
-
-<!--Anything common to a given neutrino experiment-->
 <NeutrinoExperiment>
 	<Super-Kamiokande>
 		<name> Super-Kamiokande </name>
 		<status> ON </status>
 		<exposure> 300 kton-year </exposure>
-		<systematics>
+		<systematic>
 			<syst1>
 				<name> systematic1 </name>>
 				<nuisance> 1.0 </nuisance>
@@ -41,13 +46,13 @@
 				<name> systematic2 </name>>
 				<nuisance> 1.2 </nuisance>
 			</syst2>
-		</systematics>
+		</systematic>
 	</Super-Kamiokande>
 	<Ice-Cube>
 		<name> IceCube </name>
 		<status> ON </status>
 		<exposure> 300 kton-year </exposure>
-		<systematics>
+		<systematic>
 			<syst1>
 				<name> systematic1 </name>>
 				<nuisance> 1.0 </nuisance>
@@ -56,14 +61,13 @@
 				<name> systematic2 </name>>
 				<nuisance> 1.2 </nuisance>
 			</syst2>
-		</systematics>
+		</systematic>
 	</Ice-Cube>
-<!--
 	<T2K>
 		<name> T2K </name>
 		<status> OFF </status>
 		<exposure> 3.1e21 POT </exposure>
-		<systematics>
+		<systematic>
 			<syst1>
 				<name> systematic1 </name>>
 				<nuisance> 1.0 </nuisance>
@@ -72,13 +76,11 @@
 				<name> systematic2 </name>>
 				<nuisance> 1.2 </nuisance>
 			</syst2>
-		</systematics>
+		</systematic>
 	</T2K>
--->
 </NeutrinoExperiment>
 
 
-<!--Mixing angles to be set in radians and mass splittings in eV^2-->
 <NeutrinoOscillations>
 	<ThreeFlavour>
 		<name> Three Flavour Oscillations </name>
@@ -123,5 +125,5 @@
 		</MassOrdering>
 	</ThreeFlavour>
 </NeutrinoOscillations>
-
+-->
 </Analysis>

@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 
-def parseXML(xmlfile='../AnalysisTemplate.xml'):
+# def parseXML(xmlfile='test.xml'):
+def parseXML(xmlfile='AnalysisTemplate.xml'):
 	
 	# create element tree object
 	tree = ET.parse(xmlfile)
@@ -8,9 +9,37 @@ def parseXML(xmlfile='../AnalysisTemplate.xml'):
 	# get root element
 	root = tree.getroot()
 
-	status = 'dummy'
-	name = 'dummy'
-	[elem.tag for elem in root.iter()]
+	print('Neutrino sources considered:')
+	# for item in root.find('NeutrinoSource'):
+	for source in root:
+		sourceON = int(source.find('status').text)
+		if sourceON:
+			print(' + ',source.attrib['name'])
+			for syst in source:
+				systON = int(source.find('status').text)
+				stag = syst.tag
+				if str(stag) == 'systematic' and systON:
+					nuisance = float(syst.find('nuisance').text)
+					isFree = not bool(int(syst.find('tofit').text))
+					if isFree:
+						print('   - ',syst.attrib['name'],' with nominal nuisance parameter ', nuisance, ' and let free in the analysis.')
+					else:
+						print('   - ',syst.attrib['name'],' with nuisance parameter ', nuisance, ' fixed in the analysis.')
+
+
+
+				# systON = int(syst.find('status').text)
+				# print(systON)
+				# if systON:
+				# 	print('    ', syst.attrib['name'])
+
+
+
+
+
+
+	# print(root.get('Analysis/NeutrinoSource/Atmospheric/name'))
+	# print([elem.tag for elem in root.iter()])
 	# for item in root:
 	# 	print(item.tag)
 	# 	if item.tag == 'NeutrinoSource':
