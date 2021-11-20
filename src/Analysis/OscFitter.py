@@ -25,21 +25,21 @@ SqT23_min = 0.305
 SqT23_max = 0.705
 # dm_31
 NDM31 = 24
-NDM31 = 0
+# NDM31 = 2
 DM31_max = 3.0e-3
 DM31_min = 2.0e-3
 # dcp
 NDCP = 19
-NDCP = 0
+# NDCP = 2
 DCP_min = 0
 DCP_max = 2*math.pi
 DM31,T23,SqT23,DCP = OscPar(NDM31,DM31_min,DM31_max,NT23,SqT23_min,SqT23_max,NDCP,DCP_min,DCP_max)
 # Best fit values
 T23BF = T23[16]
-# DM31BF = DM31[12]
-# DCPBF = DCP[13]
-DM31BF = DM31[0]
-DCPBF = DCP[0]
+DM31BF = DM31[12]
+DCPBF = DCP[13]
+# DM31BF = DM31[0]
+# DCPBF = DCP[0]
 
 # Start oscillation bussiness
 # mc.OscillationSetUp()
@@ -60,8 +60,13 @@ for t,t23 in enumerate(T23):
 				processes.append(p)
 				p.start()
 				j = j + 1
-for p in processes:
-	p.join()
+				print(f'{j}th process started')
+				if j%20==0:
+					for i,p in enumerate(processes):
+						p.join()
+						print(f'{i}th process completed')
+					processes = []
+
 
 
 with open(outfile,'w') as f:

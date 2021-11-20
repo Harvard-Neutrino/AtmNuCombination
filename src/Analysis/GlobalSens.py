@@ -122,7 +122,7 @@ if len(sys.argv)==3 and (experiment=='SK' or experiment=='IC'):
 elif len(sys.argv)==4 and (experiment=='SK' or experiment=='IC'):
 	filename2 = sys.argv[3]
 	X2reader(filename, filename2)
-elif experiment=='SK+IC' or experiment='IC+SK':
+elif experiment=='SK+IC' or experiment=='IC+SK':
 	if len(sys.argv)<4:
 		print('You are missing files')
 	elif len(sys.argv)==4:

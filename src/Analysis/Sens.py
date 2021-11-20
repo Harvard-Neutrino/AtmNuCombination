@@ -3,6 +3,7 @@ from plotting import cornerPlot, cornerPlotBothO
 import sys
 
 experiment = str(sys.argv[1])
+filename = str(sys.argv[2])
 if experiment=='SuperK':
 	NT23 = 25
 	SqT23_min = 0.305
