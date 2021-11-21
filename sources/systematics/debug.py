@@ -13,6 +13,7 @@ import chisq as chi
 import util
 import plotting
 import propagate as prop
+import systematics as syst
 
 
 # start = time.time()
@@ -30,9 +31,15 @@ import propagate as prop
 
 # chisqval = chi.min_chisq(rate_weight, truth0, 0) #+ chi.min_chisq(rate_weight, truth1, 1)
 
-plotting.plot_contour("1109_countour_norm_min")
-# plotting.plot_profile(1, "1109_m_profile_norm_vs_no_sys")
+# plotting.plot_contour("1109_countour_norm_min")
+# plotting.plot_profile(0, "1117_theta_norm+delta_min")
 
+truth0 = chi.get_truth(0)
+truth1 = chi.get_truth(1)
+
+W_r = prop.propagate(np.arcsin(np.sqrt(0.5)), m31)
+
+print(chi.get_chisq(W_r, 1, 1, truth0, 0) + chi.get_chisq(W_r, 1, 1, truth1, 1))
 
 # no_syst = util.read_output(dir_name = "../NoSystematics/1109_no_sys_the_profile")[0]
 # profile = util.read_output(dir_name = "./1109_theta_profile_norm_min/")[0]

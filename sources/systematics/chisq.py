@@ -21,8 +21,6 @@ def get_truth(top):
 def get_chisq(W_r, N0, delta, H_bf, top):
     # Get the rated weight and energy bins for the given t23, m31 and truth
 
-    # energy_bins, _ = syst.add_systematics(W_r, top)
-    # energy_bins = H[:]
     H = syst.add_systematics(W_r, delta, top)
 
     chisq = 0
@@ -40,13 +38,16 @@ def get_chisq(W_r, N0, delta, H_bf, top):
 # Find the minimum chisq with systematics
 def min_chisq(W_r, truth, top):
 
-    # Hist_bf = syst.add_systematics(W_r, top)
+    # Hist = syst.add_systematics(W_r, top)
 
     # define the function with only 1 variable to go through the minimization
     def to_min(syst):
         # syst := np.array([N0, delta])
         return get_chisq(W_r, syst[0], syst[1], truth, top)
+        # return get_chisq(W_r, syst[0], truth, top)
     
-    res = scp.optimize.minimize(to_min, np.array([1, 1]), bounds = ((1.6, 2.4), (0.1, 1.9)))
+    res = scp.optimize.minimize(to_min, np.array([1, 1]), options={'disp': True})
+    # res = scp.optimize.minimize(to_min, np.array([1]), options={'disp': True})
+
 
     return res.fun

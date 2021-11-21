@@ -23,6 +23,8 @@ truth1 = chi.get_truth(1)
 
 rate_weight = prop.propagate(t23val, m31val)
 
+print("begin the min_chisq")
+
 chisqval = chi.min_chisq(rate_weight, truth0, 0) + chi.min_chisq(rate_weight, truth1, 1)
 
 # print(chisqval)
