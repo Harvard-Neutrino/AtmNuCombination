@@ -1,0 +1,11 @@
+begin the min_chisq
+Optimization terminated successfully.
+         Current function value: 5.894364
+         Iterations: 6
+         Function evaluations: 36
+         Gradient evaluations: 9
+Optimization terminated successfully.
+         Current function value: 16.506513
+         Iterations: 6
+         Function evaluations: 44
+         Gradient evaluations: 11

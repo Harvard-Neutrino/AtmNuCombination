@@ -1,0 +1,11 @@
+begin the min_chisq
+Warning: Desired error not necessarily achieved due to precision loss.
+         Current function value: 2.563102
+         Iterations: 8
+         Function evaluations: 352
+         Gradient evaluations: 85
+Optimization terminated successfully.
+         Current function value: 0.681500
+         Iterations: 5
+         Function evaluations: 36
+         Gradient evaluations: 9
