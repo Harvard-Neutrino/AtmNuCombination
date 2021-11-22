@@ -29,8 +29,8 @@ print("begin the min_chisq")
 
 chisqval = chi.min_chisq(rate_weight, truth0, 0) + chi.min_chisq(rate_weight, truth1, 1)
 
-print("the final chi square is: ", chisqval)
-exit(0)
+# print("the final chi square is: ", chisqval)
+# exit(0)
 
 saveres = np.array([idx, chisqval])
 

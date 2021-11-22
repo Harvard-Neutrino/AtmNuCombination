@@ -45,3 +45,12 @@ def read_output(dir_name = dir_name):
                     continue
     # print(res)
     return res 
+
+def process(chils, thels):
+    processed_chi = []
+    processed_the = []
+    for i in range(len(chils)):
+        if chils[i] - 0 > 0.01 or i >= len(chils) / 2:
+            processed_chi.append(chils[i])
+            processed_the.append(thels[i])
+    return processed_chi, processed_the
