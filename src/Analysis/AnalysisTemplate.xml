@@ -2,128 +2,117 @@
 <Analysis>
 
 <!--Anything common to a given neutrino source-->
+<!-- Atmospheric neutrinos -->
 	<NeutrinoSource name="Atmospheric">
 		<status name='status'> 1 </status>
-			<systematic name='Flux Normalization'>
-				<status> 1 </status>
-				<tofit> 1 </tofit>
-				<nuisance> 1.0 </nuisance>
-			</systematic>
-			<systematic name='Nu-Nubar Double Ratio'>
-				<status> 1 </status>
-				<tofit> 1 </tofit>
-				<nuisance> 1.0 </nuisance>
-			</systematic>
+		<systematic name='Flux Normalization'>
+			<status> 1 </status>
+			<tofit> 1 </tofit>
+			<nuisance> 1.0 </nuisance>
+		</systematic>
+		<systematic name='Nu-Nubar Double Ratio'>
+			<status> 1 </status>
+			<tofit> 1 </tofit>
+			<nuisance> 1.0 </nuisance>
+		</systematic>
 	</NeutrinoSource>
-
+<!-- Tokai accelerator neutrinos -->
 	<NeutrinoSource name="J-PARC Beam">
-		<status name='status'> 1 </status>
-			<systematic name='Flux Pi+-decay'>
-				<status> 1 </status>
-				<tofit> 0 </tofit>
-				<nuisance> 1.0 </nuisance>
-			</systematic>
-			<systematic name='Flux K+-decay'>
-				<status> 1 </status>
-				<tofit> 1 </tofit>
-				<nuisance> 3.2 </nuisance>
-			</systematic>
+		<status name='status'> 0 </status>
+		<systematic name='Flux Pi+-decay'>
+			<status> 1 </status>
+			<tofit> 0 </tofit>
+			<nuisance> 1.0 </nuisance>
+		</systematic>
+		<systematic name='Flux K+-decay'>
+			<status> 1 </status>
+			<tofit> 1 </tofit>
+			<nuisance> 3.2 </nuisance>
+		</systematic>
 	</NeutrinoSource>
 
-<!--
-
-<NeutrinoExperiment>
-	<Super-Kamiokande>
-		<name> Super-Kamiokande </name>
-		<status> ON </status>
-		<exposure> 300 kton-year </exposure>
-		<systematic>
-			<syst1>
-				<name> systematic1 </name>>
-				<nuisance> 1.0 </nuisance>
-			</syst1>
-			<syst2>
-				<name> systematic2 </name>>
-				<nuisance> 1.2 </nuisance>
-			</syst2>
+<!--Anything common to a given neutrino experiment-->
+<!-- SuperK -->
+	<NeutrinoExperiment name="Super-Kamiokande">
+		<status name='status'> 1 </status>
+		<simulation filename='../Simulation/SuperK/data/output/combined.hdf5'> </simulation>
+		<exposure> 20 </exposure>
+		<systematic name='Energy Scale'>
+			<status> 1 </status>
+			<tofit> 1 </tofit>
+			<prior> 1.1 </prior>
+			<nuisance> 1.0 </nuisance>
 		</systematic>
-	</Super-Kamiokande>
-	<Ice-Cube>
-		<name> IceCube </name>
-		<status> ON </status>
-		<exposure> 300 kton-year </exposure>
-		<systematic>
-			<syst1>
-				<name> systematic1 </name>>
-				<nuisance> 1.0 </nuisance>
-			</syst1>
-			<syst2>
-				<name> systematic2 </name>>
-				<nuisance> 1.2 </nuisance>
-			</syst2>
+		<systematic name='Decay-e Efficiency'>
+			<status> 1 </status>
+			<tofit> 1 </tofit>
+			<prior> 1. </prior>
+			<nuisance> 1.0 </nuisance>
 		</systematic>
-	</Ice-Cube>
-	<T2K>
-		<name> T2K </name>
-		<status> OFF </status>
-		<exposure> 3.1e21 POT </exposure>
-		<systematic>
-			<syst1>
-				<name> systematic1 </name>>
-				<nuisance> 1.0 </nuisance>
-			</syst1>
-			<syst2>
-				<name> systematic2 </name>>
-				<nuisance> 1.2 </nuisance>
-			</syst2>
+	</NeutrinoExperiment>
+<!-- IceCube Upgrade -->
+	<NeutrinoExperiment name="IceCube Upgrade">
+		<status name='status'> 1 </status>
+		<simulation filename='../Simulation/IceCubeUpgradedata/neutrino_mc.csv'> </simulation>
+		<exposure> 3 </exposure>
+		<systematic name='Energy Scale'>
+			<status> 1 </status>
+			<tofit> 1 </tofit>
+			<prior> 1.1 </prior>
+			<nuisance> 1.0 </nuisance>
 		</systematic>
-	</T2K>
-</NeutrinoExperiment>
+		<systematic name='Track-Shower Separation'>
+			<status> 1 </status>
+			<tofit> 1 </tofit>
+			<prior> 1. </prior>
+			<nuisance> 1.0 </nuisance>
+		</systematic>
+	</NeutrinoExperiment>
 
-
-<NeutrinoOscillations>
-	<ThreeFlavour>
-		<name> Three Flavour Oscillations </name>
+<!--Anything common to a given neutrino physics scenario-->
+	<NeutrinoPhysics name="Three Flavour">
+		<status name="status"> 1 </status>
+		<flavours> 3 </flavours>
 		<MixingAngles>
 			<Theta12>
 				<points> 1 </points>
-				<first> 0.5 </first>
-				<last> 0.5 </last>
+				<min> 0.5 </min>
+				<max> 0.5 </max>
 				<best> 0.5 </best>
 			</Theta12>
 			<Theta13>
 				<points> 1 </points>
-				<first> 0.5 </first>
-				<last> 0.5 </last>
+				<min> 0.5 </min>
+				<max> 0.5 </max>
 				<best> 0.5 </best>
 			</Theta13>
 			<Theta23>
 				<points> 1 </points>
-				<first> 0.5 </first>
-				<last> 0.5 </last>
+				<min> 0.5 </min>
+				<max> 0.5 </max>
 				<best> 0.5 </best>
 			</Theta23>
 		</MixingAngles>
 		<MassSplittings>
 			<M21>
 				<points> 1 </points>
-				<first> 0.5 </first>
-				<last> 0.5 </last>
+				<min> 0.5 </min>
+				<max> 0.5 </max>
 				<best> 0.5 </best>
 			</M21>
 			<M31>
 				<points> 1 </points>
-				<first> 0.5 </first>
-				<last> 0.5 </last>
+				<min> 0.5 </min>
+				<max> 0.5 </max>
 				<best> 0.5 </best>
 			</M31>
 		</MassSplittings>
 		<MassOrdering>
-			<normal> ON </normal>
-			<inverted> ON </inverted>
+			<normal> 1 </normal>
+			<inverted> 1 </inverted>
 			<best> normal </best>
 		</MassOrdering>
-	</ThreeFlavour>
-</NeutrinoOscillations>
--->
+	</NeutrinoPhysics>
+
+
 </Analysis>

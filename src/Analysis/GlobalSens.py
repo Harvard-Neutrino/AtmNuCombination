@@ -33,6 +33,14 @@ def X2reader(filename, filename2='None'):
 				marg = np.amin(chi2_slice)
 				X2 = np.append(X2,marg)
 		cornerPlot(oscPar[0],oscPar[2],X2)
+		X2 = np.array([])
+		for q in oscPar[1]:
+			for m in oscPar[2]:
+				cut = (rawOscPar[1]==q) * (rawOscPar[2]==m)
+				chi2_slice = chi2[cut]
+				marg = np.amin(chi2_slice)
+				X2 = np.append(X2,marg)
+		cornerPlot(oscPar[1],oscPar[2],X2)
 
 	if filename2!='None':
 		df2 = pd.read_csv(filename2, sep=' ')
@@ -57,6 +65,14 @@ def X2reader(filename, filename2='None'):
 					marg = np.amin(chi2_slice)
 					X2I = np.append(X2I,marg)
 			cornerPlotBothO(oscPar[0],oscPar[2],X2,X2I)
+			X2I = np.array([])
+			for q in oscPar[1]:
+				for m in oscPar[2]:
+					cut = (rawOscPar[1]==q) * (rawOscPar[2]==m)
+					chi2_slice = chi2I[cut]
+					marg = np.amin(chi2_slice)
+					X2I = np.append(X2I,marg)
+			cornerPlotBothO(oscPar[1],oscPar[2],X2,X2I)
 
 def X2readerBoth(filename, filename2):
 
@@ -111,7 +127,14 @@ def X2readerBoth(filename, filename2):
 				marg = np.amin(chi2_slice)
 				X2 = np.append(X2,marg)
 		cornerPlot(oscPar[0],oscPar[2],X2, title='SuperK and DeepCore combination')
-
+		X2 = np.array([])
+		for q in oscPar[1]:
+			for m in oscPar[2]:
+				cut = (rawOscPar[1]==q) * (rawOscPar[2]==m)
+				chi2_slice = chi2[cut]
+				marg = np.amin(chi2_slice)
+				X2 = np.append(X2,marg)
+		cornerPlot(oscPar[1],oscPar[2],X2, title='SuperK and DeepCore combination')
 
 
 

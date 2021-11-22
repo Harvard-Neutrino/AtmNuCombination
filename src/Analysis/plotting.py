@@ -77,7 +77,7 @@ def cornerPlot(x,y,X2,title=''):
 	ax.set_xlim(x0,xf)
 	ax.set_ylim(y0,yf)
 
-	# plt.set_title(title)
+	axUp.set_title(title)
 
 	plt.show()
 
