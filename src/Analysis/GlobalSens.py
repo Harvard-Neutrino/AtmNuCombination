@@ -73,14 +73,14 @@ def X2readerBoth(filename, filename2):
 	if df.columns.size == 3:
 		cornerPlotBothO(oscPar[0],oscPar[1], chi2, chi2I)
 	elif df.columns.size == 4:
-		X2I = np.array([])
+		X2 = np.array([])
 		for q in oscPar[0]:
 			for m in oscPar[1]:
 				cut = (rawOscPar[0]==q) * (rawOscPar[1]==m)
 				chi2_slice = chi2I[cut]
 				marg = np.amin(chi2_slice)
-				X2I = np.append(X2,marg)
-		cornerPlotBothO(oscPar[0],oscPar[1],X2,X2I)
+				X2 = np.append(X2,marg)
+		cornerPlot(oscPar[0],oscPar[1],X2)
 		X2I = np.array([])
 		for q in oscPar[0]:
 			for m in oscPar[2]:
@@ -88,7 +88,7 @@ def X2readerBoth(filename, filename2):
 				chi2_slice = chi2I[cut]
 				marg = np.amin(chi2_slice)
 				X2I = np.append(X2I,marg)
-		cornerPlotBothO(oscPar[0],oscPar[2],X2,X2I)
+		cornerPlot(oscPar[0],oscPar[2],X2I)
 
 	# Combination...
 	chi2 = chi2+chi2I

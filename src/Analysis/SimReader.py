@@ -27,7 +27,7 @@ class Reader:
 			# To be removed at some point
 			condition1 = (d_itype<14) * (d_itype>-1) 
 			condition2 = (d_itype<16) * (d_itype>13) * (d_evis>1)
-			condition = (condition2 + condition1) * (d_evis<400)
+			condition = (condition2 + condition1) * (d_evis<400) * (d_pnu>0.1) * (d_pnu<400)
 			self.EReco = d_evis[condition]
 			self.CosZReco = d_recocz[condition]
 			self.CosZTrue = d_truecz[condition]
@@ -141,7 +141,7 @@ class Reader:
 		return np.zeros((nt23+1,nm31+1,ncp+1,self.NumberOfEvents))
 		# self.weightOsc = np.zeros((nt23+1,nm31+1,ncp+1,self.NumberOfEvents))
 
-	def Oscillator(self, j, th23, dm31, dcp, return_dict):
+	def OscillatorM(self, j, th23, dm31, dcp, return_dict):
 		units = nsq.Const()
 		Radian = np.pi / 180.
 		interactions = False

@@ -49,43 +49,51 @@ manager = multiprocessing.Manager()
 return_dict = manager.dict()
 
 processes = []
-j=0
+j = 0
+multi = 0
 
 # Osc. in parameters space (multiprocessing)
 for t,t23 in enumerate(T23):
-	for m,dm in enumerate(DM31):
-		for d,cp in enumerate(DCP):
-			p = multiprocessing.Process(target=mc.Oscillator,args=[j,t23,dm,cp,return_dict])
-			if __name__ == "__main__":
-				processes.append(p)
-				p.start()
-				j = j + 1
-				print(f'{j}th process started')
-				if j%20==0:
-					for i,p in enumerate(processes):
-						p.join()
-						print(f'{i}th process completed')
-					processes = []
+	if t23>0.98:
+		for m,dm in enumerate(DM31):
+			for d,cp in enumerate(DCP):
+			# if multi:
+				p = multiprocessing.Process(target=mc.OscillatorM,args=[j,t23,dm,cp,return_dict])
+				if __name__ == "__main__":
+					processes.append(p)
+					p.start()
+					j = j + 1
+					print(f'{math.sin(t23)**2} {dm} {cp} process started')
+					if j%20==0:
+						for i,p in enumerate(processes):
+							p.join()
+						processes = []
+				# else:
+
+
 
 
 
 with open(outfile,'w') as f:
 	f.write('SqT23 DM31 DCP X2\n')
 	j = 0
-	for t in range(NT23+1):
-		for m in range(NDM31+1):
-			for d in range(NDCP+1):
-				X2 = 0.0
-				weightOsc = return_dict[j]
-				j = j + 1
-				for s in range(mc.NumberOfSamples):
-					wBF = mc.weightOscBF[mc.Sample==s] * mc.Weight[mc.Sample==s]
-					Exp, dx, dy = np.histogram2d(mc.EReco[mc.Sample==s], mc.CosZReco[mc.Sample==s], bins=(mc.EnergyBins[s], mc.CzBins[s]), weights=wBF*mc.Norm)
-					w = weightOsc[mc.Sample==s] * mc.Weight[mc.Sample==s]
-					Obs, dx, dy = np.histogram2d(mc.EReco[mc.Sample==s], mc.CosZReco[mc.Sample==s], bins=(mc.EnergyBins[s], mc.CzBins[s]), weights=w*mc.Norm)
-					for O,E in zip(np.ravel(Obs),np.ravel(Exp)):
-						if O==0 or E==0: 
-							pass
-						else:
-							X2 = X2 + 2 * (E - O + O * math.log(O/E))
-				f.write(f'{SqT23[t]} {DM31[m]} {DCP[d]} {X2}\n')
+	# for t in range(NT23+1):
+	for t,t23 in enumerate(T23):
+		if t23>0.98:
+			for m in range(NDM31+1):
+				for d in range(NDCP+1):
+					X2 = 0.0
+					weightOsc = return_dict[j]
+					j = j + 1
+					for s in range(mc.NumberOfSamples):
+						wBF = mc.weightOscBF[mc.Sample==s] * mc.Weight[mc.Sample==s]
+						Exp, dx, dy = np.histogram2d(mc.EReco[mc.Sample==s], mc.CosZReco[mc.Sample==s], bins=(mc.EnergyBins[s], mc.CzBins[s]), weights=wBF*mc.Norm)
+						w = weightOsc[mc.Sample==s] * mc.Weight[mc.Sample==s]
+						Obs, dx, dy = np.histogram2d(mc.EReco[mc.Sample==s], mc.CosZReco[mc.Sample==s], bins=(mc.EnergyBins[s], mc.CzBins[s]), weights=w*mc.Norm)
+						for O,E in zip(np.ravel(Obs),np.ravel(Exp)):
+							if O==0 or E==0: 
+								pass
+							else:
+								X2 = X2 + 2 * (E - O + O * math.log(O/E))
+					f.write(f'{SqT23[t]} {DM31[m]} {DCP[d]} {X2}\n')
+					print(f'{SqT23[t]} {DM31[m]} {DCP[d]} {X2}\n')
