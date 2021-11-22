@@ -31,13 +31,15 @@ def plot_profile(var, savename = "profile"):
 	if var == 0: #theta
 		profile = util.read_output()[0]
 		x = np.sin(t23l) ** 2
+		only_norm = util.read_output(dir_name = "1109_theta_profile_norm_min")[0]
 		no_syst = util.read_output(dir_name = "../NoSystematics/1109_no_sys_the_profile")[0]
 		fig2.suptitle(r"$\theta_{23} \chi^2$ profile")
 		ax2.set_xlabel(r"$\sin^2{\theta_{23}}$")
-		# ax2.set_xlim([0.35, 0.65])
-		# ax2.set_ylim([0, 15])
+		ax2.set_xlim([0.35, 0.65])
+		ax2.set_ylim([0, 15])
 	if var == 1: #m
 		profile = util.read_output().T[0]
+		only_norm = util.read_output(dir_name = "./1109_theta_profile_norm_min/").T[0]
 		no_syst = util.read_output(dir_name = "../NoSystematics/1109_no_sys_m_profile").T[0]
 		x = m31l
 		fig2.suptitle(r"$\Delta m_{31}^2 \chi^2$ profile")
@@ -46,12 +48,14 @@ def plot_profile(var, savename = "profile"):
 		ax2.set_ylim([0, 15])
 	y = profile
 	y_no_sys = no_syst
-	print(y)
-	print(y_no_sys)
+	y_only_norm = only_norm
 	
 	ax2.set_ylabel(r"$\chi^2_{NH}$")
-	ax2.plot(x, y, color ="green", label = "Norm")
-	# ax2.plot(x, y_no_sys, '-.', color ="red", label = "No Syst")
+	ax2.plot(x, y, color ="green", label = "Norm + delta")
+	ax2.plot(x, y_no_sys, '-.', color ="red", label = "No Syst")
+	ax2.plot(x, y_only_norm, '--', color ="orange", label = "Only Norm")
 	ax2.grid(True)
 	ax2.legend()
 	fig2.savefig("{}.png".format(savename), bbox_inches='tight')
+
+plot_profile(0, "1120_theta_norm+delta_min")

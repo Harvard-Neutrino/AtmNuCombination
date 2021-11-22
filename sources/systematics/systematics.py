@@ -11,17 +11,27 @@ pd.options.mode.chained_assignment = None  # default='warn'
 from params import *
 import propagate as prop
 
-def add_systematics(W_r, delta, top):
-    # apply normalization
-
-    # temp = W_r[:]
+def add_systematics(W_r, delta, gamma, top):
     input_data["rate_weight"] = W_r #temp[:]
 
+    # apply nu/nubar ratio and slope
     for i in range(len(input_data["rate_weight"])):
+        # print("1")
         if input_data["pdg"][i] > 0:
+            # print("2")
             input_data["rate_weight"][i] *= delta
         if input_data["pdg"][i] < 0:
+            # print("3")
             input_data["rate_weight"][i] *= (2 - delta)
+        # print(input_data["true_energy"])
+        temp1 = input_data["true_energy"][i] / E_0
+        # print(temp1)
+        # print("4")
+        temp2 = temp1**gamma
+        # print(temp2)
+        # print("5")
+        input_data['rate_weight'][i] *= temp2
+        
 
             
     if top == 0:

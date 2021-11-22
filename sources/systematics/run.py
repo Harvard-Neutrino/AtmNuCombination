@@ -15,6 +15,8 @@ idx = int(sys.argv[1])
 # get the physical parameters
 t23val, m31val = util.id_to_param(idx)
 
+print("t23 and m31 are: {}, {}".format(t23val, m31val))
+
 file_name = "{}.txt".format(idx)
 complete_name = os.path.join(dir_name, file_name)
 
@@ -27,8 +29,8 @@ print("begin the min_chisq")
 
 chisqval = chi.min_chisq(rate_weight, truth0, 0) + chi.min_chisq(rate_weight, truth1, 1)
 
-# print(chisqval)
-# exit(0)
+print("the final chi square is: ", chisqval)
+exit(0)
 
 saveres = np.array([idx, chisqval])
 
