@@ -55,7 +55,7 @@ def min_chisq(W_r, truth, top):
                                 (Nfeval, syst[0], syst[1], syst[2], to_min(syst)))
         Nfeval += 1
     
-    res = scp.optimize.minimize(to_min, np.array([1, 1, 1]), callback = callbackF, options={'disp': True, 'maxiter': 15})
+    res = scp.optimize.minimize(to_min, np.array([1, 1, 1]), callback = callbackF, options={'disp': True, 'maxiter': 10})
     # res = scp.optimize.minimize(to_min, np.array([1]), options={'disp': True})
 
 

@@ -29,6 +29,7 @@ def plot_contour(savename = "chi_sq_contour"):
 def plot_profile(var, savename = "profile"):
 	fig2, ax2 = plt.subplots(figsize=(7,6))
 	if var == 0: #theta
+		norm_d_g = util.read_output(dir_name = "./1121_theta_3_sys_min/")[0]
 		norm_delta = util.read_output(dir_name = "./1120_theta_norm+delta_min/")[0]
 		x = np.sin(t23l) ** 2
 		only_norm = util.read_output(dir_name = "1109_theta_profile_norm_min")[0]
@@ -47,15 +48,17 @@ def plot_profile(var, savename = "profile"):
 		ax2.set_xlim([0.0024, 0.0026])
 		ax2.set_ylim([0, 15])
 	y_norm_delta, x_norm_delta = util.process(norm_delta, x)
+	y_3_sys, x_3_sys = util.process(norm_d_g, x)
 	y_no_sys = no_syst
 	y_only_norm = only_norm
 	
 	ax2.set_ylabel(r"$\chi^2_{NH}$")
-	ax2.plot(x_norm_delta, y_norm_delta, color ="green", label = "Norm + delta")
+	ax2.plot(x_norm_delta, y_norm_delta, '--', color ="green", label = "Norm + delta")
+	ax2.plot(x_3_sys, y_3_sys, color ="blue", label = "N0 + delta + gamma")
 	ax2.plot(x, y_no_sys, '-.', color ="red", label = "No Syst")
-	ax2.plot(x, y_only_norm, '--', color ="orange", label = "Only Norm")
+	ax2.plot(x, y_only_norm, '.', color ="orange", label = "Only Norm")
 	ax2.grid(True)
 	ax2.legend()
 	fig2.savefig("{}.png".format(savename), bbox_inches='tight')
 
-plot_profile(0, "1120_theta_norm+delta_min")
+plot_profile(0, "1121_theta_norm+delta_gamma_min")

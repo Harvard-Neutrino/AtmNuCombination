@@ -14,7 +14,7 @@ m21 = 7.42e-5
 m31 = 2.517e-3 # real Nu-Fit value
 # m31 = 2.8e-3  # try some larger parameters
 
-dir_name = "./1121_theta_3_sys_min/"
+dir_name = "./1128_theta_3_sys_min/"
 
 # Set theta23 numeric values to probe sensitivity
 t23min = np.arcsin(np.sqrt(0.33))
