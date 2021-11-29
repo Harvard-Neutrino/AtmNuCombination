@@ -2,16 +2,17 @@ import numpy as np
 import pandas as pd
 import h5py
 import nuflux
+import math
 import nuSQuIDS as nsq
 import nuSQUIDSTools
+from math import asin, sqrt
 
 class Reader:
 	def __init__(self, experiment, filename):
 
 		self.Experiment = experiment
 		# if filename[-4:-1] == 'hdf5' or filename[-2:-1] == 'h5':
-		# 	print(f'Opening HDF5 simulation file {filename}')
-		if self.Experiment == 'SuperK' or self.Experiment == 'SK':
+		if self.Experiment == 'Super-Kamiokande' or self.Experiment == 'SK' or self.Experiment == 'Super-Kamiokande':
 			print(f'Processing simulation of {self.Experiment} experiment.')
 			with h5py.File(filename,'r') as hf:
 				d_evis = np.array(hf['evis'][()])
@@ -56,7 +57,7 @@ class Reader:
 			d_ETrue = input_data['true_energy'].to_numpy()
 			d_Weight = input_data['weight'].to_numpy()
 			d_Sample = np.int_(input_data['pid'].to_numpy())
-			condition = (d_ETrue > 1) * (d_ETrue < 1e3)
+			condition = (d_ETrue > 1) * (d_ETrue < 1e3) * (d_EReco > 1)
 			self.EReco = d_EReco[condition]
 			self.CosZReco = d_CosZReco[condition]
 			self.CosZTrue = d_CosZTrue[condition]
@@ -71,10 +72,11 @@ class Reader:
 			self.NumberOfEvents = self.nuPDG.size
 		# print(self.NumberOfEvents)
 
+	def SetOutFile(self,o):
+		self.outfile = o
 
 	def Binning(self):
-		if self.Experiment == 'SuperK' or self.Experiment == 'SK':
-			# Define some reco energy bins for each SK sample (used throughout this notebook)
+		if self.Experiment == 'Super-Kamiokande' or self.Experiment == 'SK':
 			sge_ebins = np.array([0.1, 0.25, 0.4, 0.63, 1.0, 1.33])
 			sgm_ebins = np.array([0.1, 0.25, 0.4, 0.63, 1.0, 1.33])
 			sgsrpi0ebins = np.array([0.1, 0.25, 0.4, 0.63, 1.0, 500])
@@ -95,7 +97,7 @@ class Reader:
 			self.MaxNumberOfEnergyBins = 5
 			self.MaxNumberOfCzBins = 10
 		elif self.Experiment == 'IceCube' or self.Experiment == 'IC' or self.Experiment == 'DeepCore':
-			Erec_max = 1e3
+			Erec_max = 1e4
 			NErec = 40
 			erec = np.logspace(np.log10(self.Erec_min), np.log10(Erec_max), NErec+1, endpoint = True)
 			z10bins = np.array([-1, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
@@ -105,7 +107,7 @@ class Reader:
 			self.MaxNumberOfCzBins = 10
 
 
-	def BFOscillator(self,th23,dm31,dcp):
+	def BFOscillator(self,th23,dm31,dcp=4.01425,th13=0.14957):#  230*Radian 8.57 * Radian
 		units = nsq.Const()
 		Radian = np.pi / 180.
 		interactions = False
@@ -114,7 +116,7 @@ class Reader:
 		AtmOsc.Set_rel_error(1.0e-4);
 		AtmOsc.Set_abs_error(1.0e-4);
 		AtmOsc.Set_MixingAngle(0,1, 33.44 * Radian)
-		AtmOsc.Set_MixingAngle(0,2, 8.57 * Radian)
+		AtmOsc.Set_MixingAngle(0,2, th13)
 		AtmOsc.Set_SquareMassDifference(1,7.42e-5)
 		AtmOsc.Set_MixingAngle(1,2, th23)
 		AtmOsc.Set_SquareMassDifference(2,dm31)
@@ -137,11 +139,44 @@ class Reader:
 				neuflavor = 2
 			self.weightOscBF[i] = AtmOsc.EvalFlavor(neuflavor, cz, E*units.GeV, neutype)
 
+	def BFOscillatorxml(self,neutrino_flavors, Sin2Theta12=0, Sin2Theta13=0, Sin2Theta23=0, Dm221=0, Dm231=0, dCP=0, Ordering='normal'):
+		units = nsq.Const()
+		interactions = False
+		AtmOsc = nsq.nuSQUIDSAtm(self.cth_nodes,self.energy_nodes*units.GeV,neutrino_flavors,nsq.NeutrinoType.both,interactions)
+		AtmOsc.Set_rel_error(1.0e-4);
+		AtmOsc.Set_abs_error(1.0e-4);
+		AtmOsc.Set_MixingAngle(0,1, asin(sqrt(Sin2Theta12)))
+		AtmOsc.Set_MixingAngle(0,2, asin(sqrt(Sin2Theta13)))
+		AtmOsc.Set_SquareMassDifference(1, Dm221)
+		AtmOsc.Set_MixingAngle(1,2, asin(sqrt(Sin2Theta23)))
+		if Ordering=='normal':
+			AtmOsc.Set_SquareMassDifference(2,Dm231)
+		else:
+			AtmOsc.Set_SquareMassDifference(2,Dm221-Dm231)
+		AtmOsc.Set_CPPhase(0,2,dCP)
+		AtmOsc.Set_initial_state(self.AtmInitialFlux,nsq.Basis.flavor)
+		AtmOsc.EvolveState()
+
+		self.weightOscBF = np.zeros(self.NumberOfEvents)
+		neuflavor=0
+		for i,(E,cz) in enumerate(zip(self.ETrue, self.CosZTrue)):
+			if self.nuPDG[i] > 0 :
+				neutype = 0
+			else:
+				neutype = 1
+			if np.abs(self.nuPDG[i]) == 12:
+				neuflavor = 0
+			elif np.abs(self.nuPDG[i]) == 14:
+				neuflavor = 1
+			elif np.abs(self.nuPDG[i]) == 16:
+				neuflavor = 2
+			self.weightOscBF[i] = AtmOsc.EvalFlavor(neuflavor, cz, E*units.GeV, neutype)
+
 	def GridOscPar(self,nt23,nm31,ncp):
-		return np.zeros((nt23+1,nm31+1,ncp+1,self.NumberOfEvents))
+		return np.zeros((nt23,nm31,ncp,self.NumberOfEvents))
 		# self.weightOsc = np.zeros((nt23+1,nm31+1,ncp+1,self.NumberOfEvents))
 
-	def OscillatorM(self, j, th23, dm31, dcp, return_dict):
+	def OscillatorM(self, j, th23, dm31, dcp, th13, IO, return_dict):
 		units = nsq.Const()
 		Radian = np.pi / 180.
 		interactions = False
@@ -150,10 +185,13 @@ class Reader:
 		AtmOsc.Set_rel_error(1.0e-4);
 		AtmOsc.Set_abs_error(1.0e-4);
 		AtmOsc.Set_MixingAngle(0,1, 33.44 * Radian)
-		AtmOsc.Set_MixingAngle(0,2, 8.57 * Radian)
+		AtmOsc.Set_MixingAngle(0,2, th13)
 		AtmOsc.Set_SquareMassDifference(1,7.42e-5)
 		AtmOsc.Set_MixingAngle(1,2, th23)
-		AtmOsc.Set_SquareMassDifference(2,dm31)
+		if IO==1:
+			AtmOsc.Set_SquareMassDifference(2,7.42e-5-dm31)
+		else:
+			AtmOsc.Set_SquareMassDifference(2,dm31)
 		AtmOsc.Set_CPPhase(0,2,dcp)
 		AtmOsc.Set_initial_state(self.AtmInitialFlux,nsq.Basis.flavor)
 		AtmOsc.EvolveState()
@@ -175,9 +213,65 @@ class Reader:
 
 		return_dict[j] = w
 
+	def OscillatorMxml(self, neutrino_flavors, t12, t13, t23, dm21, dm31, dcp, Ordering='normal'):
+		units = nsq.Const()
+		interactions = False
+		AtmOsc = nsq.nuSQUIDSAtm(self.cth_nodes,self.energy_nodes*units.GeV,neutrino_flavors,nsq.NeutrinoType.both,interactions)
+		AtmOsc.Set_rel_error(1.0e-4);
+		AtmOsc.Set_abs_error(1.0e-4);
+		AtmOsc.Set_MixingAngle(0,1, asin(sqrt(t12)))
+		AtmOsc.Set_MixingAngle(0,2, asin(sqrt(t13)))
+		AtmOsc.Set_SquareMassDifference(1,dm21)
+		AtmOsc.Set_MixingAngle(1,2, asin(sqrt(t23)))
+		if Ordering=='normal':
+			AtmOsc.Set_SquareMassDifference(2,dm31)
+		else:
+			AtmOsc.Set_SquareMassDifference(2,dm21-dm31)
+		AtmOsc.Set_CPPhase(0,2,dcp)
+		AtmOsc.Set_initial_state(self.AtmInitialFlux,nsq.Basis.flavor)
+		AtmOsc.EvolveState()
+
+		w = np.zeros(self.NumberOfEvents)
+
+		for i,(E,cz) in enumerate(zip(self.ETrue, self.CosZTrue)):
+			if self.nuPDG[i] > 0 :
+				neutype = 0
+			else:
+				neutype = 1
+			if np.abs(self.nuPDG[i]) == 12:
+				neuflavor = 0
+			elif np.abs(self.nuPDG[i]) == 14:
+				neuflavor = 1
+			elif np.abs(self.nuPDG[i]) == 16:
+				neuflavor = 2
+			w[i] = AtmOsc.EvalFlavor(neuflavor, cz, E*units.GeV, neutype)
+
+		return w
+
+	def Chi2Calculator(self, neutrino_flavors, t12, t13, t23, dm21, dm31, dcp, Ordering):
+		wOsc = self.OscillatorMxml(neutrino_flavors, t12, t13, t23, dm21, dm31, dcp, Ordering)
+		X2=0
+		for s in range(self.NumberOfSamples):
+			wBF = self.weightOscBF[self.Sample==s] * self.Weight[self.Sample==s]
+			Exp, dx, dy = np.histogram2d(self.EReco[self.Sample==s], self.CosZReco[self.Sample==s], bins=(self.EnergyBins[s], self.CzBins[s]), weights=wBF*self.Norm)
+			w = wOsc[self.Sample==s] * self.Weight[self.Sample==s]
+			Obs, dx, dy = np.histogram2d(self.EReco[self.Sample==s], self.CosZReco[self.Sample==s], bins=(self.EnergyBins[s], self.CzBins[s]), weights=w*self.Norm)
+			for O,E in zip(np.ravel(Obs),np.ravel(Exp)):
+				if O==0 or E==0: 
+					pass
+				else:
+					X2 = X2 + 2 * (E - O + O * math.log(O/E))
+
+		# print(f'{t12} {t13} {t23} {dm21} {dm31} {dcp} {Ordering} {X2}\n')
+		with open(self.outfile,'a') as f:
+			f.write(f'{t12} {t13} {t23} {dm21} {dm31} {dcp} {Ordering} {X2}\n')
+			f.flush()
+
+		# return_dict
+		# minimize(fun, x0, args=(a,),
 
 	def InitialFlux(self):
-		if self.Experiment == 'SuperK':
+		if self.Experiment == 'Super-Kamiokande':
 			flux = nuflux.makeFlux('IPhonda2014_sk_solmin')
 			E_min = 0.1
 			E_max = 4.0e2
@@ -214,10 +308,10 @@ class Reader:
 		self.AtmInitialFlux = AtmInitialFlux
 		
 def OscPar(ndm31, dm31_min, dm31_max, nth23, th23_min, th23_max, ndcp, dcp_min, dcp_max):
-	SqT23 = np.linspace(th23_min, th23_max, nth23+1, endpoint = True)
+	SqT23 = np.linspace(th23_min, th23_max, nth23, endpoint = True)
 	T23 = np.arcsin(np.sqrt(SqT23))
-	DM31 = np.linspace(dm31_min, dm31_max, ndm31+1, endpoint = True)
-	DCP = np.linspace(dcp_min, dcp_max, ndcp+1, endpoint = True)
+	DM31 = np.linspace(dm31_min, dm31_max, ndm31, endpoint = True)
+	DCP = np.linspace(dcp_min, dcp_max, ndcp, endpoint = True)
 	return DM31, T23, SqT23, DCP
 
 		

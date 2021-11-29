@@ -6,30 +6,17 @@
 	<NeutrinoSource name="Atmospheric">
 		<status name='status'> 1 </status>
 		<systematic name='Flux Normalization'>
-			<status> 1 </status>
+			<status> 0 </status>
 			<tofit> 1 </tofit>
 			<nuisance> 1.0 </nuisance>
 		</systematic>
 		<systematic name='Nu-Nubar Double Ratio'>
-			<status> 1 </status>
+			<status> 0 </status>
 			<tofit> 1 </tofit>
 			<nuisance> 1.0 </nuisance>
 		</systematic>
 	</NeutrinoSource>
-<!-- Tokai accelerator neutrinos -->
-	<NeutrinoSource name="J-PARC Beam">
-		<status name='status'> 0 </status>
-		<systematic name='Flux Pi+-decay'>
-			<status> 1 </status>
-			<tofit> 0 </tofit>
-			<nuisance> 1.0 </nuisance>
-		</systematic>
-		<systematic name='Flux K+-decay'>
-			<status> 1 </status>
-			<tofit> 1 </tofit>
-			<nuisance> 3.2 </nuisance>
-		</systematic>
-	</NeutrinoSource>
+
 
 <!--Anything common to a given neutrino experiment-->
 <!-- SuperK -->
@@ -38,36 +25,19 @@
 		<simulation filename='../Simulation/SuperK/data/output/combined.hdf5'> </simulation>
 		<exposure> 20 </exposure>
 		<systematic name='Energy Scale'>
-			<status> 1 </status>
+			<status> 0 </status>
 			<tofit> 1 </tofit>
 			<prior> 1.1 </prior>
 			<nuisance> 1.0 </nuisance>
 		</systematic>
 		<systematic name='Decay-e Efficiency'>
-			<status> 1 </status>
+			<status> 0 </status>
 			<tofit> 1 </tofit>
 			<prior> 1. </prior>
 			<nuisance> 1.0 </nuisance>
 		</systematic>
 	</NeutrinoExperiment>
-<!-- IceCube Upgrade -->
-	<NeutrinoExperiment name="IceCube Upgrade">
-		<status name='status'> 0 </status>
-		<simulation filename='../Simulation/IceCubeUpgradedata/neutrino_mc.csv'> </simulation>
-		<exposure> 3 </exposure>
-		<systematic name='Energy Scale'>
-			<status> 1 </status>
-			<tofit> 1 </tofit>
-			<prior> 1.1 </prior>
-			<nuisance> 1.0 </nuisance>
-		</systematic>
-		<systematic name='Track-Shower Separation'>
-			<status> 1 </status>
-			<tofit> 1 </tofit>
-			<prior> 1. </prior>
-			<nuisance> 1.0 </nuisance>
-		</systematic>
-	</NeutrinoExperiment>
+
 
 <!--Anything common to a given neutrino physics scenario-->
 	<NeutrinoPhysics name="Three Flavour">
@@ -75,40 +45,43 @@
 		<flavours> 3 </flavours>
 		<parameters>
 			<Sin2Theta12>
-				<points> 10 </points>
-				<min> 0.5 </min>
-				<max> 1.5 </max>
-				<best> 0.5 </best>
+				<points> 1 </points>
+				<min> 0.304 </min>
+				<max> 0.304 </max>
+				<best> 0.304 </best>
 			</Sin2Theta12>
 			<Sin2Theta13>
-				<points> 1 </points>
-				<min> 0.5 </min>
-				<max> 0.5 </max>
-				<best> 0.5 </best>
+				<points> 20 </points>
+				<!-- <points> 1 </points> -->
+				<min> 0.0 </min>
+				<max> 0.08 </max>
+				<best> 0.022 </best>
 			</Sin2Theta13>
 			<Sin2Theta23>
-				<points> 1 </points>
-				<min> 0.5 </min>
-				<max> 0.5 </max>
-				<best> 0.5 </best>
+				<points> 25 </points>
+				<!-- <points> 1 </points> -->
+				<min> 0.305 </min>
+				<max> 0.705 </max>
+				<best> 0.572 </best>
 			</Sin2Theta23>
 			<dCP>
 				<points> 1 </points>
-				<min> 0.5 </min>
-				<max> 0.5 </max>
-				<best> 0.5 </best>
+				<min> 4.014 </min>
+				<max> 4.014 </max>
+				<best> 4.014 </best>
 			</dCP>
 			<Dm221>
 				<points> 1 </points>
-				<min> 0.5 </min>
-				<max> 0.5 </max>
-				<best> 0.5 </best>
+				<min> 7.42e-5 </min>
+				<max> 7.42e-5 </max>
+				<best> 7.42e-5 </best>
 			</Dm221>
 			<Dm231>
-				<points> 20 </points>
-				<min> 0.5 </min>
-				<max> 5 </max>
-				<best> 0.5 </best>
+				<!-- <points> 2 </points> -->
+				<points> 25 </points>
+				<min> 2.0e-3 </min>
+				<max> 3.0e-3 </max>
+				<best> 2.5e-3 </best>
 			</Dm231>
 			<Ordering>
 				<normal> 1 </normal>

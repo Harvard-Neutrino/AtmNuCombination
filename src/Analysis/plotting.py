@@ -49,22 +49,27 @@ def cornerPlot(x,y,X2,title=''):
 		ax.set_xlabel(r'$\Delta m^2_{31}$')
 	elif abs(x0+xf-2*math.pi)<0.1:
 		ax.set_xlabel(r'$\delta_{CP}$')
+	else:
+		ax.set_xlabel(r'$\sin^2\theta_{13}$')
 	if abs(y0+yf-1)<0.1:
 		ax.set_ylabel(r'$\sin^2\theta_{23}$')
 	elif abs(y0+yf)<0.01:
 		ax.set_ylabel(r'$\Delta m^2_{31}$')
 	elif abs(y0+yf-2*math.pi)<0.1:
 		ax.set_ylabel(r'$\delta_{CP}$')
+	else:
+		ax.set_ylabel(r'$\sin^2\theta_{13}$')
 
-	colors = ['c','g','r']
+	colors = ['c','g']
 
-	levels = np.array([2.706,3.841,6.635])
+	levels1d = np.array([2.706,9.0])
+	levels2d = np.array([4.605,11.904])
 
 	# Put data into plots
 	axUp.plot(x,X2_x, color='k')
-	for i in range(3):
-		axUp.plot([x[0],x[-1]],[levels[i],levels[i]], color=colors[i], linewidth=0.5)
-		axRi.plot([levels[i],levels[i]], [y[0],y[-1]],color=colors[i], linewidth=0.5)
+	for i in range(2):
+		axUp.plot([x[0],x[-1]],[levels1d[i],levels1d[i]], color=colors[i], linewidth=0.5)
+		axRi.plot([levels1d[i],levels1d[i]], [y[0],y[-1]],color=colors[i], linewidth=0.5)
 	axUp.set_ylim(0.,20.)
 	axUp.set_xlim(x0,xf)
 	axRi.plot(X2_y, y, color='k')
@@ -73,7 +78,7 @@ def cornerPlot(x,y,X2,title=''):
 
 	X, Y = np.meshgrid(x, y)
 	levels = np.array([4.605,5.991,9.21])
-	ax.contour(X,Y,Chi2, levels=levels, colors=colors)
+	ax.contour(X,Y,Chi2, levels=levels2d, colors=colors)
 	ax.set_xlim(x0,xf)
 	ax.set_ylim(y0,yf)
 
@@ -140,16 +145,17 @@ def cornerPlotBothO(x,y,X2_N,X2_I):
 		ax.set_ylabel(r'$\Delta m^2_{31}$')
 	elif abs(y0+yf-2*math.pi)<0.1:
 		ax.set_ylabel(r'$\delta_{CP}$')
-	colors = ['c','g','r']
+	colors = ['c','g']
 
 
-	levels = np.array([2.706,3.841,6.635])
+	levels1d = np.array([2.706,9.0])
+	levels2d = np.array([4.605,11.904])
 
 	axUp.plot(x,X2N_x, color='k')
 	axUp.plot(x,X2I_x, color='k', linestyle='dotted')
-	for i in range(3):
-		axUp.plot([x0,xf],[levels[i],levels[i]], color=colors[i], linewidth=0.5)
-		axRi.plot([levels[i],levels[i]], [y0,yf],color=colors[i], linewidth=0.5)
+	for i in range(2):
+		axUp.plot([x0,xf],[levels1d[i],levels1d[i]], color=colors[i], linewidth=0.5)
+		axRi.plot([levels1d[i],levels1d[i]], [y0,yf],color=colors[i], linewidth=0.5)
 	axUp.set_ylim(0.,20.)
 	axUp.set_xlim(x0,xf)
 	axRi.plot(X2N_y, y, color='k')
@@ -159,8 +165,8 @@ def cornerPlotBothO(x,y,X2_N,X2_I):
 
 	X, Y = np.meshgrid(x, y)
 	levels = np.array([4.605,5.991,9.21])
-	ax.contour(X,Y,Chi2N, levels=levels, colors=colors)
-	ax.contour(X,Y,Chi2I, levels=levels, colors=colors, linestyles='dotted')
+	ax.contour(X,Y,Chi2N, levels=levels2d, colors=colors)
+	ax.contour(X,Y,Chi2I, levels=levels2d, colors=colors, linestyles='dotted')
 	ax.set_xlim(x0,xf)
 	ax.set_ylim(y0,yf)
 

@@ -74,6 +74,29 @@ def X2reader(filename, filename2='None'):
 					X2I = np.append(X2I,marg)
 			cornerPlotBothO(oscPar[1],oscPar[2],X2,X2I)
 
+def X2readerGeneral(filename):	
+	df = pd.read_csv(filename, sep=' ')
+	rawOscPar = {}
+	oscPar = {}
+	ordering = np.unique(df["Ordering"])
+	for i in range(df.columns.size-1):
+		for o in ordering:
+			rawOscPar[i] = df.values[:,i]
+			oscPar[i] = np.unique(rawOscPar[i])
+	chi2 = np.array(df["X2"])
+	chi2_n = chi2
+	chi2_i = np.array(df["X2"])
+
+
+	for par1 in oscPar:
+		if oscPar[par1].size>2:
+			for par2 in oscPar:
+				if oscPar[par2].size>2 and par1!=par2:
+					print(par1,par2)
+
+
+
+
 def X2readerBoth(filename, filename2):
 
 	df = pd.read_csv(filename, sep=' ')
@@ -142,6 +165,7 @@ experiment = str(sys.argv[1])
 filename = str(sys.argv[2])
 if len(sys.argv)==3 and (experiment=='SK' or experiment=='IC'):
 	X2reader(filename)
+	# X2readerGeneral(filename)
 elif len(sys.argv)==4 and (experiment=='SK' or experiment=='IC'):
 	filename2 = sys.argv[3]
 	X2reader(filename, filename2)
