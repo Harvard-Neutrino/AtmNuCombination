@@ -30,7 +30,9 @@ def plot_profile(var, savename = "profile"):
 	fig2, ax2 = plt.subplots(figsize=(7,6))
 	if var == 0: #theta
 		norm_d_g = util.read_output(dir_name = "./1121_theta_3_sys_min/")[0]
+		print(norm_d_g)
 		norm_delta = util.read_output(dir_name = "./1120_theta_norm+delta_min/")[0]
+		print(norm_delta)
 		x = np.sin(t23l) ** 2
 		only_norm = util.read_output(dir_name = "1109_theta_profile_norm_min")[0]
 		no_syst = util.read_output(dir_name = "../NoSystematics/1109_no_sys_the_profile")[0]
@@ -61,4 +63,5 @@ def plot_profile(var, savename = "profile"):
 	ax2.legend()
 	fig2.savefig("{}.png".format(savename), bbox_inches='tight')
 
-plot_profile(0, "1121_theta_norm+delta_gamma_min")
+plot_profile(0, "1128_theta_norm+delta_gamma_min")
+# plotting.plot_contour("1109_countour_norm_min")

@@ -15,6 +15,9 @@ import plotting
 import propagate as prop
 import systematics as syst
 
+util.read_output(dir_name = "./1128_theta_3_sys_min/")[0]
+
+'''
 
 # start = time.time()
 # truth0 = chi.get_truth(0)
@@ -46,3 +49,4 @@ print(chi.get_chisq(W_r, 1, 1, truth0, 0) + chi.get_chisq(W_r, 1, 1, truth1, 1))
 
 # for i in range(len(t23l)):
 #     print(np.sin(t23l[i])**2, no_syst[i], profile[i])
+'''

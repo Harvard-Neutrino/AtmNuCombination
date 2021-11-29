@@ -6,6 +6,8 @@ import nuSQuIDS as nsq
 import nuflux
 import seaborn as sns
 
+
+
 # Set up mixing parameters as in nu-fit5.0
 theta12 = np.arcsin(np.sqrt(0.304))
 theta13 = np.arcsin(np.sqrt(0.02221))
@@ -14,23 +16,43 @@ m21 = 7.42e-5
 m31 = 2.517e-3 # real Nu-Fit value
 # m31 = 2.8e-3  # try some larger parameters
 
-dir_name = "./1128_theta_3_sys_min/"
+dir_name = "./1128_fisher_theta/"
+
+# thetalist = True
+# mlist = True
 
 # Set theta23 numeric values to probe sensitivity
 t23min = np.arcsin(np.sqrt(0.33))
 t23max = np.arcsin(np.sqrt(0.67))
 t23step = 0.001 * np.pi
+# if thetalist:
 t23l = np.arange(t23min, t23max + t23step, t23step)
-# t23l = np.array([theta23])
+# else:
+#     t23l = np.array([theta23])
 # t23l = np.array([0.44872923, theta23])
 
+# if mlist:
 # m31min = 2.20e-3
 # m31max = 2.80e-3
 # m31step = 0.01e-3
+# else:
 m31min = m31
 m31max = m31
 m31step = 1
 m31l = np.arange(m31min, m31max + m31step, m31step)
+
+# Set the fisher information plotting points lists
+fisher_null = np.array([0])
+fisher_t23l = np.arange(np.arcsin(np.sqrt(0.33)), np.arcsin(np.sqrt(0.67)) + 0.001 * np.pi, 0.001 * np.pi)
+fisher_m31l = np.arange(2.20e-3, 2.80e-3 + 0.01e-3, 0.01e-3)
+
+fisher1 = fisher_t23l
+fisher2 = fisher_null
+fisher1_is_theta = (fisher1.all() == fisher_t23l.all())
+fisher1_is_m = (fisher1.all() == fisher_m31l.all())
+fisher2_is_theta = (fisher2.all() == fisher_t23l.all())
+fisher2_is_m = (fisher2.all() == fisher_m31l.all())
+
 
 # set up systematics constants
 E_0 = 20
