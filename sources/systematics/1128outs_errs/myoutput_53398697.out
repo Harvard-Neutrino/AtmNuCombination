@@ -1,0 +1,23 @@
+t23 and m31 are: 0.7690193473133584, 0.002517
+begin the min_chisq
+   1,  1.001259,  1.000546,  0.998583,  0.998583
+   2,  1.001837,  1.000814,  0.998912,  0.998912
+   3,  1.001971,  1.000521,  0.998918,  0.998918
+   4,  1.002009,  1.000543,  0.998874,  0.998874
+   5,  1.002075,  1.000581,  0.998798,  0.998798
+   6,  1.002075,  1.000581,  0.998798,  0.998798
+Optimization terminated successfully.
+         Current function value: 0.603566
+         Iterations: 6
+         Function evaluations: 65
+         Gradient evaluations: 13
+   7,  1.000691,  1.000308,  1.000150,  1.000150
+   8,  1.001550,  1.000698,  0.999405,  0.999405
+   9,  1.001835,  1.000076,  0.999397,  0.999397
+  10,  1.001900,  1.000080,  0.999349,  0.999349
+  11,  1.001900,  1.000080,  0.999349,  0.999349
+Optimization terminated successfully.
+         Current function value: 0.533079
+         Iterations: 5
+         Function evaluations: 45
+         Gradient evaluations: 9
