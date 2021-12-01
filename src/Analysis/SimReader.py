@@ -267,7 +267,57 @@ class Reader:
 			f.write(f'{t12} {t13} {t23} {dm21} {dm31} {dcp} {Ordering} {X2}\n')
 			f.flush()
 
-		# return_dict
+		return X2
+
+	def DefinSystematics(self):
+		self.systBF = np.array([1.,1.,1.,1.,1.,1.])
+		self.systSig = np.array([1.,1.,1.,1.,1.,1.])
+
+	def Chi2CalculatorWsyst(self, syst, neutrino_flavors, t12, t13, t23, dm21, dm31, dcp, Ordering):
+		wOsc = self.OscillatorMxml(neutrino_flavors, t12, t13, t23, dm21, dm31, dcp, Ordering)
+		X2=0
+
+		# norm = syst[0]
+		# nnbar = syst[1]
+		# eovermu = syst[2]
+		# tilt = syst[3]
+		# up = syst[4]
+		# down = syst[5]
+
+		systWeight = np.ones(self.NumberOfEvents) 
+		tilt = (self.ETrue / self.E0Gam)**syst[3]
+		norm = syst[0]
+		nnbar = np.ones(self.NumberOfEvents)
+		nnbar = nnbar[self.nuPDG<0] * syst[1]
+		eovermu = np.ones(self.NumberOfEvents)
+		eovermu = eovermu[abs(self.nuPDG)==12] * syst[2]
+		zenith = np.ones(self.NumberOfEvents) 
+		zenith = zenith[self.CosZTrue<0] - syst[4] * np.tanh(self.CosZTrue[self.CosZTrue<0])**2
+		zenith = zenith[self.CosZTrue>=0] - syst[5] * np.tanh(self.CosZTrue[self.CosZTrue>=0])**2
+
+		systWeight = systWeight * tilt * norm * nnbar * eovermu * zenith
+
+		for s in range(self.NumberOfSamples):
+			wBF = self.weightOscBF[self.Sample==s] * self.Weight[self.Sample==s]
+			Exp, dx, dy = np.histogram2d(self.EReco[self.Sample==s], self.CosZReco[self.Sample==s], bins=(self.EnergyBins[s], self.CzBins[s]), weights=wBF*self.Norm)
+			w = wOsc[self.Sample==s] * self.Weight[self.Sample==s] * systWeight[self.Sample==s]
+			Obs, dx, dy = np.histogram2d(self.EReco[self.Sample==s], self.CosZReco[self.Sample==s], bins=(self.EnergyBins[s], self.CzBins[s]), weights=w*self.Norm)
+			for O,E in zip(np.ravel(Obs),np.ravel(Exp)):
+				if O==0 or E==0: 
+					pass
+				else:
+					X2 = X2 + 2 * (E - O + O * math.log(O/E))
+
+		for i,s in enumerate(syst):
+			X2 = X2 + ((s-self.systBF[i]) / self.systSig[i])**2
+
+		# print(f'{t12} {t13} {t23} {dm21} {dm31} {dcp} {Ordering} {X2}\n')
+		# with open(self.outfile,'a') as f:
+		# 	f.write(f'{t12} {t13} {t23} {dm21} {dm31} {dcp} {Ordering} {X2}\n')
+		# 	f.flush()
+
+		return X2
+
 		# minimize(fun, x0, args=(a,),
 
 	def InitialFlux(self):

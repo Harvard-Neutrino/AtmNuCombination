@@ -61,8 +61,9 @@ class parseXML:
 	def readOscPar(self):
 		keys = ['Sin2Theta12','Sin2Theta13','Sin2Theta23','Dm221','Dm231','dCP','Ordering']
 		self.parameters = keys
-		self.OscParametersGrid = {}
-		self.OscParametersBest = {}
+		self.OscParametersGrid  = {}
+		self.OscParametersEdges = {}
+		self.OscParametersBest  = {}
 		for node in self.root.iter('NeutrinoPhysics'):
 			for phys in self.physics:
 				if node.attrib['name'] == phys:
@@ -70,6 +71,7 @@ class parseXML:
 					for key in keys:
 						par = node.find('parameters/'+key)
 						self.OscParametersGrid[key] = self.readOscParValues(par, key)
+						self.OscParametersEdges[key] = self.readOscParPrior(par, key)
 						self.OscParametersBest[key] = self.readOscParBestValue(par, key)
 
 	def readOscParValues(self, pars, key):
@@ -77,14 +79,12 @@ class parseXML:
 			if int(pars.find('normal').text):
 				x = np.array(['normal'])
 				if int(pars.find('inverted').text):
-					x = np.append((x,'inverted'))
+					x = np.append(x,'inverted')
 			else:
 				if int(pars.find('inverted').text):
 					x = np.array(['inverted'])
 			return x
 
-
-			return np.array([int(pars.find('normal').text),int(pars.find('inverted').text)])
 		else:
 			n = int(pars.find('points').text)
 			mini = float(pars.find('min').text)
@@ -97,6 +97,22 @@ class parseXML:
 		else:
 			return float(pars.find('best').text)
 
+	def readOscParPrior(self, pars, key):
+		if key=='Ordering':
+			if int(pars.find('normal').text):
+				x = np.array(['normal'])
+				if int(pars.find('inverted').text):
+					x = np.append(x,'inverted')
+			else:
+				if int(pars.find('inverted').text):
+					x = np.array(['inverted'])
+			return x
+
+		else:
+			n = int(pars.find('points').text)
+			mini = float(pars.find('min').text)
+			maxi = float(pars.find('max').text)
+			return np.array([mini, maxi])
 
 import itertools
 if __name__ == '__main__':

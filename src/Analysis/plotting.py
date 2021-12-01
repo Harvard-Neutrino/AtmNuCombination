@@ -19,6 +19,8 @@ def cornerPlot(x,y,X2,title=''):
 	for i,t in enumerate(y):
 		marg = np.amin(Chi2[i,0:x.size])
 		X2_y = np.append(X2_y,marg)
+		print(t,marg)
+
 
 	for i,t in enumerate(x):
 		marg = np.amin(Chi2[0:y.size,i])
