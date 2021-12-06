@@ -42,7 +42,7 @@ class Reader:
 			self.NumberOfSamples = 16
 			self.Erec_min = 0.1
 			self.NumberOfEvents = self.nuPDG.size
-		elif self.Experiment == 'IceCube' or self.Experiment == 'IC' or self.Experiment == 'DeepCore':
+		elif self.Experiment == 'IceCube Upgrade' or self.Experiment == 'IC' or self.Experiment == 'DeepCore':
 			print(f'Processing simulation of {self.Experiment} experiment.')
 			input_data = pd.read_csv(filename)
 			Time = 3.0*365*24*60*60
@@ -51,7 +51,7 @@ class Reader:
 			d_EReco = input_data['reco_energy'].to_numpy()
 			d_CosZReco = np.cos(input_data['reco_zenith'].to_numpy())
 			d_CosZTrue = np.cos(input_data['true_zenith'].to_numpy())
-			d_AziTrue = np.cos(input_data['true_azimuth'].to_numpy())
+			d_AziTrue = input_data['true_azimuth'].to_numpy()
 			d_CC = input_data['current_type'].to_numpy()
 			d_nuPDG = np.int_(input_data['pdg'].to_numpy())
 			d_ETrue = input_data['true_energy'].to_numpy()
@@ -96,7 +96,7 @@ class Reader:
 			7:z10bins, 8:z10bins, 9:z10bins, 10:z10bins, 11:z10bins, 12:z10bins, 13:z10bins, 14:z10bins, 15:z10bins}
 			self.MaxNumberOfEnergyBins = 5
 			self.MaxNumberOfCzBins = 10
-		elif self.Experiment == 'IceCube' or self.Experiment == 'IC' or self.Experiment == 'DeepCore':
+		elif self.Experiment == 'IceCube Upgrade' or self.Experiment == 'IC' or self.Experiment == 'DeepCore':
 			Erec_max = 1e4
 			NErec = 40
 			erec = np.logspace(np.log10(self.Erec_min), np.log10(Erec_max), NErec+1, endpoint = True)
@@ -142,13 +142,14 @@ class Reader:
 	def BFOscillatorxml(self,neutrino_flavors, Sin2Theta12=0, Sin2Theta13=0, Sin2Theta23=0, Dm221=0, Dm231=0, dCP=0, Ordering='normal'):
 		units = nsq.Const()
 		interactions = False
+		# print(Sin2Theta12, Sin2Theta13, Sin2Theta23, Dm221, Dm231, dCP, Ordering)
 		AtmOsc = nsq.nuSQUIDSAtm(self.cth_nodes,self.energy_nodes*units.GeV,neutrino_flavors,nsq.NeutrinoType.both,interactions)
 		AtmOsc.Set_rel_error(1.0e-4);
 		AtmOsc.Set_abs_error(1.0e-4);
 		AtmOsc.Set_MixingAngle(0,1, asin(sqrt(Sin2Theta12)))
 		AtmOsc.Set_MixingAngle(0,2, asin(sqrt(Sin2Theta13)))
-		AtmOsc.Set_SquareMassDifference(1, Dm221)
 		AtmOsc.Set_MixingAngle(1,2, asin(sqrt(Sin2Theta23)))
+		AtmOsc.Set_SquareMassDifference(1, Dm221)
 		if Ordering=='normal':
 			AtmOsc.Set_SquareMassDifference(2,Dm231)
 		else:
@@ -221,8 +222,8 @@ class Reader:
 		AtmOsc.Set_abs_error(1.0e-4);
 		AtmOsc.Set_MixingAngle(0,1, asin(sqrt(t12)))
 		AtmOsc.Set_MixingAngle(0,2, asin(sqrt(t13)))
-		AtmOsc.Set_SquareMassDifference(1,dm21)
 		AtmOsc.Set_MixingAngle(1,2, asin(sqrt(t23)))
+		AtmOsc.Set_SquareMassDifference(1,dm21)
 		if Ordering=='normal':
 			AtmOsc.Set_SquareMassDifference(2,dm31)
 		else:
@@ -258,18 +259,19 @@ class Reader:
 			Obs, dx, dy = np.histogram2d(self.EReco[self.Sample==s], self.CosZReco[self.Sample==s], bins=(self.EnergyBins[s], self.CzBins[s]), weights=w*self.Norm)
 			for O,E in zip(np.ravel(Obs),np.ravel(Exp)):
 				if O==0 or E==0: 
+					# print(f'Warning: null statistics at {self.Experiment} sample {s} ... usual')
 					pass
 				else:
+					# print(f'{E-O}')
 					X2 = X2 + 2 * (E - O + O * math.log(O/E))
 
 		# print(f'{t12} {t13} {t23} {dm21} {dm31} {dcp} {Ordering} {X2}\n')
 		with open(self.outfile,'a') as f:
 			f.write(f'{t12} {t13} {t23} {dm21} {dm31} {dcp} {Ordering} {X2}\n')
 			f.flush()
-
 		return X2
 
-	def DefinSystematics(self):
+	def DefSystematics(self):
 		self.systBF = np.array([1.,1.,1.,1.,1.,1.])
 		self.systSig = np.array([1.,1.,1.,1.,1.,1.])
 

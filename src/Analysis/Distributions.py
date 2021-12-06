@@ -17,8 +17,10 @@ fig, axs = plt.subplots(1, 2, sharey=True, sharex=True, tight_layout=True)
 for i in range(2):
 	print(mc.EnergyBins[i])
 	# axs[i].hist(mc.EReco[mc.Sample==i], bins=mc.EnergyBins[i], weights=mc.Weight[mc.Sample==i]*mc.Norm)
-	h, x = np.histogram(mc.EReco[mc.Sample==i], bins=mc.EnergyBins[i], weights=mc.Weight[mc.Sample==i]*mc.Norm)
-	# axs[i].hist(mc.EReco[mc.Sample==i], bins=mc.EnergyBins[i], weights=np.ones(mc.NumberOfEvents)[mc.Sample==i]*mc.Norm)
+	x=mc.EReco[mc.Sample==i]
+	w=np.ones(x.size)#*mc.Norm
+	h, x = np.histogram(x, bins=mc.EnergyBins[i], weights=w)
+	axs[i].hist(mc.EReco[mc.Sample==i], bins=mc.EnergyBins[i])
 	axs[i].semilogx()
 
 plt.show()

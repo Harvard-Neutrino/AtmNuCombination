@@ -22,7 +22,7 @@
 <!-- IceCube Upgrade -->
 	<NeutrinoExperiment name="IceCube Upgrade">
 		<status name='status'> 1 </status>
-		<simulation filename='../Simulation/IceCubeUpgradedata/neutrino_mc.csv'> </simulation>
+		<simulation filename='../Simulation/IceCubeUpgrade/data/neutrino_mc.csv'> </simulation>
 		<exposure> 3 </exposure>
 		<systematic name='Energy Scale'>
 			<status> 0 </status>
