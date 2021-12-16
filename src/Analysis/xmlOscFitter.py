@@ -1,7 +1,7 @@
 import numpy as np
 import math
 from math import asin, sqrt
-from SimReader import Reader, OscPar
+from SimReader import Reader
 import multiprocessing
 import sys
 from XMLreader import parseXML
@@ -35,7 +35,7 @@ mcList = {}
 # 		f.write(par+' '+str(an.OscParametersBest[par])+' ')
 # 	f.write('X2\n')
 
-print(len(outfile))
+# print(len(outfile))
 
 for i,(exp,fil) in enumerate(zip(an.experiments,an.mcFiles)):
 	print(exp,fil)
@@ -48,7 +48,7 @@ for i,(exp,fil) in enumerate(zip(an.experiments,an.mcFiles)):
 	mcList[exp].InitialFlux()
 
 	# Setup oscillation parameters grid and best fit value
-	mcList[exp].BFOscillatorxml(an.neutrinos,**an.OscParametersBest)
+	mcList[exp].BFOscillator(an.neutrinos,**an.OscParametersBest)
 
 
 # print(an.OscParametersBest)
@@ -83,7 +83,9 @@ if mcmc==0:
 						for m,dm31 in enumerate(an.OscParametersGrid['Dm231']):
 							for d,cp in enumerate(an.OscParametersGrid['dCP']):
 								for o,hi in enumerate(an.OscParametersGrid['Ordering']):
+									# print(hi)
 									# X0 = Chi2StatsCombined(an.neutrinos,t12, t13, t23, dm21, dm31, cp, hi, mcList, outfile[0])
+									# print(X0)
 									p = multiprocessing.Process(target=Chi2StatsCombined,args=[an.neutrinos,t12, t13, t23, dm21, dm31, cp, hi, mcList, outfile[0]])
 									# for mc in mcList:
 										# Xf = Xf + mcList[mc].Chi2Calculator(an.neutrinos,t12, t13, t23, dm21, dm31, cp, hi)

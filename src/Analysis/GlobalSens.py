@@ -95,19 +95,20 @@ def X2readerGeneral(filename):
 			fitPar.append(par)
 
 	if len(switchPar)>0:
+		ChiSq = {}
 		for switch in switchPar:
 			for par1 in fitPar:
 				for par2 in fitPar:
 					if par1!=par2:
-						for scenario in oscPar[switch]:
-							ChiSq = np.array([])
+						for i,scenario in enumerate(oscPar[switch]):
+							ChiSq[i] = np.array([])
 							for val1 in oscPar[par1]:
 								for val2 in oscPar[par2]:
 									cut = (rawOscPar[par1]==val1) * (rawOscPar[par2]==val2) * (rawOscPar[switch]==scenario)
 									chi2_slice = chi2[cut]
 									marg = np.amin(chi2_slice)
-									ChiSq = np.append(ChiSq, marg)
-							cornerPlot(oscPar[par1],oscPar[par2],ChiSq)
+									ChiSq[i] = np.append(ChiSq[i], marg)
+						cornerPlotBothO(oscPar[par1],oscPar[par2],ChiSq[0],ChiSq[1])
 	else:
 		for par1 in fitPar:
 			for par2 in fitPar:

@@ -107,42 +107,9 @@ class Reader:
 			self.MaxNumberOfCzBins = 10
 
 
-	def BFOscillator(self,th23,dm31,dcp=4.01425,th13=0.14957):#  230*Radian 8.57 * Radian
-		units = nsq.Const()
-		Radian = np.pi / 180.
-		interactions = False
-		neutrino_flavors = 3
-		AtmOsc = nsq.nuSQUIDSAtm(self.cth_nodes,self.energy_nodes*units.GeV,neutrino_flavors,nsq.NeutrinoType.both,interactions)
-		AtmOsc.Set_rel_error(1.0e-4);
-		AtmOsc.Set_abs_error(1.0e-4);
-		AtmOsc.Set_MixingAngle(0,1, 33.44 * Radian)
-		AtmOsc.Set_MixingAngle(0,2, th13)
-		AtmOsc.Set_SquareMassDifference(1,7.42e-5)
-		AtmOsc.Set_MixingAngle(1,2, th23)
-		AtmOsc.Set_SquareMassDifference(2,dm31)
-		AtmOsc.Set_CPPhase(0,2,dcp)
-		AtmOsc.Set_initial_state(self.AtmInitialFlux,nsq.Basis.flavor)
-		AtmOsc.EvolveState()
-
-		self.weightOscBF = np.zeros(self.NumberOfEvents)
-		neuflavor=0
-		for i,(E,cz) in enumerate(zip(self.ETrue, self.CosZTrue)):
-			if self.nuPDG[i] > 0 :
-				neutype = 0
-			else:
-				neutype = 1
-			if np.abs(self.nuPDG[i]) == 12:
-				neuflavor = 0
-			elif np.abs(self.nuPDG[i]) == 14:
-				neuflavor = 1
-			elif np.abs(self.nuPDG[i]) == 16:
-				neuflavor = 2
-			self.weightOscBF[i] = AtmOsc.EvalFlavor(neuflavor, cz, E*units.GeV, neutype)
-
-	def BFOscillatorxml(self,neutrino_flavors, Sin2Theta12=0, Sin2Theta13=0, Sin2Theta23=0, Dm221=0, Dm231=0, dCP=0, Ordering='normal'):
+	def BFOscillator(self,neutrino_flavors, Sin2Theta12=0, Sin2Theta13=0, Sin2Theta23=0, Dm221=0, Dm231=0, dCP=0, Ordering='normal'):
 		units = nsq.Const()
 		interactions = False
-		# print(Sin2Theta12, Sin2Theta13, Sin2Theta23, Dm221, Dm231, dCP, Ordering)
 		AtmOsc = nsq.nuSQUIDSAtm(self.cth_nodes,self.energy_nodes*units.GeV,neutrino_flavors,nsq.NeutrinoType.both,interactions)
 		AtmOsc.Set_rel_error(1.0e-4);
 		AtmOsc.Set_abs_error(1.0e-4);
@@ -150,9 +117,8 @@ class Reader:
 		AtmOsc.Set_MixingAngle(0,2, asin(sqrt(Sin2Theta13)))
 		AtmOsc.Set_MixingAngle(1,2, asin(sqrt(Sin2Theta23)))
 		AtmOsc.Set_SquareMassDifference(1, Dm221)
-		if Ordering=='normal':
-			AtmOsc.Set_SquareMassDifference(2,Dm231)
-		else:
+		AtmOsc.Set_SquareMassDifference(2,Dm231)
+		if Ordering!='normal':
 			AtmOsc.Set_SquareMassDifference(2,Dm221-Dm231)
 		AtmOsc.Set_CPPhase(0,2,dCP)
 		AtmOsc.Set_initial_state(self.AtmInitialFlux,nsq.Basis.flavor)
@@ -173,48 +139,8 @@ class Reader:
 				neuflavor = 2
 			self.weightOscBF[i] = AtmOsc.EvalFlavor(neuflavor, cz, E*units.GeV, neutype)
 
-	def GridOscPar(self,nt23,nm31,ncp):
-		return np.zeros((nt23,nm31,ncp,self.NumberOfEvents))
-		# self.weightOsc = np.zeros((nt23+1,nm31+1,ncp+1,self.NumberOfEvents))
 
-	def OscillatorM(self, j, th23, dm31, dcp, th13, IO, return_dict):
-		units = nsq.Const()
-		Radian = np.pi / 180.
-		interactions = False
-		neutrino_flavors = 3
-		AtmOsc = nsq.nuSQUIDSAtm(self.cth_nodes,self.energy_nodes*units.GeV,neutrino_flavors,nsq.NeutrinoType.both,interactions)
-		AtmOsc.Set_rel_error(1.0e-4);
-		AtmOsc.Set_abs_error(1.0e-4);
-		AtmOsc.Set_MixingAngle(0,1, 33.44 * Radian)
-		AtmOsc.Set_MixingAngle(0,2, th13)
-		AtmOsc.Set_SquareMassDifference(1,7.42e-5)
-		AtmOsc.Set_MixingAngle(1,2, th23)
-		if IO==1:
-			AtmOsc.Set_SquareMassDifference(2,7.42e-5-dm31)
-		else:
-			AtmOsc.Set_SquareMassDifference(2,dm31)
-		AtmOsc.Set_CPPhase(0,2,dcp)
-		AtmOsc.Set_initial_state(self.AtmInitialFlux,nsq.Basis.flavor)
-		AtmOsc.EvolveState()
-
-		w = np.zeros(self.NumberOfEvents)
-
-		for i,(E,cz) in enumerate(zip(self.ETrue, self.CosZTrue)):
-			if self.nuPDG[i] > 0 :
-				neutype = 0
-			else:
-				neutype = 1
-			if np.abs(self.nuPDG[i]) == 12:
-				neuflavor = 0
-			elif np.abs(self.nuPDG[i]) == 14:
-				neuflavor = 1
-			elif np.abs(self.nuPDG[i]) == 16:
-				neuflavor = 2
-			w[i] = AtmOsc.EvalFlavor(neuflavor, cz, E*units.GeV, neutype)
-
-		return_dict[j] = w
-
-	def OscillatorMxml(self, neutrino_flavors, t12, t13, t23, dm21, dm31, dcp, Ordering='normal'):
+	def Oscillator(self, neutrino_flavors, t12, t13, t23, dm21, dm31, dcp, Ordering='normal'):
 		units = nsq.Const()
 		interactions = False
 		AtmOsc = nsq.nuSQUIDSAtm(self.cth_nodes,self.energy_nodes*units.GeV,neutrino_flavors,nsq.NeutrinoType.both,interactions)
@@ -224,9 +150,9 @@ class Reader:
 		AtmOsc.Set_MixingAngle(0,2, asin(sqrt(t13)))
 		AtmOsc.Set_MixingAngle(1,2, asin(sqrt(t23)))
 		AtmOsc.Set_SquareMassDifference(1,dm21)
-		if Ordering=='normal':
-			AtmOsc.Set_SquareMassDifference(2,dm31)
-		else:
+		AtmOsc.Set_SquareMassDifference(2,dm31)
+		if Ordering!='normal':
+			# print('inverted surely')
 			AtmOsc.Set_SquareMassDifference(2,dm21-dm31)
 		AtmOsc.Set_CPPhase(0,2,dcp)
 		AtmOsc.Set_initial_state(self.AtmInitialFlux,nsq.Basis.flavor)
@@ -250,7 +176,7 @@ class Reader:
 		return w
 
 	def Chi2Calculator(self, neutrino_flavors, t12, t13, t23, dm21, dm31, dcp, Ordering):
-		wOsc = self.OscillatorMxml(neutrino_flavors, t12, t13, t23, dm21, dm31, dcp, Ordering)
+		wOsc = self.Oscillator(neutrino_flavors, t12, t13, t23, dm21, dm31, dcp, Ordering)
 		X2=0
 		for s in range(self.NumberOfSamples):
 			wBF = self.weightOscBF[self.Sample==s] * self.Weight[self.Sample==s]
@@ -276,7 +202,7 @@ class Reader:
 		self.systSig = np.array([1.,1.,1.,1.,1.,1.])
 
 	def Chi2CalculatorWsyst(self, syst, neutrino_flavors, t12, t13, t23, dm21, dm31, dcp, Ordering):
-		wOsc = self.OscillatorMxml(neutrino_flavors, t12, t13, t23, dm21, dm31, dcp, Ordering)
+		wOsc = self.Oscillator(neutrino_flavors, t12, t13, t23, dm21, dm31, dcp, Ordering)
 		X2=0
 
 		# norm = syst[0]
@@ -359,39 +285,3 @@ class Reader:
 		self.cth_nodes = cth_nodes
 		self.AtmInitialFlux = AtmInitialFlux
 		
-def OscPar(ndm31, dm31_min, dm31_max, nth23, th23_min, th23_max, ndcp, dcp_min, dcp_max):
-	SqT23 = np.linspace(th23_min, th23_max, nth23, endpoint = True)
-	T23 = np.arcsin(np.sqrt(SqT23))
-	DM31 = np.linspace(dm31_min, dm31_max, ndm31, endpoint = True)
-	DCP = np.linspace(dcp_min, dcp_max, ndcp, endpoint = True)
-	return DM31, T23, SqT23, DCP
-
-		
-
-
-''' Probably outdated
-
-	def EventMatrix(self, ndm31, nt23):
-		self.Events = np.zeros(self.NumberOfSamples, ndm31, nt23, self.MaxNumberOfEnergyBins, self.MaxNumberOfCzBins)
-		self.EventsBestFit = np.zeros(self.NumberOfSamples, self.MaxNumberOfEnergyBins, self.MaxNumberOfCzBins)
-		self.WE = np.zeros((self.NumberOfSamples, self.NumberOfEvents))
-		self.WEBAR = np.zeros((self.NumberOfSamples, self.NumberOfEvents))
-		self.WM = np.zeros((self.NumberOfSamples, self.NumberOfEvents))
-		self.WMBAR = np.zeros((self.NumberOfSamples, self.NumberOfEvents))
-
-	def EventBin(self):
-		# Asign a bin number to each event
-		dBin = np.zeros((2,self.NumberOfEvents), dtype=int)
-		for i in range(self.NumberOfEvents):
-			h, bins = np.histogram(self.EReco[i],self.EnergyBins[self.Sample[i]])
-			index = np.where(h==1)
-			dBin[0][i] = int(index[0][0])
-			h, bins = np.histogram(self.CosZReco[i],self.CzBins[self.Sample[i]])
-			index = np.where(h==1)
-			dBin[1][i] = int(index[0][0])
-		return dBin
-'''
-
-
-
-
