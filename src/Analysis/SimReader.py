@@ -11,6 +11,7 @@ class Reader:
 	def __init__(self, experiment, filename):
 
 		self.Experiment = experiment
+		self.Source = 'Atmospheric'
 		# if filename[-4:-1] == 'hdf5' or filename[-2:-1] == 'h5':
 		if self.Experiment == 'Super-Kamiokande' or self.Experiment == 'SK' or self.Experiment == 'Super-Kamiokande':
 			print(f'Processing simulation of {self.Experiment} experiment.')
@@ -48,15 +49,27 @@ class Reader:
 			Time = 3.0*365*24*60*60
 			meter_to_cm_sq = 1e4
 			self.Erec_min = 1
-			d_EReco = input_data['reco_energy'].to_numpy()
-			d_CosZReco = np.cos(input_data['reco_zenith'].to_numpy())
-			d_CosZTrue = np.cos(input_data['true_zenith'].to_numpy())
-			d_AziTrue = input_data['true_azimuth'].to_numpy()
-			d_CC = input_data['current_type'].to_numpy()
-			d_nuPDG = np.int_(input_data['pdg'].to_numpy())
-			d_ETrue = input_data['true_energy'].to_numpy()
-			d_Weight = input_data['weight'].to_numpy()
-			d_Sample = np.int_(input_data['pid'].to_numpy())
+			if int(pd.__version__[0]) == 1:
+				d_EReco = input_data['reco_energy'].to_numpy()
+				d_CosZReco = np.cos(input_data['reco_zenith'].to_numpy())
+				d_CosZTrue = np.cos(input_data['true_zenith'].to_numpy())
+				d_AziTrue = input_data['true_azimuth'].to_numpy()
+				d_CC = input_data['current_type'].to_numpy()
+				d_nuPDG = np.int_(input_data['pdg'].to_numpy())
+				d_ETrue = input_data['true_energy'].to_numpy()
+				d_Weight = input_data['weight'].to_numpy()
+				d_Sample = np.int_(input_data['pid'].to_numpy())
+			elif int(pd.__version__[0]) == 0:
+				d_nuPDG = np.int_(input_data["pdg"])
+				d_EReco = np.array(input_data['reco_energy'])
+				d_CosZReco = np.cos(input_data['reco_zenith'])
+				d_CosZTrue = np.cos(input_data['true_zenith'])
+				d_AziTrue = np.array(input_data['true_azimuth'])
+				d_CC = np.array(input_data['current_type'])
+				d_ETrue = np.array(input_data['true_energy'])
+				d_Weight = np.array(input_data['weight'])
+				d_Sample = np.int_(input_data['pid'])
+
 			condition = (d_ETrue > 1) * (d_ETrue < 1e3) * (d_EReco > 1)
 			self.EReco = d_EReco[condition]
 			self.CosZReco = d_CosZReco[condition]

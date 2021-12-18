@@ -69,6 +69,9 @@ else:
 			f.write('X2\n')
 mcmc=0
 
+cores = multiprocessing.cpu_count()
+print(f'{cores} cores')
+
 if mcmc==0:
 	if an.physics[0] == 'Three Flavour':
 		print(an.physics)
@@ -95,7 +98,7 @@ if mcmc==0:
 										p.start()
 										jj = jj + 1
 										print(f'{t12} {t13} {t23} {dm21} {dm31} {cp} process started')
-										if jj%20==0:
+										if jj%(cores*3)==0:
 											for i,p in enumerate(processes):
 												p.join()
 											processes = []
