@@ -4,9 +4,10 @@ from math import asin, sqrt
 from SimReader import Reader
 import multiprocessing
 import sys
-from XMLreader import parseXML
+from xmlReader import parseXML
 from itertools import product
 from merger import Chi2StatsCombined
+from Sensitivity import sensitivity
 
 # Setup analysis details
 analysis_xml_file=str(sys.argv[1])
@@ -24,36 +25,26 @@ else:
 an = parseXML(analysis_xml_file)
 an.readSources()
 an.readExperiments()
-an.readSystematics()
 an.readPhysics()
 an.readOscPar()
+an.CheckSystematics()
 
 # Setup all experiments
 mcList = {}
-# with open(outfile,'w') as f:
-# 	for par in an.parameters:
-# 		f.write(par+' '+str(an.OscParametersBest[par])+' ')
-# 	f.write('X2\n')
 
-# print(len(outfile))
+for s in an.sources:
+	for i,(exp,fil) in enumerate(zip(an.experiments,an.mcFiles)):
+		print(exp,fil)
+		mcList[exp] = Reader(s,exp,fil)
+		mcList[exp].Binning()
 
-for i,(exp,fil) in enumerate(zip(an.experiments,an.mcFiles)):
-	print(exp,fil)
-	mcList[exp] = Reader(exp,fil)
-	mcList[exp].Binning()
-	# mcList[exp].SetOutFile(outfile[0])
-	# mcList[exp].SetOutFile(outfile[i])
+		# Get unoscillated atm. fluxes
+		mcList[exp].InitialFlux()
 
-	# Get unoscillated atm. fluxes
-	mcList[exp].InitialFlux()
-
-	# Setup oscillation parameters grid and best fit value
-	mcList[exp].BFOscillator(an.neutrinos,**an.OscParametersBest)
-
-
-# print(an.OscParametersBest)
-# chi2Comb = Chi2StatsCombined(3, an.OscParametersBest['Sin2Theta12'], an.OscParametersBest['Sin2Theta13'], an.OscParametersBest['Sin2Theta23'], 
-# 		an.OscParametersBest['Dm221'], an.OscParametersBest['Dm231'], an.OscParametersBest['dCP'], an.OscParametersBest['Ordering'], mcList)
+		# Setup oscillation parameters grid and best fit value
+		mcList[exp].BFOscillator(an.neutrinos,**an.OscParametersBest)
+print('=============================================================')
+print('====================== There we go!! ========================')
 
 
 if len(outfile)>1:
@@ -66,15 +57,18 @@ else:
 	with open(outfile[0],'w') as f:
 			for par in an.parameters:
 				f.write(par+' ')
-			f.write('X2\n')
+			f.write('X2 ')
+			if an.NoSyst == 0:
+				for sys in an.Systematics.values():
+					for s in sys:
+						f.write(s+' ')
 mcmc=0
 
 cores = multiprocessing.cpu_count()
-print(f'{cores} cores')
 
 if mcmc==0:
 	if an.physics[0] == 'Three Flavour':
-		print(an.physics)
+		print(*an.OscParametersGrid)
 		processes = []
 		jj = 0
 
@@ -86,23 +80,16 @@ if mcmc==0:
 						for m,dm31 in enumerate(an.OscParametersGrid['Dm231']):
 							for d,cp in enumerate(an.OscParametersGrid['dCP']):
 								for o,hi in enumerate(an.OscParametersGrid['Ordering']):
-									# print(hi)
-									# X0 = Chi2StatsCombined(an.neutrinos,t12, t13, t23, dm21, dm31, cp, hi, mcList, outfile[0])
-									# print(X0)
-									p = multiprocessing.Process(target=Chi2StatsCombined,args=[an.neutrinos,t12, t13, t23, dm21, dm31, cp, hi, mcList, outfile[0]])
-									# for mc in mcList:
-										# Xf = Xf + mcList[mc].Chi2Calculator(an.neutrinos,t12, t13, t23, dm21, dm31, cp, hi)
-										# p = multiprocessing.Process(target=mcList[mc].Chi2Calculator,args=[an.neutrinos,t12, t13, t23, dm21, dm31, cp, hi])
+									p = multiprocessing.Process(target=sensitivity,args=[an, t12, t13, t23, dm21, dm31, cp, hi, mcList, outfile[0]])
 									if __name__ == "__main__":
 										processes.append(p)
 										p.start()
 										jj = jj + 1
 										print(f'{t12} {t13} {t23} {dm21} {dm31} {cp} process started')
-										if jj%(cores*3)==0:
+										if jj%cores==0:
 											for i,p in enumerate(processes):
 												p.join()
 											processes = []
-											print('Bunch done')
 											print('------------------------------')
 
 '''

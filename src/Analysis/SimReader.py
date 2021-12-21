@@ -8,10 +8,10 @@ import nuSQUIDSTools
 from math import asin, sqrt
 
 class Reader:
-	def __init__(self, experiment, filename):
+	def __init__(self, source, experiment, filename):
 
 		self.Experiment = experiment
-		self.Source = 'Atmospheric'
+		self.Source = source
 		# if filename[-4:-1] == 'hdf5' or filename[-2:-1] == 'h5':
 		if self.Experiment == 'Super-Kamiokande' or self.Experiment == 'SK' or self.Experiment == 'Super-Kamiokande':
 			print(f'Processing simulation of {self.Experiment} experiment.')
@@ -43,7 +43,7 @@ class Reader:
 			self.NumberOfSamples = 16
 			self.Erec_min = 0.1
 			self.NumberOfEvents = self.nuPDG.size
-		elif self.Experiment == 'IceCube Upgrade' or self.Experiment == 'IC' or self.Experiment == 'DeepCore':
+		elif self.Experiment == 'IceCube-Upgrade' or self.Experiment == 'IC' or self.Experiment == 'DeepCore':
 			print(f'Processing simulation of {self.Experiment} experiment.')
 			input_data = pd.read_csv(filename)
 			Time = 3.0*365*24*60*60
@@ -83,10 +83,6 @@ class Reader:
 			self.Norm = Time * meter_to_cm_sq
 			self.NumberOfSamples = 2
 			self.NumberOfEvents = self.nuPDG.size
-		# print(self.NumberOfEvents)
-
-	def SetOutFile(self,o):
-		self.outfile = o
 
 	def Binning(self):
 		if self.Experiment == 'Super-Kamiokande' or self.Experiment == 'SK':
@@ -109,7 +105,7 @@ class Reader:
 			7:z10bins, 8:z10bins, 9:z10bins, 10:z10bins, 11:z10bins, 12:z10bins, 13:z10bins, 14:z10bins, 15:z10bins}
 			self.MaxNumberOfEnergyBins = 5
 			self.MaxNumberOfCzBins = 10
-		elif self.Experiment == 'IceCube Upgrade' or self.Experiment == 'IC' or self.Experiment == 'DeepCore':
+		elif self.Experiment == 'IceCube-Upgrade' or self.Experiment == 'IC' or self.Experiment == 'DeepCore':
 			Erec_max = 1e4
 			NErec = 40
 			erec = np.logspace(np.log10(self.Erec_min), np.log10(Erec_max), NErec+1, endpoint = True)
@@ -187,79 +183,6 @@ class Reader:
 			w[i] = AtmOsc.EvalFlavor(neuflavor, cz, E*units.GeV, neutype)
 
 		return w
-
-	def Chi2Calculator(self, neutrino_flavors, t12, t13, t23, dm21, dm31, dcp, Ordering):
-		wOsc = self.Oscillator(neutrino_flavors, t12, t13, t23, dm21, dm31, dcp, Ordering)
-		X2=0
-		for s in range(self.NumberOfSamples):
-			wBF = self.weightOscBF[self.Sample==s] * self.Weight[self.Sample==s]
-			Exp, dx, dy = np.histogram2d(self.EReco[self.Sample==s], self.CosZReco[self.Sample==s], bins=(self.EnergyBins[s], self.CzBins[s]), weights=wBF*self.Norm)
-			w = wOsc[self.Sample==s] * self.Weight[self.Sample==s]
-			Obs, dx, dy = np.histogram2d(self.EReco[self.Sample==s], self.CosZReco[self.Sample==s], bins=(self.EnergyBins[s], self.CzBins[s]), weights=w*self.Norm)
-			for O,E in zip(np.ravel(Obs),np.ravel(Exp)):
-				if O==0 or E==0: 
-					# print(f'Warning: null statistics at {self.Experiment} sample {s} ... usual')
-					pass
-				else:
-					# print(f'{E-O}')
-					X2 = X2 + 2 * (E - O + O * math.log(O/E))
-
-		# print(f'{t12} {t13} {t23} {dm21} {dm31} {dcp} {Ordering} {X2}\n')
-		with open(self.outfile,'a') as f:
-			f.write(f'{t12} {t13} {t23} {dm21} {dm31} {dcp} {Ordering} {X2}\n')
-			f.flush()
-		return X2
-
-	def DefSystematics(self):
-		self.systBF = np.array([1.,1.,1.,1.,1.,1.])
-		self.systSig = np.array([1.,1.,1.,1.,1.,1.])
-
-	def Chi2CalculatorWsyst(self, syst, neutrino_flavors, t12, t13, t23, dm21, dm31, dcp, Ordering):
-		wOsc = self.Oscillator(neutrino_flavors, t12, t13, t23, dm21, dm31, dcp, Ordering)
-		X2=0
-
-		# norm = syst[0]
-		# nnbar = syst[1]
-		# eovermu = syst[2]
-		# tilt = syst[3]
-		# up = syst[4]
-		# down = syst[5]
-
-		systWeight = np.ones(self.NumberOfEvents) 
-		tilt = (self.ETrue / self.E0Gam)**syst[3]
-		norm = syst[0]
-		nnbar = np.ones(self.NumberOfEvents)
-		nnbar = nnbar[self.nuPDG<0] * syst[1]
-		eovermu = np.ones(self.NumberOfEvents)
-		eovermu = eovermu[abs(self.nuPDG)==12] * syst[2]
-		zenith = np.ones(self.NumberOfEvents) 
-		zenith = zenith[self.CosZTrue<0] - syst[4] * np.tanh(self.CosZTrue[self.CosZTrue<0])**2
-		zenith = zenith[self.CosZTrue>=0] - syst[5] * np.tanh(self.CosZTrue[self.CosZTrue>=0])**2
-
-		systWeight = systWeight * tilt * norm * nnbar * eovermu * zenith
-
-		for s in range(self.NumberOfSamples):
-			wBF = self.weightOscBF[self.Sample==s] * self.Weight[self.Sample==s]
-			Exp, dx, dy = np.histogram2d(self.EReco[self.Sample==s], self.CosZReco[self.Sample==s], bins=(self.EnergyBins[s], self.CzBins[s]), weights=wBF*self.Norm)
-			w = wOsc[self.Sample==s] * self.Weight[self.Sample==s] * systWeight[self.Sample==s]
-			Obs, dx, dy = np.histogram2d(self.EReco[self.Sample==s], self.CosZReco[self.Sample==s], bins=(self.EnergyBins[s], self.CzBins[s]), weights=w*self.Norm)
-			for O,E in zip(np.ravel(Obs),np.ravel(Exp)):
-				if O==0 or E==0: 
-					pass
-				else:
-					X2 = X2 + 2 * (E - O + O * math.log(O/E))
-
-		for i,s in enumerate(syst):
-			X2 = X2 + ((s-self.systBF[i]) / self.systSig[i])**2
-
-		# print(f'{t12} {t13} {t23} {dm21} {dm31} {dcp} {Ordering} {X2}\n')
-		# with open(self.outfile,'a') as f:
-		# 	f.write(f'{t12} {t13} {t23} {dm21} {dm31} {dcp} {Ordering} {X2}\n')
-		# 	f.flush()
-
-		return X2
-
-		# minimize(fun, x0, args=(a,),
 
 	def InitialFlux(self):
 		if self.Experiment == 'Super-Kamiokande':
