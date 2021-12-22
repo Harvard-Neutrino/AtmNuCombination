@@ -58,18 +58,17 @@ class Flux:
 
 	def set_initial_flux(self, flavor, neutype):
 		def match_flux(flavor, neutype):
-			match flavor.value:
-				case 12:
-					if neutype.value == -1
-						return 1, 0, nuflux.NuEBar
-					else: return 0, 0, nuflux.NuE
-				case 14:
-					if neutype.value == -1:
-						return 1, 1, nuflux.NuMuBar
-					else: return 0, 1, nuflux.NuMu
-				case _:
-					print("invalid Atm initial flux selected")
-					exit(1)
+			if flavor.value == 12:
+				if neutype.value == -1:
+					return 1, 0, nuflux.NuEBar
+				else: return 0, 0, nuflux.NuE
+			elif flavor.value == 14:
+				if neutype.value == -1:
+					return 1, 1, nuflux.NuMuBar
+				else: return 0, 1, nuflux.NuMu
+			else:
+				print("invalid Atm initial flux selected")
+				exit(1)
 
 		what_type, what_flavor, what_flux = match_flux(flavor, neutype)
 		for ic,cth in enumerate(nsq_atm.GetCosthRange()):
@@ -99,7 +98,23 @@ class Analysis:
 		self.bf_fluxes = bf_fluxes
 		self.fluxes = fluxes
 		self.W_r = np.zeros_like(self.simulation.W_mc)
-		self.weights = np.zeros(2, len(self.W_r), 2, 2)
+		self.bf_weights = np.zeros(2, 2, 2, len(self.W_r))
+		self.weights = np.zeros(2, 2, 2, len(self.W_r))
+	
+	def get_bf_weights(self, flavor, neutype):
+		def get_flavor_neutype(flavor, neutype):
+			if flavor.value == 12:
+				if neutype.value == -1:
+					return 1, 0, nuflux.NuEBar
+				else: return 0, 0, nuflux.NuE
+			elif flavor.value == 14:
+				if neutype.value == -1:
+					return 1, 1, nuflux.NuMuBar
+				else: return 0, 1, nuflux.NuMu
+			else:
+				print("invalid Atm initial flux selected")
+				exit(1)
+
 
 
 
