@@ -12,7 +12,7 @@ class Reader:
 
 		self.Experiment = experiment
 		self.Source = source
-		# if filename[-4:-1] == 'hdf5' or filename[-2:-1] == 'h5':
+
 		if self.Experiment == 'Super-Kamiokande' or self.Experiment == 'SK' or self.Experiment == 'Super-Kamiokande':
 			print(f'Processing simulation of {self.Experiment} experiment.')
 			with h5py.File(filename,'r') as hf:
@@ -43,6 +43,7 @@ class Reader:
 			self.NumberOfSamples = 16
 			self.Erec_min = 0.1
 			self.NumberOfEvents = self.nuPDG.size
+
 		elif self.Experiment == 'IceCube-Upgrade' or self.Experiment == 'IC' or self.Experiment == 'DeepCore':
 			print(f'Processing simulation of {self.Experiment} experiment.')
 			input_data = pd.read_csv(filename)
@@ -69,7 +70,6 @@ class Reader:
 				d_ETrue = np.array(input_data['true_energy'])
 				d_Weight = np.array(input_data['weight'])
 				d_Sample = np.int_(input_data['pid'])
-
 			condition = (d_ETrue > 1) * (d_ETrue < 1e3) * (d_EReco > 1)
 			self.EReco = d_EReco[condition]
 			self.CosZReco = d_CosZReco[condition]
@@ -115,8 +115,8 @@ class Reader:
 			self.MaxNumberOfEnergyBins = 40
 			self.MaxNumberOfCzBins = 10
 
-
 	def BFOscillator(self,neutrino_flavors, Sin2Theta12=0, Sin2Theta13=0, Sin2Theta23=0, Dm221=0, Dm231=0, dCP=0, Ordering='normal'):
+
 		units = nsq.Const()
 		interactions = False
 		AtmOsc = nsq.nuSQUIDSAtm(self.cth_nodes,self.energy_nodes*units.GeV,neutrino_flavors,nsq.NeutrinoType.both,interactions)
@@ -128,11 +128,11 @@ class Reader:
 		AtmOsc.Set_SquareMassDifference(1, Dm221)
 		AtmOsc.Set_SquareMassDifference(2,Dm231)
 		if Ordering!='normal':
+			print('inverted surely')
 			AtmOsc.Set_SquareMassDifference(2,Dm221-Dm231)
 		AtmOsc.Set_CPPhase(0,2,dCP)
 		AtmOsc.Set_initial_state(self.AtmInitialFlux,nsq.Basis.flavor)
 		AtmOsc.EvolveState()
-
 		self.weightOscBF = np.zeros(self.NumberOfEvents)
 		neuflavor=0
 		for i,(E,cz) in enumerate(zip(self.ETrue, self.CosZTrue)):
@@ -148,7 +148,6 @@ class Reader:
 				neuflavor = 2
 			self.weightOscBF[i] = AtmOsc.EvalFlavor(neuflavor, cz, E*units.GeV, neutype)
 
-
 	def Oscillator(self, neutrino_flavors, t12, t13, t23, dm21, dm31, dcp, Ordering='normal'):
 		units = nsq.Const()
 		interactions = False
@@ -160,13 +159,13 @@ class Reader:
 		AtmOsc.Set_MixingAngle(1,2, asin(sqrt(t23)))
 		AtmOsc.Set_SquareMassDifference(1,dm21)
 		AtmOsc.Set_SquareMassDifference(2,dm31)
+		
 		if Ordering!='normal':
-			# print('inverted surely')
+			print('inverted surely')
 			AtmOsc.Set_SquareMassDifference(2,dm21-dm31)
 		AtmOsc.Set_CPPhase(0,2,dcp)
 		AtmOsc.Set_initial_state(self.AtmInitialFlux,nsq.Basis.flavor)
 		AtmOsc.EvolveState()
-
 		w = np.zeros(self.NumberOfEvents)
 
 		for i,(E,cz) in enumerate(zip(self.ETrue, self.CosZTrue)):
@@ -181,7 +180,6 @@ class Reader:
 			elif np.abs(self.nuPDG[i]) == 16:
 				neuflavor = 2
 			w[i] = AtmOsc.EvalFlavor(neuflavor, cz, E*units.GeV, neutype)
-
 		return w
 
 	def InitialFlux(self):
@@ -193,7 +191,7 @@ class Reader:
 			flux = nuflux.makeFlux('IPhonda2014_spl_solmin')
 			E_min = 1.0
 			E_max = 1.0e3
-
+			
 		E_nodes = 100
 		energy_range = nsq.logspace(E_min,E_max,E_nodes)
 		energy_nodes = nsq.logspace(E_min,E_max,E_nodes)

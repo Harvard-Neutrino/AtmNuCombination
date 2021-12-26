@@ -80,11 +80,6 @@ def cornerPlot(x,y,X2,title=''):
 	axRi.set_ylim(y0,yf)
 
 	X, Y = np.meshgrid(x, y)
-	xnew = np.linspace(x.min(), x.max(), 200)
-	ynew = np.linspace(y.min(), y.max(), 200)
-	f = interpolate.interp2d(X, Y, Chi2, kind='cubic')
-	Xnew, Ynew = np.meshgrid(xnew, ynew)
-	Chi2_smooth = f(xnew,ynew)
 	levels = np.array([4.605,5.991,9.21])
 	ax.contour(X,Y,Chi2, levels=levels2d, colors=colors)
 	ax.set_xlim(x0,xf)
@@ -165,14 +160,14 @@ def cornerPlotBothO(x,y,X2_N,X2_I):
 	levels2d = np.array([4.605,11.904])
 
 	# Smooth
-	xnew = np.linspace(x.min(), x.max(), 200)
-	spl_Nx = make_interp_spline(x, X2N_x, k=3)
-	X2N_x_new = spl_Nx(xnew)
-	spl_Ix = make_interp_spline(x, X2I_x, k=3)
-	X2I_x_new = spl_Ix(xnew)
+	# xnew = np.linspace(x.min(), x.max(), 200)
+	# spl_Nx = make_interp_spline(x, X2N_x, k=3)
+	# X2N_x_new = spl_Nx(xnew)
+	# spl_Ix = make_interp_spline(x, X2I_x, k=3)
+	# X2I_x_new = spl_Ix(xnew)
 
-	axUp.plot(xnew,X2N_x_new, color='k')
-	axUp.plot(xnew,X2I_x_new, color='k', linestyle='dotted')
+	axUp.plot(x,X2N_x, color='k')
+	axUp.plot(x,X2I_x, color='k', linestyle='dotted')
 
 	# axUp.plot(x,X2N_x, color='k')
 	# axUp.plot(x,X2I_x, color='k', linestyle='dotted')
@@ -186,14 +181,14 @@ def cornerPlotBothO(x,y,X2_N,X2_I):
 
 
 	# Smooth
-	ynew = np.linspace(y.min(), y.max(), 200)
-	spl_Ny = make_interp_spline(y, X2N_y, k=3)
-	X2N_y_new = spl_Ny(ynew)
-	spl_Iy = make_interp_spline(y, X2I_y, k=3)
-	X2I_y_new = spl_Iy(ynew)
+	# ynew = np.linspace(y.min(), y.max(), 200)
+	# spl_Ny = make_interp_spline(y, X2N_y, k=3)
+	# X2N_y_new = spl_Ny(ynew)
+	# spl_Iy = make_interp_spline(y, X2I_y, k=3)
+	# X2I_y_new = spl_Iy(ynew)
 
-	axRi.plot(X2N_y_new, ynew, color='k')
-	axRi.plot(X2I_y_new, ynew, color='k', linestyle='dotted')
+	axRi.plot(X2N_y, y, color='k')
+	axRi.plot(X2I_y, y, color='k', linestyle='dotted')
 
 	# axRi.plot(X2N_y, y, color='k')
 	# axRi.plot(X2I_y, y, color='k', linestyle='dotted')

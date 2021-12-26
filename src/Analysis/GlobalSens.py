@@ -9,7 +9,7 @@ def X2reader(filename, filename2='None'):
 	df = pd.read_csv(filename, sep=' ')
 	rawOscPar = {}
 	oscPar = {}
-	for i in range(df.columns.size-1):
+	for i in range(7):
 		rawOscPar[i] = df.values[:,i]
 		oscPar[i] = np.unique(rawOscPar[i])
 	chi2 = np.array(df["X2"])
@@ -78,10 +78,13 @@ def X2readerGeneral(filename):
 	df = pd.read_csv(filename, sep=' ')
 	rawOscPar = {}
 	oscPar = {}
-	for i in range(df.columns.size-1):
+	for i in range(7):
 		rawOscPar[i] = df.values[:,i]
 		oscPar[i] = np.unique(rawOscPar[i])
-	chi2 = np.array(df["X2"])
+	rawchi2 = np.array(df["X2"])
+	minchi2 = np.amin(rawchi2)
+	chi2 = rawchi2 - minchi2
+	print(f'Minimum x2 = {minchi2}')
 
 	fixPar = []
 	fitPar = []
@@ -127,7 +130,7 @@ def X2readerGeneralCombined(filename, filename2):
 	df = pd.read_csv(filename, sep=' ')
 	rawOscPar = {}
 	oscPar = {}
-	for i in range(df.columns.size-1):
+	for i in range(7):
 		rawOscPar[i] = df.values[:,i]
 		oscPar[i] = np.unique(rawOscPar[i])
 	chi2 = np.array(df["X2"])
@@ -139,14 +142,14 @@ def X2readerGeneralCombined(filename, filename2):
 		oscPar2[i] = np.unique(rawOscPar2[i])
 	
 	chi20 = np.array(df2["X2"])
+	chi2 = chi2 + chi20
 	i0,j0 = 0,0
 	count=0
 	cond = 1
 	for i in range(rawOscPar[0].size):
 		cond = 1
-		for k in range(df.columns.size-1):
+		for k in range(7):
 			cond = cond * rawOscPar2[k][i]==rawOscPar[k][i]
-		print(count)
 		chi2[i0] = chi2[i0] + chi20[j0]
 
 
