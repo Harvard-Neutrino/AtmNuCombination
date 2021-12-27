@@ -22,6 +22,10 @@ class Flavor(Enum):
     mu = 14
     tau = 16
 
+class PointType(Enum):
+	BestFit = 0
+	Physical = 1
+
 # These still need working on
 # define functions to extract lists of enum objects from lists
 # def flavor_list(ls):
@@ -38,6 +42,15 @@ class Flavor(Enum):
 # 	for i in range(len(ls)):
 # 		ls[i] = Topology(ls[i])
 # 	return ls 
+
+class Systematics:
+	def __init__(self, norm, nu_nubar_ratio, energy_slope, e_mu_ratio, direction_up, direction_down):
+		self.N = norm
+		self.delta = nu_nubar_ratio
+		self.gamma = energy_slope
+		self.eps = e_mu_ratio
+		self.Up = direction_up
+		self.Down = direction_down
 
 class Simulation:
 	def __init__(self, input_file):
@@ -103,10 +116,14 @@ class Analysis:
 		self.bf_fluxes = bf_fluxes
 		self.fluxes = fluxes
 		# self.W_r = np.zeros_like(self.simulation.W_mc)
-		self.bf_weights = np.zeros((2, 2, 2, len(self.simulation.W_mc)))
-		self.weights = np.zeros((2, 2, 2, len(self.simulation.W_mc)))
+		self.bf_weights = np.zeros((2, 2, 2, len(self.simulation.W_mc)), dtype = float)
+		self.weights = np.zeros((2, 2, 2, len(self.simulation.W_mc)), dtype = float)
+		self.bf_histogram = np.zeros((2, 2, 2, NErec, Ncrec), dtype = float)
+		self.histogram = np.zeros((2, 2, 2, NErec, Ncrec), dtype = float)
+		self.chisq = 0
 	
-	def get_bf_weights(self, flavor, neutype):
+	# none-bf part written on the plane and need testing
+	def get_weights(self, flavor, neutype, pointtype):
 		def get_flavor_neutype(flavor, neutype):
 			if flavor.value == 12:
 				if neutype.value == -1:
@@ -120,7 +137,8 @@ class Analysis:
 				print("invalid Atm initial flux selected")
 				exit(1)
 		whatflavor, whatneutype = get_flavor_neutype(flavor, neutype)
-	
+
+		# conciseness or performance? if inside or outside the loop
 		for i in range(len(self.simulation.W_mc)):
 
 			if self.simulation.pdg[i] > 0 :
@@ -140,9 +158,67 @@ class Analysis:
 			elif np.abs(self.simulation.pdg[i]) == 16:
 				neuflavor = 2
 
-			if self.simulation.E_re[i] > Erec_min and self.simulation.E_tr[i] * units.GeV > E_min and self.simulation.E_tr[i] * units.GeV < E_max:
-				self.bf_weights[whatneutype][whatflavor][topology][i] += self.simulation.W_mc[i] * self.bf_fluxes[whatflavor][whatneutype].nsq_atm.EvalFlavor(neuflavor, np.cos(self.simulation.C_tr[i]), self.simulation.E_tr[i] * units.GeV, neutype) * Time * meter_to_cm_sq
+			if pointtype.value == 0:
+				if self.simulation.E_re[i] > Erec_min and self.simulation.E_tr[i] * units.GeV > E_min and self.simulation.E_tr[i] * units.GeV < E_max:
+					self.bf_weights[whatneutype][whatflavor][topology][i] += self.simulation.W_mc[i] * self.bf_fluxes[whatflavor][whatneutype].nsq_atm.EvalFlavor(neuflavor, \
+						np.cos(self.simulation.C_tr[i]), self.simulation.E_tr[i] * units.GeV, neutype) * Time * meter_to_cm_sq
+			elif pointtype.value == 1:
+				if self.simulation.E_re[i] > Erec_min and self.simulation.E_tr[i] * units.GeV > E_min and self.simulation.E_tr[i] * units.GeV < E_max:
+					self.weights[whatneutype][whatflavor][topology][i] += self.simulation.W_mc[i] * self.bf_fluxes[whatflavor][whatneutype].nsq_atm.EvalFlavor(neuflavor, \
+						np.cos(self.simulation.C_tr[i]), self.simulation.E_tr[i] * units.GeV, neutype) * Time * meter_to_cm_sq
+			else:
+				print("invalid point type selected")
+				exit(1)
+	# The followings are written on a plane and needs testing
 
+	# This function applies only tilt and energy slope
+	def pre_apply_systematics(self, sys):
+
+		# in the first step before chi-squared we must first apply slope and cos zenith
+		# first the energy slope
+		tilt = (self.simulation.E_tr / E0) ** sys.gamma
+		# now the cosine zenith
+		cosZen = np.cos(self.simulation.C_tr)
+		TanCos = np.tanh(cosZen)
+		mask_cUP = cosZen < 0
+		mask_cDOWN = cosZen > 0
+		zenith = np.ones(len(self.simulation.E_tr))
+		zenith[mask_cUP] -= sys.Up * TanCos[mask_cUP]
+		zenith[mask_cDOWN] -= sys.Down *TanCos[mask_cDOWN]
+		# now apply these to the weights
+		for i in range(2):
+			for j in range(2):
+				for k in range(2):
+					self.weights *= tilt
+					self.weights *= zenith
+
+	# now we can histogram the weights
+	def histogram(self, pointtype):
+		# performance or conciseness?
+		for i in range(2):
+			for j in range(2):
+				for k in range(2):
+					if pointtype.value == 0:
+						self.bf_histogram[i][j][k] = np.histogram2d(self.simulation.E_re, np.cos(self.simulation.C_re), \
+													bins = (erec, crec), weights = self.bf_weights[i][j][k])
+					elif pointtype.value == 1:
+						self.histogram[i][j][k] = np.histogram2d(self.simulation.E_re, np.cos(self.simulation.C_re), \
+													bins = (erec, crec), weights = self.weights[i][j][k])
+					else:
+						print("invalid point type selected")
+						exit(1)
+
+	# now we can calculate chi squared, this part is not completed yet, but it's just the computation of chisq
+	def get_chisq(self, sys):
+		chisq = 0.
+		for i in range(2):
+			for j in range(2):
+				for k in range(2):
+					for ebins in range(NErec):
+						for cbins in range(Ncrec):
+							if self.bf_histogram[i][j][k][ebins][cbins] > 0:
+								chisq += (sys.N * (sys.eps * self.histogram[i][j][k][ebins][cbins]))
+		
 
 
 
