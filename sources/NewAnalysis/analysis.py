@@ -35,4 +35,4 @@ fluxes = np.array([[bf_e_flux, bf_ebar_flux],[bf_mu_flux, bf_mubar_flux]])
 
 analysis = cl.Analysis(sim, bf_fluxes, fluxes)
 
-analysis.get_bf_weights(cl.Flavor.e, cl.NeuType.Neutrino)
+# Rest are not tested

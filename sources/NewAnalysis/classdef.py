@@ -210,18 +210,48 @@ class Analysis:
 
 	# now we can calculate chi squared, this part is not completed yet, but it's just the computation of chisq
 	def get_chisq(self, sys):
-		chisq = 0.
-		for i in range(2):
-			for j in range(2):
-				for k in range(2):
-					for ebins in range(NErec):
-						for cbins in range(Ncrec):
-							if self.bf_histogram[i][j][k][ebins][cbins] > 0:
-								chisq += (sys.N * (sys.eps * self.histogram[i][j][k][ebins][cbins]))
-		
 
+		N = sys.N
+		delta = sys.delta 
+		eps = sys.eps 
 
+		def get_single_chisq(flavor, neutype):
+			def get_flavor_neutype(flavor, neutype):
+			if flavor.value == 12:
+				if neutype.value == -1:
+					return 1, 0, 1 - delta, eps
+				else: return 0, 0, delta, eps
+			elif flavor.value == 14:
+				if neutype.value == -1:
+					return 1, 1, 1 - delta, 1 - eps
+				else: return 0, 1, delta, 1 - eps
+			else:
+				print("invalid Atm initial flux selected")
+				exit(1)
 
+			whatflavor, whatneutype, whatdelta, whateps = get_flavor_neutype(flavor, neutype, delta, eps)
 
+			single_chisq = 0.
+			for top in range(2):
+				for ebin in range(NErec):
+					for cbin in range(Ncrec):
+						single_chisq += (N * whatdelta * whateps * self.histogram[top][ebin][cbin] - \
+									self.bf_histogram[top][ebin][cbin]) ** 2 / self.self.bf_histogram[top][ebin][cbin]
+			return single_chisq
+
+		chisq = get_single_chisq(Flavor.e, NeuType.Neutrino) + get_single_chisq(Flavor.e, NeuType.AntiNeutrino) + \
+				et_single_chisq(Flavor.mu, NeuType.Neutrino) + get_single_chisq(Flavor.mu, NeuType.AntiNeutrino)
+
+		Sys_BF = cl.Systematics(N_bf, delta_bf, gamma_bf, eps_bf, hv_bf, hv_bf)
+		Sys_Sigma = cl.Systematics(sig_N, sig_delta, sig_gamma, sig_eps, sig_hv, sig_hv)
+
+		chisq += (sys.N - Sys_BF.N) ** 2 / Sys_Sigma.N ** 2
+		chisq += (sys.delta - Sys_BF.delta) ** 2 / Sys_Sigma.delta ** 2
+		chisq += (sys.gamma - Sys_BF.gamma) ** 2 / Sys_Sigma.gamma ** 2
+		chisq += (sys.eps - Sys_BF.eps) ** 2 / Sys_Sigma.eps ** 2
+		chisq += (sys.Up - Sys_BF.Up) ** 2 / Sys_Sigma.Up ** 2
+		chisq += (sys.Down - Sys_BF.Down) ** 2 / Sys_Sigma.Down ** 2
+
+		return chisq
 
 
