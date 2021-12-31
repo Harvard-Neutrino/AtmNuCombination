@@ -36,3 +36,13 @@ fluxes = np.array([[bf_e_flux, bf_ebar_flux],[bf_mu_flux, bf_mubar_flux]])
 analysis = cl.Analysis(sim, bf_fluxes, fluxes)
 
 # Rest are not tested
+
+# should also include util functions to bundle these functions together
+
+analysis.get_weights()
+
+analysis.pre_apply_systematics()
+
+analysis.histogram()
+
+analysis.get_chisq()
