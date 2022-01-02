@@ -17,7 +17,7 @@ class NeuType(Enum):
     AntiNeutrino = -1
     Neutrino = 1
 
-class Flavor(Enum):
+class Flavor(Enum): 
     e = 12
     mu = 14
     tau = 16
