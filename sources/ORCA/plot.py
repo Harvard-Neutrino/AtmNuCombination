@@ -1,59 +1,38 @@
 import matplotlib.pyplot as plt
-import matplotlib.image as img
 import numpy as np
 
-## Digitize the scale ##
-#scale_min = 0 # Minimum value of the scale
-#scale_max = 0.01 * 183.42/25.5 # Maximum value of the scale
-scale_min = -3 # Minimum value of the scale
-scale_max = 0 # Maximum value of the scale
-n_bins = 20 # Number of color bins
+import util
 
-#palette_x = np.linspace(scale_min, scale_max, 2*n_bins+1)[1::2]
-palette_x = np.logspace(scale_min, scale_max, 2*n_bins+1)[1::2]
-palette_clr = []
+def plot_zenith_errors():
+    e, ebar, mu, mubar = util.get_zenith_error()
 
-img_data = img.imread("scale.png")
-img_size_y, img_size_x = img_data.shape[:2]
+    x = np.linspace(1.8, 53, 100000)
+    ye = np.zeros_like(x)
+    yeb = np.zeros_like(x)
+    ymu = np.zeros_like(x)
+    ymub = np.zeros_like(x)
 
-dy = img_size_y / n_bins
-for iy in range(n_bins)[::-1]:
-    c = img_data[int(np.round((iy+0.5)*dy)), int(np.round(0.5*img_size_x))] # find color at center of this pixel
-    palette_clr.append(c)
+    for i in range(len(x)):
+        ye[i] = e(x[i])
+        yeb[i] = ebar(x[i])
+        ymu[i] = mu(x[i])
+        ymub[i] = mubar(x[i])
 
-## Digitize the covariance matrix ##
-n_bins_x  = 22
-n_bins_y = 22
+    plt.plot(x, ye, color = "red", linewidth = 1.8, linestyle = '-', label = "Electron Neutrino")
+    plt.plot(x, yeb, color = "red", linewidth = 1.8, linestyle = '--', label = "Electron AntiNeutrino")
+    plt.plot(x, ymu, color = "blue", linewidth = 1.8, linestyle = '-', label = "Muon Neutrino")
+    plt.plot(x, ymub, color = "blue", linewidth = 1.8, linestyle = '--', label = "Muon AntiNeutrino")
 
-my_data = np.zeros((n_bins_x, n_bins_y))
+    plt.xscale('log')
 
-#img_data = img.imread('migration.png')
-img_data = img.imread('migrationCascades.png')
-#img_data = img.imread('migrationTracks.png')
-img_size_y, img_size_x = img_data.shape[:2]
-dx = img_size_x / n_bins_x
-dy = img_size_y / n_bins_y
+    plt.xlabel("Neutrino Energy [Gev]")
+    plt.ylabel("Median Angular Error [deg]")
 
-for ix in range(n_bins_x):       # loops over all pixels in the extracted data
-    for iy in range(n_bins_y):
-        c = img_data[int(np.round((iy+0.5)*dy)), int(np.round((ix+0.5)*dx))] # find color at center of this pixel
-        if abs(np.sum(c**2) - 4) < 1e-4: # Blank = 0
-            my_data[ix, n_bins_y-1-iy] = 0
-        else:
-            ic = np.argmin( np.sum((c[None,:] - palette_clr)**2, axis=1) )         # find closest color in palette
-            my_data[ix, n_bins_y-1-iy] = palette_x[ic]
+    plt.title("KM3NeT Angular Error")
 
-#np.savetxt("Migration_matrixTracks.dat", my_data)
-np.savetxt("Migration_matrixCascades.dat", my_data)
+    # plt.show()
+    plt.savefig("KM3NeT Angular Error")
 
-exit(0)
-my_data = np.loadtxt("Migration_matrix.dat")
-# If I multiply my_data by my true energy binned spectrum, I will get my reconstructed energy binned spectrum
-print(np.matmul(my_data, [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]))
-print(np.matmul(my_data, [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]))
-print(np.matmul(my_data, [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]))
-print(np.matmul(my_data, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]))
+    return
 
-epsilon = np.sum(my_data, axis=0)
-d = np.loadtxt("Measured.dat")
-u = np.loadtxt("MC_truth.dat")
+plot_zenith_errors()

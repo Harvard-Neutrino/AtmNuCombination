@@ -26,23 +26,6 @@ class PointType(Enum):
 	BestFit = 0
 	Physical = 1
 
-# These still need working on
-# define functions to extract lists of enum objects from lists
-# def flavor_list(ls):
-# 	for i in range(len(ls)):
-# 		ls[i] = Flavor(np.absolute(ls[i]))
-# 	return ls
-
-# def neutype_list(ls):
-# 	for i in range(len(ls)):
-# 		ls[i] = NeuType(np.absolute(ls[i])/ls[i])
-# 	return ls
-
-# def topology_list(ls):
-# 	for i in range(len(ls)):
-# 		ls[i] = Topology(ls[i])
-# 	return ls 
-
 class Systematics:
 	def __init__(self, norm, nu_nubar_ratio, energy_slope, e_mu_ratio, direction_up, direction_down):
 		self.N = norm

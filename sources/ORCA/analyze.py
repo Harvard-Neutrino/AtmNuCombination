@@ -4,6 +4,7 @@ import MCGenerator as gen
 import pandas as pd
 from matplotlib import pyplot as plt
 from params import *
+import util
 
 tracks = dgt.Digitalizer(input_track, input_scale)
 cascades = dgt.Digitalizer(input_cascade, input_scale)
@@ -17,12 +18,8 @@ cascades.digitalize(22, 22)
 D_tracks = tracks.extracted
 D_cascades = cascades.extracted
 
-# print(D_tracks)
-
 tracks.fit()
 cascades.fit()
-
-# print(tracks.gaussians)
 
 tracksgen = gen.Generator(input_MC, tracks.gaussians, cascades.gaussians, x_bins)
 tracksgen.generate(1, 1)
