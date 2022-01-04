@@ -29,6 +29,8 @@ def plot_zenith_errors():
     plt.ylabel("Median Angular Error [deg]")
 
     plt.title("KM3NeT Angular Error")
+    plt.legend()
+    plt.grid(True)
 
     # plt.show()
     plt.savefig("KM3NeT Angular Error")

@@ -72,6 +72,7 @@ class Generator:
 				else:
 					ORCA_zen_reco = -1
 
+				print("For event ", i, ":")
 				print("the true energy is ", self.MC["true_energy"][i])
 				print("the IC reco energy is ", self.MC["reco_energy"][i])
 				print("the fake ORCA MC energy is ", ORCA_E_reco, "\n")
