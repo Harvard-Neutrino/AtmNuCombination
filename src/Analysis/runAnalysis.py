@@ -11,7 +11,7 @@ from Sensitivity import sensitivity
 
 # Setup analysis details
 analysis_xml_file=str(sys.argv[1])
-outfile=[str(sys.argv[2])]
+outfile=str(sys.argv[2])
 
 an = parseXML(analysis_xml_file)
 an.readSources()
@@ -31,12 +31,12 @@ for s in an.sources:
 	for i,(exp,fil) in enumerate(zip(an.experiments,an.mcFiles)):
 		mcList[exp] = Reader(s,exp,fil)
 		mcList[exp].Binning()
-
 		# Get unoscillated atm. fluxes
 		mcList[exp].InitialFlux()
-
 		# Setup oscillation parameters grid and best fit value
 		mcList[exp].BFOscillator(an.neutrinos,**an.OscParametersBest)
+
+
 print('=============================================================')
 print('====================== There we go!! ========================')
 
@@ -52,7 +52,6 @@ with open(outfile,'w') as f:
 		f.write('\n')
 
 
-
 # Main analysis
 
 if multiproc:
@@ -64,24 +63,22 @@ if multiproc:
 			jj = 0
 
 			# Osc. in parameters space (multiprocessing)
-			for i,t12 in enumerate(an.OscParametersGrid['Sin2Theta12']):
-				for j,t13 in enumerate(an.OscParametersGrid['Sin2Theta13']):
-					for k,t23 in enumerate(an.OscParametersGrid['Sin2Theta23']):
-						for l,dm21 in enumerate(an.OscParametersGrid['Dm221']):
-							for m,dm31 in enumerate(an.OscParametersGrid['Dm231']):
-								for d,cp in enumerate(an.OscParametersGrid['dCP']):
-									for o,hi in enumerate(an.OscParametersGrid['Ordering']):
-										p = multiprocessing.Process(target=sensitivity,args=[an, t12, t13, t23, dm21, dm31, cp, hi, mcList, outfile)
-										if __name__ == "__main__":
-											processes.append(p)
-											p.start()
-											jj = jj + 1
-											print(f'{t12} {t13} {t23} {dm21} {dm31} {cp} process started')
-											if jj%cores==0:
-												for i,p in enumerate(processes):
-													p.join()
-												processes = []
-												print('------------------------------')
+			param = []
+			for oscpar in [*an.OscParametersGrid]:
+				param.append(an.OscParametersGrid[oscpar])
+
+			for element in product(*param):
+				p = multiprocessing.Process(target=sensitivity,args=[an, *element, mcList, outfile])
+				if __name__ == "__main__":
+					processes.append(p)
+					p.start()
+					jj = jj + 1
+					print(f'{element} process started')
+					if jj%cores==0:
+						for i,p in enumerate(processes):
+							p.join()
+							processes = []
+							print('------------------------------')
 
 	'''
 	else:
@@ -116,14 +113,12 @@ else:
 		if an.physics[0] == 'Three Flavour':
 		
 			# Osc. in parameters space (multiprocessing)
-			for i,t12 in enumerate(an.OscParametersGrid['Sin2Theta12']):
-				for j,t13 in enumerate(an.OscParametersGrid['Sin2Theta13']):
-					for k,t23 in enumerate(an.OscParametersGrid['Sin2Theta23']):
-						for l,dm21 in enumerate(an.OscParametersGrid['Dm221']):
-							for m,dm31 in enumerate(an.OscParametersGrid['Dm231']):
-								for d,cp in enumerate(an.OscParametersGrid['dCP']):
-									for o,hi in enumerate(an.OscParametersGrid['Ordering']):
-										sensitivity(an, t12, t13, t23, dm21, dm31, cp, hi, mcList, outfile)
+			param = []
+			for oscpar in [*an.OscParametersGrid]:
+				param.append(an.OscParametersGrid[oscpar])
+
+			for element in product(*param):
+				sensitivity(an, *element, mcList, outfile)
 
 	'''
 	else:

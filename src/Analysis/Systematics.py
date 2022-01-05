@@ -3,6 +3,12 @@ import numpy as np
 def FluxNormalization(x, experiment):
 	return np.ones(experiment.NumberOfEvents) * x
 
+def SKFluxNormalization(x, experiment):
+	return np.ones(experiment.NumberOfEvents) * x
+
+def ICFluxNormalization(x, experiment):
+	return np.ones(experiment.NumberOfEvents) * x
+
 def FluxNormalization_Below1GeV(x, experiment):
 	nev = np.ones(experiment.NumberOfEvents)
 	nev[experiment.ETrue<1] = nev[experiment.ETrue<1] * x

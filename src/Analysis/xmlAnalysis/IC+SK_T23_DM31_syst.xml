@@ -10,7 +10,7 @@
 			<sigma> 0.2 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
-				<systematic name='FluxNormalization_Below1GeV'>
+        <systematic name='FluxNormalization_Below1GeV'>
 			<status> 1 </status>
 			<sigma> 0.25 </sigma>
 			<nominal> 1.0 </nominal>
