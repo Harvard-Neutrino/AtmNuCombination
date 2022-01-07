@@ -6,7 +6,6 @@ import multiprocessing
 import sys
 from xmlReader import parseXML
 from itertools import product
-from merger import Chi2StatsCombined
 from Sensitivity import sensitivity
 
 # Setup analysis details
