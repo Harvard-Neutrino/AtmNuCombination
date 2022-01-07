@@ -132,6 +132,7 @@ dmypy.json
 src/Simulation/SuperK/figs/*
 src/Simulation/SuperK/data/*
 src/Simulation/IceCubeUpgrade/data/*
+src/Simulation/ORCA/data/*
 src/utils/*.hdf5
 src/utils/*.png
 src/utils/*.root
