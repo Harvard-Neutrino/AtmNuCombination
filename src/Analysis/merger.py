@@ -15,7 +15,6 @@ def Chi2StatsCombined(neutrino_flavors, t12, t13, t23, dm21, dm31, dcp, Ordering
 			for O,E in zip(np.ravel(Obs),np.ravel(Exp)):
 				if O!=0 and E!=0:
 					X2 = X2 + 2 * (E - O + O * math.log(O/E))
-					print(f'sample, e, o: {s} {O} {E} --> {X2}')
 
 	# Writing output
 	with open(outfile,'a') as f:
@@ -42,7 +41,6 @@ def Chi2SystsCombined(syst, analysis, t12, t13, t23, dm21, dm31, dcp, Ordering, 
 							j = i
 							usedSysts.append(j)
 							break
-					print(j)
 					wSys = wSys * globals()[sys](syst[j],experiments[exp])
 					X2 = X2 + ((syst[j]-analysis.SystNominalList[j])/analysis.SystSigmaList[j])**2
 
