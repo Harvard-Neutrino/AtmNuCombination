@@ -22,4 +22,4 @@ tracks.fit()
 cascades.fit()
 
 tracksgen = gen.Generator(input_MC, tracks.gaussians, cascades.gaussians, x_bins)
-tracksgen.generate(1, 1)
+res_true, res_reco = tracksgen.generate(1, 1)

@@ -50,7 +50,7 @@ class Simulation:
 		self.pdg = input_file["pdg"]
 		self.pid = input_file["pid"]
 
-class Flux:
+class Flux: 
 	def __init__(self, cth_nodes, energy_nodes):
 		self.nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,3,nsq.NeutrinoType.both,interactions)
 		self.flux = nuflux.makeFlux("IPhonda2014_spl_solmin")
@@ -147,14 +147,14 @@ class Analysis:
 						np.cos(self.simulation.C_tr[i]), self.simulation.E_tr[i] * units.GeV, neutype) * Time * meter_to_cm_sq
 			elif pointtype.value == 1:
 				if self.simulation.E_re[i] > Erec_min and self.simulation.E_tr[i] * units.GeV > E_min and self.simulation.E_tr[i] * units.GeV < E_max:
-					self.weights[whatneutype][whatflavor][topology][i] += self.simulation.W_mc[i] * self.bf_fluxes[whatflavor][whatneutype].nsq_atm.EvalFlavor(neuflavor, \
+					self.weights[whatneutype][whatflavor][topology][i] += self.simulation.W_mc[i] * self.fluxes[whatflavor][whatneutype].nsq_atm.EvalFlavor(neuflavor, \
 						np.cos(self.simulation.C_tr[i]), self.simulation.E_tr[i] * units.GeV, neutype) * Time * meter_to_cm_sq
 			else:
 				print("invalid point type selected")
 				exit(1)
 	# The followings are written on a plane and needs testing
 
-	# This function applies only tilt and energy slope
+	# This function applies only tilt and zenith
 	def pre_apply_systematics(self, sys):
 
 		# in the first step before chi-squared we must first apply slope and cos zenith
@@ -169,11 +169,14 @@ class Analysis:
 		zenith[mask_cUP] -= sys.Up * TanCos[mask_cUP]
 		zenith[mask_cDOWN] -= sys.Down *TanCos[mask_cDOWN]
 		# now apply these to the weights
-		for i in range(2):
-			for j in range(2):
-				for k in range(2):
-					self.weights *= tilt
-					self.weights *= zenith
+		tilt *= zenith
+		all_tilt = np.array([[[tilt],[tilt]],[[tilt],[tilt]],[[tilt],[tilt]],[[tilt],[tilt]]])
+		self.weights *= all_tilt
+		# for i in range(2):
+		# 	for j in range(2):
+		# 		for k in range(2):
+		# 			self.weights[i][j][k] *= tilt
+		# 			self.weights[i][j][k] *= zenith
 
 	# now we can histogram the weights
 	def histogram(self, pointtype):
