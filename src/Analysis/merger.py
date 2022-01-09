@@ -22,8 +22,6 @@ def Chi2StatsCombined(neutrino_flavors, t12, t13, t23, dm21, dm31, dcp, Ordering
 		f.flush()
 
 
-
-
 def Chi2SystsCombined(syst, analysis, t12, t13, t23, dm21, dm31, dcp, Ordering, experiments):
 	X2 = 0
 	usedSysts = []

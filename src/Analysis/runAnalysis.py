@@ -43,12 +43,12 @@ print('====================== There we go!! ========================')
 with open(outfile,'w') as f:
 	for par in an.parameters:
 		f.write(par+' ')
-		if an.NoSyst == 0:
-			for sys in an.Systematics.values():
-				for s in sys:
-					f.write(s+' ')
-		f.write('X2 ')
-		f.write('\n')
+	if an.NoSyst == 0:
+		for sys in an.Systematics.values():
+			for s in sys:
+				f.write(s+' ')
+	f.write('X2 ')
+	f.write('\n')
 
 
 # Main analysis
