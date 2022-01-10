@@ -1,10 +1,47 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import LogNorm
+from scipy.optimize import curve_fit
 
+import digitalizer as dgt
 import util
+from util import gaussian
 import analyze as anl
 from params import *
+
+def plot_mig_hist(binnum):
+
+    tracks = dgt.Digitalizer(input_track, input_scale)
+    cascades = dgt.Digitalizer(input_cascade, input_scale)
+
+    tracks.set_palette(0, -3, 20)
+    cascades.set_palette(0, -3, 20)
+
+    tracks.digitalize(22, 22)
+    cascades.digitalize(22, 22)
+
+    D_tracks = tracks.extracted
+    D_cascades = cascades.extracted
+
+    data_entries = D_tracks[binnum]
+    # data_entries = D_cascades[binnum]
+
+    print(data_entries)
+
+    bins_centers = np.array([0.5 * (x_bins[i] + x_bins[i+1]) for i in range(len(x_bins)-1)])
+    popt, pcov = curve_fit(gaussian, xdata=bins_centers, ydata=data_entries, p0=[binnum, 20])
+
+    # # Generate enough x values to make the curves look smooth.
+    xspace = np.linspace(2, 55, 100000)
+
+    # # Plot the histogram and the fitted function.
+    plt.bar(bins_centers, data_entries, width=x_bins[1] - x_bins[0], color='navy', label=r'Histogram entries')
+    plt.plot(xspace, gaussian(xspace, *popt), color='darkorange', linewidth=2.5, label=r'Fitted function')
+    plt.savefig("./MigMatPlots/TrackMigMatBin{}.png".format(binnum))
+    plt.close()
+
+# for i in range(22):
+#     plot_mig_hist(i)
 
 def plot_zenith_errors():
     e, ebar, mu, mubar = util.get_zenith_error()

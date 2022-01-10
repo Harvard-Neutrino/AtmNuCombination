@@ -9,8 +9,8 @@ import util
 tracks = dgt.Digitalizer(input_track, input_scale)
 cascades = dgt.Digitalizer(input_cascade, input_scale)
 
-tracks.set_palette(0, -3, 20)
-cascades.set_palette(0, -3, 20)
+tracks.set_palette(0, -3, 100)
+cascades.set_palette(0, -3, 100)
 
 tracks.digitalize(22, 22)
 cascades.digitalize(22, 22)

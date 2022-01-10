@@ -24,6 +24,8 @@ class Digitalizer:
 			# print("in the ", iy, "th bin, the color extracted is ", c)
 			self.palette_clr.append(c)
 
+		# print(self.palette_clr)
+
 	def digitalize(self, n_bins_x, n_bins_y):
 		ext_data = np.zeros((n_bins_x, n_bins_y))
 
@@ -37,6 +39,12 @@ class Digitalizer:
 		            ext_data[ix, n_bins_y - 1 - iy] = 0
 		        else:
 		            ic = np.argmin(np.sum((c[None,:] - self.palette_clr) ** 2, axis = 1) )         # find closest color in palette
+		            if self.palette_x[ic] < 0.002:
+		            	ext_data[ix, n_bins_y - 1 - iy] = 0
+		            	continue
+		            elif self.palette_x[ic] > 0.8: # too dark, probably a text there
+		            	 c = self.image[int(np.round((iy + 0.5) * dy)) + 15, int(np.round((ix + 0.5) * dx) - 10)] # look beside the center
+		            	 ic = np.argmin(np.sum((c[None,:] - self.palette_clr) ** 2, axis = 1) )
 		            ext_data[ix, n_bins_y - 1 - iy] = self.palette_x[ic]
 
 		self.extracted = ext_data
@@ -44,6 +52,6 @@ class Digitalizer:
 	def fit(self):
 		self.gaussians = np.ndarray((self.extracted.shape[0],2), float)
 		for i in range(self.extracted.shape[0]):
-			sigma, mu = gaus_fit(self.extracted[i], x_bins)
+			sigma, mu = gaus_fit(self.extracted[i], x_bins, i)
 			self.gaussians[i][0] = sigma
 			self.gaussians[i][1] = mu
