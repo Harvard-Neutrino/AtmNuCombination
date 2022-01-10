@@ -32,4 +32,5 @@ print("propagate took {}".format(end - start))
 chisqval = chi.min_chisq(rate_weight, truth0, 0) #+ chi.min_chisq(rate_weight, truth1, 1)
 '''
 
-plotting.plot_profile(0, "1109_no_sys_the_profile")
+# plotting.plot_profile(0, "1109_no_sys_the_profile")
+print(chi.get_chisq(np.arcsin(np.sqrt(0.5)), m31, chi.get_truth(0), 0) + chi.get_chisq(np.arcsin(np.sqrt(0.5)), m31, chi.get_truth(1), 1))

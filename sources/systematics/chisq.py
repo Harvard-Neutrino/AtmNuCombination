@@ -51,7 +51,7 @@ def min_chisq(W_r, truth, top):
     # define a callback function to visualize the results
     def callbackF(syst):
         global Nfeval
-        print('{0:4d}, {1: 3.6f}, {2: 3.6f}, {3: 3.6f}, {3: 3.6f}'.format\
+        print('{0:4d}, {1: 3.6f}, {2: 3.6f}, {3: 3.6f}, {4: 3.6f}'.format\
                                 (Nfeval, syst[0], syst[1], syst[2], to_min(syst)))
         Nfeval += 1
     

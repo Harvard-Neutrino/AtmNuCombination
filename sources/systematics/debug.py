@@ -15,7 +15,16 @@ import plotting
 import propagate as prop
 import systematics as syst
 
-util.read_output(dir_name = "./1128_theta_3_sys_min/")[0]
+# util.read_output(dir_name = "./1128_theta_3_sys_min/")[0]
+t23val = 0.7910104958884872
+m23val = 0.002517
+
+truth0 = chi.get_truth(0)
+truth1 = chi.get_truth(1)
+
+W_r = prop.propagate(t23val, m31val)
+
+print(chi.get_chisq(W_r, N0, delta, gamma, truth0, 0))
 
 '''
 

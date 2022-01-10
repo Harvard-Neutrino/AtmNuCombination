@@ -22,7 +22,9 @@ def get_chisq(t23, m31, H_bf, top):
     chisq = 0
     (rows, cols) = H.shape
     for i in range(rows):
+        # print(i)
         for j in range(cols):
+            # print(j)
             chisqplus = (H[i][j] - H_bf[i][j]) ** 2 /  H_bf[i][j]
             chisq += chisqplus
 

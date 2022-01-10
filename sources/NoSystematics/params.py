@@ -27,12 +27,12 @@ t23step = 0.001 * np.pi
 t23l = np.array([theta23])
 # t23l = np.array([0.44872923, theta23])
 
-m31min = 2.20e-3
-m31max = 2.80e-3
-m31step = 0.005e-3
-# m31min = m31
-# m31max = m31
-# m31step = 1
+# m31min = 2.20e-3
+# m31max = 2.80e-3
+# m31step = 0.005e-3
+m31min = m31
+m31max = m31
+m31step = 1
 m31l = np.arange(m31min, m31max + m31step, m31step)
 
 # set up normalization range

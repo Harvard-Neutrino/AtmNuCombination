@@ -15,6 +15,13 @@ class Flavor(Enum):
     mu: 14
     tau: 16
 
+class Systematics:
+    def __init__(self, norm, nu_ratio, e_slope, zenith_slope):
+        self.N0 = norm
+        self.delta = nu_ratio
+        self.gamma_1 = e_slope
+        self.gamma_2 = zenith_slope
+
 # Now define the class of a single MCevent
 class MCEvent:
     def __init__(self, neutype, flavor, topology, t_energy, \
@@ -37,11 +44,11 @@ class MCEvent:
 # Now define the class of a MC simulation
 # Each MC simulation class contains 8 arrays of events w/ different neutuype, flavor, top
 # Each array is then binnable
-class simulation:
+class Simulation:
     def __init__(self, input_file):
         self.input_file = input_file
         # initialize 12+1 arrays
-        self.events = np.array([])
+        self.events_list = np.array([])
         self.nu_e_cascade = np.array([])
         self.nu_e_track = np.array([])
         self.nub_e_cascade = np.array([])
@@ -50,8 +57,13 @@ class simulation:
         self.nu_mu_track = np.array([])
         self.nub_mu_cascade = np.array([])
         self.nub_mu_track = np.array([])
-
-        # Now put the events into the arrays
+        self.nu_tau_cascade = np.array([])
+        self.nu_tau_track = np.array([])
+        self.nub_tau_cascade = np.array([])
+        self.nub_tau_track = np.array([])
+    
+    def read_events_separate(self):
+        # put the events into the arrays separatedly
         for i in range(len(input_file["true_energy"])):
             flavor = np.absolute(input_file["pdg"])
             neutype = input_data["pdg"] / flavor
@@ -72,11 +84,43 @@ class simulation:
             elif new_event.flavor.value == 14:
                 if new_event.neutype.value == 1:
                     if new_event.topology.value == 0:
-                        np.append(self.nu_e_cascade, np.array(new_event), axis = 0)
+                        np.append(self.nu_mu_cascade, np.array(new_event), axis = 0)
                     elif new_event.topology.value == 1:
-                        np.append(self.nu_e_track, np.array(new_event), axis = 0)
+                        np.append(self.nu_mu_track, np.array(new_event), axis = 0)
                 elif new_event.neutype.value == -1:
                     if new_event.topology.value == 0:
-                        np.append(self.nub_e_cascade, np.array(new_event), axis = 0)
+                        np.append(self.nub_mu_cascade, np.array(new_event), axis = 0)
                     elif new_event.topology.value == 1:
-                        np.append(self.nub_e_track, np.array(new_event), axis = 0)
+                        np.append(self.nub_mu_track, np.array(new_event), axis = 0)
+            elif new_event.flavor.value == 16:
+                if new_event.neutype.value == 1:
+                    if new_event.topology.value == 0:
+                        np.append(self.nu_tau_cascade, np.array(new_event), axis = 0)
+                    elif new_event.topology.value == 1:
+                        np.append(self.nu_tau_track, np.array(new_event), axis = 0)
+                elif new_event.neutype.value == -1:
+                    if new_event.topology.value == 0:
+                        np.append(self.nub_tau_cascade, np.array(new_event), axis = 0)
+                    elif new_event.topology.value == 1:
+                        np.append(self.nub_tau_track, np.array(new_event), axis = 0)
+
+    def read_all_events(self):
+        # reads all events into a single array
+        for i in range(len(input_file["true_energy"])):
+            flavor = np.absolute(input_file["pdg"])
+            neutype = input_data["pdg"] / flavor
+            new_event = MCEvent(neutype, flavor, input_file["pid"][i], input_file["true_energy"][i], \
+                                input_file["true_zenith"][i], input_file["reco_energy"][i], \
+                                input_file["reco_zenith"][i], input_file["weight"][i])
+            np.append(self.events_list, np.array([new_event]))
+
+class Analysis:
+    def __init__(self, simulation: Simulation, systematics: Systematics):
+        self.simulation = simulation
+        self.systematics = systematics
+    
+
+
+
+
+

@@ -98,15 +98,17 @@ class Analysis:
 		self.simulation = simulation
 		self.bf_fluxes = bf_fluxes
 		self.fluxes = fluxes
-		# self.W_r = np.zeros_like(self.simulation.W_mc)
+		# the rest have structures: (neutype 2 x flavor 2 x topology 2)
 		self.bf_weights = np.zeros((2, 2, 2, len(self.simulation.W_mc)), dtype = float)
 		self.weights = np.zeros((2, 2, 2, len(self.simulation.W_mc)), dtype = float)
 		self.bf_histogram = np.zeros((2, 2, 2, NErec, Ncrec), dtype = float)
 		self.histogram = np.zeros((2, 2, 2, NErec, Ncrec), dtype = float)
 		self.chisq = 0
+		self.chisq_min = None
 	
 	# none-bf part written on the plane and need testing
 	def get_weights(self, flavor, neutype, pointtype):
+		# print("W_mc: ", self.simulation.W_mc[:10])
 		def get_flavor_neutype(flavor, neutype):
 			if flavor.value == 12:
 				if neutype.value == -1:
@@ -152,6 +154,8 @@ class Analysis:
 			else:
 				print("invalid point type selected")
 				exit(1)
+		
+		# self.weights = self.bf_weights
 	# The followings are written on a plane and needs testing
 
 	# This function applies only tilt and zenith
@@ -161,34 +165,32 @@ class Analysis:
 		# first the energy slope
 		tilt = (self.simulation.E_tr / E0) ** sys.gamma
 		# now the cosine zenith
-		cosZen = np.cos(self.simulation.C_tr)
-		TanCos = np.tanh(cosZen)
-		mask_cUP = cosZen < 0
-		mask_cDOWN = cosZen > 0
-		zenith = np.ones(len(self.simulation.E_tr))
-		zenith[mask_cUP] -= sys.Up * TanCos[mask_cUP]
-		zenith[mask_cDOWN] -= sys.Down *TanCos[mask_cDOWN]
-		# now apply these to the weights
-		tilt *= zenith
-		all_tilt = np.array([[[tilt],[tilt]],[[tilt],[tilt]],[[tilt],[tilt]],[[tilt],[tilt]]])
-		self.weights *= all_tilt
-		# for i in range(2):
-		# 	for j in range(2):
-		# 		for k in range(2):
-		# 			self.weights[i][j][k] *= tilt
-		# 			self.weights[i][j][k] *= zenith
+		# cosZen = np.cos(self.simulation.C_tr)
+		# TanCos = np.tanh(cosZen)
+		# mask_cUP = cosZen < 0
+		# mask_cDOWN = cosZen > 0
+		# zenith = np.ones(len(self.simulation.E_tr))
+		# zenith[mask_cUP] -= sys.Up * TanCos[mask_cUP]
+		# zenith[mask_cDOWN] -= sys.Down *TanCos[mask_cDOWN]
+		# print(zenith)
+
+		for i in range(2):
+			for j in range(2):
+				for k in range(2):
+					self.weights[i][j][k] *= tilt
+					# self.weights[i][j][k] *= zenith
 
 	# now we can histogram the weights
-	def histogram(self, pointtype):
+	def binning(self, pointtype):
 		# performance or conciseness?
 		for i in range(2):
 			for j in range(2):
 				for k in range(2):
 					if pointtype.value == 0:
-						self.bf_histogram[i][j][k] = np.histogram2d(self.simulation.E_re, np.cos(self.simulation.C_re), \
+						self.bf_histogram[i][j][k], _, _ = np.histogram2d(self.simulation.E_re, np.cos(self.simulation.C_re), \
 													bins = (erec, crec), weights = self.bf_weights[i][j][k])
 					elif pointtype.value == 1:
-						self.histogram[i][j][k] = np.histogram2d(self.simulation.E_re, np.cos(self.simulation.C_re), \
+						self.histogram[i][j][k], _, _ = np.histogram2d(self.simulation.E_re, np.cos(self.simulation.C_re), \
 													bins = (erec, crec), weights = self.weights[i][j][k])
 					else:
 						print("invalid point type selected")
@@ -203,33 +205,48 @@ class Analysis:
 
 		def get_single_chisq(flavor, neutype):
 			def get_flavor_neutype(flavor, neutype):
-			if flavor.value == 12:
-				if neutype.value == -1:
-					return 1, 0, 1 - delta, eps
-				else: return 0, 0, delta, eps
-			elif flavor.value == 14:
-				if neutype.value == -1:
-					return 1, 1, 1 - delta, 1 - eps
-				else: return 0, 1, delta, 1 - eps
-			else:
-				print("invalid Atm initial flux selected")
-				exit(1)
+				if flavor.value == 12:
+					if neutype.value == -1:
+						return 1, 0, 2 - delta, eps
+					else: return 0, 0, delta, eps
+				elif flavor.value == 14:
+					if neutype.value == -1:
+						return 1, 1, 2 - delta, 2 - eps
+					else: return 0, 1, delta, 2 - eps
+				else:
+					print("invalid Atm initial flux selected")
+					exit(1)
 
-			whatflavor, whatneutype, whatdelta, whateps = get_flavor_neutype(flavor, neutype, delta, eps)
+			whatflavor, whatneutype, whatdelta, whateps = get_flavor_neutype(flavor, neutype)
 
 			single_chisq = 0.
-			for top in range(2):
+
+			# the following manual repeat pattern is to avoid a 5-layer nested for loop
+			def chisq_plus(neutype, flavor, top):
+				plus = 0
 				for ebin in range(NErec):
 					for cbin in range(Ncrec):
-						single_chisq += (N * whatdelta * whateps * self.histogram[top][ebin][cbin] - \
-									self.bf_histogram[top][ebin][cbin]) ** 2 / self.self.bf_histogram[top][ebin][cbin]
+						if self.bf_histogram[neutype][flavor][top][ebin][cbin] != 0:
+							plus = (N * whatdelta * whateps * self.histogram[neutype][flavor][top][ebin][cbin] - \
+										self.bf_histogram[neutype][flavor][top][ebin][cbin]) ** 2 / self.bf_histogram[neutype][flavor][top][ebin][cbin]
+				return plus
+
+			# consider putting these lines to a more elegant expression with matrix arrays
+			single_chisq += chisq_plus(0, 0, 0)
+			single_chisq += chisq_plus(0, 0, 1)
+			single_chisq += chisq_plus(0, 1, 0)
+			single_chisq += chisq_plus(0, 1, 1)
+			single_chisq += chisq_plus(1, 0, 0)
+			single_chisq += chisq_plus(1, 0, 1)
+			single_chisq += chisq_plus(1, 1, 0)
+			single_chisq += chisq_plus(1, 1, 1)
 			return single_chisq
 
 		chisq = get_single_chisq(Flavor.e, NeuType.Neutrino) + get_single_chisq(Flavor.e, NeuType.AntiNeutrino) + \
-				et_single_chisq(Flavor.mu, NeuType.Neutrino) + get_single_chisq(Flavor.mu, NeuType.AntiNeutrino)
+				get_single_chisq(Flavor.mu, NeuType.Neutrino) + get_single_chisq(Flavor.mu, NeuType.AntiNeutrino)
 
-		Sys_BF = cl.Systematics(N_bf, delta_bf, gamma_bf, eps_bf, hv_bf, hv_bf)
-		Sys_Sigma = cl.Systematics(sig_N, sig_delta, sig_gamma, sig_eps, sig_hv, sig_hv)
+		Sys_BF = Systematics(N_bf, delta_bf, gamma_bf, eps_bf, hv_bf, hv_bf)
+		Sys_Sigma = Systematics(sig_N, sig_delta, sig_gamma, sig_eps, sig_hv, sig_hv)
 
 		chisq += (sys.N - Sys_BF.N) ** 2 / Sys_Sigma.N ** 2
 		chisq += (sys.delta - Sys_BF.delta) ** 2 / Sys_Sigma.delta ** 2
@@ -238,6 +255,30 @@ class Analysis:
 		chisq += (sys.Up - Sys_BF.Up) ** 2 / Sys_Sigma.Up ** 2
 		chisq += (sys.Down - Sys_BF.Down) ** 2 / Sys_Sigma.Down ** 2
 
+		self.chisq = chisq
+
 		return chisq
 
+	def min_chisq(self):
 
+		# define a function to minimize
+		def to_min(syst_array):
+			syst = Systematics(syst_array[0], syst_array[1], syst_array[2], syst_array[3], syst_array[4], syst_array[5])
+			self.pre_apply_systematics(syst)
+			self.binning(PointType.BestFit)
+			self.binning(PointType.Physical)
+			self.get_chisq(syst)
+			return self.chisq
+		
+		# define a callback function to visualize the results
+		def callbackF(syst_array):
+			global Nfeval
+			print('{0:4d}, {1: 3.6f}, {2: 3.6f}, {3: 3.6f}, {4: 3.6f}, {5: 3.6f}, {6: 3.6f}'.format\
+									(Nfeval, syst[0], syst[1], syst[2], syst[3], syst[4], syst[5], to_min(syst_array)))
+			Nfeval += 1
+
+		res = minimize(to_min, [N_bf, delta_bf, gamma_bf, eps_bf, hv_bf, hv_bf], callback = callbackF, options={'disp': True, 'maxiter': 10})
+
+		self.chisq_min = res.fun
+
+		return res.fun
