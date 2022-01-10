@@ -47,8 +47,12 @@ def FlavorRatio(x,experiment):
 	eovermu = eovermu[abs(experiment.nuPDG)==12] * x
 	return eovermu
 
-def ZenithFlux(x, experiment):
+def ZenithFluxUp(x, experiment):
 	zenith = np.ones(experiment.NumberOfEvents) 
-	zenith = zenith[experiment.CosZTrue<0] - syst[4] * np.tanh(experiment.CosZTrue[experiment.CosZTrue<0])**2
-	zenith = zenith[experiment.CosZTrue>=0] - syst[5] * np.tanh(experiment.CosZTrue[experiment.CosZTrue>=0])**2
+	zenith = zenith[experiment.CosZTrue>=0] - x * np.tanh(experiment.CosZTrue[experiment.CosZTrue>=0])**2
+	return zenith
+
+def ZenithFluxDown(x, experiment):
+	zenith = np.ones(experiment.NumberOfEvents) 
+	zenith = zenith[experiment.CosZTrue<0] - x * np.tanh(experiment.CosZTrue[experiment.CosZTrue<0])**2
 	return zenith

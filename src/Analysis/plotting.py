@@ -13,6 +13,10 @@ def cornerPlot(x,y,X2,title=''):
 	y0 = np.amin(y)
 	yf = np.amax(y)
 
+	minChi2 = np.amin(X2)
+	print(f'Minimum X2 {minChi2}')
+	X2 = X2 - minChi2
+
 	Chi2 = np.reshape(X2, (x.size,y.size)).T
 
 	X2_x = np.array([])
@@ -20,7 +24,6 @@ def cornerPlot(x,y,X2,title=''):
 	for i,t in enumerate(y):
 		marg = np.amin(Chi2[i,0:x.size])
 		X2_y = np.append(X2_y,marg)
-		print(t,marg)
 
 
 	for i,t in enumerate(x):
@@ -155,22 +158,11 @@ def cornerPlotBothO(x,y,X2_N,X2_I):
 
 	colors = ['c','g']
 
-
 	levels1d = np.array([2.706,9.0])
 	levels2d = np.array([4.605,11.904])
 
-	# Smooth
-	# xnew = np.linspace(x.min(), x.max(), 200)
-	# spl_Nx = make_interp_spline(x, X2N_x, k=3)
-	# X2N_x_new = spl_Nx(xnew)
-	# spl_Ix = make_interp_spline(x, X2I_x, k=3)
-	# X2I_x_new = spl_Ix(xnew)
-
 	axUp.plot(x,X2N_x, color='k')
 	axUp.plot(x,X2I_x, color='k', linestyle='dotted')
-
-	# axUp.plot(x,X2N_x, color='k')
-	# axUp.plot(x,X2I_x, color='k', linestyle='dotted')
 
 	for i in range(2):
 		axUp.plot([x0,xf],[levels1d[i],levels1d[i]], color=colors[i], linewidth=0.5)
@@ -178,40 +170,17 @@ def cornerPlotBothO(x,y,X2_N,X2_I):
 	axUp.set_ylim(0.,20.)
 	axUp.set_xlim(x0,xf)
 
-
-
-	# Smooth
-	# ynew = np.linspace(y.min(), y.max(), 200)
-	# spl_Ny = make_interp_spline(y, X2N_y, k=3)
-	# X2N_y_new = spl_Ny(ynew)
-	# spl_Iy = make_interp_spline(y, X2I_y, k=3)
-	# X2I_y_new = spl_Iy(ynew)
-
 	axRi.plot(X2N_y, y, color='k')
 	axRi.plot(X2I_y, y, color='k', linestyle='dotted')
 
-	# axRi.plot(X2N_y, y, color='k')
-	# axRi.plot(X2I_y, y, color='k', linestyle='dotted')
 	axRi.set_xlim(0.,20.)
 	axRi.set_ylim(y0,yf)
 
 	X, Y = np.meshgrid(x, y)
-	# xnew = np.linspace(x.min(), x.max(), 200)
-	# ynew = np.linspace(y.min(), y.max(), 200)
-	# fN = interpolate.interp2d(X, Y, Chi2N, kind='cubic')
-	# fI = interpolate.interp2d(X, Y, Chi2I, kind='cubic')
-	# Xnew, Ynew = np.meshgrid(xnew, ynew)
-	# Chi2N_smooth = fN(xnew,ynew)
-	# Chi2I_smooth = fI(xnew,ynew)
 	levels = np.array([4.605,5.991,9.21])
 	ax.contour(X,Y,Chi2N, levels=levels2d, colors=colors)
 	ax.contour(X,Y,Chi2I, levels=levels2d, colors=colors, linestyles='dotted')
-	# ax.contour(Xnew,Ynew,Chi2N_smooth, levels=levels2d, colors=colors)
-	# ax.contour(Xnew,Ynew,Chi2I_smooth, levels=levels2d, colors=colors, linestyles='dotted')
 	ax.set_xlim(x0,xf)
 	ax.set_ylim(y0,yf)
-
-	# plt.set_title(title)
-	
 
 	plt.show()

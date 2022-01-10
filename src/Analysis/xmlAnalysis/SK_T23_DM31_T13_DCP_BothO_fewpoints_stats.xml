@@ -38,7 +38,7 @@
 		</systematic>
 	</NeutrinoExperiment>
 <!-- IceCube Upgrade -->
-	<NeutrinoExperiment name="IceCube Upgrade">
+	<NeutrinoExperiment name="IceCube-Upgrade">
 		<status name='status'> 0 </status>
 		<simulation filename='../Simulation/IceCubeUpgrade/data/neutrino_mc.csv'> </simulation>
 		<exposure> 3 </exposure>

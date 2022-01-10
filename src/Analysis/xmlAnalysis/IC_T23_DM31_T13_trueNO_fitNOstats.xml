@@ -20,7 +20,7 @@
 
 <!--Anything common to a given neutrino experiment-->
 <!-- IceCube Upgrade -->
-	<NeutrinoExperiment name="IceCube Upgrade">
+	<NeutrinoExperiment name="IceCube-Upgrade">
 		<status name='status'> 1 </status>
 		<simulation filename='../Simulation/IceCubeUpgrade/data/neutrino_mc.csv'> </simulation>
 		<exposure> 3 </exposure>

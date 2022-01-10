@@ -136,5 +136,3 @@ class parseXML:
 			self.NoSyst = 0
 
 	
-
-
