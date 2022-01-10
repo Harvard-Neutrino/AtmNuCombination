@@ -7,28 +7,12 @@ import numpy as np
 def FluxNormalization(x, experiment):
 	return np.ones(experiment.NumberOfEvents) * x
 
-def SKFluxNormalization(x, experiment):
-	return np.ones(experiment.NumberOfEvents) * x
-
-def ICFluxNormalization(x, experiment):
-	return np.ones(experiment.NumberOfEvents) * x
-
 def FluxNormalization_Below1GeV(x, experiment):
 	nev = np.ones(experiment.NumberOfEvents)
 	nev[experiment.ETrue<1] = nev[experiment.ETrue<1] * x
 	return nev
 
-def SKFluxNormalization_Above1GeV(x, experiment):
-	nev = np.ones(experiment.NumberOfEvents)
-	nev[experiment.ETrue>1] = nev[experiment.ETrue>1] * x
-	return nev
-
-def SKFluxNormalization_Below1GeV(x, experiment):
-	nev = np.ones(experiment.NumberOfEvents)
-	nev[experiment.ETrue<1] = nev[experiment.ETrue<1] * x
-	return nev
-
-def ICFluxNormalization_Above1GeV(x, experiment):
+def FluxNormalization_Above1GeV(x, experiment):
 	nev = np.ones(experiment.NumberOfEvents)
 	nev[experiment.ETrue>1] = nev[experiment.ETrue>1] * x
 	return nev
@@ -56,3 +40,4 @@ def ZenithFluxDown(x, experiment):
 	zenith = np.ones(experiment.NumberOfEvents) 
 	zenith = zenith[experiment.CosZTrue<0] - x * np.tanh(experiment.CosZTrue[experiment.CosZTrue<0])**2
 	return zenith
+

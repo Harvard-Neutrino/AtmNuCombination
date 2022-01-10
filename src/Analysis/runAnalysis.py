@@ -8,6 +8,10 @@ from xmlReader import parseXML
 from itertools import product
 from Sensitivity import sensitivity
 
+# Running flags: to be developed
+mcmc = 0
+multiproc = 1
+
 # Setup analysis details
 analysis_xml_file=str(sys.argv[1])
 outfile=str(sys.argv[2])
@@ -18,10 +22,6 @@ an.readExperiments()
 an.readPhysics()
 an.readOscPar()
 an.CheckSystematics()
-
-# Analysis flags
-mcmc = 0
-multiproc = 1
 
 # Setup all experiments
 mcList = {}
@@ -77,7 +77,6 @@ if multiproc:
 						for i,p in enumerate(processes):
 							p.join()
 							processes = []
-							print('------------------------------')
 
 	'''
 	else:

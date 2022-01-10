@@ -128,7 +128,6 @@ class Reader:
 		AtmOsc.Set_SquareMassDifference(1, Dm221)
 		AtmOsc.Set_SquareMassDifference(2,Dm231)
 		if Ordering!='normal':
-			print('inverted surely')
 			AtmOsc.Set_SquareMassDifference(2,Dm221-Dm231)
 		AtmOsc.Set_CPPhase(0,2,dCP)
 		AtmOsc.Set_initial_state(self.AtmInitialFlux,nsq.Basis.flavor)
@@ -161,7 +160,6 @@ class Reader:
 		AtmOsc.Set_SquareMassDifference(2,dm31)
 		
 		if Ordering!='normal':
-			print('inverted surely')
 			AtmOsc.Set_SquareMassDifference(2,dm21-dm31)
 		AtmOsc.Set_CPPhase(0,2,dcp)
 		AtmOsc.Set_initial_state(self.AtmInitialFlux,nsq.Basis.flavor)
