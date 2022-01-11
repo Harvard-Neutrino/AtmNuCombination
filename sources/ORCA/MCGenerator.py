@@ -28,8 +28,8 @@ class Generator:
 				return -1
 
 			# now generate a random reco number from t
-			sigma, mu = 0, 0
-			[sigma, mu] = gaus[bin_num]
+			sigma, mu, A = 0, 0, 1
+			[sigma, mu, A] = gaus[bin_num]
 			random_E_reco = np.random.normal(sigma, mu)
 
 			# return this fake ORCA MC energy

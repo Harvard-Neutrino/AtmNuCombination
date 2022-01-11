@@ -16,6 +16,7 @@ tracks.digitalize(22, 22)
 cascades.digitalize(22, 22)
 
 D_tracks = tracks.extracted
+D_tracks[11][14] = 0.1 # only manual hardcode part
 D_cascades = cascades.extracted
 
 tracks.fit()

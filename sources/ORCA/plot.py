@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import LogNorm
+from matplotlib.ticker import LogFormatterMathtext
 from scipy.optimize import curve_fit
 
 import digitalizer as dgt
@@ -26,10 +27,13 @@ def plot_mig_hist(binnum):
     data_entries = D_tracks[binnum]
     # data_entries = D_cascades[binnum]
 
+    if binnum == 11: # only manual hard code part
+        data_entries[14] = 0.1
+
     print(data_entries)
 
     bins_centers = np.array([0.5 * (x_bins[i] + x_bins[i+1]) for i in range(len(x_bins)-1)])
-    popt, pcov = curve_fit(gaussian, xdata=bins_centers, ydata=data_entries, p0=[binnum, 20])
+    popt, pcov = curve_fit(gaussian, xdata=bins_centers, ydata=data_entries, p0=[binnum, 10, 1])
 
     # # Generate enough x values to make the curves look smooth.
     xspace = np.linspace(2, 55, 100000)
@@ -79,59 +83,32 @@ def plot_zenith_errors():
 
 # plot_zenith_errors()
 
-# This function has some problems: heatmap definition is understood wrong I believe
-# def plot_energy_reco(gaus, bins):
-#     def find_reco_energy_prob(gaus, bins, true_energy, reco_energy):
-#         # set bounds on IC energy
-#         if true_energy > 53 or true_energy < 1.85:
-#             return -1
-#         # find which E_true_ORCA bin this E_true belongs to
-#         for i in range(len(bins) - 1):
-#             if true_energy <= bins[i + 1]:
-#                 bin_num = i
-#                 print("in find reco, i is ", i)
-#                 break
 
-#         # now generate a random reco number from t
-#         [sigma, mu] = gaus[bin_num]
-#         print("and now sigma and mu are ", sigma, mu)
-#         E_reco = util.gaussian(reco_energy, mu, sigma)
-#         print("and the reco is ", E_reco)
-
-#         # return this fake ORCA MC energy
-#         return E_reco
-#     x = np.logspace(np.log10(2), np.log10(50), 22)
-#     y = np.logspace(np.log10(2), np.log10(50), 22)
-#     print("x and y are ", x, y)
-#     mesh = np.zeros((22, 22), float)
-#     for i in range(22):
-#         for j in range(22):
-#             true_energy = x[i]
-#             print("currently i and j, and x and y are ", i, j, x[i], y[j])
-#             res = find_reco_energy_prob(gaus, bins, x[i], y[j])
-#             mesh[i][j] = res
-
-#     fig, ax = plt.subplots()
-#     ax.imshow(mesh)
-#     # plt.xscale('log')
-#     # plt.yscale('log')
-#     plt.xlim(0.1, 50)
-#     plt.ylim(0.1, 50)
+# def plot_energy_reco():
+#     # plt.scatter(anl.res_true, anl.res_reco)
+#     heatmap, xedges, yedges = np.histogram2d(anl.res_true, anl.res_reco, bins=(x_bins, x_bins))
+#     extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
+#     plt.xlim(2, 53)
+#     plt.ylim(2, 53)
+#     plt.clf()
+#     plt.imshow(heatmap.T, extent=extent, origin='lower', norm = LogNorm())
+#     # plt.xscale("log")
+#     # plt.yscale("log")
+#     plt.savefig("ICMC_with_ORCA_Reco")
 #     plt.show()
 
-# plot_energy_reco(anl.tracks.gaussians, x_bins)
-
 def plot_energy_reco():
-    # plt.scatter(anl.res_true, anl.res_reco)
-    heatmap, xedges, yedges = np.histogram2d(anl.res_true, anl.res_reco, bins=(x_bins, x_bins))
-    extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
+    x = np.logspace(np.log10(1.85), np.log10(53), 23)
+    y = np.logspace(np.log10(1.85), np.log10(53), 23)
+    X, Y = np.meshgrid(x, y)
+    Z, xedges, yedges = np.histogram2d(anl.res_true, anl.res_reco, bins=(x, y))
+    im = plt.pcolor(X, Y, Z.T, cmap = "gray_r", norm = LogNorm())
     plt.xlim(2, 53)
     plt.ylim(2, 53)
-    plt.clf()
-    plt.imshow(heatmap.T, extent=extent, origin='lower', norm = LogNorm())
-    # plt.xscale("log")
-    # plt.yscale("log")
+    plt.colorbar(im, orientation = "vertical", format = LogFormatterMathtext())
+    plt.xscale("log")
+    plt.yscale("log")
+    # plt.show()
     plt.savefig("ICMC_with_ORCA_Reco")
-    plt.show()
 
 plot_energy_reco()
