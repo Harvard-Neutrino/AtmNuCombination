@@ -116,7 +116,6 @@ class Reader:
 			self.MaxNumberOfCzBins = 10
 
 	def BFOscillator(self,neutrino_flavors, Sin2Theta12=0, Sin2Theta13=0, Sin2Theta23=0, Dm221=0, Dm231=0, dCP=0, Ordering='normal'):
-
 		units = nsq.Const()
 		interactions = False
 		AtmOsc = nsq.nuSQUIDSAtm(self.cth_nodes,self.energy_nodes*units.GeV,neutrino_flavors,nsq.NeutrinoType.both,interactions)
@@ -146,6 +145,8 @@ class Reader:
 			elif np.abs(self.nuPDG[i]) == 16:
 				neuflavor = 2
 			self.weightOscBF[i] = AtmOsc.EvalFlavor(neuflavor, cz, E*units.GeV, neutype)
+			# self.weightOscBF[i] = AtmOsc.EvalFlavor(neuflavor, cz, E*units.GeV, neutype, randomize_production_height = true)
+			# print(AtmOsc.Get_h())
 
 	def Oscillator(self, neutrino_flavors, t12, t13, t23, dm21, dm31, dcp, Ordering='normal'):
 		units = nsq.Const()
