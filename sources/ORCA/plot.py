@@ -101,7 +101,7 @@ def plot_energy_reco():
     x = np.logspace(np.log10(1.85), np.log10(53), 23)
     y = np.logspace(np.log10(1.85), np.log10(53), 23)
     X, Y = np.meshgrid(x, y)
-    Z, xedges, yedges = np.histogram2d(anl.res_true, anl.res_reco, bins=(x, y))
+    Z, xedges, yedges = np.histogram2d(anl.res_e_true, anl.res_e_reco, bins=(x, y))
     im = plt.pcolor(X, Y, Z.T, cmap = "gray_r", norm = LogNorm())
     plt.xlim(2, 53)
     plt.ylim(2, 53)
@@ -111,4 +111,20 @@ def plot_energy_reco():
     # plt.show()
     plt.savefig("ICMC_with_ORCA_Reco")
 
-plot_energy_reco()
+# plot_energy_reco()
+
+def plot_zenith_reco():
+    x = np.linspace(-1, 1, 20)
+    y = np.linspace(-1, 1, 20)
+    X, Y = np.meshgrid(x, y)
+    Z, xedges, yedges = np.histogram2d(np.cos(anl.res_zen_true), np.cos(anl.res_zen_reco), bins=(x, y))
+    im = plt.pcolor(X, Y, Z.T, cmap = "gray_r", norm = LogNorm())
+    plt.xlim(-1, 1)
+    plt.ylim(-1, 1)
+    plt.colorbar(im, orientation = "vertical", format = LogFormatterMathtext())
+    # plt.xscale("log")
+    # plt.yscale("log")
+    # plt.show()
+    plt.savefig("ICMC_coszen_with_ORCA_Reco")
+
+plot_zenith_reco()

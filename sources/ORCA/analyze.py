@@ -22,5 +22,5 @@ D_cascades = cascades.extracted
 tracks.fit()
 cascades.fit()
 
-tracksgen = gen.Generator(input_MC, tracks.gaussians, cascades.gaussians, x_bins)
-res_true, res_reco = tracksgen.generate(1, 1)
+fakegen = gen.Generator(input_MC, tracks.gaussians, cascades.gaussians, x_bins)
+res_e_true, res_e_reco, res_zen_true, res_zen_reco = fakegen.generate(1, 1)

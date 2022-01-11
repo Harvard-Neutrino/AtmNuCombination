@@ -51,34 +51,34 @@ class Generator:
 		# define the 4 exponential functions of zenith error
 		e_error, eb_error, mu_error, mub_error = util.get_zenith_error()
 
-		all_true = []
-		all_reco = []
+		all_e_true = []
+		all_e_reco = []
+		all_zen_true = []
+		all_zen_reco = []
 		# now generate a fake ORCA MC energy and ORCA MC weight for all the events
 		for i in range(len(self.MC["true_energy"])):
 			energy = self.MC["true_energy"][i]
+			zenith = self.MC["true_zenith"][i]
 			#if i < 10: # just to test the code
 			if self.MC["pid"][i] == 0:
 				# use cascade gaussian params
 				ORCA_E_reco = find_reco_energy(self.G_E_ca, energy)
 				ORCA_W_MC = N_ORCA / N_IC * self.MC["weight"][i]
+				if int(self.MC["pdg"][i]) > 0:
+					ORCA_zen_reco = self.MC["reco_zenith"][i] - find_reco_zenith(e_error, energy)
+				else:
+					ORCA_zen_reco = self.MC["reco_zenith"][i] - find_reco_zenith(eb_error, energy)
 			elif self.MC["pid"][i] == 1:
 				# use track gaussian params
 				ORCA_E_reco = find_reco_energy(self.G_E_tr, energy)
 				ORCA_W_MC = N_ORCA / N_IC * self.MC["weight"][i]
+				if int(self.MC["pdg"][i]) > 0:
+					ORCA_zen_reco = self.MC["reco_zenith"][i] - find_reco_zenith(mu_error, energy)
+				else:
+					ORCA_zen_reco = self.MC["reco_zenith"][i] - find_reco_zenith(mub_error, energy)
 			else:
 				print("invalid pid detected")
 				exit(1)
-
-			if int(self.MC["pdg"][i]) == 12:
-				ORCA_zen_reco = self.MC["reco_zenith"][i] - find_reco_zenith(e_error, energy)
-			elif int(self.MC["pdg"][i]) == 14:
-				ORCA_zen_reco = self.MC["reco_zenith"][i] - find_reco_zenith(eb_error, energy)
-			elif int(self.MC["pdg"][i]) == -12:
-				ORCA_zen_reco = self.MC["reco_zenith"][i] - find_reco_zenith(mu_error, energy)
-			elif int(self.MC["pdg"][i]) == -14:
-				ORCA_zen_reco = self.MC["reco_zenith"][i] - find_reco_zenith(mub_error, energy)
-			else:
-				ORCA_zen_reco = -1
 
 			# print("For event ", i, ":")
 			# print("the true energy is ", self.MC["true_energy"][i])
@@ -88,11 +88,15 @@ class Generator:
 			# print("the IC reco zenith is ", self.MC["reco_zenith"][i])
 			# print("the fake ORCA MC zenith is ", ORCA_zen_reco, "\n")
 
-			all_true.append(energy)
-			all_reco.append(ORCA_E_reco)
+			all_e_true.append(energy)
+			all_e_reco.append(ORCA_E_reco)
+			all_zen_true.append(zenith)
+			all_zen_reco.append(ORCA_zen_reco)
 
-		res_true = np.array(all_true)
-		res_reco = np.array(all_reco)
+		res_e_true = np.array(all_e_true)
+		res_e_reco = np.array(all_e_reco)
+		res_zen_true = np.array(all_zen_true)
+		res_zen_reco = np.array(all_zen_reco)
 
-		return res_true, res_reco
+		return res_e_true, res_e_reco, res_zen_true, res_zen_reco
 
