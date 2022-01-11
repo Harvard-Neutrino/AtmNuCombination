@@ -24,11 +24,11 @@ def plot_mig_hist(binnum):
     D_tracks = tracks.extracted
     D_cascades = cascades.extracted
 
-    data_entries = D_tracks[binnum]
-    # data_entries = D_cascades[binnum]
+    # data_entries = D_tracks[binnum]
+    data_entries = D_cascades[binnum]
 
-    if binnum == 11: # only manual hard code part
-        data_entries[14] = 0.1
+    # if binnum == 11: # only manual hard code part
+    #     data_entries[14] = 0.1
 
     print(data_entries)
 
@@ -41,11 +41,11 @@ def plot_mig_hist(binnum):
     # # Plot the histogram and the fitted function.
     plt.bar(bins_centers, data_entries, width=x_bins[1] - x_bins[0], color='navy', label=r'Histogram entries')
     plt.plot(xspace, gaussian(xspace, *popt), color='darkorange', linewidth=2.5, label=r'Fitted function')
-    plt.savefig("./MigMatPlots/TrackMigMatBin{}.png".format(binnum))
+    plt.savefig("./MigMatPlots/Cascades/CascadeMigMatBin{}.png".format(binnum))
     plt.close()
 
-# for i in range(22):
-#     plot_mig_hist(i)
+for i in range(22):
+    plot_mig_hist(i)
 
 def plot_zenith_errors():
     e, ebar, mu, mubar = util.get_zenith_error()
@@ -127,4 +127,4 @@ def plot_zenith_reco():
     # plt.show()
     plt.savefig("ICMC_coszen_with_ORCA_Reco")
 
-plot_zenith_reco()
+# plot_zenith_reco()
