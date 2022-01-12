@@ -1,21 +1,43 @@
+import sys
+import os.path
 import numpy as np
 import math
 from math import asin, sqrt
 from SimReader import Reader
 import multiprocessing
-import sys
 from xmlReader import parseXML
 from itertools import product
 from Sensitivity import sensitivity
+import argparse
 
-# Running flags: to be developed
-mcmc = 0
-multiproc = 1
+# Read arguments
+############################
+parser = argparse.ArgumentParser()
+parser.add_argument("xml_file", type=str, nargs='?', default='xmlAnalysis/AnalysisTemplate.xml', help='Input analysis file in xml format')
+parser.add_argument('-p', '--point', nargs='?', type=int, default=0, help='Specify analysis point to run. Only if \'cluster\' option is enabled')
+parser.add_argument('-o', '--outfile', nargs='?', type=str, default='out.dat', help='Analysis output file')
+parser.add_argument("--multi", dest='multiproc', default=False, action='store_true', help='Option for running the analysis with multiprocessing (recommended locally)') 
+parser.add_argument("--cluster", dest='cluster', default=False, action='store_true', help='Option for submitting jobs to a cluster')
+args = parser.parse_args()
 
-# Setup analysis details
-analysis_xml_file=str(sys.argv[1])
-outfile=str(sys.argv[2])
+# Setup running flags
+############################
+# mcmc = args.mcmc
+multiproc = args.multiproc
+cluster = args.cluster
+if cluster:
+	if args.point is None:
+		point=0
+	else:
+		point = args.point
 
+# Setup analysis files
+############################
+analysis_xml_file = args.xml_file
+outfile = args.outfile
+
+# Setup analysis from xml file
+############################
 an = parseXML(analysis_xml_file)
 an.readSources()
 an.readExperiments()
@@ -24,8 +46,8 @@ an.readOscPar()
 an.CheckSystematics()
 
 # Setup all experiments
+############################
 mcList = {}
-
 for s in an.sources:
 	for i,(exp,fil) in enumerate(zip(an.experiments,an.mcFiles)):
 		mcList[exp] = Reader(s,exp,fil)
@@ -36,113 +58,55 @@ for s in an.sources:
 		mcList[exp].BFOscillator(an.neutrinos,**an.OscParametersBest)
 
 
+# Write first line of output file
+############################
+if (cluster and (point==0 or not os.path.isfile(outfile))) or not cluster:
+	with open(outfile,'w') as f:
+		for par in an.parameters:
+			f.write(par+' ')
+		if an.NoSyst == 0:
+			for sys in an.Systematics.values():
+				for s in sys:
+					f.write(s+' ')
+		f.write('X2 ')
+		f.write('\n')
+
 print('=============================================================')
-print('====================== There we go!! ========================')
+print('==================== Starting analysis ======================')
+print('=============================================================')
 
+# Main analysis loop
+############################
 
-with open(outfile,'w') as f:
-	for par in an.parameters:
-		f.write(par+' ')
-	if an.NoSyst == 0:
-		for sys in an.Systematics.values():
-			for s in sys:
-				f.write(s+' ')
-	f.write('X2 ')
-	f.write('\n')
+if an.physics[0] == 'Three Flavour':
+	# Osc. in parameters space
+	param = []
+	for oscpar in [*an.OscParametersGrid]:
+		param.append(an.OscParametersGrid[oscpar])
+	parametersGrid = product(*param)
 
+	if cluster:
+		element = list(parametersGrid)[point]
+		print(f'Processing {element}')
+		sensitivity(an, *element, mcList, outfile)
 
-# Main analysis
+	elif multiproc:
+		cores = multiprocessing.cpu_count()
+		processes = []
+		jj = 0
+		for element in parametersGrid:
+			p = multiprocessing.Process(target=sensitivity,args=[an, *element, mcList, outfile])
+			if __name__ == "__main__":
+				processes.append(p)
+				p.start()
+				jj = jj + 1
+				print(f'{element} process started')
+				if jj%cores==0:
+					for i,p in enumerate(processes):
+						p.join()
+						processes = []
 
-if multiproc:
-	cores = multiprocessing.cpu_count()
-
-	if mcmc==0:
-		if an.physics[0] == 'Three Flavour':
-			processes = []
-			jj = 0
-
-			# Osc. in parameters space (multiprocessing)
-			param = []
-			for oscpar in [*an.OscParametersGrid]:
-				param.append(an.OscParametersGrid[oscpar])
-
-			for element in product(*param):
-				p = multiprocessing.Process(target=sensitivity,args=[an, *element, mcList, outfile])
-				if __name__ == "__main__":
-					processes.append(p)
-					p.start()
-					jj = jj + 1
-					print(f'{element} process started')
-					if jj%cores==0:
-						for i,p in enumerate(processes):
-							p.join()
-							processes = []
-
-	'''
 	else:
-		param = []
-		for par in an.parameters:
-			if an.OscParametersGrid[par].size>2:
-				param.append(par)
-
-		ndim = len(param)
-		nwalkers = 32
-		print(f'Parameter space of {ndim} dimensions.')
-		print(f'We have 32 walkers by default and you are using {nwalkers}.')
-		
-		p0 = np.random.randn(nwalkers, ndim)
-
-		prior = np.random.rand(ndim)
-		prior = an.OscParametersBest
-
-		print(prior)
-		for i,par in enumerate(param):
-			r = np.random.rand(1)[0]
-			prior[par] = an.OscParametersEdges[par][0] + r * (an.OscParametersEdges[par][1] - an.OscParametersEdges[par][0]) 
-			# print(an.OscParametersEdges[par])
-			# prior[i] = an.OscParametersEdges[par][0] + prior[i] * (an.OscParametersEdges[par][1] - an.OscParametersEdges[par][0]) 
-
-		print(prior)
-
-
-	'''
-else:
-	if mcmc==0:
-		if an.physics[0] == 'Three Flavour':
-		
-			# Osc. in parameters space (multiprocessing)
-			param = []
-			for oscpar in [*an.OscParametersGrid]:
-				param.append(an.OscParametersGrid[oscpar])
-
-			for element in product(*param):
-				sensitivity(an, *element, mcList, outfile)
-
-	'''
-	else:
-		param = []
-		for par in an.parameters:
-			if an.OscParametersGrid[par].size>2:
-				param.append(par)
-
-		ndim = len(param)
-		nwalkers = 32
-		print(f'Parameter space of {ndim} dimensions.')
-		print(f'We have 32 walkers by default and you are using {nwalkers}.')
-		
-		p0 = np.random.randn(nwalkers, ndim)
-
-		prior = np.random.rand(ndim)
-		prior = an.OscParametersBest
-
-		print(prior)
-		for i,par in enumerate(param):
-			r = np.random.rand(1)[0]
-			prior[par] = an.OscParametersEdges[par][0] + r * (an.OscParametersEdges[par][1] - an.OscParametersEdges[par][0]) 
-			# print(an.OscParametersEdges[par])
-			# prior[i] = an.OscParametersEdges[par][0] + prior[i] * (an.OscParametersEdges[par][1] - an.OscParametersEdges[par][0]) 
-
-		print(prior)
-
-
-	'''
+		for element in parametersGrid:
+			print(f'Processing {element}')
+			sensitivity(an, *element, mcList, outfile)
