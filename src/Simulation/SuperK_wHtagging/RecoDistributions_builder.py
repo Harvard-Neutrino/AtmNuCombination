@@ -875,10 +875,10 @@ with h5py.File('lib/defaultRecoDistributions.hdf5', 'w') as hf:
 	# Gd-tagged neutrons SubGeV e-like nu CC
 	g = hf.create_group('sge_ngd_nucc')
 	start = 0
-	end = 7
+	end = 10
 	step = 1
 	values = np.arange(start, end, step, 'int32')
-	weights = np.array([])
+	weights = np.array([2768.2119205298,609.271523178808,284.76821192053,145.695364238411,79.4701986754965,46.3576158940398,33.1125827814571,26.4900662251654,0,0])
 	weights = weights / np.sum(weights)
 	g.create_dataset('values', data=values)
 	g.create_dataset('weights', data=weights)
@@ -886,10 +886,10 @@ with h5py.File('lib/defaultRecoDistributions.hdf5', 'w') as hf:
 	# Gd-tagged neutrons SubGeV e-like nubar CC
 	g = hf.create_group('sge_ngd_nubarcc')
 	start = 0
-	end = 7
+	end = 10
 	step = 1
 	values = np.arange(start, end, step, 'int32')
-	weights = np.array([])
+	weights = np.array([331.12582781457,509.933774834437,198.675496688741,92.7152317880796,33.1125827814571,33.1125827814571,26.4900662251654,26.4900662251654,0,0])
 	weights = weights / np.sum(weights)
 	g.create_dataset('values', data=values)
 	g.create_dataset('weights', data=weights)
@@ -897,10 +897,10 @@ with h5py.File('lib/defaultRecoDistributions.hdf5', 'w') as hf:
 	# Gd-tagged neutrons SubGeV e-like NC
 	g = hf.create_group('sge_ngd_nc')
 	start = 0
-	end = 7
+	end = 10
 	step = 1
 	values = np.arange(start, end, step, 'int32')
-	weights = np.array([])
+	weights = np.array([99.337748344371,46.3576158940398,39.7350993377485,29.801324503311,26.4900662251654,19.867549668874,0,0,0,0])
 	weights = weights / np.sum(weights)
 	g.create_dataset('values', data=values)
 	g.create_dataset('weights', data=weights)
@@ -908,10 +908,10 @@ with h5py.File('lib/defaultRecoDistributions.hdf5', 'w') as hf:
 	# Gd-tagged neutrons SubGeV mu-like nu CC
 	g = hf.create_group('sgm_ngd_nucc')
 	start = 0
-	end = 7
+	end = 10
 	step = 1
 	values = np.arange(start, end, step, 'int32')
-	weights = np.array([])
+	weights = np.array([3873.30316742081,914.027149321267,452.488687782805,235.294117647059,117.647058823529,63.3484162895923,27.1493212669682,0,0,0])
 	weights = weights / np.sum(weights)
 	g.create_dataset('values', data=values)
 	g.create_dataset('weights', data=weights)
@@ -919,10 +919,10 @@ with h5py.File('lib/defaultRecoDistributions.hdf5', 'w') as hf:
 	# Gd-tagged neutrons SubGeV mu-like nubar CC
 	g = hf.create_group('sgm_ngd_nubarcc')
 	start = 0
-	end = 7
+	end = 10
 	step = 1
 	values = np.arange(start, end, step, 'int32')
-	weights = np.array([])
+	weights = np.array([542.986425339367,841.628959276018,343.891402714932,144.796380090498,72.3981900452488,36.1990950226241,27.1493212669682,0,0,0])
 	weights = weights / np.sum(weights)
 	g.create_dataset('values', data=values)
 	g.create_dataset('weights', data=weights)
@@ -930,10 +930,10 @@ with h5py.File('lib/defaultRecoDistributions.hdf5', 'w') as hf:
 	# Gd-tagged neutrons SubGeV mu-like NC
 	g = hf.create_group('sgm_ngd_nc')
 	start = 0
-	end = 7
+	end = 10
 	step = 1
 	values = np.arange(start, end, step, 'int32')
-	weights = np.array([])
+	weights = np.array([108.597285067873,72.3981900452488,45.2488687782806,45.2488687782806,27.1493212669682,36.1990950226241,27.1493212669682,0,0,0])
 	weights = weights / np.sum(weights)
 	g.create_dataset('values', data=values)
 	g.create_dataset('weights', data=weights)
@@ -941,10 +941,10 @@ with h5py.File('lib/defaultRecoDistributions.hdf5', 'w') as hf:
 	# Gd-tagged neutrons MultiGeV e-like nu CC
 	g = hf.create_group('mge_ngd_nucc')
 	start = 0
-	end = 7
+	end = 10
 	step = 1
 	values = np.arange(start, end, step, 'int32')
-	weights = np.array([])
+	weights = np.array([412.997903563941,139.412997903564,87.0020964360587,56.6037735849057,39.832285115304,27.2536687631027,17.8197064989518,14.6750524109015,10.482180293501,7.33752620545074])
 	weights = weights / np.sum(weights)
 	g.create_dataset('values', data=values)
 	g.create_dataset('weights', data=weights)
@@ -952,10 +952,10 @@ with h5py.File('lib/defaultRecoDistributions.hdf5', 'w') as hf:
 	# Gd-tagged neutrons MultiGeV e-like nubar CC
 	g = hf.create_group('mge_ngd_nubarcc')
 	start = 0
-	end = 7
+	end = 10
 	step = 1
 	values = np.arange(start, end, step, 'int32')
-	weights = np.array([])
+	weights = np.array([91.1949685534591,129.979035639413,76.5199161425577,47.1698113207548,31.4465408805031,19.916142557652,12.5786163522013,6.28930817610069,4.19287211740043,4.19287211740043])
 	weights = weights / np.sum(weights)
 	g.create_dataset('values', data=values)
 	g.create_dataset('weights', data=weights)
@@ -963,10 +963,10 @@ with h5py.File('lib/defaultRecoDistributions.hdf5', 'w') as hf:
 	# Gd-tagged neutrons MultiGeV e-like NC
 	g = hf.create_group('mge_ngd_nc')
 	start = 0
-	end = 7
+	end = 10
 	step = 1
 	values = np.arange(start, end, step, 'int32')
-	weights = np.array([])
+	weights = np.array([27.2536687631027,15.7232704402516,11.5303983228512,9.433962264151,7.33752620545074,5.24109014675056,5.24109014675056,6.28930817610069,4.19287211740043,4.19287211740043])
 	weights = weights / np.sum(weights)
 	g.create_dataset('values', data=values)
 	g.create_dataset('weights', data=weights)
@@ -974,10 +974,10 @@ with h5py.File('lib/defaultRecoDistributions.hdf5', 'w') as hf:
 	# Gd-tagged neutrons MultiGeV mu-like nu CC
 	g = hf.create_group('mgm_ngd_nucc')
 	start = 0
-	end = 7
+	end = 10
 	step = 1
 	values = np.arange(start, end, step, 'int32')
-	weights = np.array([])
+	weights = np.array([642.650103519669,205.383022774327,122.567287784679,82.815734989648,48.0331262939958,33.1262939958592,23.1884057971014,14.9068322981366,11.5942028985507,8.28157349896475])
 	weights = weights / np.sum(weights)
 	g.create_dataset('values', data=values)
 	g.create_dataset('weights', data=weights)
@@ -985,10 +985,10 @@ with h5py.File('lib/defaultRecoDistributions.hdf5', 'w') as hf:
 	# Gd-tagged neutrons MultiGeV mu-like nubar CC
 	g = hf.create_group('mgm_ngd_nubarcc')
 	start = 0
-	end = 7
+	end = 10
 	step = 1
 	values = np.arange(start, end, step, 'int32')
-	weights = np.array([])
+	weights = np.array([163.975155279503,231.884057971014,139.130434782609,77.8467908902691,44.7204968944099,26.5010351966873,16.5631469979296,11.5942028985507,13.2505175983437,8.28157349896475])
 	weights = weights / np.sum(weights)
 	g.create_dataset('values', data=values)
 	g.create_dataset('weights', data=weights)
@@ -996,10 +996,10 @@ with h5py.File('lib/defaultRecoDistributions.hdf5', 'w') as hf:
 	# Gd-tagged neutrons MultiGeV mu-like NC
 	g = hf.create_group('mgm_ngd_nc')
 	start = 0
-	end = 7
+	end = 10
 	step = 1
 	values = np.arange(start, end, step, 'int32')
-	weights = np.array([])
+	weights = np.array([4,3.31262939958583,3.31262939958583,3.31262939958583,3.31262939958583,3.31262939958583,3.31262939958583,3.31262939958583,3.31262939958583,1.65631469979286,0])
 	weights = weights / np.sum(weights)
 	g.create_dataset('values', data=values)
 	g.create_dataset('weights', data=weights)
