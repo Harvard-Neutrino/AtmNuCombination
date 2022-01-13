@@ -11,16 +11,15 @@ from RandomGenerator import RecoDists
 from GenieHDF5 import FluxFactor, GenieSimulation
 from pythiaDecay import pythiaDecay
 from RecoNonFC import nonFCReco
-from reWeight import simMatrix, SKMatrix, modeIndex
+from reWeight import simMatrix, allSKMatrix, modeIndex
 
 print('Super-Kamiokande atmospheric neutrino simulation')
 
 parser = argparse.ArgumentParser()
 parser.add_argument("in_hdf5filename", type=str, nargs='?', default='NULL', help='Input Genie HDF5 file.')
-parser.add_argument("outfilename", type=str, nargs='?', default='NULL', help='Output file name in HDF5 format.')
+parser.add_argument("-o", "--outfilename", type=str, default='NULL', help='Output file name in HDF5 format.')
 parser.add_argument("-v", '--verbo', default=False, action='store_true', help='Verbosity of simulation process.')
-parser.add_argument("--all", dest='allSK', default=False, action='store_true', help='Default SKI to SKIV data without neutron tagging.')
-parser.add_argument("--sk123", dest='SK123', default=False, action='store_true', help='Default SKI to SKIII data without neutron tagging.')
+parser.add_argument("--sk", dest='SK', default=True, action='store_true', help='Default SK simulation without neutron tagging.')
 parser.add_argument("--H", dest='H_ntag', default=False, action='store_true', help='SKIV simulation with neutron tagging on hydrogen.')
 parser.add_argument("--Gd", dest='Gd_ntag', default=False, action='store_true', help='SKVII simulation with neutron tagging on gadolinium.')
 args = parser.parse_args()
@@ -30,15 +29,20 @@ verbose = args.verbo
 htag = args.H_ntag
 gdtag = args.Gd_ntag 
 ntag = htag + gdtag
-allsk = args.allSK
-sk123 = args.SK123
+sk = args.SK
 
 # Setup input and output files
 genie_input = args.in_hdf5filename
 output = args.outfilename
 if genie_input != 'NULL' and output == 'NULL':
 	indir, fname = os.path.split(genie_input)
-	output = 'data/output/sksim.'+fname
+	if htag:
+		output = 'data/output/SK_Htag/sim.'+fname
+	elif gdtag:
+		output = 'data/output/SK_Gdtag/sksim.'+fname
+	else:
+		output = 'data/output/SK/sksim.'+fname
+
 
 # Read GENIE GST file in hdf5 format
 event = GenieSimulation(genie_input)
@@ -46,7 +50,10 @@ event = GenieSimulation(genie_input)
 # Read reco distributions
 rd = RecoDists()
 
-toposample = {'FC':0, 'PC-Stop':14, 'PC-Thru':15, 'UpMu-Stop':16, 'UpMu-Thru':17, 'UpMu-Show':18, 'None':-1}
+if ntag:
+	toposample = {'FC':0, 'PC-Stop':16, 'PC-Thru':17, 'UpMu-Stop':18, 'UpMu-Thru':19, 'UpMu-Show':20, 'None':-1}
+else:
+	toposample = {'FC':0, 'PC-Stop':14, 'PC-Thru':15, 'UpMu-Stop':16, 'UpMu-Thru':17, 'UpMu-Show':18, 'None':-1}
 
 # Variable declaration for out file
 # True variables
@@ -79,6 +86,7 @@ nring       = np.array([], dtype=np.double)
 muedk       = np.array([], dtype=np.double)
 neutron     = np.array([], dtype=np.double)
 itype       = np.array([], dtype=np.double)
+otype       = np.array([], dtype=np.double)
 imass       = np.array([], dtype=np.double)
 mode        = np.array([], dtype=np.double)
 
@@ -93,7 +101,7 @@ for i, nu in enumerate(event.Ipnu):
 		print('----------- Event number ',i,'----------------------')
 		print('----------------------------------------------------')
 # Get variables from Genie Simulation
-	if abs(event.Ipnu[i])==16 and event.NC[i]: # Removing tau NC from simulation
+	if abs(event.Ipnu[i])==16 and event.NC[i]: # Removing tau NC from simulation if any
 		continue
 # Neutrino
 #######################################
@@ -166,7 +174,6 @@ for i, nu in enumerate(event.Ipnu):
 			print('Reconstructed total direction: ', RRing.TotDir)
 			print('---------------------------------')
 
-# ----> Here
 	elif toposample[event.TopologySample[i]]>1:
 		nonfcType = toposample[event.TopologySample[i]]
 		if TrueNRing == 1:
@@ -222,8 +229,10 @@ for i, nu in enumerate(event.Ipnu):
 		ip         = np.append(ip, RRing.MERIP)
 		nring      = np.append(nring, RRing.NRing)
 		muedk      = np.append(muedk, RRing.MuEdk)
+		neutron    = np.append(neutron, RRing.Neutrons)
 		neutron    = np.append(neutron, numberOfNeutrons(pdgs))
 		itype      = np.append(itype, RRing.Type)
+		otype      = np.append(otype, RRing.originalType)
 		imass      = np.append(imass, RRing.Imass)
 		del RRing
 	else:
@@ -237,18 +246,22 @@ for i, nu in enumerate(event.Ipnu):
 		muedk      = np.append(muedk, 0)
 		neutron    = np.append(neutron, 0)
 		itype      = np.append(itype, nonfcType)
+		if ntag:
+			otype      = np.append(otype, nonfcType-2)
+		else:
+			otype      = np.append(otype, nonfcType)
 		imass      = np.append(imass, -9999.)
 
 # Applying weights to match SK's public event rate tables
 #######################################
-W = simMatrix(itype, ipnu, mode, weightOsc_SKpaper) # Rate matrix from this simulation
-W0= SKMatrix() # Rate matrix from SK's paper
+W = simMatrix(otype, ipnu, mode, weightOsc_SKpaper) # Rate matrix from this simulation
+W0= allSKMatrix() # Rate matrix from SK's paper
 weightReco = np.zeros(np.size(weightOsc_SKpaper))
-for i,t in enumerate(itype):
+
+for i,t in enumerate(otype):
 	ti = int(t)
 	j = modeIndex(ipnu[i], mode[i])
 	if ti>-1 and ti<16:
-		# print(ipnu[i], mode[i], j)
 		if W[ti][j]>0:
 			weightReco[i] = W0[ti][j] / W[ti][j]
 		else:
@@ -285,10 +298,10 @@ with h5py.File(output, 'w') as hf:
 	hf.create_dataset('muedk', data=muedk, compression='gzip')
 	hf.create_dataset('neutron', data=neutron, compression='gzip')
 	hf.create_dataset('itype', data=itype, compression='gzip')
+	hf.create_dataset('otype', data=otype, compression='gzip')
 	hf.create_dataset('imass', data=imass, compression='gzip')
 	hf.create_dataset('mode', data=mode, compression='gzip')
 	hf.create_dataset('weightSim', data=weightSim, compression='gzip')
 	hf.create_dataset('weightOsc_SKpaper', data=weightOsc_SKpaper, compression='gzip')
 	hf.create_dataset('weightOsc_SKbest', data=weightOsc_SKbest, compression='gzip')
 	hf.create_dataset('weightReco', data=weightReco, compression='gzip')
-

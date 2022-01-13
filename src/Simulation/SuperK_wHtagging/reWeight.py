@@ -5,7 +5,6 @@ import sys
 
 def simMatrix(itype, nu, mode, oscw):
 	# Build rate matrix for SuperKSim output
-	matrix = np.zeros((16, 5))
 	cc = abs(mode)<30
 	ccnue   = (cc==1)*(nu==12)
 	ccnueb  = (cc==1)*(nu==-12)
@@ -13,6 +12,7 @@ def simMatrix(itype, nu, mode, oscw):
 	ccnutau = (cc==1)*(abs(nu)==16)
 	nc      = (cc==0)
 
+	matrix = np.zeros((16, 5))
 	for t in range(16):
 		a = (itype==t)*(ccnue)
 		matrix[t,0] = np.sum(oscw[a])
@@ -24,14 +24,13 @@ def simMatrix(itype, nu, mode, oscw):
 		matrix[t,3] = np.sum(oscw[a])
 		a = (itype==t)*(nc)
 		matrix[t,4] = np.sum(oscw[a])
-	a = itype>-1
+
 	norm = np.sum(matrix)
 	if abs(np.sum(matrix)-norm)>0.0001:
 		print('WARNING: Check the reweighting, there is a potential error here.')
-
 	return matrix / norm
 
-def SKMatrix():
+def allSKMatrix():
 	matrix = np.array([[0.184519891405709,0.063822779733077,0.000514699836557,0.0,0.008492547303192],
 	[0.023220765775251,0.000548067763639,0.003115332551214,2.88456717704981E-05,0.001932660008623],
 	[0.001376049093042,0.000473016875733,0.000215007670788,0,0.012269771079626],
@@ -49,6 +48,7 @@ def SKMatrix():
 	[0.001200252684776,0.00045723911801,0.011845350900942,0.000142887224378,0.000642992509701],
 	[0.000434662936558,0.000217331468279,0.070850058658966,0.000507106759318,0.000434662936558]])
 	return matrix
+
 
 def modeIndex(nu, mode):
 	if abs(mode)<30:

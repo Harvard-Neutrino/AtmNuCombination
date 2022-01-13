@@ -129,6 +129,48 @@ class RecoRing:
 						pi0=0
 
 		itype=-1
+		if self.NRing==1:
+			if self.Evis>0.1 and self.Evis<1.330 and self.MERIP==2:
+				if self.MuEdk==0 and pi0==0:
+					itype=0
+				elif self.MuEdk>0 and pi0==0:
+					itype=1
+				elif self.MuEdk==0 and pi0==1:
+					itype=2
+			elif self.Evis>0.2 and self.Evis<1.330 and self.MERIP==3:
+				if self.MuEdk==0:
+					itype=3
+				elif self.MuEdk==1:
+					itype=4
+				elif self.MuEdk>1:
+					itype=5
+			elif self.Evis>=1.330 and self.MERIP==2:
+				if self.MuEdk>0:
+					itype=7
+				elif self.MuEdk==0:
+					itype=8
+			elif self.Evis>=1.330 and self.MERIP==3:
+				itype=9
+		elif self.NRing>1:
+			if self.MERIP==2 and self.Evis>1.330:
+				if ip_r>-0.25:
+					if ip_n>0:
+						itype=10
+					elif ip_n<0:
+						itype=11
+				else:
+					itype=13
+			elif self.MERIP==3 and self.MERMomentum>0.6:
+				itype=12
+		if self.NRing==2:
+			self.Imass = pp.InvariantMass(self.MERMomentum, self.sMERMomentum, self.MERDirection, self.sMERDirection)
+			if self.MERIP==2 and self.sMERIP==2 and self.Imass>=0.085 and self.Imass<=0.215:
+				itype=6
+
+		self.originalType = itype
+
+
+		itype=-1
 		if ntag:
 			if self.NRing==1:
 				if self.Evis>0.1 and self.Evis<1.330 and self.MERIP==2:
@@ -177,47 +219,9 @@ class RecoRing:
 				if self.MERIP==2 and self.sMERIP==2 and self.Imass>=0.085 and self.Imass<=0.215:
 					itype=6
 
+			self.Type = itype
 		else:
-			if self.NRing==1:
-				if self.Evis>0.1 and self.Evis<1.330 and self.MERIP==2:
-					if self.MuEdk==0 and pi0==0:
-						itype=0
-					elif self.MuEdk>0 and pi0==0:
-						itype=1
-					elif self.MuEdk==0 and pi0==1:
-						itype=2
-				elif self.Evis>0.2 and self.Evis<1.330 and self.MERIP==3:
-					if self.MuEdk==0:
-						itype=3
-					elif self.MuEdk==1:
-						itype=4
-					elif self.MuEdk>1:
-						itype=5
-				elif self.Evis>=1.330 and self.MERIP==2:
-					if self.MuEdk>0:
-						itype=7
-					elif self.MuEdk==0:
-						itype=8
-				elif self.Evis>=1.330 and self.MERIP==3:
-					itype=9
-			elif self.NRing>1:
-				if self.MERIP==2 and self.Evis>1.330:
-					if ip_r>-0.25:
-						if ip_n>0:
-							itype=10
-						elif ip_n<0:
-							itype=11
-					else:
-						itype=13
-				elif self.MERIP==3 and self.MERMomentum>0.6:
-					itype=12
-
-			if self.NRing==2:
-				self.Imass = pp.InvariantMass(self.MERMomentum, self.sMERMomentum, self.MERDirection, self.sMERDirection)
-				if self.MERIP==2 and self.sMERIP==2 and self.Imass>=0.085 and self.Imass<=0.215:
-					itype=6
-
-		self.Type = itype
+			self.Type = self.originalType
 
 
 	def DecayE(self, ipnu, cc, mode):
