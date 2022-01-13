@@ -21,6 +21,7 @@ class parseXML:
 		itemList = []
 		if item == 'NeutrinoExperiment':
 			self.mcFiles = []
+			self.Exposure = []
 		for source in self.root.iter(item):
 			if atrib=='name':
 				if int(source.find('status').text):
@@ -28,6 +29,7 @@ class parseXML:
 					if item == 'NeutrinoExperiment':
 						print(source.find('simulation').attrib['filename'])
 						self.mcFiles.append(source.find('simulation').attrib['filename'])
+						self.Exposure.append(float(source.find('exposure').text))
 				sname = source.attrib['name']
 				self.Systematics[sname] = []
 				self.SystSigma[sname] = []

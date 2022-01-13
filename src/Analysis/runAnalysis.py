@@ -49,8 +49,8 @@ an.CheckSystematics()
 ############################
 mcList = {}
 for s in an.sources:
-	for i,(exp,fil) in enumerate(zip(an.experiments,an.mcFiles)):
-		mcList[exp] = Reader(s,exp,fil)
+	for i,(exp,fil,t) in enumerate(zip(an.experiments,an.mcFiles,an.Exposure)):
+		mcList[exp] = Reader(s,exp,t,fil)
 		mcList[exp].Binning()
 		# Get unoscillated atm. fluxes
 		mcList[exp].InitialFlux()

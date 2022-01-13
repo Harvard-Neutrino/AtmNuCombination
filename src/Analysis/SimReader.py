@@ -8,12 +8,13 @@ import nuSQUIDSTools
 from math import asin, sqrt
 
 class Reader:
-	def __init__(self, source, experiment, filename):
+	def __init__(self, source, experiment, exposure, filename):
 
 		self.Experiment = experiment
 		self.Source = source
+		self.Exposure = exposure
 
-		if self.Experiment == 'Super-Kamiokande' or self.Experiment == 'SK' or self.Experiment == 'Super-Kamiokande':
+		if self.Experiment == 'Super-Kamiokande' or self.Experiment == 'SK':
 			print(f'Processing simulation of {self.Experiment} experiment.')
 			with h5py.File(filename,'r') as hf:
 				d_evis = np.array(hf['evis'][()])
@@ -39,15 +40,48 @@ class Reader:
 			self.ETrue = d_pnu[condition]
 			self.Weight = d_weightReco[condition] * d_weightSim[condition]
 			self.Sample = d_itype[condition]
-			self.Norm = 0.05411673990568942
 			self.NumberOfSamples = 16
 			self.Erec_min = 0.1
 			self.NumberOfEvents = self.nuPDG.size
+			# This Norm is hard-coded and it's the inverse of the total simulated exposure, in our case 269 years
+			self.Norm = self.Exposure / 269.5068251628932
+
+		elif self.Experiment == 'SuperK-Gd' or self.Experiment == 'SKIV' or self.Experiment == 'SuperK_Htag' or self.Experiment == 'SuperK_Gdtag':
+			print(f'Processing simulation of {self.Experiment} experiment.')
+			with h5py.File(filename,'r') as hf:
+				d_evis = np.array(hf['evis'][()])
+				d_recocz = np.array(hf['recodirZ'][()])
+				d_truecz = np.array(hf['dirnuZ'][()])
+				d_azi = np.array(hf['azi'][()])
+				d_mode = np.array(hf['mode'][()], dtype=int)
+				d_ipnu = np.array(hf['ipnu'][()], dtype=int)
+				d_pnu = np.array(hf['pnu'][()])
+				d_weightReco = np.array(hf['weightReco'][()])
+				d_weightSim = np.array(hf['weightSim'][()])
+				d_itype = np.array(hf['itype'][()], dtype=int)
+			# To be removed at some point
+			condition1 = (d_itype<16) * (d_itype>-1) 
+			condition2 = (d_itype<18) * (d_itype>15) * (d_evis>1)
+			condition = (condition2 + condition1) * (d_evis<400) * (d_pnu>0.1) * (d_pnu<400)
+			self.EReco = d_evis[condition]
+			self.CosZReco = d_recocz[condition]
+			self.CosZTrue = d_truecz[condition]
+			self.AziTrue = d_azi[condition]
+			self.CC = np.abs(d_mode[condition]) < 30
+			self.nuPDG = d_ipnu[condition]
+			self.ETrue = d_pnu[condition]
+			self.Weight = d_weightReco[condition] * d_weightSim[condition]
+			self.Sample = d_itype[condition]
+			self.NumberOfSamples = 18
+			self.Erec_min = 0.1
+			self.NumberOfEvents = self.nuPDG.size
+			# This Norm is hard-coded and it's the inverse of the total simulated exposure, in our case 269 years
+			self.Norm = self.Exposure / 269.5068251628932
 
 		elif self.Experiment == 'IceCube-Upgrade' or self.Experiment == 'IC' or self.Experiment == 'DeepCore':
 			print(f'Processing simulation of {self.Experiment} experiment.')
 			input_data = pd.read_csv(filename)
-			Time = 3.0*365*24*60*60
+			Time = self.Exposure * 365*24*60*60
 			meter_to_cm_sq = 1e4
 			self.Erec_min = 1
 			if int(pd.__version__[0]) == 1:
@@ -103,6 +137,26 @@ class Reader:
 			7:mge_ebins, 8:mge_ebins, 9:mgm_ebins, 10:mre_ebins, 11:mre_ebins, 12:mrm_ebins, 13:mro_ebins, 14:pcs_ebins, 15:pct_ebins}
 			self.CzBins = {0:z10bins, 1:z1bins, 2:z1bins, 3:z10bins, 4:z10bins, 5:z1bins, 6:z1bins,
 			7:z10bins, 8:z10bins, 9:z10bins, 10:z10bins, 11:z10bins, 12:z10bins, 13:z10bins, 14:z10bins, 15:z10bins}
+			self.MaxNumberOfEnergyBins = 5
+			self.MaxNumberOfCzBins = 10
+		elif self.Experiment == 'SuperK-Gd' or self.Experiment == 'SKIV' or self.Experiment == 'SuperK_Htag' or self.Experiment == 'SuperK_Gdtag':
+			sge_ebins = np.array([0.1, 0.25, 0.4, 0.63, 1.0, 1.33])
+			sgm_ebins = np.array([0.1, 0.25, 0.4, 0.63, 1.0, 1.33])
+			sgsrpi0ebins = np.array([0.1, 0.25, 0.4, 0.63, 1.0, 500])
+			sgmrpi0ebins = np.array([0.1, 0.15, 0.25, 0.4, 0.63, 500])
+			mge_ebins = np.array([1.3, 2.5, 5., 10., 500.])
+			mgm_ebins = np.array([1.3, 3.0, 500.])
+			mre_ebins = np.array([1.3, 2.5, 5.0, 500.])
+			mrm_ebins = np.array([0.6, 1.3, 2.5, 5., 500.])
+			mro_ebins = np.array([1.3, 2.5, 5.0, 10., 500.])
+			pcs_ebins = np.array([0.1, 20., 1.0e5])
+			pct_ebins = np.array([0.1, 10.0, 50., 1.0e3, 1.0e5])
+			z10bins = np.array([-1, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
+			z1bins = np.array([-1, 1.0])
+			self.EnergyBins = {0:sge_ebins, 1:sge_ebins, 2:sge_ebins, 3:sgsrpi0ebins, 4:sgm_ebins, 5:sgm_ebins, 6:sgmrpi0ebins,
+			7:mge_ebins, 8:mge_ebins, 9:mge_ebins, 10:mgm_ebins, 11:mgm_ebins, 12:mre_ebins, 13:mre_ebins, 14:mrm_ebins, 15:mro_ebins, 16:pcs_ebins, 17:pct_ebins}
+			self.CzBins = {0:z10bins, 1:z1bins, 2:z1bins, 3:z10bins, 4:z10bins, 5:z1bins, 6:z1bins,
+			7:z10bins, 8:z10bins, 9:z10bins, 10:z10bins, 11:z10bins, 12:z10bins, 13:z10bins, 14:z10bins, 15:z10bins, 16:z10bins, 17:z10bins}
 			self.MaxNumberOfEnergyBins = 5
 			self.MaxNumberOfCzBins = 10
 		elif self.Experiment == 'IceCube-Upgrade' or self.Experiment == 'IC' or self.Experiment == 'DeepCore':
