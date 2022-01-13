@@ -49,7 +49,10 @@ def Chi2SystsCombined(syst, analysis, t12, t13, t23, dm21, dm31, dcp, Ordering, 
 			Exp, dx, dy = np.histogram2d(experiments[exp].EReco[experiments[exp].Sample==s], experiments[exp].CosZReco[experiments[exp].Sample==s], bins=(experiments[exp].EnergyBins[s], experiments[exp].CzBins[s]), weights=wBF)
 			Obs, dx, dy = np.histogram2d(experiments[exp].EReco[experiments[exp].Sample==s], experiments[exp].CosZReco[experiments[exp].Sample==s], bins=(experiments[exp].EnergyBins[s], experiments[exp].CzBins[s]), weights=w)
 			for O,E in zip(np.ravel(Obs),np.ravel(Exp)):
-				if O!=0 and E!=0:
+				if O>0 and E>0:
 					X2 = X2 + 2 * (E - O + O * math.log(O/E))
-
+				else:
+					X2 = X2 + 9999.
+					break
+					
 	return(X2)
