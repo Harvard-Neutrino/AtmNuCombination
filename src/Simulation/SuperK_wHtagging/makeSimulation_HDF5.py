@@ -18,17 +18,18 @@ print('Super-Kamiokande atmospheric neutrino simulation')
 parser = argparse.ArgumentParser()
 parser.add_argument("in_hdf5filename", type=str, nargs='?', default='NULL', help='Input Genie HDF5 file.')
 parser.add_argument("outfilename", type=str, nargs='?', default='NULL', help='Output file name in HDF5 format.')
-parser.add_argument("-v", '--verbo', nargs='?', default=False, action='store_true', help='Verbosity of simulation process.')
-parser.add_argument("--all", dest='allSK', nargs='?', default=False, action='store_true', help='Default SKI to SKIV data without neutron tagging.')
-parser.add_argument("--sk123", dest='SK123', nargs='?', default=False, action='store_true', help='Default SKI to SKIII data without neutron tagging.')
-parser.add_argument("--H", dest='H_ntag', nargs='?', default=False, action='store_true', help='SKIV simulation with neutron tagging on hydrogen.')
-parser.add_argument("--Gd", dest='Gd_ntag', nargs='?', default=False, action='store_true', help='SKVII simulation with neutron tagging on gadolinium.')
+parser.add_argument("-v", '--verbo', default=False, action='store_true', help='Verbosity of simulation process.')
+parser.add_argument("--all", dest='allSK', default=False, action='store_true', help='Default SKI to SKIV data without neutron tagging.')
+parser.add_argument("--sk123", dest='SK123', default=False, action='store_true', help='Default SKI to SKIII data without neutron tagging.')
+parser.add_argument("--H", dest='H_ntag', default=False, action='store_true', help='SKIV simulation with neutron tagging on hydrogen.')
+parser.add_argument("--Gd", dest='Gd_ntag', default=False, action='store_true', help='SKVII simulation with neutron tagging on gadolinium.')
 args = parser.parse_args()
 
 # Setup flags
 verbose = args.verbo
 htag = args.H_ntag
-gdtag = args.Gd_ntag
+gdtag = args.Gd_ntag 
+ntag = htag + gdtag
 allsk = args.allSK
 sk123 = args.SK123
 
@@ -95,20 +96,24 @@ for i, nu in enumerate(event.Ipnu):
 	if abs(event.Ipnu[i])==16 and event.NC[i]: # Removing tau NC from simulation
 		continue
 # Neutrino
+#######################################
 	Pnu_v = np.array([event.Pxnu[i], event.Pynu[i], event.Pznu[i]]) # Neutrino momentum vector
 # Primary lepton
 	Plep_v = np.array([event.Pxlep[i], event.Pylep[i], event.Pzlep[i]]) # Prompt lepton momentum vector
 # Hadronic system arrangement
+#######################################
 	P_fp_v = np.transpose(np.array([event.Pxhad[i], event.Pyhad[i], event.Pzhad[i]])) # Momenta
 	P_fp = event.Phad[i] # Momentum
 	pdg_fp = event.PDGhad[i] # PDG IDs
 	E_fp = event.Ehad[i] # Energies
 # Merge all interaction products
+#######################################
 	pdgs = np.append(event.PDGlep[i], pdg_fp)
 	Es = np.append(event.Elep[i], E_fp)
 	Ps = np.append(event.Plep[i], P_fp)
 	Pvs = np.vstack((Plep_v, P_fp_v))
 # Anything to decay?
+#######################################
 	decayed = np.array([], dtype='int32')
 	for k, particle in enumerate(pdgs):
 		if pd.canDecay(particle):
@@ -119,12 +124,14 @@ for i, nu in enumerate(event.Ipnu):
 				Es = np.append(Es,daug_E)
 				Pvs = np.vstack((Pvs,daug_pv))
 				Ps = np.append(Ps,daug_p)
-	# Remove decayed particles
+# Remove decayed particles
+#######################################
 	pdgs = np.delete(pdgs, decayed)
 	Es = np.delete(Es, decayed)
 	Ps = np.delete(Ps, decayed)
 	Pvs = np.delete(Pvs, decayed, 0)
 # True Ring constructor, baseline for reconstructing the event
+#######################################
 	TrueNRing, TrueRingPDG, TrueRingIP, TrueRingE, TrueRingP, TrueRingDir = TrueRingConstructor(pdgs, Es, Ps, Pvs)
 	if TrueNRing == 0:
 		if verbose:
@@ -132,12 +139,17 @@ for i, nu in enumerate(event.Ipnu):
 		continue
 
 # SK topology classification: Detailed reconstruction only for FCs, the rest are much simpler
+#######################################
 	if event.TopologySample[i]=='FC':
 	# Reconstructing rings
 		RRing = RecoRing(TrueNRing, TrueRingPDG, TrueRingIP, TrueRingE, TrueRingP, TrueRingDir, rd, event.Mode[i])
 		if RRing.NRing == 1:
 			RRing.DecayE(event.Ipnu[i], event.CC[i], event.Mode[i])
-		RRing.SKType(event.Ipnu[i], event.CC[i])
+			if htag:
+				RRing.HNeutrons(event.Ipnu[i], event.CC[i])
+			elif gdtag:
+				RRing.GdNeutrons(event.Ipnu[i], event.CC[i])
+		RRing.SKType(event.Ipnu[i], event.CC[i], ntag)
 		if RRing.NRing < 1 or RRing.Type < 0:
 			if verbose:
 				print('Zero reconstructed Rings')
@@ -154,6 +166,7 @@ for i, nu in enumerate(event.Ipnu):
 			print('Reconstructed total direction: ', RRing.TotDir)
 			print('---------------------------------')
 
+# ----> Here
 	elif toposample[event.TopologySample[i]]>1:
 		nonfcType = toposample[event.TopologySample[i]]
 		if TrueNRing == 1:
@@ -178,6 +191,7 @@ for i, nu in enumerate(event.Ipnu):
 		continue
 
 # Fill true variables
+#######################################
 	ipnu       = np.append(ipnu, event.Ipnu[i])
 	pnu        = np.append(pnu, event.Enu[i])
 	dirnu_x    = np.append(dirnu_x, Pnu_v[0] / event.Enu[i])
@@ -198,6 +212,7 @@ for i, nu in enumerate(event.Ipnu):
 	dirlep_z   = np.append(dirlep_z, event.Pzlep[i] / event.Plep[i])
 	mode       = np.append(mode, event.Mode[i])
 # Fill reco variables
+#######################################
 	if event.TopologySample[i]=='FC':
 		reco_pmax  = np.append(reco_pmax, RRing.MERMomentum)
 		evis       = np.append(evis, RRing.Evis)
@@ -225,6 +240,7 @@ for i, nu in enumerate(event.Ipnu):
 		imass      = np.append(imass, -9999.)
 
 # Applying weights to match SK's public event rate tables
+#######################################
 W = simMatrix(itype, ipnu, mode, weightOsc_SKpaper) # Rate matrix from this simulation
 W0= SKMatrix() # Rate matrix from SK's paper
 weightReco = np.zeros(np.size(weightOsc_SKpaper))
@@ -242,6 +258,7 @@ for i,t in enumerate(itype):
 		weightReco[i] = 0
 
 # Saving data
+#######################################
 with h5py.File(output, 'w') as hf:
 	hf.create_dataset('ipnu', data=ipnu, compression='gzip')
 	hf.create_dataset('pnu', data=pnu, compression='gzip')
