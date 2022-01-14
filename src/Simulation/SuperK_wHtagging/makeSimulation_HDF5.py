@@ -252,6 +252,7 @@ for i, nu in enumerate(event.Ipnu):
 			otype      = np.append(otype, nonfcType)
 		imass      = np.append(imass, -9999.)
 
+
 # Applying weights to match SK's public event rate tables
 #######################################
 W = simMatrix(otype, ipnu, mode, weightOsc_SKpaper) # Rate matrix from this simulation

@@ -264,7 +264,14 @@ class RecoRing:
 				if ipnu==14 and cc and dummy<0.83:
 					recmuedk = 1
 				elif ipnu==-14 and cc and dummy<0.96:
-					recmuedk = 1				
+					recmuedk = 1
+		elif self.MERIP==3 and self.Evis>=1.33:
+			if cc and ipnu>0:
+				recmuedk = self.distros.Random('mgm_muedk_ccnu')
+			elif cc and ipnu<0:
+				recmuedk = self.distros.Random('mgm_muedk_ccnub')
+			else:
+				recmuedk = self.distros.Random('mgm_muedk_nc')		
 		self.MuEdk = recmuedk
 
 

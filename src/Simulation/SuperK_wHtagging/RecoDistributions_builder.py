@@ -605,7 +605,7 @@ with h5py.File('lib/defaultRecoDistributions.hdf5', 'w') as hf:
 	g.create_dataset('weights', data=weights)
 
 	# Decay-e SubGeV mu-like CC nu
-	g = hf.create_group('sgmu_muedk_ccnu')
+	g = hf.create_group('sgm_muedk_ccnu')
 	start = 0
 	end = 5
 	step = 1
@@ -633,6 +633,39 @@ with h5py.File('lib/defaultRecoDistributions.hdf5', 'w') as hf:
 	step = 1
 	values = np.arange(start, end, step, 'int32')
 	weights = np.array([21, 16, 4, 0, 0])
+	weights = weights / np.sum(weights)
+	g.create_dataset('values', data=values)
+	g.create_dataset('weights', data=weights)
+
+	# Decay-e MultiGeV mu-like CC nu
+	g = hf.create_group('mgm_muedk_ccnu')
+	start = 0
+	end = 5
+	step = 1
+	values = np.arange(start, end, step, 'int32')
+	weights = np.array([200.936037441498,445.553822152886,119.8127925117,14.9765990639625,0])
+	weights = weights / np.sum(weights)
+	g.create_dataset('values', data=values)
+	g.create_dataset('weights', data=weights)
+
+	# Decay-e MultiGeV mu-like CC nub
+	g = hf.create_group('mgm_muedk_ccnub')
+	start = 0
+	end = 5
+	step = 1
+	values = np.arange(start, end, step, 'int32')
+	weights = np.array([99.8439937597504,353.198127925117,22.4648985959439,14.9765990639625,0])
+	weights = weights / np.sum(weights)
+	g.create_dataset('values', data=values)
+	g.create_dataset('weights', data=weights)
+
+	# Decay-e MultiGeV mu-like NC
+	g = hf.create_group('mgm_muedk_nc')
+	start = 0
+	end = 5
+	step = 1
+	values = np.arange(start, end, step, 'int32')
+	weights = np.array([7.48829953198115,4.99219968798737,4.99219968798737,3.74414976599058,0])
 	weights = weights / np.sum(weights)
 	g.create_dataset('values', data=values)
 	g.create_dataset('weights', data=weights)
