@@ -37,7 +37,7 @@ output = args.outfilename
 if genie_input != 'NULL' and output == 'NULL':
 	indir, fname = os.path.split(genie_input)
 	if htag:
-		output = 'data/output/SK_Htag/sim.'+fname
+		output = 'data/output/SK_Htag/sksim.'+fname
 	elif gdtag:
 		output = 'data/output/SK_Gdtag/sksim.'+fname
 	else:
