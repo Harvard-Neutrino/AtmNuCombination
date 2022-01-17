@@ -34,18 +34,18 @@ def get_all_weights(analysis, pointtype):
 
 	return
 
-def num_id():
-    return len(t23l) * len(m31l)
+def num_id(vt23l = t23l, vm31l = m31l):
+    return len(vt23l) * len(vm31l)
 
-def id_to_2did(idx):
-    t23id = math.floor(idx / len(m31l))
-    m31id = idx % len(m31l)
+def id_to_2did(idx, vm31l = m31l):
+    t23id = math.floor(idx / len(vm31l))
+    m31id = idx % len(vm31l)
     return t23id, m31id
 
-def id_to_param(idx):
+def id_to_param(idx, vt23l = t23l, vm31l = m31l):
     t23id, m31id = id_to_2did(idx)
-    t23val = t23l[t23id]
-    m31val = m31l[m31id]
+    t23val = vt23l[t23id]
+    m31val = vm31l[m31id]
     return t23val, m31val 
 
 def local():
@@ -57,13 +57,13 @@ def local():
         file1 = open(complete_name, "a")
         file1.close()
 
-def read_output(dir_name = dir_name):
-    res = np.ndarray(shape = (len(m31l), len(t23l)))
+def read_output(dir_name = dir_name, vm31l = m31l, vt23l = t23l):
+    res = np.ndarray(shape = (len(vm31l), len(vt23l)))
     # print(m31l)
     # print(res.shape)
     for filename in os.listdir(dir_name):
         if filename.endswith(".txt"):
-            print(filename)
+            # print(filename)
             with open(os.path.join(dir_name, filename), "r") as file1:
                 try:
                     temp = [line.rstrip('\n') for line in file1]
@@ -74,14 +74,14 @@ def read_output(dir_name = dir_name):
                     # Lines = file1.readLines()
                     # for line in Lines:
                     #     temp[i] = float(line)
-                    thidx, dmidx = id_to_2did(int(float(temp[0])))
+                    thidx, dmidx = id_to_2did(int(float(temp[0])), vm31l = vm31l)
                     res[dmidx][thidx] = float(temp[1])
                 except:
                     # print("excepted")
                     index = int(filename.split(".")[0])
                     # print(index)
-                    thidx, dmidx = id_to_2did(int(float(index)))
+                    thidx, dmidx = id_to_2did(int(float(index)), vm31l = vm31l)
                     res[dmidx][thidx] = 0
                     continue
-    print(res)
+    # print(res)
     return res 

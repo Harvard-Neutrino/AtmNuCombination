@@ -21,12 +21,16 @@ def plot_contour(savename = "chi_sq_contour"):
 
 	X, Y = np.meshgrid(sin2t23, m31)
 	Z = util.read_output()
-	# Z2 = util.read_output("0117_IC")
+
+	ogt23step = 0.001 * np.pi
+	ogm31step = 0.01e-3
+	Z2 = util.read_output(dir_name = "0117_IC", vt23l = np.arange(t23min, t23max + ogt23step, ogt23step), \
+									vm31l = np.arange(m31min, m31max + ogm31step, ogm31step))
 
 	Zinterp = scp.interpolate.interp2d(sin2t23, m31, Z, kind = 'cubic')
-	newsin = np.arange(t23min, t23max + 0.0001, 0.0001)
+	newsin = np.arange(t23min, t23max + ogt23step, ogt23step)
 	newx = np.sin(newsin) ** 2
-	newy = np.arange(m31min, m31max + 0.0001e-3, 0.0001e-3)
+	newy = np.arange(m31min, m31max + ogm31step, ogm31step)
 	newz = Zinterp(newx, newy)
 	XX, YY = np.meshgrid(newx, newy)
 
@@ -35,8 +39,8 @@ def plot_contour(savename = "chi_sq_contour"):
 	ax.set_xlabel(r"$\sin^2{\theta_{23}}$")
 	ax.set_ylabel(r"$m^2_{31}$")
 	axim = ax.contour(XX,YY,newz,levels=[4.605, 5.991, 9.21],cmap=plt.cm.jet, linewidths = 0.8)
-	# axim = ax.contour(X,Y,Z2,levels=[4.605, 5.991, 9.21], linewidths = 0.8)
+	axim = ax.contour(XX,YY,Z2,levels=[4.605, 5.991, 9.21], linewidths = 0.8)
 	cb   = fig.colorbar(axim)
 	fig.savefig("{}.png".format(savename), bbox_inches="tight")
 
-plot_contour("0117_ORCA_interpolate.png")
+plot_contour("0117_ORCA_coarse_interpolate_vs_IC.png")
