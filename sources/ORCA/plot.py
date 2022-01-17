@@ -44,8 +44,7 @@ def plot_mig_hist(binnum):
     plt.savefig("./MigMatPlots/Cascades/CascadeMigMatBin{}.png".format(binnum))
     plt.close()
 
-for i in range(22):
-    plot_mig_hist(i)
+for i in range(22):z
 
 def plot_zenith_errors():
     e, ebar, mu, mubar = util.get_zenith_error()
