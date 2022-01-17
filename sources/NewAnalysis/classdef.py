@@ -151,20 +151,21 @@ class Analysis:
 		
 	# The followings are written on a plane and needs testing
 
+
 	# This function applies only tilt and zenith
 	def pre_apply_systematics(self, sys):
 
 		# in the first step before chi-squared we must first apply slope and cos zenith
 		# first the energy slope
 		tilt = (self.simulation.E_tr / E0) ** sys.gamma
-		# now the cosine zenith
+		# # now the cosine zenith
 		cosZen = np.cos(self.simulation.C_tr)
 		TanCos = np.tanh(cosZen)
 		mask_cUP = cosZen < 0
 		mask_cDOWN = cosZen > 0
 		zenith = np.ones(len(self.simulation.E_tr))
-		zenith[mask_cUP] -= sys.Up * TanCos[mask_cUP]
-		zenith[mask_cDOWN] -= sys.Down *TanCos[mask_cDOWN]
+		zenith[self.mask_cUP] -= sys.Up * self.TanCos[self.mask_cUP]
+		zenith[self.mask_cDOWN] -= sys.Down * self.TanCos[self.mask_cDOWN]
 
 		for i in range(2):
 			for j in range(2):
@@ -195,45 +196,26 @@ class Analysis:
 		delta = sys.delta 
 		eps = sys.eps 
 
-		def get_single_chisq(flavor, neutype):
-			def get_flavor_neutype(flavor, neutype):
-				if flavor.value == 12:
-					if neutype.value == -1:
-						return 1, 0, 2 - delta, eps
-					else: return 0, 0, delta, eps
-				elif flavor.value == 14:
-					if neutype.value == -1:
-						return 1, 1, 2 - delta, 2 - eps
-					else: return 0, 1, delta, 2 - eps
-				else:
-					print("invalid Atm initial flux selected")
-					exit(1)
+		e_bf = self.bf_histogram[0][0]
+		ebar_bf = self.bf_histogram[1][0]
+		mu_bf = self.bf_histogram[0][1]
+		mubar_bf = self.bf_histogram[1][1]
 
-			whatneutype, whatflavor, whatdelta, whateps = get_flavor_neutype(flavor, neutype)
+		e = self.histogram[0][0]
+		ebar = self.histogram[1][0]
+		mu = self.histogram[0][1]
+		mubar = self.histogram[1][1]
 
-			single_chisq = 0.
+		chisq = 0
 
-			# the following manual repeat pattern is to avoid a 5-layer nested for loop
-			def chisq_plus(neutype, flavor, top):
-				bf = self.bf_histogram[neutype][flavor][top]
-				phy = self.histogram[neutype][flavor][top]
-
-				chisq = 0
-				for i in range(bf.shape[0]):
-					for j in range(bf.shape[1]):
-						if bf[i][j] > 0:
-							plus = (N * whatdelta * whateps * phy[i][j] - bf[i][j]) ** 2 / bf[i][j]
-							chisq += plus
-				return chisq
-
-			# consider putting these lines to a more elegant expression with matrix arrays
-			single_chisq += chisq_plus(whatneutype, whatflavor, 0)
-			single_chisq += chisq_plus(whatneutype, whatflavor, 1)
-
-			return single_chisq
-
-		chisq = get_single_chisq(Flavor.e, NeuType.Neutrino) + get_single_chisq(Flavor.e, NeuType.AntiNeutrino) + \
-				get_single_chisq(Flavor.mu, NeuType.Neutrino) + get_single_chisq(Flavor.mu, NeuType.AntiNeutrino)
+		for top in range(2):
+			for i in range(self.bf_histogram[0][0][0].shape[0]):
+				for j in range(self.bf_histogram[0][0][0].shape[1]):
+					if e_bf[top][i][j] + ebar_bf[top][i][j] + mu_bf[top][i][j] + mubar_bf[top][i][j] > 0:
+						chisq += (N * (delta * eps * e[top][i][j] + (2 - delta) * eps * ebar[top][i][j] + delta * (2 - eps) * mu[top][i][j] + \
+																						(2 - delta) * (2 - eps) * mubar[top][i][j]) - \
+								(e_bf[top][i][j] + ebar_bf[top][i][j] + mu_bf[top][i][j] + mubar_bf[top][i][j])) ** 2 \
+								/ (e_bf[top][i][j] + ebar_bf[top][i][j] + mu_bf[top][i][j] + mubar_bf[top][i][j])
 
 		Sys_BF = Systematics(N_bf, delta_bf, gamma_bf, eps_bf, hv_bf, hv_bf)
 		Sys_Sigma = Systematics(sig_N, sig_delta, sig_gamma, sig_eps, sig_hv, sig_hv)

@@ -5,31 +5,23 @@ import nuflux
 import sys
 from scipy.optimize import minimize
 
+dir_name = "./0107_IC/"
+
 units = nsq.Const()
 Time = 3.0*365*24*60*60
 meter_to_cm_sq = 1e4
 Radian = np.pi / 180.
 
 ######################################################
-NT23 = 24
-SqT23_min = 0.305
-SqT23_max = 0.705
-SqT23 = np.linspace(SqT23_min, SqT23_max, NT23+1, endpoint = True)
-SqT23BF = SqT23[17]
-T23 = np.arcsin(np.sqrt(SqT23))
-T23BF = T23[16]
+t23min = np.arcsin(np.sqrt(0.33))
+t23max = np.arcsin(np.sqrt(0.67))
+t23step = 0.001 * np.pi
+t23l = np.arange(t23min, t23max + t23step, t23step)
 
-NDM31 = 24
-DM31_max = 3.0e-3
-DM31_min = 2.0e-3
-DM31 = np.linspace(DM31_min, DM31_max, NDM31+1, endpoint = True)
-DM31BF = DM31[12]
-
-NDCP = 19
-DCP_min = 0
-DCP_max = 2*np.pi
-DCP = np.linspace(DCP_min, DCP_max, NDCP+1, endpoint = True)
-DCPBF = DCP[13]
+m31min = 2.20e-3
+m31max = 2.80e-3
+m31step = 0.01e-3
+m31l = np.arange(m31min, m31max + m31step, m31step)
 ######################################################
 
 input_file = "neutrino_mc.csv"

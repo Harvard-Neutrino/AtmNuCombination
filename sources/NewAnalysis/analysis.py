@@ -16,10 +16,10 @@ Syst = cl.Systematics(N_bf, delta_bf, gamma_bf, eps_bf, hv_bf, hv_bf)
 sim = cl.Simulation(pd.read_csv(input_file))
 
 # initialize and propagate all 4 = 2x2 fluxes
-bf_fluxes = util.bundle_fluxes(cth_nodes, energy_nodes, theta23, dm31, dcp)
+bf_fluxes = util.bundle_fluxes(cth_nodes, energy_nodes, T23BF, DM31BF, DCPBF)
 
 # in this trial we do fluxes = bf_fluxes
-fluxes = util.bundle_fluxes(cth_nodes, energy_nodes, np.arcsin(np.sqrt(0.500)), dm31, dcp)
+fluxes = util.bundle_fluxes(cth_nodes, energy_nodes, np.arcsin(np.sqrt(0.500)), DM31BF, DCPBF)
 
 finishprop = time.time()
 
@@ -31,6 +31,8 @@ util.get_all_weights(analysis, cl.PointType.Physical)
 util.get_all_weights(analysis, cl.PointType.BestFit)
 
 finishweights = time.time()
+
+# analysis.prepare_syst()
 
 print(analysis.min_chisq())
 
