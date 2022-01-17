@@ -8,6 +8,10 @@ from scipy.optimize import minimize
 
 from params import *
 
+if includeORCA:
+	import ORCA
+	from ORCA import analyze as anl
+
 class Topology(Enum):
     cascade = 0
     track = 1
@@ -44,6 +48,11 @@ class Simulation:
 		self.C_re = input_file["reco_zenith"]
 		self.pdg = input_file["pdg"]
 		self.pid = input_file["pid"]
+		if includeORCA:
+			self.W_mc = anl.res_W_mc
+			self.E_re = anl.res_e_reco
+			self.C_re = anl.res_zen_reco
+
 
 class Flux: 
 	def __init__(self, cth_nodes, energy_nodes):

@@ -5,7 +5,9 @@ import nuflux
 import sys
 from scipy.optimize import minimize
 
-dir_name = "./0107_IC/"
+dir_name = "./0117_ORCA/"
+
+includeORCA = True
 
 units = nsq.Const()
 Time = 3.0*365*24*60*60

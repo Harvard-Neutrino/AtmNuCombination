@@ -30,16 +30,16 @@ analysis = cl.Analysis(sim, bf_fluxes, fluxes)
 util.get_all_weights(analysis, cl.PointType.Physical)
 util.get_all_weights(analysis, cl.PointType.BestFit)
 
-numevents = 0
-for i in range(2):
-    for j in range(2):
-        for k in range(2):
-            for l in range(len(analysis.simulation.W_mc)):
-                if analysis.simulation.E_tr[l] <= 53 and analysis.simulation.E_tr[l] >= 1.85:
-                    numevents += analysis.bf_weights[i][j][k][l]
+# numevents = 0
+# for i in range(2):
+#     for j in range(2):
+#         for k in range(2):
+#             for l in range(len(analysis.simulation.W_mc)):
+#                 if analysis.simulation.E_tr[l] <= 53 and analysis.simulation.E_tr[l] >= 1.85:
+#                     numevents += analysis.bf_weights[i][j][k][l]
 
-print(numevents / 3)
-exit(0)
+# print(numevents / 3)
+# exit(0)
 
 
 finishweights = time.time()
