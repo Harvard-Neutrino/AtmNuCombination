@@ -1,6 +1,5 @@
 import numpy as np 
 import pandas as pd
-#import nuSQUIDSpy as nsq
 import nuSQuIDS as nsq
 import nuflux
 import sys
@@ -43,10 +42,6 @@ class Simulation:
 		self.C_tr = input_file["true_zenith"]
 		self.E_re = input_file["reco_energy"]
 		self.C_re = input_file["reco_zenith"]
-		# These need working on
-		# self.flavor = flavor_list(input_file["pdg"])
-		# self.neutype = neutype_list(input_file["pdg"])
-		# self.topology = topology_list(input_file["pid"])
 		self.pdg = input_file["pdg"]
 		self.pid = input_file["pid"]
 
@@ -84,13 +79,12 @@ class Flux:
 		self.nsq_atm.Set_MixingAngle(1, 2, t23)
 		self.nsq_atm.Set_SquareMassDifference(1, 7.42e-5)
 		self.nsq_atm.Set_SquareMassDifference(2, dm31)
-		self.nsq_atm.Set_CPPhase(0,2, dcp)
+		self.nsq_atm.Set_CPPhase(0, 2, dcp)
 
 		self.nsq_atm.Set_rel_error(1.0e-4)
 		self.nsq_atm.Set_abs_error(1.0e-4)
 
 		self.nsq_atm.Set_initial_state(self.AtmInitFlux,nsq.Basis.flavor)
-		# self.nsq_atm.Set_ProgressBar(True)
 		self.nsq_atm.EvolveState()
 
 class Analysis:
@@ -155,7 +149,6 @@ class Analysis:
 				print("invalid point type selected")
 				exit(1)
 		
-		# self.weights = self.bf_weights
 	# The followings are written on a plane and needs testing
 
 	# This function applies only tilt and zenith
@@ -165,20 +158,19 @@ class Analysis:
 		# first the energy slope
 		tilt = (self.simulation.E_tr / E0) ** sys.gamma
 		# now the cosine zenith
-		# cosZen = np.cos(self.simulation.C_tr)
-		# TanCos = np.tanh(cosZen)
-		# mask_cUP = cosZen < 0
-		# mask_cDOWN = cosZen > 0
-		# zenith = np.ones(len(self.simulation.E_tr))
-		# zenith[mask_cUP] -= sys.Up * TanCos[mask_cUP]
-		# zenith[mask_cDOWN] -= sys.Down *TanCos[mask_cDOWN]
-		# print(zenith)
+		cosZen = np.cos(self.simulation.C_tr)
+		TanCos = np.tanh(cosZen)
+		mask_cUP = cosZen < 0
+		mask_cDOWN = cosZen > 0
+		zenith = np.ones(len(self.simulation.E_tr))
+		zenith[mask_cUP] -= sys.Up * TanCos[mask_cUP]
+		zenith[mask_cDOWN] -= sys.Down *TanCos[mask_cDOWN]
 
 		for i in range(2):
 			for j in range(2):
 				for k in range(2):
 					self.weights[i][j][k] *= tilt
-					# self.weights[i][j][k] *= zenith
+					self.weights[i][j][k] *= zenith
 
 	# now we can histogram the weights
 	def binning(self, pointtype):
@@ -217,29 +209,27 @@ class Analysis:
 					print("invalid Atm initial flux selected")
 					exit(1)
 
-			whatflavor, whatneutype, whatdelta, whateps = get_flavor_neutype(flavor, neutype)
+			whatneutype, whatflavor, whatdelta, whateps = get_flavor_neutype(flavor, neutype)
 
 			single_chisq = 0.
 
 			# the following manual repeat pattern is to avoid a 5-layer nested for loop
 			def chisq_plus(neutype, flavor, top):
-				plus = 0
-				for ebin in range(NErec):
-					for cbin in range(Ncrec):
-						if self.bf_histogram[neutype][flavor][top][ebin][cbin] != 0:
-							plus = (N * whatdelta * whateps * self.histogram[neutype][flavor][top][ebin][cbin] - \
-										self.bf_histogram[neutype][flavor][top][ebin][cbin]) ** 2 / self.bf_histogram[neutype][flavor][top][ebin][cbin]
-				return plus
+				bf = self.bf_histogram[neutype][flavor][top]
+				phy = self.histogram[neutype][flavor][top]
+
+				chisq = 0
+				for i in range(bf.shape[0]):
+					for j in range(bf.shape[1]):
+						if bf[i][j] > 0:
+							plus = (N * whatdelta * whateps * phy[i][j] - bf[i][j]) ** 2 / bf[i][j]
+							chisq += plus
+				return chisq
 
 			# consider putting these lines to a more elegant expression with matrix arrays
-			single_chisq += chisq_plus(0, 0, 0)
-			single_chisq += chisq_plus(0, 0, 1)
-			single_chisq += chisq_plus(0, 1, 0)
-			single_chisq += chisq_plus(0, 1, 1)
-			single_chisq += chisq_plus(1, 0, 0)
-			single_chisq += chisq_plus(1, 0, 1)
-			single_chisq += chisq_plus(1, 1, 0)
-			single_chisq += chisq_plus(1, 1, 1)
+			single_chisq += chisq_plus(whatneutype, whatflavor, 0)
+			single_chisq += chisq_plus(whatneutype, whatflavor, 1)
+
 			return single_chisq
 
 		chisq = get_single_chisq(Flavor.e, NeuType.Neutrino) + get_single_chisq(Flavor.e, NeuType.AntiNeutrino) + \
@@ -260,24 +250,18 @@ class Analysis:
 		return chisq
 
 	def min_chisq(self):
-
 		# define a function to minimize
 		def to_min(syst_array):
 			syst = Systematics(syst_array[0], syst_array[1], syst_array[2], syst_array[3], syst_array[4], syst_array[5])
-			self.pre_apply_systematics(syst)
+			# self.pre_apply_systematics(syst)
 			self.binning(PointType.BestFit)
 			self.binning(PointType.Physical)
 			self.get_chisq(syst)
 			return self.chisq
 		
-		# define a callback function to visualize the results
-		def callbackF(syst_array):
-			global Nfeval
-			print('{0:4d}, {1: 3.6f}, {2: 3.6f}, {3: 3.6f}, {4: 3.6f}, {5: 3.6f}, {6: 3.6f}'.format\
-									(Nfeval, syst[0], syst[1], syst[2], syst[3], syst[4], syst[5], to_min(syst_array)))
-			Nfeval += 1
+		bnds = ((0., 2.), (0., 2.), (-1., 1), (0., 2.),  (-1., 1), (-1., 1))
 
-		res = minimize(to_min, [N_bf, delta_bf, gamma_bf, eps_bf, hv_bf, hv_bf], callback = callbackF, options={'disp': True, 'maxiter': 10})
+		res = minimize(to_min, [N_bf, delta_bf, gamma_bf, eps_bf, hv_bf, hv_bf], bounds = bnds, method = 'L-BFGS-B', options={'disp': True})
 
 		self.chisq_min = res.fun
 

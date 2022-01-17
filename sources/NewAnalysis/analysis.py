@@ -32,9 +32,7 @@ util.get_all_weights(analysis, cl.PointType.BestFit)
 
 finishweights = time.time()
 
-'''
 print(analysis.min_chisq())
-print(analysis.chisq_min)
 
 finishmin = time.time()
 
@@ -43,7 +41,6 @@ print("calculation of rated weight took ", finishweights - finishprop)
 print("minimization took ", finishmin - finishweights)
 print("entire process took ", finishmin - startprogram)
 '''
-
 
 # The followings are for calculating a single chi-squared value from an input syst array
 
@@ -58,8 +55,6 @@ analysis.binning(cl.PointType.Physical)
 
 finishbinning = time.time()
 
-print(analysis.bf_histogram[0][0][0])
-print(analysis.histogram[0][0][0])
 
 # apply the other systematics and calculate chi squared
 print(analysis.get_chisq(Syst))
@@ -73,3 +68,4 @@ print("binning took ", finishbinning - finishpreapply)
 print("rest of syst and chisq took ", finishprogram - finishbinning)
 print("entire program took ", finishprogram - startprogram)
 
+'''
