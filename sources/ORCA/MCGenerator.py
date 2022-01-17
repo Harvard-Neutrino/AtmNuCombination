@@ -38,13 +38,13 @@ class Generator:
 		# now define function to find reco zenith
 		def find_reco_zenith(exp, true_energy):
 			# bounds on IC energy
-			if true_energy > 53 or true_energy < 1.85:
-				return -1
+			true_energy = min(53, true_energy)
+			true_energy = max(1.85, true_energy)
 
 			# find sigma
 			sigma = exp(true_energy)
 			# random generate reco error
-			reco_zenith_error = np.random.normal(sigma, 0) * np.pi / 180
+			reco_zenith_error = np.random.normal(0, sigma) * np.pi / 180
 
 			return reco_zenith_error
 
@@ -65,17 +65,17 @@ class Generator:
 				ORCA_E_reco = find_reco_energy(self.G_E_ca, energy)
 				ORCA_W_MC = N_ORCA / N_IC * self.MC["weight"][i]
 				if int(self.MC["pdg"][i]) > 0:
-					ORCA_zen_reco = self.MC["reco_zenith"][i] - find_reco_zenith(e_error, energy)
+					ORCA_zen_reco = self.MC["true_zenith"][i] - find_reco_zenith(e_error, energy)
 				else:
-					ORCA_zen_reco = self.MC["reco_zenith"][i] - find_reco_zenith(eb_error, energy)
+					ORCA_zen_reco = self.MC["true_zenith"][i] - find_reco_zenith(eb_error, energy)
 			elif self.MC["pid"][i] == 1:
 				# use track gaussian params
 				ORCA_E_reco = find_reco_energy(self.G_E_tr, energy)
 				ORCA_W_MC = N_ORCA / N_IC * self.MC["weight"][i]
 				if int(self.MC["pdg"][i]) > 0:
-					ORCA_zen_reco = self.MC["reco_zenith"][i] - find_reco_zenith(mu_error, energy)
+					ORCA_zen_reco = self.MC["true_zenith"][i] - find_reco_zenith(mu_error, energy)
 				else:
-					ORCA_zen_reco = self.MC["reco_zenith"][i] - find_reco_zenith(mub_error, energy)
+					ORCA_zen_reco = self.MC["true_zenith"][i] - find_reco_zenith(mub_error, energy)
 			else:
 				print("invalid pid detected")
 				exit(1)

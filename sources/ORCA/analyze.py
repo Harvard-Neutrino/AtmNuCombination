@@ -5,7 +5,6 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from params import *
 import util
-
 tracks = dgt.Digitalizer(input_track, input_scale)
 cascades = dgt.Digitalizer(input_cascade, input_scale)
 
