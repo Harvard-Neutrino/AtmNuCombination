@@ -34,11 +34,14 @@ def Chi2SystsCombined(syst, analysis, t12, t13, t23, dm21, dm31, dcp, Ordering, 
 			if source == exp or source == experiments[exp].Source:
 				for sys in analysis.Systematics[source]:
 					index = np.where(analysis.SystematicsList==sys)[0]
-					for i in index:
-						if i not in usedSysts:
-							j = i
-							usedSysts.append(j)
-							break
+					if index.size>1:
+						for i in index:
+							if i not in usedSysts:
+								j = i
+								usedSysts.append(j)
+								break
+					else:
+						j = index[0]
 					wSys = wSys * globals()[sys](syst[j],experiments[exp])
 					X2 = X2 + ((syst[j]-analysis.SystNominalList[j])/analysis.SystSigmaList[j])**2
 
@@ -51,8 +54,8 @@ def Chi2SystsCombined(syst, analysis, t12, t13, t23, dm21, dm31, dcp, Ordering, 
 			for O,E in zip(np.ravel(Obs),np.ravel(Exp)):
 				if O>0 and E>0:
 					X2 = X2 + 2 * (E - O + O * math.log(O/E))
-				else:
-					X2 = X2 + 9999.
-					break
+				elif O<=0 and E>0:
+					X2 = np.inf
+					return X2
 					
 	return(X2)

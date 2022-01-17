@@ -36,7 +36,7 @@
 			<nominal> 0.0 </nominal>
 		</systematic>
 		<systematic name='ZenithFluxDown'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.2 </sigma>
 			<nominal> 0.0 </nominal>
 		</systematic>
