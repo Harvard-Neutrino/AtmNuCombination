@@ -22,19 +22,19 @@ An analysis is specified to the code via a xml file which contains all the infor
 
 In order to run some examples and get familiar with the code, the src/Analysis/run_example.sh contains a few quick examples. The main program for running the analysis is src/Analysis/runAnalysis.py and is run as follows:  
 
-usage: runAnalysis.py [-h] [-p [POINT]] [-o [OUTFILE]] [--multi] [--cluster] [xml_file]  
+  usage: runAnalysis.py [-h] [-p [POINT]] [-o [OUTFILE]] [--multi] [--cluster] [xml_file]  
 
-positional arguments:  
-  xml_file              Input analysis file in xml format  
+  positional arguments:  
+    xml_file              Input analysis file in xml format  
   
-optional arguments:  
-  -h, --help            show this help message and exit  
-  -p [POINT], --point [POINT]  
-                        Specify analysis point to run. Only if 'cluster' option is enabled  
-  -o [OUTFILE], --outfile [OUTFILE]  
-                        Analysis output file  
-  --multi               Option for running the analysis with multiprocessing (recommended locally)  
-  --cluster             Option for submitting jobs to a cluster  
+  optional arguments:  
+    -h, --help            show this help message and exit  
+    -p [POINT], --point [POINT]  
+                          Specify analysis point to run. Only if 'cluster' option is enabled  
+    -o [OUTFILE], --outfile [OUTFILE]  
+                          Analysis output file  
+    --multi               Option for running the analysis with multiprocessing (recommended locally)  
+    --cluster             Option for submitting jobs to a cluster  
 
   
 The results of the analysis are saved in <output_file> as a text file of columns (by deafult the output file is out.dat). If no running mode (--multi or --cluster) is specified it will run sequentially the list of points from the xml file.   
