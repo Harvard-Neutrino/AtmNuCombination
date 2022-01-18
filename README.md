@@ -68,7 +68,26 @@ The option of providing a second analysis output file is only for the cases when
 - pandas
 - scipy
 
+#### Super-Kamiokande
+##### Running
 
+```
+Super-Kamiokande atmospheric neutrino simulation
+usage: makeSimulation_HDF5.py [-h] [-o OUTFILENAME] [-v] [--sk] [--H] [--Gd] [in_hdf5filename]
+
+positional arguments:
+  in_hdf5filename       Input Genie HDF5 file.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -o OUTFILENAME, --outfilename OUTFILENAME
+                        Output file name in HDF5 format.
+  -v, --verbo           Verbosity of simulation process.
+  --SK                  Default SK simulation without neutron tagging.
+  --H                   SKIV simulation with neutron tagging on hydrogen.
+  --Gd                  SKVII simulation with neutron tagging on gadolinium.
+
+```
 
 ## Utils
 The folder utils gathers tools for converting ROOT files produced by GENIE to HDF5 files, and read and merge any HDF5 files.
