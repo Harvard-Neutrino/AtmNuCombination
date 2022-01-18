@@ -7,14 +7,14 @@ For the time being the code is contained under the src folder and structured in 
 Currently performs standard 3-flavor neutrino oscillation analyses for the implemented experiments (IceCube Upgrade and Super-Kamiokande) and their combination. The code also includes some systematic uncertainties associated to the neutrino source and each experiment. 
 
 ### Dependencies
-numpy  
-nuSQuIDS  
-nuSQUIDSTools  
-nuflux  
-h5py  
-matplotlib  
-pandas  
-scipy  
+- numpy  
+- nuSQuIDS  
+- nuSQUIDSTools  
+- nuflux  
+- h5py  
+- matplotlib  
+- pandas  
+- scipy  
 
 
 ### Running
@@ -57,16 +57,16 @@ The option of providing a second analysis output file is only for the cases when
  It contains the official MC simulation of IceCube Upgrade and preliminary effective/toy simulations for the ORCA and Super-Kamiokande experiments.
 
 ### Requirements
-nuSQuIDS
-nuSQUIDSTools
-nuflux
-particle
-matplotlib
-numpy
-pythia8
-h5py
-pandas
-scipy
+- nuSQuIDS
+- nuSQUIDSTools
+- nuflux
+- particle
+- matplotlib
+- numpy
+- pythia8
+- h5py
+- pandas
+- scipy
 
 
 
