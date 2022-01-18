@@ -42,9 +42,11 @@ The results of the analysis are saved in <output_file> as a text file of columns
 
 ### Plotting
 Further, these output files can be plotted using src/Analysis/PlotGlobalSens.py. Some examples are shown in src/Analysis/plot_example.sh.
+```
 
 python3 PlotGlobalSens.py <experiment> <output_file> [output_file2]
 
+```
 
 In order to run src/Analysis/PlotGlobalSens.py, one should specify the experiment: SK, IC or IC+SK.
 
