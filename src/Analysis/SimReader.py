@@ -155,7 +155,7 @@ class Reader:
 			z1bins = np.array([-1, 1.0])
 			self.EnergyBins = {0:sge_ebins, 1:sge_ebins, 2:sge_ebins, 3:sgsrpi0ebins, 4:sgm_ebins, 5:sgm_ebins, 6:sgmrpi0ebins,
 			7:mge_ebins, 8:mge_ebins, 9:mge_ebins, 10:mgm_ebins, 11:mgm_ebins, 12:mre_ebins, 13:mre_ebins, 14:mrm_ebins, 15:mro_ebins, 16:pcs_ebins, 17:pct_ebins}
-			self.CzBins = {0:z10bins, 1:z1bins, 2:z1bins, 3:z10bins, 4:z10bins, 5:z1bins, 6:z1bins,
+			self.CzBins = {0:z1bins, 1:z10bins, 2:z10bins, 3:z1bins, 4:z10bins, 5:z10bins, 6:z1bins,
 			7:z10bins, 8:z10bins, 9:z10bins, 10:z10bins, 11:z10bins, 12:z10bins, 13:z10bins, 14:z10bins, 15:z10bins, 16:z10bins, 17:z10bins}
 			self.MaxNumberOfEnergyBins = 5
 			self.MaxNumberOfCzBins = 10
@@ -170,7 +170,6 @@ class Reader:
 			self.MaxNumberOfCzBins = 10
 
 	def BFOscillator(self,neutrino_flavors, Sin2Theta12=0, Sin2Theta13=0, Sin2Theta23=0, Dm221=0, Dm231=0, dCP=0, Ordering='normal'):
-
 		units = nsq.Const()
 		interactions = False
 		AtmOsc = nsq.nuSQUIDSAtm(self.cth_nodes,self.energy_nodes*units.GeV,neutrino_flavors,nsq.NeutrinoType.both,interactions)
@@ -212,14 +211,12 @@ class Reader:
 		AtmOsc.Set_MixingAngle(1,2, asin(sqrt(t23)))
 		AtmOsc.Set_SquareMassDifference(1,dm21)
 		AtmOsc.Set_SquareMassDifference(2,dm31)
-		
 		if Ordering!='normal':
 			AtmOsc.Set_SquareMassDifference(2,dm21-dm31)
 		AtmOsc.Set_CPPhase(0,2,dcp)
 		AtmOsc.Set_initial_state(self.AtmInitialFlux,nsq.Basis.flavor)
 		AtmOsc.EvolveState()
 		w = np.zeros(self.NumberOfEvents)
-
 		for i,(E,cz) in enumerate(zip(self.ETrue, self.CosZTrue)):
 			if self.nuPDG[i] > 0 :
 				neutype = 0
@@ -235,7 +232,7 @@ class Reader:
 		return w
 
 	def InitialFlux(self):
-		if self.Experiment == 'Super-Kamiokande':
+		if self.Experiment == 'Super-Kamiokande' or self.Experiment == 'SK' or self.Experiment == 'SuperK-Gd' or self.Experiment == 'SKIV' or self.Experiment == 'SuperK_Htag' or self.Experiment == 'SuperK_Gdtag':
 			flux = nuflux.makeFlux('IPhonda2014_sk_solmin')
 			E_min = 0.1
 			E_max = 4.0e2
