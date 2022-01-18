@@ -58,7 +58,6 @@ class parseXML:
 
 	def readExperiments(self):
 		self.experiments = self.reader('NeutrinoExperiment')
-		# self.mcFiles = self.reader('simulation','filename')
 		print('------------------------------------')
 		print('Experiments considered:')
 		for s,m in zip(self.experiments,self.mcFiles):
