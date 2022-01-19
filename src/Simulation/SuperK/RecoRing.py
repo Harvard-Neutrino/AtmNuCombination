@@ -10,24 +10,17 @@ class RecoRing:
 	AngResoThr = 0.975 #math.cos(25.*pi/180.)
 	MeVtoGeV = 0.001
 	def __init__(self, TrueNRing, TrueRingPDG, TrueRingIP, TrueRingE, TrueRingP, TrueRingDir, distros, mode):
-		
 		self.distros = distros
-
 		self.NRing = TrueNRing
 		self.CC = True if abs(mode)<30 else False
-
 		self.RecoLabels = np.ones(TrueNRing)
 		self.HeavyChargedWA(TrueRingPDG, TrueRingP)
-
 		# Ring IP reconstruction
 		self.ReconSRIP(TrueRingIP, TrueRingP)
-
 		# Momentum reconstruction of each ring
 		self.ReconMomentum(TrueRingPDG, TrueRingP)
-
 		# Direction reconstruction of each ring
 		self.ReconDirection(TrueRingDir)
-
 		if self.NRing >1: # Oh, the multi-ringers! Special care needed
 			dmer = np.where(self.Momentum == np.amax(self.Momentum))
 			mer = dmer[0][0]
@@ -43,8 +36,8 @@ class RecoRing:
 
 		self.TotalVariables()
 		self.MuEdk = 0
+		self.Neutrons = 0
 		self.Imass = 0
-
 
 	def HeavyChargedWA(self, pdg, p):
 		for i,part in enumerate(pdg):
@@ -53,8 +46,7 @@ class RecoRing:
 			elif abs(part)==2212 and p[i]<2.3:
 				self.RecoLabels[i] = 0
 
-
-	def SKType(self, ipnu, cc):
+	def SKType(self, ipnu, cc, ntag):
 		
 		if self.NRing>1 and self.MERIP==2:
 			if cc:
@@ -170,13 +162,66 @@ class RecoRing:
 					itype=13
 			elif self.MERIP==3 and self.MERMomentum>0.6:
 				itype=12
-
 		if self.NRing==2:
 			self.Imass = pp.InvariantMass(self.MERMomentum, self.sMERMomentum, self.MERDirection, self.sMERDirection)
 			if self.MERIP==2 and self.sMERIP==2 and self.Imass>=0.085 and self.Imass<=0.215:
 				itype=6
 
-		self.Type = itype
+		self.originalType = itype
+
+
+		itype=-1
+		if ntag:
+			if self.NRing==1:
+				if self.Evis>0.1 and self.Evis<1.330 and self.MERIP==2:
+					if self.MuEdk==0 and pi0==0:
+						if self.Neutrons==0:
+							itype=1
+						else:
+							itype=2
+					elif self.MuEdk>0 and pi0==0:
+						itype=0
+					elif self.MuEdk==0 and pi0==1:
+						itype=3
+				elif self.Evis>0.2 and self.Evis<1.330 and self.MERIP==3:
+					if self.MuEdk==1 and self.Neutrons>0:
+						itype=5
+					else:
+						itype=4
+				elif self.Evis>=1.330 and self.MERIP==2:
+					if self.MuEdk>0:
+						itype=7
+					elif self.MuEdk==0:
+						if self.Neutrons==0:
+							itype=8
+						else:
+							itype=9
+				elif self.Evis>=1.330 and self.MERIP==3:
+					if self.MuEdk==1 and self.Neutrons>0:
+						itype=10
+					else:
+						itype=11
+
+			elif self.NRing>1:
+				if self.MERIP==2 and self.Evis>1.330:
+					if ip_r>-0.25:
+						if ip_n>0:
+							itype=12
+						elif ip_n<0:
+							itype=13
+					else:
+						itype=14
+				elif self.MERIP==3 and self.MERMomentum>0.6:
+					itype=15
+
+			if self.NRing==2:
+				self.Imass = pp.InvariantMass(self.MERMomentum, self.sMERMomentum, self.MERDirection, self.sMERDirection)
+				if self.MERIP==2 and self.sMERIP==2 and self.Imass>=0.085 and self.Imass<=0.215:
+					itype=6
+
+			self.Type = itype
+		else:
+			self.Type = self.originalType
 
 
 	def DecayE(self, ipnu, cc, mode):
@@ -219,7 +264,14 @@ class RecoRing:
 				if ipnu==14 and cc and dummy<0.83:
 					recmuedk = 1
 				elif ipnu==-14 and cc and dummy<0.96:
-					recmuedk = 1				
+					recmuedk = 1
+		elif self.MERIP==3 and self.Evis>=1.33:
+			if cc and ipnu>0:
+				recmuedk = self.distros.Random('mgm_muedk_ccnu')
+			elif cc and ipnu<0:
+				recmuedk = self.distros.Random('mgm_muedk_ccnub')
+			else:
+				recmuedk = self.distros.Random('mgm_muedk_nc')		
 		self.MuEdk = recmuedk
 
 
@@ -432,3 +484,67 @@ class RecoRing:
 					self.IP[i]=3
 				else:
 					self.IP[i]=2
+
+	def HNeutrons(self, ipnu, cc):
+		nn = 0
+		if self.MERIP==2 and self.Evis<1.33:
+			if cc and ipnu>0:
+				nn = self.distros.Random('sge_nh_nucc')
+			elif cc and ipnu<0:
+				nn = self.distros.Random('sge_nh_nubarcc')
+			elif not cc:
+				nn = self.distros.Random('sge_nh_nc')
+		elif self.MERIP==2 and self.Evis>=1.33:
+			if cc and ipnu>0:
+				nn = self.distros.Random('mge_nh_nucc')
+			elif cc and ipnu<0:
+				nn = self.distros.Random('mge_nh_nubarcc')
+			elif not cc:
+				nn = self.distros.Random('mge_nh_nc')
+		elif self.MERIP==3 and self.Evis<1.33:
+			if cc and ipnu>0:
+				nn = self.distros.Random('sgm_nh_nucc')
+			elif cc and ipnu<0:
+				nn = self.distros.Random('sgm_nh_nubarcc')
+			elif not cc:
+				nn = self.distros.Random('sgm_nh_nc')			
+		elif self.MERIP==3 and self.Evis>1.33:
+			if cc and ipnu>0:
+				nn = self.distros.Random('mgm_nh_nucc')
+			elif cc and ipnu<0:
+				nn = self.distros.Random('mgm_nh_nubarcc')
+			elif not cc:
+				nn = self.distros.Random('mgm_nh_nc')
+		self.Neutrons = nn
+
+	def GdNeutrons(self, ipnu, cc):
+		nn = 0
+		if self.MERIP==2 and self.Evis<1.33:
+			if cc and ipnu>0:
+				nn = self.distros.Random('sge_ngd_nucc')
+			elif cc and ipnu<0:
+				nn = self.distros.Random('sge_ngd_nubarcc')
+			elif not cc:
+				nn = self.distros.Random('sge_ngd_nc')
+		elif self.MERIP==2 and self.Evis>=1.33:
+			if cc and ipnu>0:
+				nn = self.distros.Random('mge_ngd_nucc')
+			elif cc and ipnu<0:
+				nn = self.distros.Random('mge_ngd_nubarcc')
+			elif not cc:
+				nn = self.distros.Random('mge_ngd_nc')
+		elif self.MERIP==3 and self.Evis<1.33:
+			if cc and ipnu>0:
+				nn = self.distros.Random('sgm_ngd_nucc')
+			elif cc and ipnu<0:
+				nn = self.distros.Random('sgm_ngd_nubarcc')
+			elif not cc:
+				nn = self.distros.Random('sgm_ngd_nc')			
+		elif self.MERIP==3 and self.Evis>1.33:
+			if cc and ipnu>0:
+				nn = self.distros.Random('mgm_ngd_nucc')
+			elif cc and ipnu<0:
+				nn = self.distros.Random('mgm_ngd_nubarcc')
+			elif not cc:
+				nn = self.distros.Random('mgm_ngd_nc')
+		self.Neutrons = nn
