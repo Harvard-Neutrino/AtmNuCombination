@@ -133,6 +133,7 @@ src/Simulation/SuperK/figs/*
 src/Simulation/SuperK/data/*
 src/Simulation/IceCubeUpgrade/data/*
 src/Simulation/ORCA/data/*
+src/Simulation/ORCA/*csv
 src/utils/*.hdf5
 src/utils/*.png
 src/utils/*.root
