@@ -210,9 +210,9 @@ class RecoRing:
 						elif ip_n<0:
 							itype=13
 					else:
-						itype=14
+						itype=15
 				elif self.MERIP==3 and self.MERMomentum>0.6:
-					itype=15
+					itype=14
 
 			if self.NRing==2:
 				self.Imass = pp.InvariantMass(self.MERMomentum, self.sMERMomentum, self.MERDirection, self.sMERDirection)

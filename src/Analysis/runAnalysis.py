@@ -92,6 +92,9 @@ if an.physics[0] == 'Three Flavour':
 
 	elif multiproc:
 		cores = multiprocessing.cpu_count()
+		if an.NoSyst:
+			cores = 3*cores
+			print('Analyzing with no systematics')
 		processes = []
 		jj = 0
 		for element in parametersGrid:

@@ -15,7 +15,7 @@ class Reader:
 		self.Exposure = exposure
 
 		if self.Experiment == 'Super-Kamiokande' or self.Experiment == 'SK':
-			print(f'Processing simulation of {self.Experiment} experiment.')
+			print(f'Processing simulation of {self.Experiment} experiment with a exposure of {self.Exposure} years.')
 			with h5py.File(filename,'r') as hf:
 				d_evis = np.array(hf['evis'][()])
 				d_recocz = np.array(hf['recodirZ'][()])
@@ -43,11 +43,11 @@ class Reader:
 			self.NumberOfSamples = 16
 			self.Erec_min = 0.1
 			self.NumberOfEvents = self.nuPDG.size
-			# This Norm is hard-coded and it's the inverse of the total simulated exposure, in our case 269 years
+			# This Norm is hard-coded and it's the inverse of the total simulated exposure, in our case ~269 years
 			self.Norm = self.Exposure / 269.5068251628932
 
 		elif self.Experiment == 'SuperK-Gd' or self.Experiment == 'SKIV' or self.Experiment == 'SuperK_Htag' or self.Experiment == 'SuperK_Gdtag':
-			print(f'Processing simulation of {self.Experiment} experiment.')
+			print(f'Processing simulation of {self.Experiment} experiment with a exposure of {self.Exposure} years.')
 			with h5py.File(filename,'r') as hf:
 				d_evis = np.array(hf['evis'][()])
 				d_recocz = np.array(hf['recodirZ'][()])
@@ -79,7 +79,7 @@ class Reader:
 			self.Norm = self.Exposure / 269.5068251628932
 
 		elif self.Experiment == 'IceCube-Upgrade' or self.Experiment == 'IC' or self.Experiment == 'DeepCore':
-			print(f'Processing simulation of {self.Experiment} experiment.')
+			print(f'Processing simulation of {self.Experiment} experiment with a exposure of {self.Exposure} years.')
 			input_data = pd.read_csv(filename)
 			Time = self.Exposure * 365*24*60*60
 			meter_to_cm_sq = 1e4

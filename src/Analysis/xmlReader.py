@@ -27,7 +27,6 @@ class parseXML:
 				if int(source.find('status').text):
 					itemList.append(source.attrib[atrib])
 					if item == 'NeutrinoExperiment':
-						print(source.find('simulation').attrib['filename'])
 						self.mcFiles.append(source.find('simulation').attrib['filename'])
 						self.Exposure.append(float(source.find('exposure').text))
 				sname = source.attrib['name']

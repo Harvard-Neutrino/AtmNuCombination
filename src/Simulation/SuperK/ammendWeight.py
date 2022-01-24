@@ -16,7 +16,7 @@ with h5py.File(infile, 'r') as hf:
 	mode = np.array(hf['mode'][()])
 	ipnu = np.array(hf['ipnu'][()])
 	weightOsc_SKpaper = np.array(hf['weightOsc_SKpaper'][()])
-	itype = np.array(hf['itype'][()])
+	itype = np.array(hf['otype'][()])
 
 W = simMatrix(itype, ipnu, mode, weightOsc_SKpaper) # Rate matrix from this simulation
 W0= allSKMatrix() # Rate matrix from SK's paper
