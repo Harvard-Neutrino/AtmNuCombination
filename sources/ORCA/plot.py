@@ -7,10 +7,18 @@ from scipy.optimize import curve_fit
 import digitalizer as dgt
 import util
 from util import gaussian
-import analyze as anl
+# import analyze as anl
 from params import *
 
-def plot_mig_hist(binnum):
+input_file = pd.read_csv("ORCA.csv")
+pid = input_file["pid"]
+e_true = input_file["true_energy"]
+e_reco = input_file["reco_energy"]
+zen_true = input_file["true_zenith"]
+zen_reco = input_file["reco_zenith"]
+
+
+def plot_mig_hist(binnum, top):
 
     tracks = dgt.Digitalizer(input_track, input_scale)
     cascades = dgt.Digitalizer(input_cascade, input_scale)
@@ -24,13 +32,18 @@ def plot_mig_hist(binnum):
     D_tracks = tracks.extracted
     D_cascades = cascades.extracted
 
-    # data_entries = D_tracks[binnum]
-    data_entries = D_cascades[binnum]
+    if top == 1:
+        data_entries = D_tracks[binnum]
+    elif top == 0:
+        data_entries = D_cascades[binnum]
 
     # if binnum == 11: # only manual hard code part
     #     data_entries[14] = 0.1
 
-    print(data_entries)
+    # if binnum == 10:
+    #     print(data_entries)
+    #     data_entries[10] -= 0.34
+    #     print(data_entries)
 
     bins_centers = np.array([0.5 * (x_bins[i] + x_bins[i+1]) for i in range(len(x_bins)-1)])
     popt, pcov = curve_fit(gaussian, xdata=bins_centers, ydata=data_entries, p0=[binnum, 10, 1])
@@ -41,11 +54,15 @@ def plot_mig_hist(binnum):
     # # Plot the histogram and the fitted function.
     plt.bar(bins_centers, data_entries, width=x_bins[1] - x_bins[0], color='navy', label=r'Histogram entries')
     plt.plot(xspace, gaussian(xspace, *popt), color='darkorange', linewidth=2.5, label=r'Fitted function')
-    plt.savefig("./MigMatPlots/Cascades/CascadeMigMatBin{}.png".format(binnum))
+    if top == 1:
+        plt.savefig("./MigMatPlots/Tracks/TrackMigMatBin{}.png".format(binnum))
+    if top == 0:
+        plt.savefig("./MigMatPlots/Cascades/CascadeMigMatBin{}.png".format(binnum))
     plt.close()
 
-# for i in range(22):
-#     plot_mig_hist(i)
+for i in range(22):
+    plot_mig_hist(i, 0)
+    plot_mig_hist(i, 1)
 
 def plot_zenith_errors():
     e, ebar, mu, mubar = util.get_zenith_error()
@@ -78,30 +95,17 @@ def plot_zenith_errors():
 
     # plt.show()
     plt.savefig("KM3NeT Angular Error")
+    plt.close()
 
     return
 
 # plot_zenith_errors()
 
-
-# def plot_energy_reco():
-#     # plt.scatter(anl.res_true, anl.res_reco)
-#     heatmap, xedges, yedges = np.histogram2d(anl.res_true, anl.res_reco, bins=(x_bins, x_bins))
-#     extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
-#     plt.xlim(2, 53)
-#     plt.ylim(2, 53)
-#     plt.clf()
-#     plt.imshow(heatmap.T, extent=extent, origin='lower', norm = LogNorm())
-#     # plt.xscale("log")
-#     # plt.yscale("log")
-#     plt.savefig("ICMC_with_ORCA_Reco")
-#     plt.show()
-
 def plot_energy_reco():
     x = np.logspace(np.log10(1.85), np.log10(53), 23)
     y = np.logspace(np.log10(1.85), np.log10(53), 23)
     X, Y = np.meshgrid(x, y)
-    Z, xedges, yedges = np.histogram2d(anl.res_e_true, anl.res_e_reco, bins=(x, y))
+    Z, xedges, yedges = np.histogram2d(e_true, e_reco, bins=(x, y))
     im = plt.pcolor(X, Y, Z.T, cmap = "gray_r", norm = LogNorm())
     plt.xlim(2, 53)
     plt.ylim(2, 53)
@@ -109,22 +113,79 @@ def plot_energy_reco():
     plt.xscale("log")
     plt.yscale("log")
     # plt.show()
-    plt.savefig("ICMC_with_ORCA_Reco")
+    plt.savefig("./RecoPlots/ICMC_with_ORCA_Reco")
+    plt.close()
 
-# plot_energy_reco()
+plot_energy_reco()
+
+def plot_energy_reco_track():
+    track_mask = pid == 1
+    x = np.logspace(np.log10(1.85), np.log10(53), 23)
+    y = np.logspace(np.log10(1.85), np.log10(53), 23)
+    X, Y = np.meshgrid(x, y)
+    Z, xedges, yedges = np.histogram2d(e_true[track_mask], e_reco[track_mask], bins=(x, y))
+    im = plt.pcolor(X, Y, Z.T, cmap = "gray_r", norm = LogNorm())
+    plt.xlim(2, 53)
+    plt.ylim(2, 53)
+    plt.colorbar(im, orientation = "vertical", format = LogFormatterMathtext())
+    plt.xscale("log")
+    plt.yscale("log")
+    # plt.show()
+    plt.savefig("./RecoPlots/ICMC_with_ORCA_Reco_track")
+    plt.close()
+
+plot_energy_reco_track()
+
+def plot_energy_reco_cascade():
+    cas_mask = pid == 0
+    x = np.logspace(np.log10(1.85), np.log10(53), 23)
+    y = np.logspace(np.log10(1.85), np.log10(53), 23)
+    X, Y = np.meshgrid(x, y)
+    Z, xedges, yedges = np.histogram2d(e_true[cas_mask], e_reco[cas_mask], bins=(x, y))
+    im = plt.pcolor(X, Y, Z.T, cmap = "gray_r", norm = LogNorm())
+    plt.xlim(2, 53)
+    plt.ylim(2, 53)
+    plt.colorbar(im, orientation = "vertical", format = LogFormatterMathtext())
+    plt.xscale("log")
+    plt.yscale("log")
+    # plt.show()
+    plt.savefig("./RecoPlots/ICMC_with_ORCA_Reco_cas")
+    plt.close()
+
+plot_energy_reco_cascade()
 
 def plot_zenith_reco():
     x = np.linspace(-1, 1, 20)
     y = np.linspace(-1, 1, 20)
     X, Y = np.meshgrid(x, y)
-    Z, xedges, yedges = np.histogram2d(np.cos(anl.res_zen_true), np.cos(anl.res_zen_reco), bins=(x, y))
+    Z, xedges, yedges = np.histogram2d(np.cos(zen_true), np.cos(zen_reco), bins=(x, y))
     im = plt.pcolor(X, Y, Z.T, cmap = "gray_r", norm = LogNorm())
     plt.xlim(-1, 1)
     plt.ylim(-1, 1)
     plt.colorbar(im, orientation = "vertical", format = LogFormatterMathtext())
-    # plt.xscale("log")
-    # plt.yscale("log")
-    # plt.show()
-    plt.savefig("ICMC_coszen_with_ORCA_Reco")
+    plt.savefig("./RecoPlots/ICMC_coszen_with_ORCA_Reco")
+    plt.close()
 
 plot_zenith_reco()
+
+def plot_zenith_reco_range(elo, ehi):
+    x = np.linspace(-1, 1, 20)
+    y = np.linspace(-1, 1, 20)
+    X, Y = np.meshgrid(x, y)
+    select_true = []
+    select_reco = []
+    for i in range(len(zen_true)):
+        if e_true[i] >= elo and e_true[i] <= ehi:
+            select_true.append(zen_true[i])
+            select_reco.append(zen_reco[i])
+    Z, xedges, yedges = np.histogram2d(np.cos(select_true), np.cos(select_reco), bins=(x, y))
+    im = plt.pcolor(X, Y, Z.T, cmap = "gray_r", norm = LogNorm())
+    plt.xlim(-1, 1)
+    plt.ylim(-1, 1)
+    plt.colorbar(im, orientation = "vertical", format = LogFormatterMathtext())
+    plt.savefig("./RecoPlots/ICMC_coszen_with_ORCA_Reco_in_range_{}_to_{}".format(elo, ehi))
+    plt.close()
+
+plot_zenith_reco_range(1, 5)
+plot_zenith_reco_range(5, 15)
+plot_zenith_reco_range(15, 55)

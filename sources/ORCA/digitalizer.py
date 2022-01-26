@@ -39,12 +39,14 @@ class Digitalizer:
 		            ext_data[ix, n_bins_y - 1 - iy] = 0
 		        else:
 		            ic = np.argmin(np.sum((c[None,:] - self.palette_clr) ** 2, axis = 1) )         # find closest color in palette
-		            if self.palette_x[ic] < 0.002:
+		            if self.palette_x[ic] < 0.001:
 		            	ext_data[ix, n_bins_y - 1 - iy] = 0
 		            	continue
-		            elif self.palette_x[ic] > 0.8: # too dark, probably a text there
-		            	 c = self.image[int(np.round((iy + 0.5) * dy)) + 15, int(np.round((ix + 0.5) * dx) - 10)] # look beside the center
-		            	 ic = np.argmin(np.sum((c[None,:] - self.palette_clr) ** 2, axis = 1) )
+		            elif self.palette_x[ic] > 0.58: # too dark, probably a text there
+		            	c1 = self.image[int(np.round((iy + 0.5) * dy)) + 15, int(np.round((ix + 0.5) * dx) + 10)]
+		            	c2 = self.image[int(np.round((iy + 0.5) * dy)) + 17, int(np.round((ix + 0.5) * dx) - 8)]	 # look beside the center
+		            	ic = min(np.argmin(np.sum((c1[None,:] - self.palette_clr) ** 2, axis = 1) ), \
+		            		np.argmin(np.sum((c2[None,:] - self.palette_clr) ** 2, axis = 1) ))
 		            ext_data[ix, n_bins_y - 1 - iy] = self.palette_x[ic]
 
 		self.extracted = ext_data
