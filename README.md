@@ -95,7 +95,7 @@ optional arguments:
 They have a public release of the MC simulation, use that.
 
 #### ORCA
-
+Tune IC-Up MC release to match the quoted resolution and efficiencies reported by the ORCA collaboration.
 
 ## Utils
 The folder utils gathers tools for converting ROOT files produced by GENIE to HDF5 files, and read and merge any HDF5 files.
