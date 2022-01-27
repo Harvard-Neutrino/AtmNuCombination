@@ -5,6 +5,8 @@ from matplotlib.gridspec import GridSpec
 import math
 from scipy.interpolate import make_interp_spline
 from scipy import interpolate
+from plots.OfficialContours.Results import results
+
 
 def cornerPlot(x,y,X2,title=''):
 	# Data handling
@@ -16,6 +18,9 @@ def cornerPlot(x,y,X2,title=''):
 	minChi2 = np.amin(X2)
 	print(f'Minimum X2 {minChi2}')
 	X2 = X2 - minChi2
+
+	check23 = False
+	check31 = False
 
 	Chi2 = np.reshape(X2, (x.size,y.size)).T
 
@@ -51,6 +56,7 @@ def cornerPlot(x,y,X2,title=''):
 	axRi.set_xlabel(r"$\chi^2$")
 	if abs(x0+xf-1)<0.1:
 		ax.set_xlabel(r'$\sin^2\theta_{23}$')
+		check23=True
 	elif abs(x0+xf)<0.01:
 		ax.set_xlabel(r'$\Delta m^2_{31}$')
 	elif abs(x0+xf-2*math.pi)<0.1:
@@ -61,14 +67,15 @@ def cornerPlot(x,y,X2,title=''):
 		ax.set_ylabel(r'$\sin^2\theta_{23}$')
 	elif abs(y0+yf)<0.01:
 		ax.set_ylabel(r'$\Delta m^2_{31}$')
+		check31=True
 	elif abs(y0+yf-2*math.pi)<0.1:
 		ax.set_ylabel(r'$\delta_{CP}$')
 	else:
 		ax.set_ylabel(r'$\sin^2\theta_{13}$')
 
-	colors = ['c','g']
+	colors = ['c','g','r','m']
 
-	levels1d = np.array([2.706,9.0])
+	levels1d = np.array([2.706,9.0, 16.0, 25.0])
 	levels2d = np.array([4.605,11.904])
 
 	# Put data into plots
@@ -76,19 +83,25 @@ def cornerPlot(x,y,X2,title=''):
 	for i in range(2):
 		axUp.plot([x[0],x[-1]],[levels1d[i],levels1d[i]], color=colors[i], linewidth=0.5)
 		axRi.plot([levels1d[i],levels1d[i]], [y[0],y[-1]],color=colors[i], linewidth=0.5)
-	axUp.set_ylim(0.,20.)
+	axUp.set_ylim(0.,100.)
 	axUp.set_xlim(x0,xf)
 	axRi.plot(X2_y, y, color='k')
-	axRi.set_xlim(0.,20.)
+	axRi.set_xlim(0.,100.)
 	axRi.set_ylim(y0,yf)
 
 	X, Y = np.meshgrid(x, y)
 	levels = np.array([4.605,5.991,9.21])
 	ax.contour(X,Y,Chi2, levels=levels2d, colors=colors)
-	ax.set_xlim(x0,xf)
-	ax.set_ylim(y0,yf)
+	ax.set_xlim(0.9*x0,1.1*xf)
+	ax.set_ylim(0.9*y0,1.1*yf)
 
 	axUp.set_title(title)
+
+	if check23 and check31:
+		cont = results()
+		cont.SK2017_theta23_dm31()
+		cont.SK2020_theta23_dm31()
+		cont.plot(ax)
 
 	plt.show()
 
@@ -156,24 +169,25 @@ def cornerPlotBothO(x,y,X2_N,X2_I):
 	else:
 		ax.set_ylabel(r'$\sin^2\theta_{13}$')
 
-	colors = ['c','g']
+	colors = ['c','g','r','m']
 
-	levels1d = np.array([2.706,9.0])
+	levels1d = np.array([2.706,9.0, 16.0, 25.0])
 	levels2d = np.array([4.605,11.904])
+
 
 	axUp.plot(x,X2N_x, color='k')
 	axUp.plot(x,X2I_x, color='k', linestyle='dotted')
 
-	for i in range(2):
+	for i in range(4):
 		axUp.plot([x0,xf],[levels1d[i],levels1d[i]], color=colors[i], linewidth=0.5)
 		axRi.plot([levels1d[i],levels1d[i]], [y0,yf],color=colors[i], linewidth=0.5)
-	axUp.set_ylim(0.,20.)
+	axUp.set_ylim(0.,100.)
 	axUp.set_xlim(x0,xf)
 
 	axRi.plot(X2N_y, y, color='k')
 	axRi.plot(X2I_y, y, color='k', linestyle='dotted')
 
-	axRi.set_xlim(0.,20.)
+	axRi.set_xlim(0.,100.)
 	axRi.set_ylim(y0,yf)
 
 	X, Y = np.meshgrid(x, y)

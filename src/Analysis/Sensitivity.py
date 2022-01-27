@@ -5,7 +5,6 @@ import numpy as np
 def sensitivity(analysis, t12, t13, t23, dm21, dm31, dcp, Ordering, experiments, outfile):
 	
 	if analysis.NoSyst:
-		# print('Stats. only')
 		Chi2StatsCombined(analysis.neutrinos, t12, t13, t23, dm21, dm31, dcp, Ordering, experiments, outfile)
 
 	else:

@@ -83,9 +83,9 @@ for it in range(18):
 	weights = [wcc[nu==12]*norm, wcc[nu==-12]*norm, wcc[abs(nu)==14]*norm, wcc[abs(nu)==16]*norm, wnc*norm]
 	if it==3 or it==0 or it==6:
 		bins = z1bins
-		skflag = 1
+		skflag = 0
 	else:
-		skflag = 1
+		skflag = 0
 		if it<18:
 			bins = z10bins
 		else:

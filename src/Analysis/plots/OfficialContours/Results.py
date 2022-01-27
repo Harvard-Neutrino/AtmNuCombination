@@ -7,7 +7,7 @@ class results:
 		self.x = []
 		self.y = []
 		self.label = []
-		self.line = ['-b','-c','-r','-g','-m','-y']
+		self.line = ['--b','--c','--r','--g','--m','--y']
 		self.contour = True
 
 
@@ -79,20 +79,20 @@ class results:
 		plt.show()
 
 
-cont = results()
+#cont = results()
 
-cont.SK2017_theta23_dm31()
-cont.SK2020_theta23_dm31()
-cont.IC2020_theta23_dm31()
-cont.T2K2020_theta23_dm31()
-cont.NOvA2020_theta23_dm31()
-cont.MINOS2020_theta23_dm31()
-fig, ax = plt.subplots(1, 1)
-cont.plot(ax)
+#cont.SK2017_theta23_dm31()
+#cont.SK2020_theta23_dm31()
+#cont.IC2020_theta23_dm31()
+#cont.T2K2020_theta23_dm31()
+#cont.NOvA2020_theta23_dm31()
+#cont.MINOS2020_theta23_dm31()
+#fig, ax = plt.subplots(1, 1)
+#cont.plot(ax)
 
-cont = results()
-cont.NOvA2020_dcp_IO()
-cont.NOvA2020_dcp_NO()
-cont.T2K2020_dcp_NO()
-fig, ax = plt.subplots(1, 1)
-cont.plot(ax)
+#cont = results()
+#cont.NOvA2020_dcp_IO()
+#cont.NOvA2020_dcp_NO()
+#cont.T2K2020_dcp_NO()
+#fig, ax = plt.subplots(1, 1)
+#cont.plot(ax)

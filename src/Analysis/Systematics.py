@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 ####################
 # Atmospheric flux #
@@ -40,4 +41,25 @@ def ZenithFluxDown(x, experiment):
 	zenith = np.ones(experiment.NumberOfEvents) 
 	zenith[experiment.CosZTrue<0] = zenith[experiment.CosZTrue<0] - x * np.tanh(experiment.CosZTrue[experiment.CosZTrue<0])**2
 	return zenith
+
+def SKEnergyScale(x, experiment):
+	modEReco = experiment.EReco * x
+	w = experiment.Weight
+	modW = np.ones(experiment.NumberOfEvents)
+	for s in range(experiment.NumberOfSamples):
+		bins = experiment.EnergyBins[s]
+		for bn in range(bins.size -1):
+			cond0 = (experiment.Sample==s) * (experiment.EReco>bins[bn]) * (experiment.EReco<bins[bn+1])
+			cond1 = (experiment.Sample==s) * (modEReco>bins[bn]) * (modEReco<bins[bn+1])
+			w1 = np.sum(w[cond1])
+			w0 = np.sum(w[cond0])
+			if w1==0:
+				diff = 0
+				modW[cond0] = modW[cond0]
+			elif w0==0:
+				diff = 1
+			else:
+				diff = w1 / w0
+			modW[cond0] = modW[cond0] * diff
+	return modW
 

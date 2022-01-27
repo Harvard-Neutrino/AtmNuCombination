@@ -19,6 +19,6 @@ python3 ../../../utils/HDF5merger.py data/output/SK_Gdtag data/output/SK_Gdtag/c
 
 # Re-weighting after combination
 #python3 ammendWeight.py data/output/SK/combined.hdf
-python3 ammendWeight.py data/output/SK_Htag/combined.hdf
-python3 ammendWeight.py data/output/SK_Gdtag/combined.hdf
+python3 ammendWeight.py data/output/SK_Htag/combined.hdf5
+python3 ammendWeight.py data/output/SK_Gdtag/combined.hdf5
 

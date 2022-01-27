@@ -29,22 +29,21 @@ class parseXML:
 					if item == 'NeutrinoExperiment':
 						self.mcFiles.append(source.find('simulation').attrib['filename'])
 						self.Exposure.append(float(source.find('exposure').text))
-				sname = source.attrib['name']
-				self.Systematics[sname] = []
-				self.SystSigma[sname] = []
-				self.SystNominal[sname] = []
-				for syst in source.findall('systematic'):
-					if int(syst.find('status').text):
-						s = syst.attrib['name']
-						self.SystSigma[sname].append(float(syst.find('sigma').text))
-						self.SystSigmaList.append(float(syst.find('sigma').text))
-						self.SystNominal[sname].append(float(syst.find('nominal').text))
-						self.SystNominalList.append(float(syst.find('nominal').text))
-						self.Systematics[sname].append(s)
-						self.SystematicsList = np.append(self.SystematicsList,s)
+					sname = source.attrib['name']
+					self.Systematics[sname] = []
+					self.SystSigma[sname] = []
+					self.SystNominal[sname] = []
+					for syst in source.findall('systematic'):
+						if int(syst.find('status').text):
+							s = syst.attrib['name']
+							self.SystSigma[sname].append(float(syst.find('sigma').text))
+							self.SystSigmaList.append(float(syst.find('sigma').text))
+							self.SystNominal[sname].append(float(syst.find('nominal').text))
+							self.SystNominalList.append(float(syst.find('nominal').text))
+							self.Systematics[sname].append(s)
+							self.SystematicsList = np.append(self.SystematicsList,s)
 			else:
 				itemList.append(source.attrib[atrib])
-
 		return itemList
 
 	def readSources(self):
@@ -62,6 +61,8 @@ class parseXML:
 		for s,m in zip(self.experiments,self.mcFiles):
 			print(' + ',s, ', at ',m)
 		print('====================================')
+		print(f' + {self.Systematics}')
+
 
 	def readPhysics(self):
 		self.physics = self.reader('NeutrinoPhysics')
@@ -127,9 +128,12 @@ class parseXML:
 
 	def CheckSystematics(self):
 		nosyst = 0
+		print('List of Systematics')
 		for source in self.Systematics:
+			print(f' + From {source}: {self.Systematics[source]}')
 			if len(self.SystSigma[source]) > 0:
 				nosyst = nosyst + 1
+		print('====================================')
 		if nosyst==0:
 			self.NoSyst = 1
 		else:

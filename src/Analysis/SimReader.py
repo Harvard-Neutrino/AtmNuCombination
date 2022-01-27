@@ -118,6 +118,46 @@ class Reader:
 			self.NumberOfSamples = 2
 			self.NumberOfEvents = self.nuPDG.size
 
+		elif self.Experiment == 'ORCA':
+			print(f'Processing simulation of {self.Experiment} experiment with a exposure of {self.Exposure} years.')
+			input_data = pd.read_csv(filename)
+			Time = self.Exposure * 365*24*60*60
+			meter_to_cm_sq = 1e4
+			self.Erec_min = 1
+			if int(pd.__version__[0]) == 1:
+				d_EReco = input_data['reco_energy'].to_numpy()
+				d_CosZReco = np.cos(input_data['reco_zenith'].to_numpy())
+				d_CosZTrue = np.cos(input_data['true_zenith'].to_numpy())
+				# d_AziTrue = input_data['true_azimuth'].to_numpy()
+				# d_CC = input_data['current_type'].to_numpy()
+				d_nuPDG = np.int_(input_data['pdg'].to_numpy())
+				d_ETrue = input_data['true_energy'].to_numpy()
+				d_Weight = input_data['weight'].to_numpy()
+				d_Sample = np.int_(input_data['pid'].to_numpy())
+			elif int(pd.__version__[0]) == 0:
+				d_nuPDG = np.int_(input_data["pdg"])
+				d_EReco = np.array(input_data['reco_energy'])
+				d_CosZReco = np.cos(input_data['reco_zenith'])
+				d_CosZTrue = np.cos(input_data['true_zenith'])
+				# d_AziTrue = np.array(input_data['true_azimuth'])
+				# d_CC = np.array(input_data['current_type'])
+				d_ETrue = np.array(input_data['true_energy'])
+				d_Weight = np.array(input_data['weight'])
+				d_Sample = np.int_(input_data['pid'])
+			condition = (d_ETrue > 1) * (d_ETrue < 1e3) * (d_EReco > 1)
+			self.EReco = d_EReco[condition]
+			self.CosZReco = d_CosZReco[condition]
+			self.CosZTrue = d_CosZTrue[condition]
+			# self.AziTrue = d_AziTrue[condition]
+			# self.CC = d_CC[condition]
+			self.nuPDG = d_nuPDG[condition]
+			self.ETrue = d_ETrue[condition]
+			self.Weight = d_Weight[condition]
+			self.Sample = d_Sample[condition]
+			self.Norm = Time * meter_to_cm_sq
+			self.NumberOfSamples = 2
+			self.NumberOfEvents = self.nuPDG.size
+
 	def Binning(self):
 		if self.Experiment == 'Super-Kamiokande' or self.Experiment == 'SK':
 			sge_ebins = np.array([0.1, 0.25, 0.4, 0.63, 1.0, 1.33])
@@ -159,7 +199,7 @@ class Reader:
 			7:z10bins, 8:z10bins, 9:z10bins, 10:z10bins, 11:z10bins, 12:z10bins, 13:z10bins, 14:z10bins, 15:z10bins, 16:z10bins, 17:z10bins}
 			self.MaxNumberOfEnergyBins = 5
 			self.MaxNumberOfCzBins = 10
-		elif self.Experiment == 'IceCube-Upgrade' or self.Experiment == 'IC' or self.Experiment == 'DeepCore':
+		elif self.Experiment == 'IceCube-Upgrade' or self.Experiment == 'IC' or self.Experiment == 'DeepCore' or self.Experiment == 'ORCA':
 			Erec_max = 1e4
 			NErec = 40
 			erec = np.logspace(np.log10(self.Erec_min), np.log10(Erec_max), NErec+1, endpoint = True)

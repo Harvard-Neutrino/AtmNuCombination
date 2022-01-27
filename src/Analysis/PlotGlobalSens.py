@@ -41,6 +41,9 @@ def X2readerGeneral(filename):
 									marg = np.amin(chi2_slice)
 									ChiSq[i] = np.append(ChiSq[i], marg)
 						cornerPlotBothO(oscPar[par1],oscPar[par2],ChiSq[0],ChiSq[1])
+							
+
+
 	else:
 		for par1 in fitPar:
 			for par2 in fitPar:

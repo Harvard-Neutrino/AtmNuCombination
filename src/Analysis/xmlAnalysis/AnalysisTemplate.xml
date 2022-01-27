@@ -59,12 +59,12 @@
 		<status name='status'> 1 </status>
 		<simulation filename='../Simulation/SuperK/data/output/combined.hdf5'> </simulation>
 		<exposure> 14.582 </exposure> <!-- 14.582 years of SK up to 2017 paper, 7.685 years of SK123 and 6.897 of SK4-->
-<!-- 		<systematic name='EnergyScale'>
-			<status> 0 </status>
+ 		<systematic name='SKEnergyScale'>
+			<status> 1 </status>
 			<sigma> 0.03 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
-		<systematic name='Decay-eEfficiency'>
+<!--		<systematic name='Decay-eEfficiency'>
 			<status> 0 </status>
 			<sigma> 0.2 </sigma>
 			<nominal> 1.0 </nominal>
@@ -104,7 +104,7 @@
  -->	</NeutrinoExperiment>
 <!-- IceCube Upgrade -->
 	<NeutrinoExperiment name="IceCube-Upgrade">
-		<status name='status'> 1 </status>
+		<status name='status'> 0 </status>
 		<simulation filename='../Simulation/IceCubeUpgrade/data/neutrino_mc.csv'> </simulation>
 		<exposure> 3 </exposure>  <!-- years -->
 <!-- 		<systematic name='EnergyScale'>
