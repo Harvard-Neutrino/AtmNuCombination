@@ -131,6 +131,14 @@ dmypy.json
 # Large files
 src/Simulation/SuperK/figs/*
 src/Simulation/SuperK/data/*
+src/Simulation/IceCubeUpgrade/data/*
+src/Simulation/ORCA/data/*
+src/Simulation/ORCA/*png
+src/Simulation/ORCA/*Plots/*png
+src/Simulation/ORCA/*Plots/*/*png
+src/Simulation/ORCA/*csv
+src/Analysis/plots/*png
+src/Analysis/plots/OfficialContours/*png
 src/utils/*.hdf5
 src/utils/*.png
 src/utils/*.root

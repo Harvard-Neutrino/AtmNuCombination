@@ -48,11 +48,12 @@ nring   = np.array([], dtype=np.double)
 muedk   = np.array([], dtype=np.double)
 neutron = np.array([], dtype=np.double)
 itype   = np.array([], dtype=np.double)
+otype   = np.array([], dtype=np.double)
 imass   = np.array([], dtype=np.double)
 mode= np.array([], dtype=np.double)
 variables = {'ipnu':ipnu, 'pnu':pnu, 'dirnuX':dirnuX, 'dirnuY':dirnuY, 'dirnuZ':dirnuZ, 'azi':azi, 
 'cz':cz, 'fluxho_nue':fluxho_nue, 'fluxho_nueb':fluxho_nueb, 'fluxho_numu':fluxho_numu, 'fluxho_numub':fluxho_numub,
-'plep':plep, 'dirlepX':dirlepX, 'dirlepY':dirlepY, 'dirlepZ':dirlepZ, 'pmax':pmax, 'evis':evis, 'itype':itype,
+'plep':plep, 'dirlepX':dirlepX, 'dirlepY':dirlepY, 'dirlepZ':dirlepZ, 'pmax':pmax, 'evis':evis, 'itype':itype, 'otype':otype,
 'recodirX':recodirX, 'recodirY':recodirY, 'recodirZ':recodirZ, 'ip':ip, 'nring':nring, 'muedk':muedk,
 'neutron':neutron, 'imass':imass, 'mode':mode, 'weightSim':weightSim, 'weightOsc_SKpaper':weightOsc_SKpaper,
 'weightOsc_SKbest':weightOsc_SKbest, 'weightReco':weightReco}

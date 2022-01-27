@@ -62,11 +62,19 @@ mrpi_bins = np.array([0.125, 0.2, 0.325, 0.515, 0.98])
 
 # Exposure normalizations
 # entries = np.sum(sksge0) + np.sum(sksge1) + np.sum(sksrpi) + np.sum(sksgm0) + np.sum(sksgm1) + np.sum(sksgm2) + np.sum(skmrpi) + np.sum(skmge) + np.sum(skmgeb) + np.sum(skmgm) + np.sum(skmre) + np.sum(skmreb) + np.sum(skmrm) + np.sum(skmro) + np.sum(pcstop) + np.sum(pcthru) + np.sum(umstop) + np.sum(umnons) + np.sum(umshow)
+entries = np.sum(sksge0) + np.sum(sksge1) + np.sum(sksrpi) + np.sum(sksgm0) + np.sum(sksgm1) + np.sum(sksgm2) + np.sum(skmrpi) + np.sum(skmge) + np.sum(skmgeb) + np.sum(skmgm) + np.sum(skmre) + np.sum(skmreb) + np.sum(skmrm) + np.sum(skmro)
+cond = (itype>-1)*(itype<16)
+total = np.sum(wght[cond])
+norm = entries / total
+
+print('Number of events from SK paper ', entries)
+print('SK Simulation of ', 5326/norm,' days')
+print('SK Simulation of ', 5326/norm/365.25,' years')
+
 entries = np.sum(sksge0) + np.sum(sksge1) + np.sum(sksrpi) + np.sum(sksgm0) + np.sum(sksgm1) + np.sum(sksgm2) + np.sum(skmrpi) + np.sum(skmge) + np.sum(skmgeb) + np.sum(skmgm) + np.sum(skmre) + np.sum(skmreb) + np.sum(skmrm) + np.sum(skmro) + np.sum(pcstop) + np.sum(pcthru)
 cond = (itype>-1)*(itype<16)
 total = np.sum(wght[cond])
 norm = entries / total
-print(norm)
 
 # Energy bining
 sge_ebins = np.array([0.1, 0.25, 0.4, 0.63, 1.0, 1.33])
