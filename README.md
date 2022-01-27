@@ -52,6 +52,8 @@ In order to run src/Analysis/PlotGlobalSens.py, one should specify the experimen
 
 The option of providing a second analysis output file is only for the cases when one wants to add the output of two separate analyses but with the same parameter grid.
 
+NOTE: This needs to be improved and merged with Ivan's plotting.
+
 ## Simulation
 ### src/Simulations
  It contains the official MC simulation of IceCube Upgrade and preliminary effective/toy simulations for the ORCA and Super-Kamiokande experiments.
@@ -88,6 +90,12 @@ optional arguments:
   --Gd                  SKVII simulation with neutron tagging on gadolinium.
 
 ```
+
+#### IceCube Upgrage
+They have a public release of the MC simulation, use that.
+
+#### ORCA
+
 
 ## Utils
 The folder utils gathers tools for converting ROOT files produced by GENIE to HDF5 files, and read and merge any HDF5 files.
