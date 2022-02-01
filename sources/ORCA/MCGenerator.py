@@ -33,7 +33,7 @@ class Generator:
 			if bin_num == -1:
 				return -1
 
-			# truncated normal if it belongs to the latter bins
+			# truncated normal if it belongs to the latter bins (look into truncate function later)
 			# now generate a random reco number from t
 			sigma, mu, A = 0, 0, 1
 			[sigma, mu, A] = gaus[bin_num]
@@ -116,5 +116,5 @@ class Generator:
 		res_zen_reco = np.array(all_zen_reco)
 		res_wmc = np.array(all_Wmc)
 
-		return res_e_true, res_e_reco, res_zen_true, res_zen_reco, res_wmc, self.MC["pid"]
+		return res_e_true, res_e_reco, res_zen_true, res_zen_reco, res_wmc, self.MC["pid"], self.MC["pdg"]
 

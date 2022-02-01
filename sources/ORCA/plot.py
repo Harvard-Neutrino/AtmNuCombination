@@ -17,6 +17,14 @@ e_reco = input_file["reco_energy"]
 zen_true = input_file["true_zenith"]
 zen_reco = input_file["reco_zenith"]
 
+# will complete class later
+# class plot():
+    # def __init__(self, input_file, pid, true_energy, reco_energy, true_zenith, reco_zenith):
+    #     self.MC = input_file 
+    #     self.pid = pid
+    #     self.e_
+
+
 
 def plot_mig_hist(binnum, top):
 
@@ -37,14 +45,6 @@ def plot_mig_hist(binnum, top):
     elif top == 0:
         data_entries = D_cascades[binnum]
 
-    # if binnum == 11: # only manual hard code part
-    #     data_entries[14] = 0.1
-
-    # if binnum == 10:
-    #     print(data_entries)
-    #     data_entries[10] -= 0.34
-    #     print(data_entries)
-
     bins_centers = np.array([0.5 * (x_bins[i] + x_bins[i+1]) for i in range(len(x_bins)-1)])
     popt, pcov = curve_fit(gaussian, xdata=bins_centers, ydata=data_entries, p0=[binnum, 10, 1])
 
@@ -60,9 +60,9 @@ def plot_mig_hist(binnum, top):
         plt.savefig("./MigMatPlots/Cascades/CascadeMigMatBin{}.png".format(binnum))
     plt.close()
 
-for i in range(22):
-    plot_mig_hist(i, 0)
-    plot_mig_hist(i, 1)
+# for i in range(22):
+#     plot_mig_hist(i, 0)
+#     plot_mig_hist(i, 1)
 
 def plot_zenith_errors():
     e, ebar, mu, mubar = util.get_zenith_error()
@@ -134,7 +134,33 @@ def plot_energy_reco_track():
     plt.savefig("./RecoPlots/ICMC_with_ORCA_Reco_track")
     plt.close()
 
-plot_energy_reco_track()
+# plot_energy_reco_track()
+
+def plot_energy_reco_track_probability():
+    track_mask = pid == 1
+    x = np.logspace(np.log10(1.85), np.log10(53), 23)
+    y = np.logspace(np.log10(1.85), np.log10(53), 23)
+    X, Y = np.meshgrid(x, y)
+    Z, xedges, yedges = np.histogram2d(e_true[track_mask], e_reco[track_mask], bins=(x, y))
+    # attempt to manually normalize column
+    for i in range(22):
+        currcol = Z[i][:]
+        tot = 0
+        for j in range(22):
+            tot += currcol[j]
+        for j in range(22):
+            currcol[j] = currcol[j] / tot
+    im = plt.pcolor(X, Y, Z.T, cmap = "gray_r", norm = LogNorm())
+    plt.xlim(2, 53)
+    plt.ylim(2, 53)
+    plt.colorbar(im, orientation = "vertical", format = LogFormatterMathtext())
+    plt.xscale("log")
+    plt.yscale("log")
+    # plt.show()
+    plt.savefig("./RecoPlots/ICMC_with_ORCA_Reco_track_probability")
+    plt.close()
+
+plot_energy_reco_track_probability()
 
 def plot_energy_reco_cascade():
     cas_mask = pid == 0
@@ -152,7 +178,33 @@ def plot_energy_reco_cascade():
     plt.savefig("./RecoPlots/ICMC_with_ORCA_Reco_cas")
     plt.close()
 
-plot_energy_reco_cascade()
+# plot_energy_reco_cascade()
+
+def plot_energy_reco_cascade_probability():
+    cas_mask = pid == 0
+    x = np.logspace(np.log10(1.85), np.log10(53), 23)
+    y = np.logspace(np.log10(1.85), np.log10(53), 23)
+    X, Y = np.meshgrid(x, y)
+    Z, xedges, yedges = np.histogram2d(e_true[cas_mask], e_reco[cas_mask], bins=(x, y))
+    # attempt to manually normalize column
+    for i in range(22):
+        currcol = Z[i][:]
+        tot = 0
+        for j in range(22):
+            tot += currcol[j]
+        for j in range(22):
+            currcol[j] = currcol[j] / tot
+    im = plt.pcolor(X, Y, Z.T, cmap = "gray_r", norm = LogNorm())
+    plt.xlim(2, 53)
+    plt.ylim(2, 53)
+    plt.colorbar(im, orientation = "vertical", format = LogFormatterMathtext())
+    plt.xscale("log")
+    plt.yscale("log")
+    # plt.show()
+    plt.savefig("./RecoPlots/ICMC_with_ORCA_Reco_cascade_probability")
+    plt.close()
+
+plot_energy_reco_cascade_probability()
 
 def plot_zenith_reco():
     x = np.linspace(-1, 1, 20)
@@ -166,7 +218,7 @@ def plot_zenith_reco():
     plt.savefig("./RecoPlots/ICMC_coszen_with_ORCA_Reco")
     plt.close()
 
-plot_zenith_reco()
+# plot_zenith_reco()
 
 def plot_zenith_reco_range(elo, ehi):
     x = np.linspace(-1, 1, 20)
@@ -186,6 +238,6 @@ def plot_zenith_reco_range(elo, ehi):
     plt.savefig("./RecoPlots/ICMC_coszen_with_ORCA_Reco_in_range_{}_to_{}".format(elo, ehi))
     plt.close()
 
-plot_zenith_reco_range(1, 5)
-plot_zenith_reco_range(5, 15)
-plot_zenith_reco_range(15, 55)
+# plot_zenith_reco_range(1, 5)
+# plot_zenith_reco_range(5, 15)
+# plot_zenith_reco_range(15, 55)
