@@ -9,8 +9,7 @@ from scipy.optimize import minimize
 from params import *
 
 if includeORCA:
-	import ORCA
-	from ORCA import analyze as anl
+	ORCAMC = pd.read_csv("ORCA.csv")
 
 class Topology(Enum):
     cascade = 0
@@ -49,9 +48,9 @@ class Simulation:
 		self.pdg = input_file["pdg"]
 		self.pid = input_file["pid"]
 		if includeORCA:
-			self.W_mc = anl.res_W_mc
-			self.E_re = anl.res_e_reco
-			self.C_re = anl.res_zen_reco
+			self.W_mc = ORCAMC["weight"]
+			self.E_re = ORCAMC["reco_energy"]
+			self.C_re = ORCAMC["reco_zenith"]
 
 
 class Flux: 
