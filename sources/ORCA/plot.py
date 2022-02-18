@@ -116,7 +116,7 @@ def plot_energy_reco():
     plt.savefig("./RecoPlots/ICMC_with_ORCA_Reco")
     plt.close()
 
-plot_energy_reco()
+# plot_energy_reco()
 
 def plot_energy_reco_track():
     track_mask = pid == 1

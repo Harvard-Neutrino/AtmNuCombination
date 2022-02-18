@@ -1,5 +1,6 @@
 import numpy as np
 import digitalizer as dgt
+import Vol
 import util
 from scipy.stats import truncnorm
 
@@ -11,7 +12,6 @@ class Generator:
 		self.bins = ORCA_bins
 
 	def generate(self):
-
 		# first define function to find reco energy for one event
 		def find_reco_energy(top, true_energy):
 			# specify gaussian of topologies
@@ -66,6 +66,48 @@ class Generator:
 			reco_zenith_error = np.random.normal(0, sigma) * np.pi / 180
 
 			return reco_zenith_error
+		ICe, ICeb, ICmu, ICmub, ICtau, ICtaub, ICnc, ICncb = Vol.IC()
+		ORe, OReb, ORmu, ORmub, ORtau, ORtaub, ORnc, ORncb = Vol.ORCA()
+		def find_weight_ratio(true_energy, pdg, interaction_type): # it's actually current type
+
+			volbins = np.logspace(np.log10(1), np.log10(50), num=51)
+			
+			idx = 0
+			for i in range(len(volbins) - 1):
+				idx = i
+				if true_energy <= volbins[i + 1]:
+					break
+			
+			# print(idx)
+			
+			if interaction_type == 0:
+				if pdg / np.abs(pdg) == 1:
+					return ORnc[idx] / ICnc[idx]
+				elif pdg / np.abs(pdg) == -1:
+					return ORncb[idx] / ICncb[idx]
+				else:
+					print("wrong pdg detected")
+					exit(0)
+			elif interaction_type == 1:
+				if pdg == 12:
+					return ORe[idx] / ICe[idx]
+				elif pdg == -12:
+					return OReb[idx] / ICeb[idx]
+				elif pdg == 14:
+					return ORmu[idx] / ICmu[idx]
+				elif pdg == -14:
+					return ORmub[idx] / ICmub[idx]
+				elif pdg == 16:
+					return ORtau[idx] / ICtau[idx]
+				elif pdg == -16:
+					return ORtaub[idx] / ICtaub[idx]
+				else:
+					print("wrong pdg detected")
+					exit(0)
+			else:
+				print("wrong interaction type detected: ", interaction_type)
+				exit(0)
+
 
 		# define the 4 exponential functions of zenith error
 		e_error, eb_error, mu_error, mub_error = util.get_zenith_error()
@@ -101,7 +143,8 @@ class Generator:
 			# also give some new MC weights!
 			W_mc = self.MC["weight"][i]
 			if energy <= 53 and energy >= 1.85:
-				all_Wmc.append(W_mc * 66000 / 61400)
+				ratio = find_weight_ratio(self.MC["true_energy"][i], self.MC["pdg"][i], self.MC["current_type"][i])
+				all_Wmc.append(W_mc * ratio)
 			else:
 				all_Wmc.append(0)
 

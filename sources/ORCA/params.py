@@ -1,9 +1,9 @@
 import numpy as np 
 import pandas as pd
 
-input_scale = "scale.png"
-input_track = "migrationTracks.png"
-input_cascade = "migrationCascades.png"
+input_scale = "./ORCA_Results/scale.png"
+input_track = "./ORCA_Results/migrationTracks.png"
+input_cascade = "./ORCA_Results/migrationCascades.png"
 
 input_MC = pd.read_csv("neutrino_mc.csv")
 

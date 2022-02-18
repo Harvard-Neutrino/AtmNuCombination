@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
+import pandas as pd
 
 def gaussian(x, mu, sigma, A):
     return (A / (sigma * np.sqrt(2 * np.pi)) * np.exp(-1.0 * (x - mu)**2 / (2 * sigma**2)))
@@ -22,3 +23,14 @@ def get_zenith_error():
 	mu_antineutrino = lambda x : exp(6.17314, 42.50309, -0.41, -0.08031, x)
 
 	return e_neutrino, e_antineutrino, mu_neutrino, mu_antineutrino
+
+def getORCAbins(input, tau = False):
+	df = pd.read_csv(input, header = None, usecols = [1])
+	# print(df)
+	res = np.array(df[:]).T[0] * 10 ** 6
+	if tau:
+		for i in range(len(res)):
+			if res[i] <= 0.1:
+				res[i] = 0
+	# print(res)
+	return res
