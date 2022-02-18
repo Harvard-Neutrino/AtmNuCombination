@@ -39,8 +39,8 @@ def plot_contour(savename = "chi_sq_contour"):
 	ax.set_xlabel(r"$\sin^2{\theta_{23}}$")
 	ax.set_ylabel(r"$m^2_{31}$")
 	axim = ax.contour(XX,YY,newz,levels=[4.605, 5.991, 9.21],cmap=plt.cm.jet, linewidths = 0.8)
-	axim = ax.contour(XX,YY,Z2,levels=[4.605, 5.991, 9.21], linewidths = 0.8)
+	# axim = ax.contour(XX,YY,Z2,levels=[4.605, 5.991, 9.21], linewidths = 0.8)
 	cb   = fig.colorbar(axim)
 	fig.savefig("{}.png".format(savename), bbox_inches="tight")
 
-plot_contour("0117_ORCA_coarse_interpolate_vs_IC.png")
+plot_contour("0218_ORCA_coarse_interpolate.png")
