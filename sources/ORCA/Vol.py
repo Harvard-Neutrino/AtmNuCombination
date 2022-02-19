@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import util
 
-plot = False
+plot = True
 
 def IC():
 	hi = 50
@@ -50,7 +50,7 @@ def IC():
 		# first calculate xsection
 		x = findx(ICMC["true_energy"][i], ICMC["current_type"][i])
 		# number of ice nucleon
-		nd = 0.9168 * (100 ** 3) * 6.022 * (10 ** 23) / 18
+		nd = 0.9168 * (100 ** 3) * 6.022 * (10 ** 23) #/ 18
 		# translate from cm^3 to m^3
 		V_eff[i] = (ICMC["weight"][i] / (x * nd))
 		if ICMC["true_energy"][i] >= lo and ICMC["true_energy"][i] <= hi:
@@ -148,7 +148,7 @@ def IC():
 	ax.grid(True)
 	ax.legend(loc = 2)
 	plt.show()
-	# fig.savefig("IC Effective Volume Normalized")
+	# fig.savefig("New IC Effective Volume Normalized")
 
 def ORCA():
 	ehist = util.getORCAbins("./ORCA_Results/nueCC.csv")
@@ -194,4 +194,4 @@ def ORCA():
 	# plt.show()
 	fig.savefig("ORCA Effective Volume Reproduce")
 
-ORCA()
+IC()
