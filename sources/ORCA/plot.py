@@ -218,7 +218,7 @@ def plot_zenith_reco():
     plt.savefig("./RecoPlots/ICMC_coszen_with_ORCA_Reco")
     plt.close()
 
-# plot_zenith_reco()
+plot_zenith_reco()
 
 def plot_zenith_reco_range(elo, ehi):
     x = np.linspace(-1, 1, 20)
