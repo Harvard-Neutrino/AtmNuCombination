@@ -43,4 +43,4 @@ def plot_contour(savename = "chi_sq_contour"):
 	cb   = fig.colorbar(axim)
 	fig.savefig("{}.png".format(savename), bbox_inches="tight")
 
-plot_contour("0218_ORCA_coarse_interpolate.png")
+plot_contour("0222_ORCA_coarse_interpolate.png")
