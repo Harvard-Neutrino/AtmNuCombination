@@ -36,17 +36,23 @@ def getORCAbins(input, tau = False):
 	# print(res)
 	return res
 
-def interpolate_xsection():
+def interpolate_xsection(nutype):
 	# reads the xsection txt file
-	xsection = pd.read_csv("xsec.txt", sep = ' ', usecols = [0, 1, 2])
+	nuxsection = pd.read_csv("nu.txt", sep = ' ', usecols = [0, 1, 2])
+	nubarxsection = pd.read_csv("nubar.txt", sep = ' ', usecols = [0, 1, 2])
 
-	length = len(xsection["Energy"])
+	length = len(nuxsection["Energy"])
 	extracted = np.zeros(length)
 	energies = np.zeros(length)
 
-	for i in range(length):
-		extracted[i] = xsection["sigmaCC"][i] + xsection["sigmaNC"][i]
-		energies[i] = xsection["Energy"][i]
+	if nutype == 1:
+		for i in range(length):
+			extracted[i] = nuxsection["sigmaCC"][i] + nuxsection["sigmaNC"][i]
+			energies[i] = nuxsection["Energy"][i]
+	elif nutype == -1:
+		for i in range(length):
+			extracted[i] = nubarxsection["sigmaCC"][i] + nubarxsection["sigmaNC"][i]
+			energies[i] = nubarxsection["Energy"][i]
 
 	resf = interp1d(energies, extracted)
 

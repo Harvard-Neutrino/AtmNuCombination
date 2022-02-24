@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import util
 
-plot = False
+plot = True
 
 def IC():
 	hi = 50
@@ -11,20 +11,26 @@ def IC():
 	binnum = 51 # for 1-50 I use 51, for 1-125 I use 71
 
 	# reads the xsection txt file
-	xsection = pd.read_csv("xsec.txt", sep = ' ', usecols = [0, 1, 2])
+	nuxsection = pd.read_csv("nu.txt", sep = ' ', usecols = [0, 1, 2])
+	nubarxsection = pd.read_csv("nubar.txt", sep = ' ', usecols = [0, 1, 2])
 
 	# reads the ICMC file
 	ICMC = pd.read_csv("neutrino_mc.csv")
 
-	findsec = util.interpolate_xsection()
-	def findx(energy):
+	findsec_nu = util.interpolate_xsection(1)
+	findsec_nubar = util.interpolate_xsection(-1)
+
+	def findx(energy, nutype):
 		# print("in findx")
 		if energy < 0.01:
 			return 2.538e-05
 		elif energy > 125:
 			return 84.1363 + 26.4089
 		else:
-			return findsec(energy) * (10 ** -38) / (100 ** 2)
+			if nutype == 1:
+				return findsec_nu(energy) * (10 ** -38) / (100 ** 2)
+			if nutype == -1:
+				return findsec_nubar(energy) * (10 ** -38) / (100 ** 2)
 
 
 	# initialize V_eff
@@ -47,7 +53,7 @@ def IC():
 	# now get the Veff function
 	for i in range(len(ICMC["true_energy"])):
 		# first calculate xsection
-		x = findx(ICMC["true_energy"][i])
+		x = findx(ICMC["true_energy"][i], ICMC["pdg"][i] / np.abs(ICMC["pdg"][i]))
 		# number of ice nucleon
 		nd = 0.9168 * (100 ** 3) * 6.022 * (10 ** 23) #/ 18
 		# translate from cm^3 to m^3
@@ -147,7 +153,9 @@ def IC():
 	ax.grid(True)
 	ax.legend(loc = 2)
 	# plt.show()
-	fig.savefig("./RecoPlots/New IC Effective Volume Normalized (30 bins)")
+	fig.savefig("./RecoPlots/New IC Effective Volume Normalized (nubar xsec corrected)")
+
+IC()
 
 def ORCA():
 	ehist = util.getORCAbins("./ORCA_Results/nueCC.csv")
