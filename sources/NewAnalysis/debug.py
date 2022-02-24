@@ -22,6 +22,7 @@ for i in range(2):
 	for j in range(2):
 		for k in range(2):
 			for l in range(len(analysis.bf_weights[i][j][k])):
-			 numevents += analysis.bf_weights[i][j][k][l]
+				if sim.E_tr[l] >= 1 and sim.E_tr[l] <= 50:
+					numevents += analysis.bf_weights[i][j][k][l]
 
 print(numevents)
