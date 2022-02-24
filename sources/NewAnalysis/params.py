@@ -7,7 +7,7 @@ from scipy.optimize import minimize
 
 dir_name = "./0218_ORCA_coarse/"
 
-includeORCA = True
+includeORCA = False
 
 units = nsq.Const()
 Time = 3.0*365*24*60*60
