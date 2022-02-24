@@ -1,0 +1,151 @@
+fisher1 and fisher2 are: 0.7344618281238704, 0
+begin truth calculations
+begin calculating d2chi
+   1,  1.001248,  1.000546,  0.998753,  0.998753
+   2,  1.001751,  1.000781,  0.999078,  0.999078
+   3,  1.001688,  1.000920,  0.999075,  0.999075
+   4,  1.001736,  1.000919,  0.999037,  0.999037
+   5,  1.001823,  1.000916,  0.998968,  0.998968
+   6,  1.001824,  1.000916,  0.998968,  0.998968
+Optimization terminated successfully.
+         Current function value: 0.729758
+         Iterations: 6
+         Function evaluations: 70
+         Gradient evaluations: 14
+   7,  1.000078,  1.000037,  1.000058,  1.000058
+   8,  1.000287,  1.000147,  0.999910,  0.999910
+   9,  1.000123,  1.000503,  0.999915,  0.999915
+  10,  1.000093,  1.000487,  0.999947,  0.999947
+  11,  1.000093,  1.000486,  0.999947,  0.999947
+Optimization terminated successfully.
+         Current function value: 0.131812
+         Iterations: 5
+         Function evaluations: 45
+         Gradient evaluations: 9
+  12,  1.001248,  1.000546,  0.998753,  0.998753
+  13,  1.001751,  1.000781,  0.999077,  0.999077
+  14,  1.001688,  1.000920,  0.999075,  0.999075
+  15,  1.001736,  1.000919,  0.999037,  0.999037
+  16,  1.001823,  1.000916,  0.998968,  0.998968
+  17,  1.001824,  1.000916,  0.998968,  0.998968
+  18,  1.001824,  1.000916,  0.998968,  0.998968
+Optimization terminated successfully.
+         Current function value: 0.729757
+         Iterations: 7
+         Function evaluations: 75
+         Gradient evaluations: 15
+  19,  1.000078,  1.000037,  1.000058,  1.000058
+  20,  1.000287,  1.000147,  0.999910,  0.999910
+  21,  1.000123,  1.000503,  0.999915,  0.999915
+  22,  1.000093,  1.000487,  0.999947,  0.999947
+  23,  1.000093,  1.000486,  0.999947,  0.999947
+Optimization terminated successfully.
+         Current function value: 0.131813
+         Iterations: 5
+         Function evaluations: 45
+         Gradient evaluations: 9
+  24,  1.001248,  1.000546,  0.998753,  0.998753
+  25,  1.001751,  1.000781,  0.999077,  0.999077
+  26,  1.001688,  1.000920,  0.999075,  0.999075
+  27,  1.001736,  1.000919,  0.999037,  0.999037
+  28,  1.001823,  1.000916,  0.998968,  0.998968
+  29,  1.001824,  1.000916,  0.998968,  0.998968
+Optimization terminated successfully.
+         Current function value: 0.729757
+         Iterations: 6
+         Function evaluations: 70
+         Gradient evaluations: 14
+  30,  1.000078,  1.000037,  1.000058,  1.000058
+  31,  1.000287,  1.000147,  0.999910,  0.999910
+  32,  1.000123,  1.000503,  0.999915,  0.999915
+  33,  1.000093,  1.000487,  0.999947,  0.999947
+  34,  1.000093,  1.000486,  0.999947,  0.999947
+Optimization terminated successfully.
+         Current function value: 0.131814
+         Iterations: 5
+         Function evaluations: 45
+         Gradient evaluations: 9
+  35,  1.001248,  1.000546,  0.998753,  0.998753
+  36,  1.001751,  1.000781,  0.999077,  0.999077
+  37,  1.001688,  1.000920,  0.999075,  0.999075
+  38,  1.001736,  1.000919,  0.999037,  0.999037
+  39,  1.001823,  1.000916,  0.998968,  0.998968
+  40,  1.001824,  1.000916,  0.998968,  0.998968
+Optimization terminated successfully.
+         Current function value: 0.729757
+         Iterations: 6
+         Function evaluations: 70
+         Gradient evaluations: 14
+  41,  1.000078,  1.000037,  1.000058,  1.000058
+  42,  1.000287,  1.000147,  0.999910,  0.999910
+  43,  1.000123,  1.000503,  0.999915,  0.999915
+  44,  1.000093,  1.000487,  0.999947,  0.999947
+  45,  1.000093,  1.000486,  0.999947,  0.999947
+Optimization terminated successfully.
+         Current function value: 0.131814
+         Iterations: 5
+         Function evaluations: 45
+         Gradient evaluations: 9
+  46,  1.001248,  1.000546,  0.998753,  0.998753
+  47,  1.001751,  1.000781,  0.999077,  0.999077
+  48,  1.001688,  1.000920,  0.999075,  0.999075
+  49,  1.001736,  1.000919,  0.999037,  0.999037
+  50,  1.001823,  1.000916,  0.998968,  0.998968
+  51,  1.001824,  1.000916,  0.998968,  0.998968
+Optimization terminated successfully.
+         Current function value: 0.729757
+         Iterations: 6
+         Function evaluations: 70
+         Gradient evaluations: 14
+  52,  1.000078,  1.000037,  1.000058,  1.000058
+  53,  1.000287,  1.000147,  0.999910,  0.999910
+  54,  1.000123,  1.000503,  0.999915,  0.999915
+  55,  1.000093,  1.000486,  0.999947,  0.999947
+  56,  1.000093,  1.000486,  0.999947,  0.999947
+Optimization terminated successfully.
+         Current function value: 0.131815
+         Iterations: 5
+         Function evaluations: 45
+         Gradient evaluations: 9
+  57,  1.001248,  1.000546,  0.998753,  0.998753
+  58,  1.001751,  1.000781,  0.999077,  0.999077
+  59,  1.001688,  1.000920,  0.999075,  0.999075
+  60,  1.001736,  1.000919,  0.999037,  0.999037
+  61,  1.001823,  1.000916,  0.998968,  0.998968
+  62,  1.001824,  1.000916,  0.998968,  0.998968
+Optimization terminated successfully.
+         Current function value: 0.729757
+         Iterations: 6
+         Function evaluations: 70
+         Gradient evaluations: 14
+  63,  1.000078,  1.000037,  1.000058,  1.000058
+  64,  1.000287,  1.000147,  0.999910,  0.999910
+  65,  1.000123,  1.000503,  0.999915,  0.999915
+  66,  1.000093,  1.000486,  0.999947,  0.999947
+  67,  1.000093,  1.000486,  0.999947,  0.999947
+Optimization terminated successfully.
+         Current function value: 0.131816
+         Iterations: 5
+         Function evaluations: 45
+         Gradient evaluations: 9
+  68,  1.001248,  1.000546,  0.998753,  0.998753
+  69,  1.001751,  1.000781,  0.999077,  0.999077
+  70,  1.001688,  1.000920,  0.999075,  0.999075
+  71,  1.001736,  1.000919,  0.999037,  0.999037
+  72,  1.001823,  1.000916,  0.998968,  0.998968
+  73,  1.001824,  1.000916,  0.998968,  0.998968
+Optimization terminated successfully.
+         Current function value: 0.729757
+         Iterations: 6
+         Function evaluations: 70
+         Gradient evaluations: 14
+  74,  1.000078,  1.000037,  1.000058,  1.000058
+  75,  1.000287,  1.000147,  0.999910,  0.999910
+  76,  1.000123,  1.000503,  0.999915,  0.999915
+  77,  1.000093,  1.000486,  0.999947,  0.999947
+  78,  1.000093,  1.000486,  0.999947,  0.999947
+Optimization terminated successfully.
+         Current function value: 0.131816
+         Iterations: 5
+         Function evaluations: 45
+         Gradient evaluations: 9

@@ -3,30 +3,35 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import util
 
-plot = False
+plot = True
 
 def IC():
 	hi = 50
 	lo = 1.
+	binnum = 51 # for 1-50 I use 51, for 1-125 I use 71
 
 	# reads the xsection txt file
-	xsection = pd.read_csv("xsec.txt", sep = ' ', usecols = [0, 1, 2])
+	nuxsection = pd.read_csv("nu.txt", sep = ' ', usecols = [0, 1, 2])
+	nubarxsection = pd.read_csv("nubar.txt", sep = ' ', usecols = [0, 1, 2])
 
 	# reads the ICMC file
 	ICMC = pd.read_csv("neutrino_mc.csv")
 
-	def findx(energy, interaction_type):
-		amp = 84.1363+26.4089
-		for i in range(len(xsection["Energy"])):
-			if energy <= xsection["Energy"][i]:
-				if interaction_type == 1 or interaction_type == 0:
-					amp = xsection["sigmaCC"][i] + xsection["sigmaNC"][i]
-					break
-				else:
-					print("invalid interaction type detected")
-					exit(1)
+	findsec_nu = util.interpolate_xsection(1)
+	findsec_nubar = util.interpolate_xsection(-1)
 
-		return amp * (10 ** -38) / (100 ** 2)
+	def findx(energy, nutype):
+		# print("in findx")
+		if energy < 0.01:
+			return 2.538e-05
+		elif energy > 125:
+			return 84.1363 + 26.4089
+		else:
+			if nutype == 1:
+				return findsec_nu(energy) * (10 ** -38) / (100 ** 2)
+			if nutype == -1:
+				return findsec_nubar(energy) * (10 ** -38) / (100 ** 2)
+
 
 	# initialize V_eff
 	V_eff = np.zeros_like(ICMC["weight"])
@@ -42,15 +47,15 @@ def IC():
 	ncbarV = 0
 
 	# initializa bin normalization
-	energy_bins_fine = np.logspace(np.log10(lo), np.log10(hi), num=51)
+	energy_bins_fine = np.logspace(np.log10(lo), np.log10(hi), num=binnum)
 
 
 	# now get the Veff function
 	for i in range(len(ICMC["true_energy"])):
 		# first calculate xsection
-		x = findx(ICMC["true_energy"][i], ICMC["current_type"][i])
+		x = findx(ICMC["true_energy"][i], ICMC["pdg"][i] / np.abs(ICMC["pdg"][i]))
 		# number of ice nucleon
-		nd = 0.9168 * (100 ** 3) * 6.022 * (10 ** 23) / 18
+		nd = 0.9168 * (100 ** 3) * 6.022 * (10 ** 23) #/ 18
 		# translate from cm^3 to m^3
 		V_eff[i] = (ICMC["weight"][i] / (x * nd))
 		if ICMC["true_energy"][i] >= lo and ICMC["true_energy"][i] <= hi:
@@ -99,7 +104,7 @@ def IC():
 	numubar_mask = (ICMC["pdg"]) == -14
 	nutaubar_mask = (ICMC["pdg"]) == -16
 
-
+	print("start binning")
 	# use numpy to bin the data
 	ehist, ebin = np.histogram(ICMC["true_energy"][nue_mask & cc_mask], bins=energy_bins_fine, \
 		weights=V_eff[nue_mask & cc_mask], density = True)
@@ -147,8 +152,10 @@ def IC():
 	ax.set_ylabel("Effective Volume [m^3]")
 	ax.grid(True)
 	ax.legend(loc = 2)
-	plt.show()
-	# fig.savefig("IC Effective Volume Normalized")
+	# plt.show()
+	fig.savefig("./RecoPlots/New IC Effective Volume Normalized (nubar xsec corrected)")
+
+IC()
 
 def ORCA():
 	ehist = util.getORCAbins("./ORCA_Results/nueCC.csv")
@@ -194,4 +201,49 @@ def ORCA():
 	# plt.show()
 	fig.savefig("ORCA Effective Volume Reproduce")
 
-ORCA()
+
+def ratio():
+	ICe, ICeb, ICmu, ICmub, ICtau, ICtaub, ICnc, ICncb = IC()
+	ORe, OReb, ORmu, ORmub, ORtau, ORtaub, ORnc, ORncb = ORCA()
+
+	ye = ORe / ICe 
+	yeb = OReb / ICeb
+	ymu = ORmu / ICmu
+	ymub = ORmub / ICmub
+	ync = ORnc / ICnc
+	yncb = ORncb / ICncb
+	
+	volbins = np.logspace(np.log10(1), np.log10(50), num=51)
+	x = volbins[:-1]
+
+		
+
+	
+	fig, ax = plt.subplots(figsize=(7,6))
+	fig.suptitle("ORCA/IC Effective Volume Ratio")
+
+	ax.plot(x, ye, label=r"$\nu_eCC$", color="red")
+	ax.plot(x, yeb, label=r"$\overline{\nu}_eCC$", \
+							linestyle = '--', color="red")
+	ax.plot(x, ymu, label=r"$\nu_{\mu}CC$", color="blue")
+	ax.plot(x, ymub, label=r"$\overline{\nu}_{\mu}CC$", \
+							linestyle = '--', color="blue")
+	ax.plot(x, ync, label=r"$\nu_eCC$", color="brown")
+	ax.plot(x, yncb, label=r"$\overline{\nu}_eCC$", \
+							linestyle = '--', color="brown")
+
+
+	ax.set_xscale("log")
+	# ax.set_yscale("log")
+	ax.set_xlabel(r"$E_{\nu,\rm{true}}$ [GeV]")
+	ax.set_xlim(1, 50)
+	ax.set_ylabel("Effective Volume Ratio [m^3/m^3]")
+	ax.grid(True)
+	ax.legend(loc = 2)
+	# plt.show()
+	fig.savefig("ORCA_to_IC Effective Volume Ratio")
+
+# ratio()
+
+
+

@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
+from scipy.interpolate import interp1d
 import pandas as pd
 
 def gaussian(x, mu, sigma, A):
@@ -34,3 +35,36 @@ def getORCAbins(input, tau = False):
 				res[i] = 0
 	# print(res)
 	return res
+
+def interpolate_xsection(nutype):
+	# reads the xsection txt file
+	nuxsection = pd.read_csv("nu.txt", sep = ' ', usecols = [0, 1, 2])
+	nubarxsection = pd.read_csv("nubar.txt", sep = ' ', usecols = [0, 1, 2])
+
+	length = len(nuxsection["Energy"])
+	extracted = np.zeros(length)
+	energies = np.zeros(length)
+
+	if nutype == 1:
+		for i in range(length):
+			extracted[i] = nuxsection["sigmaCC"][i] + nuxsection["sigmaNC"][i]
+			energies[i] = nuxsection["Energy"][i]
+	elif nutype == -1:
+		for i in range(length):
+			extracted[i] = nubarxsection["sigmaCC"][i] + nubarxsection["sigmaNC"][i]
+			energies[i] = nubarxsection["Energy"][i]
+
+	resf = interp1d(energies, extracted)
+
+	# newx = np.arange(0.01, 125, 0.1)
+	# newy = resf(newx)
+	# plt.plot(newx, newy, '-')
+	# plt.savefig("interpolated_xsection")
+	return resf
+
+
+
+
+
+
+

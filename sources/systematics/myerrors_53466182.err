@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "runfisher.py", line 47, in <module>
+    saveres = np.array([idx, d2chiqval])
+NameError: name 'd2chiqval' is not defined
