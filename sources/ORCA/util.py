@@ -49,6 +49,8 @@ def interpolate_xsection(nutype):
 		for i in range(length):
 			extracted[i] = nuxsection["sigmaCC"][i] + nuxsection["sigmaNC"][i]
 			energies[i] = nuxsection["Energy"][i]
+			# print(extracted[i])
+			# print(energies[i])
 	elif nutype == -1:
 		for i in range(length):
 			extracted[i] = nubarxsection["sigmaCC"][i] + nubarxsection["sigmaNC"][i]
@@ -56,12 +58,37 @@ def interpolate_xsection(nutype):
 
 	resf = interp1d(energies, extracted)
 
+
 	# newx = np.arange(0.01, 125, 0.1)
 	# newy = resf(newx)
 	# plt.plot(newx, newy, '-')
-	# plt.savefig("interpolated_xsection")
+	# plt.show()
 	return resf
 
+
+# interpolate_xsection(1)
+
+def get_index(current, pdg):
+	if current == 1: #charged
+		if pdg / np.abs(pdg) == 1: # neutrino
+			if pdg == 12:
+				return 0, 0
+			elif pdg == 14:
+				return 0, 1
+			elif pdg == 16:
+				return 0, 2
+		elif pdg / np.abs(pdg) == -1: # antineutrino
+			if np.abs(pdg) == 12:
+				return 1, 0
+			elif np.abs(pdg) == 14:
+				return 1, 1
+			elif np.abs(pdg) == 16:
+				return 1, 2
+	if current == 0: # neutral
+		if pdg / np.abs(pdg) == 1: # neutrino
+			return 0, 3
+		elif pdg / np.abs(pdg) == -1: # antineutrino
+			return 1, 3
 
 
 
