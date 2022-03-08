@@ -28,13 +28,14 @@ def get_zenith_error():
 def getORCAbins(input, tau = False):
 	df = pd.read_csv(input, header = None, usecols = [1])
 	# print(df)
-	res = np.array(df[:]).T[0] * 10 ** 6
+	# this is the bin heights
+	w_bin = np.array(df[:]).T[0] * 10 ** 6
 	if tau:
-		for i in range(len(res)):
-			if res[i] <= 0.1:
-				res[i] = 0
+		for i in range(len(w_bin)):
+			if w_bin[i] <= 0.1:
+				w_bin[i] = 0
 	# print(res)
-	return res
+	return w_bin
 
 def interpolate_xsection(nutype):
 	# reads the xsection txt file

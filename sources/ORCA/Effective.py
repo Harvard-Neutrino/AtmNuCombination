@@ -6,7 +6,7 @@ from util import get_index
 import scipy as scp
 from scipy.interpolate import interp1d
 
-class EffectiveAnalysis:
+class ICEffectiveAnalysis:
 	def __init__(self, lo, hi, binnum, mc = 'neutrino_mc.csv', nusec = 'nu.txt', nubarsec = 'nubar.txt'):
 		self.lo = lo 
 		self.hi = hi 
@@ -132,12 +132,42 @@ class EffectiveAnalysis:
 		# plt.show()
 		fig.savefig("./RecoPlots/IC_Effective_volume")
 		plt.close()
+	
+class ORCAEffectiveAnalysis:
+	def __init__(self):
+		self.ehist = util.getORCAbins("./ORCA_Results/nueCC.csv")
+		self.ebarhist = util.getORCAbins("./ORCA_Results/nuebarCC.csv")
+		self.muhist = util.getORCAbins("./ORCA_Results/numuCC.csv")
+		self.mubarhist = util.getORCAbins("./ORCA_Results/numubarCC.csv")
+		self.tauhist = util.getORCAbins("./ORCA_Results/nutauCC.csv", tau = True)
+		self.taubarhist = util.getORCAbins("./ORCA_Results/nutaubarCC.csv", tau = True)
+		self.nchist = util.getORCAbins("./ORCA_Results/nuNC.csv")
+		self.ncbarhist = util.getORCAbins("./ORCA_Results/nubarNC.csv")
+		self.e_bin = np.logspace(np.log10(1), np.log10(50), 51)
+		self.e_center = np.zeros(len(self.ebin) - 1)
+		for i in range(len(self.e_center)):
+			e_center[i] = ebin[i + 1] - ebin[i]
+		self.areas = np.zeros((2, 4, len(self.ehist)))
+	
+	# def computeArea(self):
+	# 	for i in range()
 
-area = EffectiveAnalysis(1, 1000, 31)
-area.computeArea()
-area.plotArea()
+	
+	# def make_csv(self):
+		# we make a neutrino_mc-like file that contains the orca information
 
-vol = EffectiveAnalysis(1, 50, 21)
-vol.computeVolume()
-vol.plotVol()
+		# first the total 
+
+
+
+ORCA = ORCAEffectiveAnalysis()
+print(len(ORCA.eenergy))
+print(len(ORCA.ehist))
+# area = EffectiveAnalysis(1, 1000, 31)
+# area.computeArea()
+# area.plotArea()
+
+# vol = EffectiveAnalysis(1, 50, 21)
+# vol.computeVolume()
+# vol.plotVol()
 
