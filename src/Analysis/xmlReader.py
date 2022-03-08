@@ -14,6 +14,7 @@ class parseXML:
 		self.Systematics = {}
 		self.SystNominal = {}
 		self.SystNominalList = []
+		self.SystPrior = []
 		self.SystSigma = {}
 		self.SystSigmaList = []
 
@@ -40,6 +41,7 @@ class parseXML:
 							self.SystSigmaList.append(float(syst.find('sigma').text))
 							self.SystNominal[sname].append(float(syst.find('nominal').text))
 							self.SystNominalList.append(float(syst.find('nominal').text))
+							self.SystPrior.append(float(syst.find('nominal').text))
 							self.Systematics[sname].append(s)
 							self.SystematicsList = np.append(self.SystematicsList,s)
 			else:
@@ -51,6 +53,14 @@ class parseXML:
 		print('------------------------------------')
 		print('Neutrino sources considered:')
 		for s in self.sources:
+			print(' + ',s)
+		print('====================================')
+
+	def readDetectors(self):
+		self.detectors = self.reader('Detector')
+		print('------------------------------------')
+		print('Neutrino detectors considered:')
+		for s in self.detectors:
 			print(' + ',s)
 		print('====================================')
 

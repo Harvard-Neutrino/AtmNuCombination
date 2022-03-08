@@ -10,16 +10,31 @@ def sensitivity(analysis, t12, t13, t23, dm21, dm31, dcp, Ordering, experiments,
 	else:
 		bnds = []
 		prior = []
-		for source in analysis.Systematics:
-			for i,sys in enumerate(analysis.Systematics[source]):
-				# prior.append(analysis.SystNominal[source][i]+0.02*np.random.rand())
-				prior.append(analysis.SystNominal[source][i])
-				if abs(analysis.SystNominal[source][i] -1) < 0.1:
-					bnds.append((0.5,2))
-				elif abs(analysis.SystNominal[source][i]) < 0.1:
-					bnds.append((-0.9,0.9))
+		for prior,sigma in zip(analysis.SystPrior,analysis.SystSigmaList):
+			if sigma<0.05:
+				bnd_min = prior - 2*sigma
+				bnd_max = prior + 2*sigma
+			else:
+				bnd_min = prior - sigma
+				bnd_max = prior + sigma
+			if prior>0:
+				bnd_min = max(0.5,bnd_min)
+				bnd_max = min(1.5,bnd_max)
+			elif prior==0:
+				bnd_min = max(-0.5,bnd_min)
+				bnd_max = min(0.5,bnd_max)
+
+			bnds.append((bnd_min,bnd_max))
 		bounds = tuple(bnds)
-		res = minimize(Chi2SystsCombined, prior, args=(analysis, t12, t13, t23, dm21, dm31, dcp, Ordering, experiments), method='L-BFGS-B', bounds=bounds, tol=0.001)
+
+		wOsc = {}
+		for exp in experiments:
+			wOsc[exp] = experiments[exp].Oscillator(analysis.neutrinos, t12, t13, t23, dm21, dm31, dcp, Ordering)
+
+		# res = minimize(Chi2SystsCombined_and_Gradient, prior, args=(analysis, t12, t13, t23, dm21, dm31, dcp, Ordering, experiments), method='L-BFGS-B', jac=True, bounds=bounds, options={'disp' : True, 'ftol' : 1e-4})
+		res = minimize(Chi2SystsCombined_and_Gradient_Binned_Next, analysis.SystPrior, args=(analysis, wOsc, experiments), method='L-BFGS-B', jac=True, bounds=bounds, options={'disp' : True, 'ftol':1e-4, 'gtol': 1e-01})
+
+		analysis.SystPrior = res.x
 
 		# Writing output
 		sys_data = ' '.join(map(str,res.x))

@@ -162,6 +162,7 @@ class GenieSimulation:
 		self.PDGlep = lep_pdg
 
 	def Flux(self):
+		# flux = nuflux.makeFlux('IPhonda2014_sk_solmax')
 		flux = nuflux.makeFlux('IPhonda2014_sk_solmin')
 		numu = nuflux.NuMu
 		numub = nuflux.NuMuBar
@@ -190,6 +191,7 @@ class GenieSimulation:
 
 	def FluxWeight(self): # Computes the inverse of the simulated flux used in the GENIE production for a given neutrino flavour
 		flux = nuflux.makeFlux('IPhonda2014_sk_solmin')
+		# flux = nuflux.makeFlux('IPhonda2014_sk_solmax')
 		nus = {12:nuflux.NuE, -12:nuflux.NuEBar, 14:nuflux.NuMu, -14:nuflux.NuMuBar, 16:nuflux.NuMu, -16:nuflux.NuMuBar}
 		flx_weight = np.array([])
 
@@ -201,6 +203,7 @@ class GenieSimulation:
 	def AtmInitialFlux(self, energies, zeniths, neutrino_flavors):
 		AtmFlux = np.zeros((len(zeniths),len(energies),2,neutrino_flavors))
 		flux = nuflux.makeFlux('IPhonda2014_sk_solmin')
+		# flux = nuflux.makeFlux('IPhonda2014_sk_solmax')
 		for ic,cz in enumerate(zeniths):
 			for ie,E in enumerate(energies):
 				AtmFlux[ic][ie][0][0] = flux.getFlux(nuflux.NuE,E,cz) # nue
@@ -211,28 +214,60 @@ class GenieSimulation:
 				AtmFlux[ic][ie][1][2] = 0.0 # nutau bar
 		return AtmFlux
 
-	def PointOscGrid(self, neutrino_flavors=3):
+		
+	def PointOsc_SKBest(self):
+		self.weightOsc_SKbest = np.array([])
 		units = nsq.Const()
 
-		E_min = 1.0e-1
-		E_max = 4.0e2
-		E_nodes = 100
-		energy_nodes = nsq.geomspace(E_min*units.GeV,E_max*units.GeV,E_nodes)
+		for k,(nu,E,cz,mod) in enumerate(zip(self.Ipnu, self.Enu, self.Cz, self.Mode)):
+		# Get P_{x->ipnu} probabilities
+			weight = 0.0
+			if nu>0:
+				rho = 0
+				# nuSQ = nsq.nuSQUIDS(3,nsq.NeutrinoType.neutrino)
+			elif nu<0:
+				rho = 1
+				# nuSQ = nsq.nuSQUIDS(3,nsq.NeutrinoType.antineutrino)
+			else:
+				print('What?! No identified neutrino flavour')
 
-		cth_min = -1.0
-		cth_max = 1.0
-		cth_nodes = 40
-		cz_nodes = nsq.linspace(cth_min,cth_max,cth_nodes)
+			if cz>0:
+				coszen = np.array([0.99999*cz,1.00001*cz])
+			else:
+				coszen = np.array([1.00001*cz,0.99999*cz])
 
-		interactions = 'False'
-		
-		nsq_atm = nsq.nuSQUIDSAtm(cth_nodes,energy_nodes,neutrino_flavors,nsq.NeutrinoType.both,interactions)
-		nsq_atm.Set_rel_error(1.0e-4);
-		nsq_atm.Set_abs_error(1.0e-4);
+			ener = np.array([0.99*E,1.01*E])
+			AtmOsc = nsq.nuSQUIDSAtm(coszen,ener*units.GeV,3,nsq.NeutrinoType.both,False)
+			AtmOsc.Set_rel_error(1.0e-5);
+			AtmOsc.Set_abs_error(1.0e-5);
+			AtmOsc.Set_MixingAngle(0,1,math.asin(math.sqrt(0.304)))
+			AtmOsc.Set_MixingAngle(0,2,math.asin(math.sqrt(0.0219)))
+			AtmOsc.Set_MixingAngle(1,2,math.asin(math.sqrt(0.588)))
+			AtmOsc.Set_SquareMassDifference(1,7.53e-05)
+			AtmOsc.Set_SquareMassDifference(2,0.0025)
+			AtmOsc.Set_CPPhase(0,2,4.18)
 
-		# nsq_atm.Set_Track(nsq.EarthAtm().Track(zenith))
-		# nsq_atm.Set_Body(nsq.EarthAtm())
-		
+			if abs(mod) < 30:
+				for i in range(2):
+					in_state = np.zeros((2,2,2,3))
+					for ii in range(2):
+						for ij in range(2):
+							for ik in range(2):
+								in_state[ii][ij][ik][i] = 1
+					Ffactor = FluxFactor(i, nu, self.Flux_nue[k], self.Flux_nueb[k], self.Flux_numu[k], self.Flux_numub[k])
+					AtmOsc.Set_initial_state(in_state,nsq.Basis.flavor)
+					AtmOsc.EvolveState()
+					j = int(abs(nu) / 2) % 6
+					prob = 0
+					for _ in range(20):
+						prob += AtmOsc.EvalFlavor(j, cz, E*units.GeV, rho, True)
+					prob /= 20
+					weight += prob*Ffactor
+			else:
+				weight = 1.0
+
+			self.weightOsc_SKbest = np.append(self.weightOsc_SKbest,weight)
+		print('Done with oscillations')
 
 	def PointOsc_SKTable(self):
 		self.weightOsc_SKpaper = np.array([])
@@ -242,79 +277,143 @@ class GenieSimulation:
 		# Get P_{x->ipnu} probabilities
 			weight = 0.0
 			if nu>0:
-				nuSQ = nsq.nuSQUIDS(3,nsq.NeutrinoType.neutrino)
+				rho = 0
 			elif nu<0:
-				nuSQ = nsq.nuSQUIDS(3,nsq.NeutrinoType.antineutrino)
+				rho = 1
 			else:
 				print('What?! No identified neutrino flavour')
-			nuSQ.Set_E(E*units.GeV)
-			zenith = np.arccos(cz)
-			nuSQ.Set_Track(nsq.EarthAtm().Track(zenith))
-			nuSQ.Set_Body(nsq.EarthAtm())
-			nuSQ.Set_rel_error(1.0e-4);
-			nuSQ.Set_abs_error(1.0e-4);
-			nuSQ.Set_MixingAngle(0,1,math.asin(math.sqrt(0.304)))
-			nuSQ.Set_MixingAngle(0,2,math.asin(math.sqrt(0.0219)))
-			nuSQ.Set_MixingAngle(1,2,math.asin(math.sqrt(0.5)))
-			nuSQ.Set_SquareMassDifference(1,7.53e-05)
-			nuSQ.Set_SquareMassDifference(2,0.0024)
-			nuSQ.Set_CPPhase(0,2,0)
+
+			if cz>0:
+				coszen = np.array([0.99999*cz,1.00001*cz])
+			else:
+				coszen = np.array([1.00001*cz,0.99999*cz])
+
+			ener = np.array([0.99*E,1.01*E])
+			AtmOsc = nsq.nuSQUIDSAtm(coszen,ener*units.GeV,3,nsq.NeutrinoType.both,False)
+			AtmOsc.Set_rel_error(1.0e-5);
+			AtmOsc.Set_abs_error(1.0e-5);
+			AtmOsc.Set_MixingAngle(0,1,math.asin(math.sqrt(0.304)))
+			AtmOsc.Set_MixingAngle(0,2,math.asin(math.sqrt(0.0219)))
+			AtmOsc.Set_MixingAngle(1,2,math.asin(math.sqrt(0.5)))
+			AtmOsc.Set_SquareMassDifference(1,7.53e-05)
+			AtmOsc.Set_SquareMassDifference(2,0.0024)
+			AtmOsc.Set_CPPhase(0,2,0)
 
 			if abs(mod) < 30:
 				for i in range(2):
-					in_state = np.zeros(3)
-					in_state[i] = 1
+					in_state = np.zeros((2,2,2,3))
+					for ii in range(2):
+						for ij in range(2):
+							for ik in range(2):
+								in_state[ii][ij][ik][i] = 1
 					Ffactor = FluxFactor(i, nu, self.Flux_nue[k], self.Flux_nueb[k], self.Flux_numu[k], self.Flux_numub[k])
-					nuSQ.Set_initial_state(in_state,nsq.Basis.flavor)
-					nuSQ.EvolveState()
+					AtmOsc.Set_initial_state(in_state,nsq.Basis.flavor)
+					AtmOsc.EvolveState()
 					j = int(abs(nu) / 2) % 6
-					prob = nuSQ.EvalFlavor(j)
+					prob = 0
+					for _ in range(20):
+						prob += AtmOsc.EvalFlavor(j, cz, E*units.GeV, rho, True)
+					prob /= 20
 					weight += prob*Ffactor
 			else:
 				weight = 1.0
 
 			self.weightOsc_SKpaper = np.append(self.weightOsc_SKpaper,weight)
+			if math.isnan(weight): print(self.weightOsc_SKpaper[k],weight,cz,E)
 		print('Done with oscillations')
 
+	# def PointOsc_SKTable(self):
+	# 	self.weightOsc_SKpaper = np.zeros_like(self.Enu)
+	# 	units = nsq.Const()
+	# 	interactions = False
+		
+	# 	AtmOsc = nsq.nuSQUIDSAtm(self.cth_nodes,self.energy_nodes*units.GeV,3,nsq.NeutrinoType.both,interactions)
+	# 	AtmOsc.Set_rel_error(1.0e-4);
+	# 	AtmOsc.Set_abs_error(1.0e-4);
+	# 	AtmOsc.Set_MixingAngle(0,1,math.asin(math.sqrt(0.304)))
+	# 	AtmOsc.Set_MixingAngle(0,2,math.asin(math.sqrt(0.0219)))
+	# 	AtmOsc.Set_MixingAngle(1,2,math.asin(math.sqrt(0.5)))
+	# 	AtmOsc.Set_SquareMassDifference(1,7.53e-05)
+	# 	AtmOsc.Set_SquareMassDifference(2,0.0024)
+	# 	AtmOsc.Set_CPPhase(0,2,0)
+	# 	AtmOsc.Set_initial_state(self.InitialFlux,nsq.Basis.flavor)
+	# 	AtmOsc.EvolveState()
 
-	def PointOsc_SKBest(self):
-		self.weightOsc_SKbest = np.array([])
-		units = nsq.Const()
+	# 	neuflavor=0
+	# 	for i,(E,cz) in enumerate(zip(self.Enu, self.Cz)):
+	# 		if self.Ipnu[i] > 0 :
+	# 			neutype = 0
+	# 		else:
+	# 			neutype = 1
+	# 		if np.abs(self.Ipnu[i]) == 12:
+	# 			neuflavor = 0
+	# 		elif np.abs(self.Ipnu[i]) == 14:
+	# 			neuflavor = 1
+	# 		elif np.abs(self.Ipnu[i]) == 16:
+	# 			neuflavor = 2
+	# 		self.weightOsc_SKpaper[i] = AtmOsc.EvalFlavor(neuflavor, cz, E*units.GeV, neutype, True)
+	# 	print('Done with oscillations')
 
-		for k,(nu,E,cz,mod) in enumerate(zip(self.Ipnu, self.Enu, self.Cz, self.Mode)):
-		# Get P_{x->ipnu} probabilities
-			weight = 0.0
-			if nu>0:
-				nuSQ = nsq.nuSQUIDS(3,nsq.NeutrinoType.neutrino)
-			elif nu<0:
-				nuSQ = nsq.nuSQUIDS(3,nsq.NeutrinoType.antineutrino)
-			else:
-				print('What?! No identified neutrino flavour')
-			nuSQ.Set_E(E*units.GeV)
-			zenith = np.arccos(cz)
-			nuSQ.Set_Track(nsq.EarthAtm().Track(zenith))
-			nuSQ.Set_Body(nsq.EarthAtm())
-			nuSQ.Set_rel_error(1.0e-4);
-			nuSQ.Set_abs_error(1.0e-4);
-			nuSQ.Set_MixingAngle(0,1,math.asin(math.sqrt(0.304)))
-			nuSQ.Set_MixingAngle(0,2,math.asin(math.sqrt(0.0219)))
-			nuSQ.Set_MixingAngle(1,2,math.asin(math.sqrt(0.588)))
-			nuSQ.Set_SquareMassDifference(1,7.53e-05)
-			nuSQ.Set_SquareMassDifference(2,0.0025)
-			nuSQ.Set_CPPhase(0,2,4.18)
 
-			if abs(mod) < 30:
-				for i in range(2):
-					in_state = np.zeros(3)
-					in_state[i] = 1
-					Ffactor = FluxFactor(i, nu, self.Flux_nue[k], self.Flux_nueb[k], self.Flux_numu[k], self.Flux_numub[k])
-					nuSQ.Set_initial_state(in_state,nsq.Basis.flavor)
-					nuSQ.EvolveState()
-					j = int(abs(nu) / 2) % 6
-					prob = nuSQ.EvalFlavor(j)
-					weight += prob*Ffactor
-			else:
-				weight = 1.0
+	# def PointOsc_SKBest(self):
+	# 	self.weightOsc_SKbest = np.zeros_like(self.Enu)
+	# 	units = nsq.Const()
+	# 	interactions = False
+		
+	# 	AtmOsc = nsq.nuSQUIDSAtm(self.cth_nodes,self.energy_nodes*units.GeV,3,nsq.NeutrinoType.both,interactions)
+	# 	AtmOsc.Set_rel_error(1.0e-4);
+	# 	AtmOsc.Set_abs_error(1.0e-4);
+	# 	AtmOsc.Set_MixingAngle(0,1,math.asin(math.sqrt(0.304)))
+	# 	AtmOsc.Set_MixingAngle(0,2,math.asin(math.sqrt(0.0219)))
+	# 	AtmOsc.Set_MixingAngle(1,2,math.asin(math.sqrt(0.588)))
+	# 	AtmOsc.Set_SquareMassDifference(1,7.53e-05)
+	# 	AtmOsc.Set_SquareMassDifference(2,0.0025)
+	# 	AtmOsc.Set_CPPhase(0,2,4.18)
+	# 	AtmOsc.Set_initial_state(self.InitialFlux,nsq.Basis.flavor)
+	# 	AtmOsc.EvolveState()
 
-			self.weightOsc_SKbest = np.append(self.weightOsc_SKbest,weight)
-		print('Done with oscillations')
+	# 	neuflavor=0
+	# 	for i,(E,cz) in enumerate(zip(self.Enu, self.Cz)):
+	# 		if self.Ipnu[i] > 0 :
+	# 			neutype = 0
+	# 		else:
+	# 			neutype = 1
+	# 		if np.abs(self.Ipnu[i]) == 12:
+	# 			neuflavor = 0
+	# 		elif np.abs(self.Ipnu[i]) == 14:
+	# 			neuflavor = 1
+	# 		elif np.abs(self.Ipnu[i]) == 16:
+	# 			neuflavor = 2
+	# 		self.weightOsc_SKbest[i] = AtmOsc.EvalFlavor(neuflavor, cz, E*units.GeV, neutype, True)
+	# 		if i==1: 
+	# 			print(AtmOsc.EvalFlavor(neuflavor, cz, E*units.GeV, neutype, True), self.Ipnu[i], neuflavor)
+	# 			print(AtmOsc.EvalFlavor(neuflavor, cz, E*units.GeV, neutype), self.Ipnu[i], neuflavor)
+	# 	print('Done with oscillations')
+
+
+	# def InitialFlux(self):
+	# 	flux = nuflux.makeFlux('IPhonda2014_sk_solmin')
+	# 	E_min = 0.1
+	# 	E_max = 4.0e2
+	# 	E_nodes = 100
+	# 	energy_range = nsq.logspace(E_min,E_max,E_nodes)
+	# 	energy_nodes = nsq.logspace(E_min,E_max,E_nodes)
+	# 	cth_min = -1.0
+	# 	cth_max = 1.0
+	# 	cth_nodes = 40
+	# 	cth_nodes = nsq.linspace(cth_min,cth_max,cth_nodes)
+	# 	neutrino_flavors = 3
+
+	# 	#Initialize the flux
+	# 	AtmInitialFlux = np.zeros((len(cth_nodes),len(energy_nodes),2,neutrino_flavors))
+	# 	for ic,nu_cos_zenith in enumerate(cth_nodes):
+	# 		for ie,nu_energy in enumerate(energy_range):
+	# 			AtmInitialFlux[ic][ie][0][0] = 1 #flux.getFlux(nuflux.NuE,nu_energy,nu_cos_zenith) # nue
+	# 			AtmInitialFlux[ic][ie][1][0] = 1 #flux.getFlux(nuflux.NuEBar,nu_energy,nu_cos_zenith) # nue bar
+	# 			AtmInitialFlux[ic][ie][0][1] = 1 #flux.getFlux(nuflux.NuMu,nu_energy,nu_cos_zenith) # numu
+	# 			AtmInitialFlux[ic][ie][1][1] = 1 #flux.getFlux(nuflux.NuMuBar,nu_energy,nu_cos_zenith) # numu bar
+	# 			AtmInitialFlux[ic][ie][0][2] = 0.  # nutau
+	# 			AtmInitialFlux[ic][ie][1][2] = 0.  # nutau bar
+	# 	self.energy_nodes = energy_nodes
+	# 	self.cth_nodes = cth_nodes
+	# 	self.InitialFlux = AtmInitialFlux

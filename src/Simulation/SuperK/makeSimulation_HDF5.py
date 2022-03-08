@@ -4,6 +4,7 @@ import numpy as np
 import argparse
 import time
 import h5py
+import math
 # Local libraries
 from TrueRing import TrueRingConstructor, numberOfNeutrons
 from RecoRing import RecoRing
@@ -43,6 +44,7 @@ if genie_input != 'NULL' and output == 'NULL':
 	else:
 		output = 'data/output/SK/sksim.'+fname
 
+print(genie_input)
 
 # Read GENIE GST file in hdf5 format
 event = GenieSimulation(genie_input)
@@ -176,11 +178,18 @@ for i, nu in enumerate(event.Ipnu):
 
 	elif toposample[event.TopologySample[i]]>1:
 		nonfcType = toposample[event.TopologySample[i]]
-		if TrueNRing == 1:
-			RnonFC = nonFCReco(TrueRingPDG[0], nonfcType, rd, TrueRingDir, TrueRingP[0])
+		if ntag:
+			if TrueNRing == 1:
+				RnonFC = nonFCReco(TrueRingPDG[0], nonfcType-2, rd, TrueRingDir, TrueRingP[0])
+			else:
+				maxP = np.argmax(TrueRingP)
+				RnonFC = nonFCReco(TrueRingPDG[maxP], nonfcType-2, rd, TrueRingDir[maxP], TrueRingP[maxP])
 		else:
-			maxP = np.argmax(TrueRingP)
-			RnonFC = nonFCReco(TrueRingPDG[maxP], nonfcType, rd, TrueRingDir[maxP], TrueRingP[maxP])
+			if TrueNRing == 1:
+				RnonFC = nonFCReco(TrueRingPDG[0], nonfcType, rd, TrueRingDir, TrueRingP[0])
+			else:
+				maxP = np.argmax(TrueRingP)
+				RnonFC = nonFCReco(TrueRingPDG[maxP], nonfcType, rd, TrueRingDir[maxP], TrueRingP[maxP])
 		nonfcEvis = RnonFC.Momentum
 		nonfcTotXDir = RnonFC.Direction[0]
 		nonfcTotYDir = RnonFC.Direction[1]
@@ -199,28 +208,28 @@ for i, nu in enumerate(event.Ipnu):
 
 # Fill true variables
 #######################################
-	ipnu       = np.append(ipnu, event.Ipnu[i])
-	pnu        = np.append(pnu, event.Enu[i])
-	dirnu_x    = np.append(dirnu_x, Pnu_v[0] / event.Enu[i])
-	dirnu_y    = np.append(dirnu_y, Pnu_v[1] / event.Enu[i])
-	dirnu_z    = np.append(dirnu_z, Pnu_v[2] / event.Enu[i])
-	azi        = np.append(azi, event.Azi[i])
-	cz         = np.append(cz, event.Cz[i])
-	fluxho_nue  = np.append(fluxho_nue, event.Flux_nue[i])
-	fluxho_nueb  = np.append(fluxho_nueb, event.Flux_nueb[i])
-	fluxho_numu  = np.append(fluxho_numu, event.Flux_numu[i])
-	fluxho_numub  = np.append(fluxho_numub, event.Flux_numub[i])
-	weightSim  = np.append(weightSim, event.FluxWeight[i])
-	weightOsc_SKpaper = np.append(weightOsc_SKpaper, event.weightOsc_SKpaper[i])
-	weightOsc_SKbest = np.append(weightOsc_SKbest, event.weightOsc_SKbest[i])
-	plep       = np.append(plep, event.Plep[i])
-	dirlep_x   = np.append(dirlep_x, event.Pxlep[i] / event.Plep[i])
-	dirlep_y   = np.append(dirlep_y, event.Pylep[i] / event.Plep[i])
-	dirlep_z   = np.append(dirlep_z, event.Pzlep[i] / event.Plep[i])
-	mode       = np.append(mode, event.Mode[i])
-# Fill reco variables
-#######################################
-	if event.TopologySample[i]=='FC':
+	# Fill reco variables
+	#######################################
+	if event.TopologySample[i]=='FC' and abs((event.Enu[i]-RRing.Evis) / event.Enu[i])<1 and not math.isnan(event.weightOsc_SKpaper[i]) and not math.isnan(event.weightOsc_SKbest[i]):
+		ipnu       = np.append(ipnu, event.Ipnu[i])
+		pnu        = np.append(pnu, event.Enu[i])
+		dirnu_x    = np.append(dirnu_x, Pnu_v[0] / event.Enu[i])
+		dirnu_y    = np.append(dirnu_y, Pnu_v[1] / event.Enu[i])
+		dirnu_z    = np.append(dirnu_z, Pnu_v[2] / event.Enu[i])
+		azi        = np.append(azi, event.Azi[i])
+		cz         = np.append(cz, event.Cz[i])
+		fluxho_nue  = np.append(fluxho_nue, event.Flux_nue[i])
+		fluxho_nueb  = np.append(fluxho_nueb, event.Flux_nueb[i])
+		fluxho_numu  = np.append(fluxho_numu, event.Flux_numu[i])
+		fluxho_numub  = np.append(fluxho_numub, event.Flux_numub[i])
+		weightSim  = np.append(weightSim, event.FluxWeight[i])
+		weightOsc_SKpaper = np.append(weightOsc_SKpaper, event.weightOsc_SKpaper[i])
+		weightOsc_SKbest = np.append(weightOsc_SKbest, event.weightOsc_SKbest[i])
+		plep       = np.append(plep, event.Plep[i])
+		dirlep_x   = np.append(dirlep_x, event.Pxlep[i] / event.Plep[i])
+		dirlep_y   = np.append(dirlep_y, event.Pylep[i] / event.Plep[i])
+		dirlep_z   = np.append(dirlep_z, event.Pzlep[i] / event.Plep[i])
+		mode       = np.append(mode, event.Mode[i])
 		reco_pmax  = np.append(reco_pmax, RRing.MERMomentum)
 		evis       = np.append(evis, RRing.Evis)
 		reco_dir_x = np.append(reco_dir_x, RRing.TotDir[0])
@@ -230,12 +239,30 @@ for i, nu in enumerate(event.Ipnu):
 		nring      = np.append(nring, RRing.NRing)
 		muedk      = np.append(muedk, RRing.MuEdk)
 		neutron    = np.append(neutron, RRing.Neutrons)
-		neutron    = np.append(neutron, numberOfNeutrons(pdgs))
 		itype      = np.append(itype, RRing.Type)
 		otype      = np.append(otype, RRing.originalType)
 		imass      = np.append(imass, RRing.Imass)
 		del RRing
-	else:
+	elif event.TopologySample[i]!='FC' and abs((event.Enu[i]-nonfcEvis) / event.Enu[i])<1 and not math.isnan(event.weightOsc_SKpaper[i]) and not math.isnan(event.weightOsc_SKbest[i]) and event.Enu[i]>1 and nonfcEvis>1:
+		ipnu       = np.append(ipnu, event.Ipnu[i])
+		pnu        = np.append(pnu, event.Enu[i])
+		dirnu_x    = np.append(dirnu_x, Pnu_v[0] / event.Enu[i])
+		dirnu_y    = np.append(dirnu_y, Pnu_v[1] / event.Enu[i])
+		dirnu_z    = np.append(dirnu_z, Pnu_v[2] / event.Enu[i])
+		azi        = np.append(azi, event.Azi[i])
+		cz         = np.append(cz, event.Cz[i])
+		fluxho_nue  = np.append(fluxho_nue, event.Flux_nue[i])
+		fluxho_nueb  = np.append(fluxho_nueb, event.Flux_nueb[i])
+		fluxho_numu  = np.append(fluxho_numu, event.Flux_numu[i])
+		fluxho_numub  = np.append(fluxho_numub, event.Flux_numub[i])
+		weightSim  = np.append(weightSim, event.FluxWeight[i])
+		weightOsc_SKpaper = np.append(weightOsc_SKpaper, event.weightOsc_SKpaper[i])
+		weightOsc_SKbest = np.append(weightOsc_SKbest, event.weightOsc_SKbest[i])
+		plep       = np.append(plep, event.Plep[i])
+		dirlep_x   = np.append(dirlep_x, event.Pxlep[i] / event.Plep[i])
+		dirlep_y   = np.append(dirlep_y, event.Pylep[i] / event.Plep[i])
+		dirlep_z   = np.append(dirlep_z, event.Pzlep[i] / event.Plep[i])
+		mode       = np.append(mode, event.Mode[i])
 		reco_pmax  = np.append(reco_pmax, -9999.)
 		evis       = np.append(evis, nonfcEvis)
 		reco_dir_x = np.append(reco_dir_x, nonfcTotXDir)
@@ -243,15 +270,14 @@ for i, nu in enumerate(event.Ipnu):
 		reco_dir_z = np.append(reco_dir_z, nonfcTotZDir)
 		ip         = np.append(ip, 0)
 		nring      = np.append(nring, 0)
-		muedk      = np.append(muedk, 0)
-		neutron    = np.append(neutron, 0)
+		muedk      = np.append(muedk, -1)
+		neutron    = np.append(neutron, -1)
 		itype      = np.append(itype, nonfcType)
 		if ntag:
 			otype      = np.append(otype, nonfcType-2)
 		else:
 			otype      = np.append(otype, nonfcType)
 		imass      = np.append(imass, -9999.)
-
 
 # Applying weights to match SK's public event rate tables
 #######################################

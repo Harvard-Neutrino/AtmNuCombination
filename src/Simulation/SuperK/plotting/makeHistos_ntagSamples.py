@@ -5,7 +5,8 @@ import matplotlib.pyplot as plt
 import applications as ap
 from math import pi
 
-with h5py.File('../data/output/SK_Gdtag/combined.hdf5', 'r') as hf:
+with h5py.File('../data/output/SK_Htag/combined.hdf5', 'r') as hf:
+#with h5py.File('../del', 'r') as hf:
 	evis = np.array(hf['evis'][()])
 	cz = np.array(hf['recodirZ'][()])
 	# cz = np.array(hf['dirnuZ'][()])
@@ -19,6 +20,18 @@ with h5py.File('../data/output/SK_Gdtag/combined.hdf5', 'r') as hf:
 	weight = np.array(hf['weightReco'][()])
 	itype = np.array(hf['itype'][()])
 
+condition1 = (itype<16) * (itype>-1) 
+condition2 = (itype<18) * (itype>15) * (evis>1)
+condition = (condition2 + condition1) 
+evis=evis[condition]
+cz=cz[condition]
+dz=dz[condition]
+mode=mode[condition]
+ipnu=ipnu[condition]
+pnu=pnu[condition]
+weight=weight[condition]
+oscw=oscw[condition]
+itype=itype[condition]
 
 wght = oscw*weight
 
@@ -75,6 +88,7 @@ axis = axes.flat
 # for it in range(19):
 for it in range(18):
 	cc = np.extract((abs(mode)<30) & (itype==it), cz)
+	print(np.sum(cc))
 	wcc = np.extract((abs(mode)<30) & (itype==it), wght)
 	wnc = np.extract((abs(mode)>30) & (itype==it), wght)
 	nc = np.extract((abs(mode)>30) & (itype==it), cz)

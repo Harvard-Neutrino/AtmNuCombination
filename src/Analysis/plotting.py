@@ -75,15 +75,15 @@ def cornerPlot(x,y,X2,title=''):
 
 	colors = ['c','g','r','m']
 
-	levels1d = np.array([2.706,9.0, 16.0, 25.0])
-	levels2d = np.array([4.605,11.904])
+	levels1d = np.array([1,4,9.0, 16.0, 25.0]) # 1, 2, 3, 4, 5 sigma
+	levels2d = np.array([2.3,4.61,6.18,11.53]) # 1, 90%, 2, 3 sigma
 
 	# Put data into plots
 	axUp.plot(x,X2_x, color='k')
 	for i in range(2):
 		axUp.plot([x[0],x[-1]],[levels1d[i],levels1d[i]], color=colors[i], linewidth=0.5)
 		axRi.plot([levels1d[i],levels1d[i]], [y[0],y[-1]],color=colors[i], linewidth=0.5)
-	axUp.set_ylim(0.,100.)
+	axUp.set_ylim(0.,20.)
 	axUp.set_xlim(x0,xf)
 	axRi.plot(X2_y, y, color='k')
 	axRi.set_xlim(0.,100.)
@@ -171,8 +171,8 @@ def cornerPlotBothO(x,y,X2_N,X2_I):
 
 	colors = ['c','g','r','m']
 
-	levels1d = np.array([2.706,9.0, 16.0, 25.0])
-	levels2d = np.array([4.605,11.904])
+	levels1d = np.array([1,4,9.0, 16.0, 25.0]) # 1, 2, 3, 4, 5 sigma
+	levels2d = np.array([2.3,4.61,6.18,11.53]) # 1, 90%, 2, 3 sigma
 
 
 	axUp.plot(x,X2N_x, color='k')
@@ -181,7 +181,7 @@ def cornerPlotBothO(x,y,X2_N,X2_I):
 	for i in range(4):
 		axUp.plot([x0,xf],[levels1d[i],levels1d[i]], color=colors[i], linewidth=0.5)
 		axRi.plot([levels1d[i],levels1d[i]], [y0,yf],color=colors[i], linewidth=0.5)
-	axUp.set_ylim(0.,100.)
+	axUp.set_ylim(0.,20.)
 	axUp.set_xlim(x0,xf)
 
 	axRi.plot(X2N_y, y, color='k')

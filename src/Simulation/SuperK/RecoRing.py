@@ -7,7 +7,9 @@ import random
 import applications as ap
 
 class RecoRing:
-	AngResoThr = 0.975 #math.cos(25.*pi/180.)
+	# AngResoThr = 0.906 #math.cos(25.*pi/180.)
+	AngResoThr = 0.643 #math.cos(50.*pi/180.)
+	# AngResoThr = 0.342 #math.cos(70.*pi/180.)
 	MeVtoGeV = 0.001
 	def __init__(self, TrueNRing, TrueRingPDG, TrueRingIP, TrueRingE, TrueRingP, TrueRingDir, distros, mode):
 		self.distros = distros
@@ -26,7 +28,7 @@ class RecoRing:
 			mer = dmer[0][0]
 			self.ReconMRIP(mer, TrueRingIP[mer], TrueRingPDG[mer])
 			mTrueRingPDG, mTrueRingP, mTrueRingDir = self.TooClose(TrueRingPDG, TrueRingP, TrueRingDir) # Put labels on rings which won't be reconstructed due to poor angular resolution
-			excessRing = self.NRing - 5
+			excessRing = self.NRing - 5 # Max number of rings is 5
 			if excessRing > 0:
 				for index in np.argsort(mTrueRingP)[:excessRing]:
 					self.RecoLabels[index] = 0
@@ -35,15 +37,17 @@ class RecoRing:
 				self.ReconDirection(mTrueRingDir)
 
 		self.TotalVariables()
-		self.MuEdk = 0
-		self.Neutrons = 0
-		self.Imass = 0
+		self.MuEdk = -1
+		self.Neutrons = -1
+		self.Imass = -1
 
 	def HeavyChargedWA(self, pdg, p):
 		for i,part in enumerate(pdg):
 			if abs(part)==211 and p[i]<0.3:
 				self.RecoLabels[i] = 0
 			elif abs(part)==2212 and p[i]<2.3:
+				self.RecoLabels[i] = 0
+			elif abs(part)>2212:
 				self.RecoLabels[i] = 0
 
 	def SKType(self, ipnu, cc, ntag):
@@ -225,7 +229,7 @@ class RecoRing:
 
 
 	def DecayE(self, ipnu, cc, mode):
-		recmuedk = 0
+		recmuedk = -1
 		meson_flag = pp.MesonProduction(self.MERIP,abs(mode))
 
 		if self.MERIP==2 and self.Evis<1.33:
@@ -345,7 +349,7 @@ class RecoRing:
 				
 
 	def ReconDirection(self, dirv):
-		ang=2
+		ang=4
 		self.Direction = dirv
 		for i,ip in enumerate(self.IP):
 			if  self.RecoLabels[i]==1:
@@ -357,6 +361,8 @@ class RecoRing:
 					ang = self.distros.Random('ang_mge')
 				elif ip==3 and self.Momentum[i]>=1.3:
 					ang = self.distros.Random('ang_mgm')
+				if self.NRing>1:
+					ang = ang * 1.2
 				ang=ang*pi/180.
 			# Rodrigues way
 				u = ap.RndVector()
@@ -372,14 +378,16 @@ class RecoRing:
 
 	def ReconMomentum(self, pdg, P):
 		self.Momentum = P
-		for i, p in enumerate(P):
+		if self.NRing == 1:
+			i=0
+			p=P
 			if  self.RecoLabels[i]==1 and p>0:
 				if self.IP[i] == 2:
-					reso = 0.01*(0.6+2.6/math.sqrt(p))
+					reso = 0.01*(1.7+0.7/math.sqrt(p))
 					bias = 0.0048 * p - 0.00072
 					mHypothesis = Particle.from_pdgid(11).mass * self.MeVtoGeV
 				else:
-					reso = 0.01*(1.7+0.7/math.sqrt(p))
+					reso = 0.01*(0.6+2.6/math.sqrt(p))
 					bias = 0.0025 * p + 0.0015
 					mHypothesis = Particle.from_pdgid(13).mass * self.MeVtoGeV
 				
@@ -390,6 +398,25 @@ class RecoRing:
 					self.Momentum[i] = 0
 				else:
 					self.Momentum[i] = math.sqrt(pCorrSq)
+		elif self.NRing > 1:
+			for i, p in enumerate(P):
+				if  self.RecoLabels[i]==1 and p>0:
+					if self.IP[i] == 2:
+						reso = 0.03
+						bias = 0.01
+						mHypothesis = Particle.from_pdgid(11).mass * self.MeVtoGeV
+					else:
+						reso = 0.025
+						bias = 0.01
+						mHypothesis = Particle.from_pdgid(13).mass * self.MeVtoGeV
+					
+					p = (1-random.gauss(bias,reso)) * p
+					pCorrSq = p**2+(Particle.from_pdgid(pdg[i]).mass * self.MeVtoGeV)**2-mHypothesis**2
+					if pCorrSq < 0:
+						self.RecoLabels[i] = 0
+						self.Momentum[i] = 0
+					else:
+						self.Momentum[i] = math.sqrt(pCorrSq)
 
 
 	def ReconMRIP(self, mer, ip, pdg):
@@ -486,7 +513,7 @@ class RecoRing:
 					self.IP[i]=2
 
 	def HNeutrons(self, ipnu, cc):
-		nn = 0
+		nn = -1
 		if self.MERIP==2 and self.Evis<1.33:
 			if cc and ipnu>0:
 				nn = self.distros.Random('sge_nh_nucc')
@@ -518,7 +545,7 @@ class RecoRing:
 		self.Neutrons = nn
 
 	def GdNeutrons(self, ipnu, cc):
-		nn = 0
+		nn = -1
 		if self.MERIP==2 and self.Evis<1.33:
 			if cc and ipnu>0:
 				nn = self.distros.Random('sge_ngd_nucc')

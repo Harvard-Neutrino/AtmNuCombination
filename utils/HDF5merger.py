@@ -4,6 +4,7 @@ import sys
 import os
 import subprocess
 import numpy as np
+import math
 
 parser = argparse.ArgumentParser()
 parser.add_argument('in_dir', type=str, nargs='?', default='NULL')
@@ -67,12 +68,13 @@ for i, file in enumerate(lst):
                 ds = hf[key]
                 data = np.array(ds[()])
                 variables[j] = np.append(variables[j],data)
+                if j == 'weightOsc_SKbest':
+                    for x in data:
+                        if math.isnan(x):
+                            print('hey')
 
 with h5py.File(os.path.join(path,'combined.hdf5'), 'w') as ff:
     for var in variables:
         ff.create_dataset(var, data=variables[var], compression='gzip')
 print('Written output to ',os.path.join(path,'combined.hdf5'))
-
-
-
 

@@ -58,7 +58,7 @@
 	<NeutrinoExperiment name="Super-Kamiokande">
 		<status name='status'> 1 </status>
 		<simulation filename='../Simulation/SuperK/data/output/combined.hdf5'> </simulation>
-		<exposure> 14.582 </exposure> <!-- 14.582 years of SK up to 2017 paper, 7.685 years of SK123 and 6.897 of SK4-->
+		<exposure> 7.685 </exposure> <!-- 14.582 years of SK up to 2017 paper, 7.685 years of SK123 and 6.897 of SK4-->
  		<systematic name='SKEnergyScale'>
 			<status> 0 </status>
 			<sigma> 0.03 </sigma>

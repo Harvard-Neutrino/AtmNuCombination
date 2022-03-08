@@ -41,6 +41,7 @@ outfile = args.outfile
 an = parseXML(analysis_xml_file)
 an.readSources()
 an.readExperiments()
+an.readDetectors()
 an.readPhysics()
 an.readOscPar()
 an.CheckSystematics()
@@ -50,6 +51,7 @@ an.CheckSystematics()
 mcList = {}
 for s in an.sources:
 	for i,(exp,fil,t) in enumerate(zip(an.experiments,an.mcFiles,an.Exposure)):
+		# print(s,exp,t,fil)
 		mcList[exp] = Reader(s,exp,t,fil)
 		mcList[exp].Binning()
 		# Get unoscillated atm. fluxes

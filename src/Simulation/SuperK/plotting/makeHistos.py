@@ -5,10 +5,13 @@ import matplotlib.pyplot as plt
 import applications as ap
 from math import pi
 
-with h5py.File('../data/output/combined.hdf5', 'r') as hf:
+# with h5py.File('../../../../../MC/SuperK/data/output/combined.hdf5', 'r') as hf:
+with h5py.File('../data/output/SK/combined.hdf5', 'r') as hf:
+# with h5py.File('../data/output/combined_last+h.hdf5', 'r') as hf:
+# with h5py.File('../data/output/combined_at70deg.hdf5', 'r') as hf:
 	evis = np.array(hf['evis'][()])
 	cz = np.array(hf['recodirZ'][()])
-	# cz = np.array(hf['dirnuZ'][()])
+	# tcz = np.array(hf['dirnuZ'][()])
 	dz = np.array(hf['dirnuZ'][()])
 	dx = np.array(hf['dirnuX'][()])
 	dy = np.array(hf['dirnuY'][()])
@@ -18,16 +21,20 @@ with h5py.File('../data/output/combined.hdf5', 'r') as hf:
 	oscw = np.array(hf['weightOsc_SKbest'][()])
 	weight = np.array(hf['weightReco'][()])
 	itype = np.array(hf['itype'][()])
-
-# for i, (x, y, z, it) in enumerate(zip(dx, dy, dz, itype)):
-# 	if it == 15:
-# 		ang = np.random.normal(0, 7, 1)
-# 		ang = ang*pi/180.
-# 		u = ap.RndVector()
-# 		di = ap.RodRot(np.array([x,y,z]),u,ang)
-# 		cz[i] = di[2]
-
-
+#'''
+condition1 = (itype<14) * (itype>-1) 
+condition2 = (itype<16) * (itype>13) * (evis>1)
+condition = (condition2 + condition1)
+evis=evis[condition]
+cz=cz[condition]
+dz=dz[condition]
+mode=mode[condition]
+ipnu=ipnu[condition]
+pnu=pnu[condition]
+weight=weight[condition]
+oscw=oscw[condition]
+itype=itype[condition]
+#'''
 wght = oscw*weight
 
 # SK results
@@ -148,14 +155,14 @@ for it in range(16):
 			bins = z10bins_up
 	axis[it].hist(series, bins, weights=weights, stacked=True)
 	axis[it].set_title(SampleLabel[it])
-	axis[it].set_xlabel("Reco. Zenith (GeV)")
+	axis[it].set_xlabel("Reco. Zenith")
 	ymin, ymax = axis[it].get_ylim()
 	axis[it].set_ylim([0,1.5*ymax])
 	if skflag: axis[it].legend(labels = ('SK official MC', 'CCnue', 'CCnuebar', 'CCnumu', 'CCnutau', 'NC'), loc = 'upper right', ncol=2, prop={'size': 6})
 	else: axis[it].legend(labels = ('CCnue', 'CCnuebar', 'CCnumu', 'CCnutau', 'NC'), loc = 'upper right', ncol=2, prop={'size': 6})
 
-# plt.show()
-plt.savefig('../figs/RecoZenith_Hists_Osc.png')
+plt.show()
+# plt.savefig('../figs/RecoZenith_Hists_Osc.png')
 plt.clf()
 
 # Third plot: Ratio plots of the previous
@@ -179,14 +186,14 @@ for it in range(16):
 	y_error = np.divide(sim_hist,np.sqrt(sim_entries))
 	axis[it].plot(bins,np.zeros(nbins+1))
 	axis[it].set_title(SampleLabel[it])
-	axis[it].set_xlabel("Reco. Zenith (GeV)")
+	axis[it].set_xlabel("Reco. Zenith")
 	axis[it].set_ylabel("SKSim / SKOfficial")
 	axis[it].errorbar(bins_mp, np.ones(nbins)-np.divide(sim_hist,sk_zenith[it]), yerr=np.divide(y_error,sk_zenith[it]), fmt='o')
 	ymin, ymax = axis[it].get_ylim()
 	axis[it].set_ylim([-0.25,0.25])
 
-# plt.show()
-plt.savefig('../figs/RecoZenith_Ratios_Osc.png')
+plt.show()
+# plt.savefig('../figs/RecoZenith_Ratios_Osc.png')
 plt.clf()
 
 
@@ -220,8 +227,8 @@ axis[2].set_xlabel('Neutrino Energy (GeV)')
 axis[2].semilogx()
 axis[2].legend(labels = ('PC Stop', 'PC Thru'), loc = 'upper right')
 
-# plt.show()
-plt.savefig('../figs/NeutrinoEnergy_Samples_Unosc.png')
+plt.show()
+# plt.savefig('../figs/NeutrinoEnergy_Samples_Unosc.png')
 plt.clf()
 
 
@@ -279,7 +286,9 @@ for it in range(16):
 	axis[it].hist(series, bins, weights=weights, stacked=True)
 	axis[it].set_title(SampleLabel[it])
 	axis[it].set_xlabel("Reco. Momentum (GeV)")
+	axis[it].semilogx()
+
 	if skflag: axis[it].legend(labels = ('SK official MC', 'CCnue', 'CCnuebar', 'CCnumu', 'CCnutau', 'NC'), loc = 'upper right', ncol=2, prop={'size': 6})
 	else: axis[it].legend(labels = ('CCnue', 'CCnuebar', 'CCnumu', 'CCnutau', 'NC'), loc = 'upper right', ncol=2, prop={'size': 6})
-# plt.show()
-plt.savefig('../figs/RecoMomentum_Hists_Osc.png')
+plt.show()
+# plt.savefig('../figs/RecoMomentum_Hists_Osc.png')

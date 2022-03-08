@@ -41,8 +41,8 @@
 <!-- SuperK -->
 	<NeutrinoExperiment name="Super-Kamiokande">
 		<status name='status'> 1 </status>
-		<simulation filename='../Simulation/SuperK/data/output/combined.hdf5'> </simulation>
-		<exposure> 20 </exposure>  <!-- years -->
+		<simulation filename='../../../MC/SuperK/data/output/combined.hdf5'> </simulation>
+		<exposure> 14.5 </exposure>  <!-- years -->
 		<systematic name='EnergyScale'>
 			<status> 0 </status>
 			<sigma> 0.03 </sigma>

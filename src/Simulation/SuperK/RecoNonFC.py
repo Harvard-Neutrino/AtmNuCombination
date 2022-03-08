@@ -18,7 +18,7 @@ class nonFCReco:
 		self.ReconMomentum()
 
 	def ReconDirection(self):
-		ang=2.5
+		ang=10
 		# if self.itype == 14 or self.itype == 15: # PC-Stop, PC-Thru
 		if self.itype == 14: # PC-Stop, PC-Thru
 			ang = self.distros.Random('ang_pc')
