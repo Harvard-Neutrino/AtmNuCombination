@@ -23,7 +23,7 @@ for i in range(2):
 	for j in range(2):
 		for k in range(2):
 			for l in range(len(analysis.bf_weights[i][j][k])):
-				if sim.E_tr[l] >= 1 and sim.E_tr[l] <= 50 and np.cos(sim.C_tr[l]) > 0:
+				if sim.E_tr[l] >= 1 and sim.E_tr[l] <= 53 and np.cos(sim.C_tr[l]) > 0:
 					numevents += analysis.bf_weights[i][j][k][l]
 					if sim.pdg[l] > 0:
 						numnuevents += analysis.bf_weights[i][j][k][l]
