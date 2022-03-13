@@ -1,8 +1,9 @@
-# this file needs rewriting
+# this file needs rewriting 
 
 import numpy as np
 import digitalizer as dgt
-import Vol
+from Effective import ICEffectiveAnalysis as ICEff
+from Effective import ORCAEffectiveAnalysis as ORCAEff
 import util
 from scipy.stats import truncnorm
 
@@ -68,9 +69,18 @@ class Generator:
 			reco_zenith_error = np.random.normal(0, sigma) * np.pi / 180
 
 			return reco_zenith_error
-		# This needs to be rewritten
-		ICe, ICeb, ICmu, ICmub, ICtau, ICtaub, ICnc, ICncb = Vol.IC()
-		ORe, OReb, ORmu, ORmub, ORtau, ORtaub, ORnc, ORncb = Vol.ORCA()
+
+		# set up effective area + volume analysis
+		ICVol = ICEff(1, 50, 51)
+		ICVol.computeArea()
+		ICVol.computeVolume()
+		ORCAVol = ORCAEff()
+		ORCAVol.computeArea()
+		ORCAVol.computeVolume()
+		ICe, ICeb, ICmu, ICmub, ICtau, ICtaub, ICnc, ICncb = ICVol.returnVol()
+		ORe, OReb, ORmu, ORmub, ORtau, ORtaub, ORnc, ORncb = ORCAVol.returnVol()
+
+
 		def find_weight_ratio(true_energy, pdg, interaction_type): # it's actually current type
 
 			volbins = np.logspace(np.log10(1), np.log10(50), num=51)

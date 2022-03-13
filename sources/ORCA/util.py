@@ -25,14 +25,18 @@ def get_zenith_error():
 
 	return e_neutrino, e_antineutrino, mu_neutrino, mu_antineutrino
 
-def getORCAbins(input, tau = False):
+def getORCAbins(input, tau = False, nc = False):
 	df = pd.read_csv(input, header = None, usecols = [1])
 	# print(df)
 	# this is the bin heights
 	w_bin = np.array(df[:]).T[0] * 10 ** 6
 	if tau:
 		for i in range(len(w_bin)):
-			if w_bin[i] <= 0.1:
+			if i <= 15:
+				w_bin[i] = 0
+	if nc:
+		for i in range(len(w_bin)):
+			if i <= 3:
 				w_bin[i] = 0
 	# print(res)
 	return w_bin

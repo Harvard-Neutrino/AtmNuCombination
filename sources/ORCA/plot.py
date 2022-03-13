@@ -157,10 +157,10 @@ def plot_energy_reco_track_probability():
     plt.xscale("log")
     plt.yscale("log")
     # plt.show()
-    plt.savefig("./RecoPlots/ICMC_with_ORCA_Reco_track_probability")
+    plt.savefig("./RecoPlots/ORCA_Reco_track_probability")
     plt.close()
 
-# plot_energy_reco_track_probability()
+plot_energy_reco_track_probability()
 
 def plot_IC_energy_reco_track_probability():
     IC_input_file = pd.read_csv("neutrino_mc.csv")
@@ -233,10 +233,10 @@ def plot_energy_reco_cascade_probability():
     plt.xscale("log")
     plt.yscale("log")
     # plt.show()
-    plt.savefig("./RecoPlots/ICMC_with_ORCA_Reco_cascade_probability")
+    plt.savefig("./RecoPlots/ORCA_Reco_cascade_probability")
     plt.close()
 
-# plot_energy_reco_cascade_probability()
+plot_energy_reco_cascade_probability()
 
 def plot_IC_energy_reco_cascade_probability():
     IC_input_file = pd.read_csv("neutrino_mc.csv")
@@ -280,7 +280,7 @@ def plot_zenith_reco():
     plt.xlim(-1, 1)
     plt.ylim(-1, 1)
     plt.colorbar(im, orientation = "vertical", format = LogFormatterMathtext())
-    plt.savefig("./RecoPlots/ICMC_coszen_with_ORCA_Reco")
+    plt.savefig("./RecoPlots/ORCA_coszen_Reco")
     plt.close()
 
 plot_zenith_reco()
