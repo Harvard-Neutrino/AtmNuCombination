@@ -1,17 +1,7 @@
 import numpy as np
 import math
-from operator import add 
-from Systematics.Flux import *
-from Systematics.JacobianFlux import *
-from Systematics.XSection import *
-from Systematics.JacobianXSection import *
-from Systematics.SKDetector import *
-from Systematics.JacobianSKDetector import *
-from Systematics.SKIVDetector import *
-from Systematics.JacobianSKIVDetector import *
-from Systematics.SKGdDetector import *
-from Systematics.JacobianSKGdDetector import *
-
+from scipy.special import gamma
+from Systematics import *
 	
 def Chi2StatsCombined(neutrino_flavors, t12, t13, t23, dm21, dm31, dcp, Ordering, experiments, outfile):
 	X2 = 0
@@ -32,6 +22,99 @@ def Chi2StatsCombined(neutrino_flavors, t12, t13, t23, dm21, dm31, dcp, Ordering
 		f.flush()
 
 
+def Chi2SystsCombined(syst, analysis, Obs, experiments):
+	JX2 = [0] * len(syst)
+	X2 = 0
+
+	# Experiments
+	for exp in experiments.values():
+
+		# Binned tatistics
+		E = exp.weightOscBF_binned
+		O = Obs[exp.Experiment]
+
+		#Systematics
+		usedSysts = []
+		dEdx = [0] * len(syst)
+		wSys = 0
+		dummywSys = 0
+		thisSyst = analysis.Systematics[exp.Experiment] + analysis.Systematics[exp.Source] + analysis.Systematics[exp.Detector]
+		for sys in thisSyst:
+			index = np.where(analysis.SystematicsList==sys)[0]
+			j = index[0]
+			xFij = globals()[sys](syst[j],exp)
+			wSys += xFij
+			# print(f'Additional fraction is {xFij} from {sys}')
+			dEdx[j] = E * globals()['Diff_'+sys](syst[j],exp)
+			usedSysts.append(j)
+
+		Es = E * (1 + wSys)
+
+		# Compute Chi^2
+		if np.any(Es<=0):
+			X2 = 1e6
+		else:
+			X2 += 2 * np.sum(Es-O+O*np.log(O/Es))
+
+		# Compute Jacobian of Chi^2
+		for i in usedSysts:
+			JX2[i] += 2 * np.sum((1-O/Es)*dEdx[i])
+
+	# Systematic's penalty terms
+	for i,(x,mu,sig) in enumerate(zip(syst,analysis.SystNominalList,analysis.SystSigmaList)):
+		X2 += ((x-mu) / sig)**2
+		JX2[i] += 2 * (x-mu) / sig**2
+
+	return (X2,JX2)
+
+def BlockChi2SystsCombined(syst, analysis, Obs, experiments, source):
+	JX2 = [0] * len(syst)
+	X2 = 0
+
+	if source in experiments.keys():
+		BlockExperiment = {source:experiments[source]}
+	else:
+		BlockExperiment = experiments
+	# Experiments
+	for exp in BlockExperiment.values():
+
+		# Binned tatistics
+		E = exp.weightOscBF_binned
+		O = Obs[exp.Experiment]
+
+		#Systematics
+		usedSysts = []
+		dEdx = [0] * len(syst)
+		wSys = 0
+		dummywSys = 0
+		thisSyst = analysis.Systematics[source]
+		for j,sys in enumerate(thisSyst):
+			xFij = globals()[sys](syst[j],exp)
+			wSys += xFij
+			dEdx[j] = E * globals()['Diff_'+sys](syst[j],exp)
+			usedSysts.append(j)
+
+		Es = E * (1 + wSys)
+
+		# Compute Chi^2
+		if np.any(Es<=0):
+			X2 = 1e6
+		else:
+			X2 += 2 * np.sum(Es-O+O*np.log(O/Es))
+
+		# Compute Jacobian of Chi^2
+		for i in usedSysts:
+			JX2[i] += 2 * np.sum((1-O/Es)*dEdx[i])
+
+	# Systematic's penalty terms
+	for i,(x,mu,sig) in enumerate(zip(syst,analysis.SystNominal[source],analysis.SystSigma[source])):
+		X2 += ((x-mu) / sig)**2
+		JX2[i] += 2 * (x-mu) / sig**2
+
+	return (X2,JX2)
+
+'''
+Older versions
 def Chi2SystsCombined(syst, analysis, t12, t13, t23, dm21, dm31, dcp, Ordering, experiments):
 	X2 = 0
 	# Systematic penalty terms
@@ -175,7 +258,6 @@ def Chi2SystsCombined_and_Gradient_Binned_Next(syst, analysis, wOsc, experiments
 	JX2 = [0] * len(syst)
 	X2 = 0
 
-
 	# Experiments
 	for exp in experiments:
 		usedSysts = []
@@ -212,3 +294,6 @@ def Chi2SystsCombined_and_Gradient_Binned_Next(syst, analysis, wOsc, experiments
 
 
 	return (X2,JX2)
+
+
+'''

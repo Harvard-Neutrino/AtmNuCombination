@@ -5,7 +5,9 @@ import nuflux
 import math
 import nuSQuIDS as nsq
 import nuSQUIDSTools
+from itertools import repeat
 from math import asin, sqrt
+from Systematics import LoadSystematics
 
 class Reader:
 	def __init__(self, source, experiment, exposure, filename):
@@ -13,6 +15,7 @@ class Reader:
 		self.Experiment = experiment
 		self.Source = source
 		self.Exposure = exposure
+		self.FewEntries = None
 
 		if self.Experiment == 'Super-Kamiokande' or self.Experiment == 'SK':
 			self.Detector = 'Water'
@@ -96,6 +99,7 @@ class Reader:
 			self.Norm = self.Exposure / MCyears
 
 		elif self.Experiment == 'IceCube-Upgrade' or self.Experiment == 'IC' or self.Experiment == 'DeepCore':
+			self.Detector = 'Water'
 			print(f'Processing simulation of {self.Experiment} experiment with a exposure of {self.Exposure} years.')
 			input_data = pd.read_csv(filename)
 			Time = self.Exposure * 365*24*60*60
@@ -135,7 +139,9 @@ class Reader:
 			self.NumberOfSamples = 2
 			self.NumberOfEvents = self.nuPDG.size
 
+
 		elif self.Experiment == 'ORCA':
+			self.Detector = 'Water'
 			print(f'Processing simulation of {self.Experiment} experiment with a exposure of {self.Exposure} years.')
 			input_data = pd.read_csv(filename)
 			Time = self.Exposure * 365*24*60*60
@@ -174,6 +180,8 @@ class Reader:
 			self.Norm = Time * meter_to_cm_sq
 			self.NumberOfSamples = 2
 			self.NumberOfEvents = self.nuPDG.size
+
+		self.FewEntries = []
 
 	def Binning(self):
 		if self.Experiment == 'Super-Kamiokande' or self.Experiment == 'SK':
@@ -226,82 +234,66 @@ class Reader:
 			self.MaxNumberOfEnergyBins = 40
 			self.MaxNumberOfCzBins = 10
 
+	def ICSystematicTables(self):
+		ev = np.zeros(self.NumberOfEvents)
+		c = (np.abs(self.nuPDG)==12) * (self.CC)
+		ev[c] = 1
+		self.ExpFracNuECC = self.Exp_wBinIt(ev) / self.weightOscBF_binned
+		ev = np.zeros(self.NumberOfEvents)
+		c = (np.abs(self.nuPDG)==14) * (self.CC)
+		ev[c] = 1
+		self.ExpFracNuMuCC = self.Exp_wBinIt(ev) / self.weightOscBF_binned
+		ev = np.zeros(self.NumberOfEvents)
+		c = (np.abs(self.nuPDG)==16) * (self.CC)
+		ev[c] = 1
+		self.ExpFracNuTauCC = self.Exp_wBinIt(ev) / self.weightOscBF_binned
+		ev = np.zeros(self.NumberOfEvents)
+		c = np.logical_not(self.CC)
+		ev[c] = 1
+		self.ExpFracNC = self.Exp_wBinIt(ev) / self.weightOscBF_binned
+		# Load systematics tables
+		self.ice_absorption = LoadSystematics.ICUp(self.EnergyBins, self.CzBins, 'ice_absorption', cut=self.FewEntries)
+		self.ice_scattering = LoadSystematics.ICUp(self.EnergyBins, self.CzBins, 'ice_scattering', cut=self.FewEntries)
+		# self.offset = LoadSystematics.ICUp(self.EnergyBins, self.CzBins, 'offset', cut=self.FewEntries)
+		self.opt_eff_headon = LoadSystematics.ICUp(self.EnergyBins, self.CzBins, 'opt_eff_headon', cut=self.FewEntries)
+		self.opt_eff_lateral = LoadSystematics.ICUp(self.EnergyBins, self.CzBins, 'opt_eff_lateral', cut=self.FewEntries)
+		self.opt_eff_overall = LoadSystematics.ICUp(self.EnergyBins, self.CzBins, 'opt_eff_overall', cut=self.FewEntries)
+		self.coin_fraction = LoadSystematics.ICUp(self.EnergyBins, self.CzBins, 'coin_fraction', cut=self.FewEntries)
+
 	def BFOscillator(self,neutrino_flavors, Sin2Theta12=0, Sin2Theta13=0, Sin2Theta23=0, Dm221=0, Dm231=0, dCP=0, Ordering='normal'):
-		units = nsq.Const()
-		interactions = False
-		AtmOsc = nsq.nuSQUIDSAtm(self.cth_nodes,self.energy_nodes*units.GeV,neutrino_flavors,nsq.NeutrinoType.both,interactions)
-		AtmOsc.Set_rel_error(1.0e-4);
-		AtmOsc.Set_abs_error(1.0e-4);
-		AtmOsc.Set_MixingAngle(0,1, asin(sqrt(Sin2Theta12)))
-		AtmOsc.Set_MixingAngle(0,2, asin(sqrt(Sin2Theta13)))
-		AtmOsc.Set_MixingAngle(1,2, asin(sqrt(Sin2Theta23)))
-		AtmOsc.Set_SquareMassDifference(1, Dm221)
-		AtmOsc.Set_SquareMassDifference(2,Dm231)
-		if Ordering!='normal':
-			AtmOsc.Set_SquareMassDifference(2,Dm221-Dm231)
-		AtmOsc.Set_CPPhase(0,2,dCP)
-		AtmOsc.Set_initial_state(self.AtmInitialFlux,nsq.Basis.flavor)
-		AtmOsc.EvolveState()
-		self.weightOscBF = np.zeros(self.NumberOfEvents)
-		neuflavor=0
-		for i,(E,cz) in enumerate(zip(self.ETrue, self.CosZTrue)):
-			if self.nuPDG[i] > 0 :
-				neutype = 0
-			else:
-				neutype = 1
-			if np.abs(self.nuPDG[i]) == 12:
-				neuflavor = 0
-			elif np.abs(self.nuPDG[i]) == 14:
-				neuflavor = 1
-			elif np.abs(self.nuPDG[i]) == 16:
-				neuflavor = 2
-			self.weightOscBF[i] = AtmOsc.EvalFlavor(neuflavor, cz, E*units.GeV, neutype, True)
+		self.weightOscBF = self.Oscillator(neutrino_flavors, Sin2Theta12, Sin2Theta13, Sin2Theta23, Dm221, Dm231, dCP, Ordering)
+		self.weightOscBF_binned = self.Exp_wBinIt(1)
+		self.FewEntries = self.weightOscBF_binned>4
+		self.weightOscBF_binned = self.weightOscBF_binned[self.FewEntries]
+		self.NumberOfBins = self.weightOscBF_binned.size
+		
+		if self.Experiment == 'IceCube-Upgrade' or self.Experiment == 'IC' or self.Experiment == 'DeepCore' or self.Experiment == 'ORCA':
+			self.ICSystematicTables()
+			
 
-		# Binned weights
-		w = self.weightOscBF * self.Weight * self.Norm
-		self.weightOscBF_binned = self.BinIt(w)
-		# self.weightOscBF_binned = self.BinIt(w**2)
+	def BinOscillator(self, neutrino_flavors, t12, t13, t23, dm21, dm31, dcp, Ordering='normal'):
+		w = self.Oscillator(neutrino_flavors, t12, t13, t23, dm21, dm31, dcp, Ordering)
+		wo = self.wBinIt(w)
+		return wo
 
-
-	def Oscillator(self, neutrino_flavors, t12, t13, t23, dm21, dm31, dcp, Ordering='normal'):
-		units = nsq.Const()
-		interactions = False
-		AtmOsc = nsq.nuSQUIDSAtm(self.cth_nodes,self.energy_nodes*units.GeV,neutrino_flavors,nsq.NeutrinoType.both,interactions)
-		AtmOsc.Set_rel_error(1.0e-4);
-		AtmOsc.Set_abs_error(1.0e-4);
-		AtmOsc.Set_MixingAngle(0,1, asin(sqrt(t12)))
-		AtmOsc.Set_MixingAngle(0,2, asin(sqrt(t13)))
-		AtmOsc.Set_MixingAngle(1,2, asin(sqrt(t23)))
-		AtmOsc.Set_SquareMassDifference(1,dm21)
-		AtmOsc.Set_SquareMassDifference(2,dm31)
-		if Ordering!='normal':
-			AtmOsc.Set_SquareMassDifference(2,dm21-dm31)
-		AtmOsc.Set_CPPhase(0,2,dcp)
-		AtmOsc.Set_initial_state(self.AtmInitialFlux,nsq.Basis.flavor)
-		AtmOsc.EvolveState()
-		w = np.zeros(self.NumberOfEvents)
-		for i,(E,cz) in enumerate(zip(self.ETrue, self.CosZTrue)):
-			if self.nuPDG[i] > 0 :
-				neutype = 0
-			else:
-				neutype = 1
-			if np.abs(self.nuPDG[i]) == 12:
-				neuflavor = 0
-			elif np.abs(self.nuPDG[i]) == 14:
-				neuflavor = 1
-			elif np.abs(self.nuPDG[i]) == 16:
-				neuflavor = 2
-			w[i] =  AtmOsc.EvalFlavor(neuflavor, cz, E*units.GeV, neutype, True)
-		return w
-
-	def BinIt(self,array):
+	def BinIt(self,array,shift_E=1):
 		v = np.array([])
+		E = self.EReco * shift_E
 		for s in range(self.NumberOfSamples):
 			cond = self.Sample==s
 			dummy_w = array[cond]
-			Obs, dx, dy = np.histogram2d(self.EReco[cond], self.CosZReco[cond], bins=(self.EnergyBins[s], self.CzBins[s]), weights=dummy_w)
-			v = np.append(v,np.ravel(Obs))
+			Obs, __, __ = np.histogram2d(E[cond], self.CosZReco[cond], bins=(self.EnergyBins[s], self.CzBins[s]), weights=dummy_w)
+			v = np.append(v,Obs)
+		v = v.reshape(-1)
+		if len(self.FewEntries) > 0:
+			v = v[self.FewEntries]
 		return v
+
+	def wBinIt(self,array,shift_E=1):
+		return self.BinIt(array*self.Weight*self.Norm,shift_E=shift_E)
+
+	def Exp_wBinIt(self,array,shift_E=1):
+		return self.wBinIt(array*self.weightOscBF,shift_E=shift_E)	
 
 	def InitialFlux(self):
 		if self.Experiment == 'Super-Kamiokande' or self.Experiment == 'SK' or self.Experiment == 'SuperK-Gd' or self.Experiment == 'SKIV' or self.Experiment == 'SuperK_Htag' or self.Experiment == 'SuperK_Gdtag':
@@ -324,10 +316,7 @@ class Reader:
 
 		#Initialize the flux
 		AtmInitialFlux = np.zeros((len(cth_nodes),len(energy_nodes),2,neutrino_flavors))
-		AtmIninue = np.zeros((len(cth_nodes),len(energy_nodes),2,neutrino_flavors))
-		AtmIninueBar = np.zeros((len(cth_nodes),len(energy_nodes),2,neutrino_flavors))
-		AtmIninum = np.zeros((len(cth_nodes),len(energy_nodes),2,neutrino_flavors))
-		AtmIninumBar = np.zeros((len(cth_nodes),len(energy_nodes),2,neutrino_flavors))
+
 		for ic,nu_cos_zenith in enumerate(cth_nodes):
 			for ie,nu_energy in enumerate(energy_range):
 				AtmInitialFlux[ic][ie][0][0] = flux.getFlux(nuflux.NuE,nu_energy,nu_cos_zenith) # nue
@@ -339,4 +328,31 @@ class Reader:
 		self.energy_nodes = energy_nodes
 		self.cth_nodes = cth_nodes
 		self.AtmInitialFlux = AtmInitialFlux
-		
+
+	def Oscillator(self, neutrino_flavors, t12, t13, t23, dm21, dm31, dcp, Ordering='normal'):
+		units = nsq.Const()
+		interactions = False
+		AtmOsc = nsq.nuSQUIDSAtm(self.cth_nodes,self.energy_nodes*units.GeV,neutrino_flavors,nsq.NeutrinoType.both,interactions)
+		AtmOsc.Set_rel_error(1.0e-4);
+		AtmOsc.Set_abs_error(1.0e-4);
+		AtmOsc.Set_MixingAngle(0,1, asin(sqrt(t12)))
+		AtmOsc.Set_MixingAngle(0,2, asin(sqrt(t13)))
+		AtmOsc.Set_MixingAngle(1,2, asin(sqrt(t23)))
+		AtmOsc.Set_SquareMassDifference(1,dm21)
+		AtmOsc.Set_SquareMassDifference(2,dm31)
+		if Ordering!='normal':
+			AtmOsc.Set_SquareMassDifference(2,dm21-dm31)
+		AtmOsc.Set_CPPhase(0,2,dcp)
+		AtmOsc.Set_initial_state(self.AtmInitialFlux,nsq.Basis.flavor)
+		AtmOsc.EvolveState()
+
+		neutype = np.zeros(self.NumberOfEvents)
+		neutype[self.nuPDG<0] = 1
+		neuflavor = 0.5*np.abs(self.nuPDG)-6
+		neutype = neutype.astype(np.uint32).tolist()
+		neuflavor = neuflavor.astype(np.uint32).tolist()
+
+		w = list(map(AtmOsc.EvalFlavor, neuflavor, self.CosZTrue, self.ETrue*units.GeV, neutype, repeat(True)))
+
+		return np.array(w)
+

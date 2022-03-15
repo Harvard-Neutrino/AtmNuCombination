@@ -6,11 +6,13 @@ from Systematics.SKDetector import SKEnergyScale
 ####################
 
 def Diff_SKEnergyScale(x, experiment):
-	h0 = x*(1+1e-6)
-	h1 = x*(1-1e-6)
-	w0 = SKEnergyScale(h0,experiment)
-	w1 = SKEnergyScale(h1,experiment)
-	dw = (w0 - w1) / (h0 - h1)
+	if np.abs(x-1)<1e-3: 
+		return 0
+	h0 = x+1e-3
+	h1 = x-1e-3
+	w0 = experiment.Exp_wBinIt(1,shift_E=h0)
+	w1 = experiment.Exp_wBinIt(1,shift_E=h1)
+	dw = (w0 - w1) / (h0 - h1) / experiment.weightOscBF_binned
 	return dw
 
 def Diff_FCPCSeparation(x,experiment):
@@ -27,7 +29,7 @@ def Diff_FCPCSeparation(x,experiment):
 		wPC = np.sum(experiment.Weight[np.logical_or(experiment.Sample==14,experiment.Sample==15)])
 		y = (-wFC) / wPC
 		fcpc[np.logical_or(experiment.Sample==14,experiment.Sample==15)] = y
-	return fcpc
+	return experiment.Exp_wBinIt(fcpc) / experiment.weightOscBF_binned
 
 def Diff_FCReduction(x,experiment):
 	fc = np.zeros(experiment.NumberOfEvents)
@@ -35,10 +37,10 @@ def Diff_FCReduction(x,experiment):
 		fc[experiment.Sample<16] = 1
 	else:
 		fc[experiment.Sample<14] = 1
-	return fc
+	return experiment.Exp_wBinIt(fc) / experiment.weightOscBF_binned
 
 def Diff_FiducialVolume(x,experiment):
-	return np.ones(experiment.NumberOfEvents)
+	return 1
 
 def Diff_PCReduction(x,experiment):
 	pc = np.zeros(experiment.NumberOfEvents)
@@ -46,12 +48,12 @@ def Diff_PCReduction(x,experiment):
 		pc[np.logical_or(experiment.Sample==16 , experiment.Sample==17)] = 1
 	else:
 		pc[np.logical_or(experiment.Sample==14, experiment.Sample==15)] = 1
-	return pc
+	return experiment.Exp_wBinIt(pc) / experiment.weightOscBF_binned
 
 def Diff_SubGeV2ringPi0(x,experiment):
 	pi02r = np.zeros(experiment.NumberOfEvents)
 	pi02r[experiment.Sample==6] = 1
-	return pi02r
+	return experiment.Exp_wBinIt(pi02r) / experiment.weightOscBF_binned
 
 def Diff_SubGeV1ringPi0(x,experiment):
 	pi01r = np.zeros(experiment.NumberOfEvents)
@@ -59,7 +61,7 @@ def Diff_SubGeV1ringPi0(x,experiment):
 		pi01r[experiment.Sample==3] = 1
 	else:
 		pi01r[experiment.Sample==2] = 1
-	return pi01r
+	return experiment.Exp_wBinIt(pi01r) / experiment.weightOscBF_binned
 
 def Diff_MultiRing_NuNuBarSeparation(x,experiment):
 	if experiment.Experiment == 'SuperK-Gd' or experiment.Experiment == 'SKIV' or experiment.Experiment == 'SuperK_Htag' or experiment.Experiment == 'SuperK_Gdtag':
@@ -74,7 +76,7 @@ def Diff_MultiRing_NuNuBarSeparation(x,experiment):
 	r = n0 / n1
 	mr[experiment.Sample==nu] = 1
 	mr[experiment.Sample==nub] = -r
-	return mr
+	return experiment.Exp_wBinIt(mr) / experiment.weightOscBF_binned
 
 def Diff_MultiRing_EMuSeparation(x,experiment):
 	if experiment.Experiment == 'SuperK-Gd' or experiment.Experiment == 'SKIV' or experiment.Experiment == 'SuperK_Htag' or experiment.Experiment == 'SuperK_Gdtag':
@@ -95,7 +97,7 @@ def Diff_MultiRing_EMuSeparation(x,experiment):
 	mr[experiment.Sample==e1] = 1
 	mr[experiment.Sample==e2] = 1
 	mr[experiment.Sample==mu] = -r
-	return mr
+	return experiment.Exp_wBinIt(mr) / experiment.weightOscBF_binned
 
 
 def Diff_MultiRing_EOtherSeparation(x,experiment):
@@ -114,7 +116,7 @@ def Diff_MultiRing_EOtherSeparation(x,experiment):
 	mr[experiment.Sample==e0] = 1
 	mr[experiment.Sample==e1] = 1
 	mr[experiment.Sample==o0] = -r
-	return mr
+	return experiment.Exp_wBinIt(mr) / experiment.weightOscBF_binned
 
 def Diff_PC_StopThruSeparation(x,experiment):
 	if experiment.Experiment == 'SuperK-Gd' or experiment.Experiment == 'SKIV' or experiment.Experiment == 'SuperK_Htag' or experiment.Experiment == 'SuperK_Gdtag':
@@ -129,7 +131,7 @@ def Diff_PC_StopThruSeparation(x,experiment):
 	r = n0 / n1
 	mr[experiment.Sample==pcs] = 1
 	mr[experiment.Sample==pct] = -r
-	return mr
+	return experiment.Exp_wBinIt(mr) / experiment.weightOscBF_binned
 
 def Diff_Pi0_RingSeparation(x,experiment):
 	if experiment.Experiment == 'SuperK-Gd' or experiment.Experiment == 'SKIV' or experiment.Experiment == 'SuperK_Htag' or experiment.Experiment == 'SuperK_Gdtag':
@@ -144,7 +146,7 @@ def Diff_Pi0_RingSeparation(x,experiment):
 	r = n0 / n1
 	mr[experiment.Sample==r1 ] = 1
 	mr[experiment.Sample==r2 ] = -r
-	return mr
+	return experiment.Exp_wBinIt(mr) / experiment.weightOscBF_binned
 
 def Diff_E_RingSeparation(x,experiment):
 	if experiment.Experiment == 'SuperK-Gd' or experiment.Experiment == 'SKIV' or experiment.Experiment == 'SuperK_Htag' or experiment.Experiment == 'SuperK_Gdtag':
@@ -165,7 +167,7 @@ def Diff_E_RingSeparation(x,experiment):
 		mr[experiment.Sample==sample] = 1
 	for sample in r2 :
 		mr[experiment.Sample==sample] = -r
-	return mr
+	return experiment.Exp_wBinIt(mr) / experiment.weightOscBF_binned
 
 def Diff_Mu_RingSeparation(x,experiment):
 	if experiment.Experiment == 'SuperK-Gd' or experiment.Experiment == 'SKIV' or experiment.Experiment == 'SuperK_Htag' or experiment.Experiment == 'SuperK_Gdtag':
@@ -186,7 +188,7 @@ def Diff_Mu_RingSeparation(x,experiment):
 		mr[experiment.Sample==sample] = 1
 	for sample in r2 :
 		mr[experiment.Sample==sample] = -r
-	return mr
+	return experiment.Exp_wBinIt(mr) / experiment.weightOscBF_binned
 
 def Diff_SingleRing_PID(x,experiment):
 	if experiment.Experiment == 'SuperK-Gd' or experiment.Experiment == 'SKIV' or experiment.Experiment == 'SuperK_Htag' or experiment.Experiment == 'SuperK_Gdtag':
@@ -207,7 +209,7 @@ def Diff_SingleRing_PID(x,experiment):
 		mr[experiment.Sample==sample] = 1
 	for sample in mu:
 		mr[experiment.Sample==sample] = -r
-	return mr
+	return experiment.Exp_wBinIt(mr) / experiment.weightOscBF_binned
 
 def Diff_MultiRing_PID(x,experiment):
 	if experiment.Experiment == 'SuperK-Gd' or experiment.Experiment == 'SKIV' or experiment.Experiment == 'SuperK_Htag' or experiment.Experiment == 'SuperK_Gdtag':
@@ -228,7 +230,7 @@ def Diff_MultiRing_PID(x,experiment):
 		mr[experiment.Sample==sample] = 1
 	for sample in mu:
 		mr[experiment.Sample==sample] = -r
-	return mr
+	return experiment.Exp_wBinIt(mr) / experiment.weightOscBF_binned
 
 def Diff_NeutronTagging(x,experiment):
 	nn = np.zeros(experiment.NumberOfEvents)
@@ -238,7 +240,7 @@ def Diff_NeutronTagging(x,experiment):
 		r = n0 / n1
 		nn[experiment.Neutron==0] = 1
 		nn[experiment.Neutron>0] = -r
-		return nn
+		return experiment.Exp_wBinIt(nn) / experiment.weightOscBF_binned
 	else:
 		return 0
 
@@ -257,4 +259,4 @@ def Diff_DecayETagging(x,experiment):
 	mue[experiment.DecayE==0] = rx0 / r0
 	mue[experiment.DecayE==1] = rx1 / r1
 	mue[experiment.DecayE>1] = rx2 / r2
-	return mue
+	return experiment.Exp_wBinIt(mue) / experiment.weightOscBF_binned

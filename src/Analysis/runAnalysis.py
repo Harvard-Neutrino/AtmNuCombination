@@ -56,7 +56,7 @@ for s in an.sources:
 		mcList[exp].Binning()
 		# Get unoscillated atm. fluxes
 		mcList[exp].InitialFlux()
-		# Setup oscillation parameters grid and best fit value
+		# Set best fit value oscillations
 		mcList[exp].BFOscillator(an.neutrinos,**an.OscParametersBest)
 
 
