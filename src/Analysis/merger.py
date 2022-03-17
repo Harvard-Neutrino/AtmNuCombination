@@ -44,7 +44,6 @@ def Chi2SystsCombined(syst, analysis, Obs, experiments):
 			j = index[0]
 			xFij = globals()[sys](syst[j],exp)
 			wSys += xFij
-			# print(f'Additional fraction is {xFij} from {sys}')
 			dEdx[j] = E * globals()['Diff_'+sys](syst[j],exp)
 			usedSysts.append(j)
 

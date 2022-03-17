@@ -90,7 +90,7 @@ if an.physics[0] == 'Three Flavour':
 	if cluster:
 		element = list(parametersGrid)[point]
 		print(f'Processing {element}')
-		sensitivity(an, *element, mcList, outfile)
+		sensitivity(an, *element, mcList, outfile, None)
 
 	elif multiproc:
 		cores = multiprocessing.cpu_count()
@@ -99,8 +99,9 @@ if an.physics[0] == 'Three Flavour':
 			print('Analyzing with no systematics')
 		processes = []
 		jj = 0
+		q = multiprocessing.Queue()
 		for element in parametersGrid:
-			p = multiprocessing.Process(target=sensitivity,args=[an, *element, mcList, outfile])
+			p = multiprocessing.Process(target=sensitivity,args=(an, *element, mcList, outfile, q, ))
 			if __name__ == "__main__":
 				processes.append(p)
 				p.start()
@@ -110,8 +111,10 @@ if an.physics[0] == 'Three Flavour':
 					for i,p in enumerate(processes):
 						p.join()
 						processes = []
+					an.SystPrior = q.get()
+					print(an.SystPrior)
 
 	else:
 		for element in parametersGrid:
 			print(f'Processing {element}')
-			sensitivity(an, *element, mcList, outfile)
+			sensitivity(an, *element, mcList, outfile, None)
