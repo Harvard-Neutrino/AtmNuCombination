@@ -4,14 +4,17 @@ from scipy.optimize import curve_fit
 from scipy.interpolate import interp1d
 import pandas as pd
 
+# gaussian function
 def gaussian(x, mu, sigma, A):
     return (A / (sigma * np.sqrt(2 * np.pi)) * np.exp(-1.0 * (x - mu)**2 / (2 * sigma**2)))
 
+# fit with the gaussian function
 def gaus_fit(data_entries, bins, current_binnum):
 	bins_centers = np.array([0.5 * (bins[i] + bins[i+1]) for i in range(len(bins)-1)])
 	popt, pcov = curve_fit(gaussian, xdata=bins_centers, ydata=data_entries, p0=[current_binnum, 5, 1])
 	return popt[0], popt[1], popt[2]
 
+# input the zenith error histogram from ORCA paper plot
 def get_zenith_error():
 
 	# first define a general exponential function
@@ -25,8 +28,8 @@ def get_zenith_error():
 
 	return e_neutrino, e_antineutrino, mu_neutrino, mu_antineutrino
 
-def getORCAbins(input, tau = False, nc = False):
-	df = pd.read_csv(input, header = None, usecols = [1])
+def getORCAbins(input_file, tau = False, nc = False):
+	df = pd.read_csv(input_file, header = None, usecols = [1])
 	# print(df)
 	# this is the bin heights
 	w_bin = np.array(df[:]).T[0] * 10 ** 6
@@ -63,11 +66,6 @@ def interpolate_xsection(nutype):
 
 	resf = interp1d(energies, extracted)
 
-
-	# newx = np.arange(0.01, 125, 0.1)
-	# newy = resf(newx)
-	# plt.plot(newx, newy, '-')
-	# plt.show()
 	return resf
 
 
@@ -96,7 +94,66 @@ def get_index(current, pdg):
 			return 1, 3
 
 
+def get_topology_prob(nutype, current_type, pdg, true_energy):
 
+	# first define how to get the probabilities
+	def get_probs(input_file):
+		df = pd.read_csv(input_file, header = None, usecols = [1])
+		# these are the histogram weights
+		res = np.array(df[:]).T[0]
+		if len(res) < 30:
+			# print("yes")
+			padding = np.zeros(30 - len(res))
+			res = np.concatenate((padding, res), axis = 0)
+		return res
+
+	# return the index in the topology histogram given the energy
+	def energy_to_index(energy):
+		energies = np.logspace(0, np.log10(50), 31)
+		idx = 0
+		for i in range(len(energies) - 1):
+			# print(i)
+			# print(energy)
+			# print(energies[i+1])
+			if energy <= energies[i + 1]:
+				return idx
+			idx += 1
+		return 29
+
+	if current_type == 0: # NC
+		if nutype == 1: # neutrinos
+			track = get_probs("./ORCA_Results/track_nu_NC.csv")
+			cascade = get_probs("./ORCA_Results/cascade_nu_NC.csv")
+		elif nutype == -1: # antineutrinos
+			track = get_probs("./ORCA_Results/track_nubar_NC.csv")
+			cascade = get_probs("./ORCA_Results/cascade_nubar_NC.csv")
+
+	if current_type == 1: # CC
+		if np.abs(pdg) == 12: # nu_e
+			if nutype == 1: # neutrinos
+				track = get_probs("./ORCA_Results/track_nue_CC.csv")
+				cascade = get_probs("./ORCA_Results/cascade_nue_CC.csv")
+			elif nutype == -1:
+				track = get_probs("./ORCA_Results/track_nuebar_CC.csv")
+				cascade = get_probs("./ORCA_Results/cascade_nuebar_CC.csv")
+		elif np.abs(pdg) == 14: #nu_mu
+			if nutype == 1: # neutrinos
+				track = get_probs("./ORCA_Results/track_numu_CC.csv")
+				cascade = get_probs("./ORCA_Results/cascade_numu_CC.csv")
+			elif nutype == -1:
+				track = get_probs("./ORCA_Results/track_numubar_CC.csv")
+				cascade = get_probs("./ORCA_Results/cascade_numubar_CC.csv")
+		elif np.abs(pdg) == 16: # nu_tau
+			if nutype == 1: # neutrinos
+				track = get_probs("./ORCA_Results/track_nutau_CC.csv")
+				cascade = get_probs("./ORCA_Results/cascade_nutau_CC.csv")
+			elif nutype == -1:
+				track = get_probs("./ORCA_Results/track_nutaubar_CC.csv")
+				cascade = get_probs("./ORCA_Results/cascade_nutaubar_CC.csv")
+	
+	# now use energy to give two numbers from the two arrays
+	idx = energy_to_index(true_energy)
+	return track[idx], 1 - cascade[idx]
 
 
 

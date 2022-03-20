@@ -1,5 +1,3 @@
-# this file needs rewriting 
-
 import numpy as np
 import digitalizer as dgt
 from Effective import ICEffectiveAnalysis as ICEff
@@ -121,6 +119,15 @@ class Generator:
 				print("wrong interaction type detected: ", interaction_type)
 				exit(0)
 
+		def assign_topology(nutype, current_type, pdg, true_energy):
+			track_prob, cas_prob = util.get_topology_prob(nutype, current_type, pdg, true_energy)
+
+			# now generate discrete choices with numpy
+			topologies = [0, 1, 2] # 0 is cascade, 1 is track, 2 is intermediate
+			probabilities = [cas_prob, track_prob, 1 - cas_prob - track_prob]
+			rand_topology = np.random.choice(topologies, p = probabilities)
+
+			return rand_topology
 
 		# define the 4 exponential functions of zenith error
 		e_error, eb_error, mu_error, mub_error = util.get_zenith_error()
@@ -130,6 +137,7 @@ class Generator:
 		all_zen_true = []
 		all_zen_reco = []
 		all_Wmc = []
+		all_pid = []
 		# now generate a fake ORCA MC energy and ORCA MC weight for all the events
 		for i in range(len(self.MC["true_energy"])):
 			energy = self.MC["true_energy"][i]
@@ -161,16 +169,22 @@ class Generator:
 			else:
 				all_Wmc.append(0)
 
+			# also assign random pid's!
+			ORCA_pid = assign_topology(self.MC["pdg"][i] / np.abs(self.MC["pdg"][i]), self.MC["current_type"][i], \
+										self.MC["pdg"][i], self.MC["true_energy"][i]) 
+
 			all_e_true.append(energy)
 			all_e_reco.append(ORCA_E_reco)
 			all_zen_true.append(zenith)
 			all_zen_reco.append(ORCA_zen_reco)
+			all_pid.append(ORCA_pid)
 
 		res_e_true = np.array(all_e_true)
 		res_e_reco = np.array(all_e_reco)
 		res_zen_true = np.array(all_zen_true)
 		res_zen_reco = np.array(all_zen_reco)
 		res_wmc = np.array(all_Wmc)
+		res_pid = np.array(all_pid)
 
-		return res_e_true, res_e_reco, res_zen_true, res_zen_reco, res_wmc, self.MC["pid"], self.MC["pdg"]
+		return res_e_true, res_e_reco, res_zen_true, res_zen_reco, res_wmc, res_pid, self.MC["pdg"]
 

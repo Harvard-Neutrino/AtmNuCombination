@@ -17,15 +17,6 @@ e_reco = input_file["reco_energy"]
 zen_true = input_file["true_zenith"]
 zen_reco = input_file["reco_zenith"]
 
-# will complete class later
-# class plot():
-    # def __init__(self, input_file, pid, true_energy, reco_energy, true_zenith, reco_zenith):
-    #     self.MC = input_file 
-    #     self.pid = pid
-    #     self.e_
-
-
-
 def plot_mig_hist(binnum, top):
 
     tracks = dgt.Digitalizer(input_track, input_scale)
@@ -64,6 +55,7 @@ def plot_mig_hist(binnum, top):
 #     plot_mig_hist(i, 0)
 #     plot_mig_hist(i, 1)
 
+# plots the zenith error line plot reproduction from ORCA paper
 def plot_zenith_errors():
     e, ebar, mu, mubar = util.get_zenith_error()
 
@@ -101,41 +93,7 @@ def plot_zenith_errors():
 
 # plot_zenith_errors()
 
-def plot_energy_reco():
-    x = np.logspace(np.log10(1.85), np.log10(53), 23)
-    y = np.logspace(np.log10(1.85), np.log10(53), 23)
-    X, Y = np.meshgrid(x, y)
-    Z, xedges, yedges = np.histogram2d(e_true, e_reco, bins=(x, y))
-    im = plt.pcolor(X, Y, Z.T, cmap = "gray_r", norm = LogNorm())
-    plt.xlim(2, 53)
-    plt.ylim(2, 53)
-    plt.colorbar(im, orientation = "vertical", format = LogFormatterMathtext())
-    plt.xscale("log")
-    plt.yscale("log")
-    # plt.show()
-    plt.savefig("./RecoPlots/ICMC_with_ORCA_Reco")
-    plt.close()
-
-# plot_energy_reco()
-
-def plot_energy_reco_track():
-    track_mask = pid == 1
-    x = np.logspace(np.log10(1.85), np.log10(53), 23)
-    y = np.logspace(np.log10(1.85), np.log10(53), 23)
-    X, Y = np.meshgrid(x, y)
-    Z, xedges, yedges = np.histogram2d(e_true[track_mask], e_reco[track_mask], bins=(x, y))
-    im = plt.pcolor(X, Y, Z.T, cmap = "gray_r", norm = LogNorm())
-    plt.xlim(2, 53)
-    plt.ylim(2, 53)
-    plt.colorbar(im, orientation = "vertical", format = LogFormatterMathtext())
-    plt.xscale("log")
-    plt.yscale("log")
-    # plt.show()
-    plt.savefig("./RecoPlots/ICMC_with_ORCA_Reco_track")
-    plt.close()
-
-# plot_energy_reco_track()
-
+# plot the fake ORCA MC energy reco track normalized prob
 def plot_energy_reco_track_probability():
     track_mask = pid == 1
     x = np.logspace(np.log10(1.85), np.log10(53), 23)
@@ -162,6 +120,7 @@ def plot_energy_reco_track_probability():
 
 plot_energy_reco_track_probability()
 
+# plot the IC MC energy reco track normalized prob
 def plot_IC_energy_reco_track_probability():
     IC_input_file = pd.read_csv("neutrino_mc.csv")
     pid = IC_input_file["pid"]
@@ -192,25 +151,7 @@ def plot_IC_energy_reco_track_probability():
     plt.savefig("./RecoPlots/ICMC_Reco_track_probability")
     plt.close()
 
-plot_IC_energy_reco_track_probability()
-
-def plot_energy_reco_cascade():
-    cas_mask = pid == 0
-    x = np.logspace(np.log10(1.85), np.log10(53), 23)
-    y = np.logspace(np.log10(1.85), np.log10(53), 23)
-    X, Y = np.meshgrid(x, y)
-    Z, xedges, yedges = np.histogram2d(e_true[cas_mask], e_reco[cas_mask], bins=(x, y))
-    im = plt.pcolor(X, Y, Z.T, cmap = "gray_r", norm = LogNorm())
-    plt.xlim(2, 53)
-    plt.ylim(2, 53)
-    plt.colorbar(im, orientation = "vertical", format = LogFormatterMathtext())
-    plt.xscale("log")
-    plt.yscale("log")
-    # plt.show()
-    plt.savefig("./RecoPlots/ICMC_with_ORCA_Reco_cas")
-    plt.close()
-
-# plot_energy_reco_cascade()
+# plot_IC_energy_reco_track_probability()
 
 def plot_energy_reco_cascade_probability():
     cas_mask = pid == 0
@@ -269,7 +210,7 @@ def plot_IC_energy_reco_cascade_probability():
     plt.savefig("./RecoPlots/ICMC_Reco_cascade_probability")
     plt.close()
 
-plot_IC_energy_reco_cascade_probability()
+# plot_IC_energy_reco_cascade_probability()
 
 def plot_zenith_reco():
     x = np.linspace(-1, 1, 20)
@@ -305,7 +246,7 @@ def plot_IC_zenith_reco():
     plt.savefig("./RecoPlots/IC_coszen_Reco")
     plt.close()
 
-plot_IC_zenith_reco()
+# plot_IC_zenith_reco()
 
 def plot_zenith_reco_range(elo, ehi):
     x = np.linspace(-1, 1, 20)
@@ -328,3 +269,7 @@ def plot_zenith_reco_range(elo, ehi):
 # plot_zenith_reco_range(1, 5)
 # plot_zenith_reco_range(5, 15)
 # plot_zenith_reco_range(15, 55)
+
+
+
+
