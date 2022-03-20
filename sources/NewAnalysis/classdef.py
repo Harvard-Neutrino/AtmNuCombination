@@ -14,6 +14,7 @@ if includeORCA:
 class Topology(Enum):
     cascade = 0
     track = 1
+    intermediate = 2
 
 class NeuType(Enum):
     AntiNeutrino = -1
@@ -47,6 +48,7 @@ class Simulation:
 		self.C_re = input_file["reco_zenith"]
 		self.pdg = input_file["pdg"]
 		self.pid = input_file["pid"]
+		self.currents = input_file["current_type"]
 		if includeORCA:
 			self.W_mc = ORCAMC["weight"]
 			self.E_re = ORCAMC["reco_energy"]
@@ -100,11 +102,11 @@ class Analysis:
 		self.simulation = simulation
 		self.bf_fluxes = bf_fluxes
 		self.fluxes = fluxes
-		# the rest have structures: (neutype 2 x flavor 2 x topology 2)
-		self.bf_weights = np.zeros((2, 2, 2, len(self.simulation.W_mc)), dtype = float)
-		self.weights = np.zeros((2, 2, 2, len(self.simulation.W_mc)), dtype = float)
-		self.bf_histogram = np.zeros((2, 2, 2, NErec, Ncrec), dtype = float)
-		self.histogram = np.zeros((2, 2, 2, NErec, Ncrec), dtype = float)
+		# the rest have structures: (neutype 2 x flavor 2 x topology 3)
+		self.bf_weights = np.zeros((2, 2, 3, len(self.simulation.W_mc)), dtype = float)
+		self.weights = np.zeros((2, 2, 3, len(self.simulation.W_mc)), dtype = float)
+		self.bf_histogram = np.zeros((2, 2, 3, NErec, Ncrec), dtype = float)
+		self.histogram = np.zeros((2, 2, 3, NErec, Ncrec), dtype = float)
 		self.chisq = 0
 		self.chisq_min = None
 	
@@ -133,10 +135,12 @@ class Analysis:
 			else:
 				neutype = 1
 						
-			if self.simulation.pid[i] == 0 :
+			if self.simulation.pid[i] == 0:
 				topology = 0
-			elif self.simulation.pid[i] == 1 :
+			elif self.simulation.pid[i] == 1:
 				topology = 1
+			elif self.simulation.pid[i] == 2:
+				topology = 2
 
 			if np.abs(self.simulation.pdg[i]) == 12:
 				neuflavor = 0
@@ -177,7 +181,7 @@ class Analysis:
 
 		for i in range(2):
 			for j in range(2):
-				for k in range(2):
+				for k in range(3):
 					self.weights[i][j][k] *= tilt
 					self.weights[i][j][k] *= zenith
 
@@ -186,7 +190,7 @@ class Analysis:
 		# performance or conciseness?
 		for i in range(2):
 			for j in range(2):
-				for k in range(2):
+				for k in range(3):
 					if pointtype.value == 0:
 						self.bf_histogram[i][j][k], _, _ = np.histogram2d(self.simulation.E_re, np.cos(self.simulation.C_re), \
 													bins = (erec, crec), weights = self.bf_weights[i][j][k])
@@ -216,7 +220,7 @@ class Analysis:
 
 		chisq = 0
 
-		for top in range(2):
+		for top in range(3):
 			for i in range(self.bf_histogram[0][0][0].shape[0]):
 				for j in range(self.bf_histogram[0][0][0].shape[1]):
 					if e_bf[top][i][j] + ebar_bf[top][i][j] + mu_bf[top][i][j] + mubar_bf[top][i][j] > 0:
