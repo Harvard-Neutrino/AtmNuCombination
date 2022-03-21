@@ -186,5 +186,5 @@ class Generator:
 		res_wmc = np.array(all_Wmc)
 		res_pid = np.array(all_pid)
 
-		return res_e_true, res_e_reco, res_zen_true, res_zen_reco, res_wmc, res_pid, self.MC["pdg"]
+		return res_e_true, res_e_reco, res_zen_true, res_zen_reco, res_wmc, res_pid, self.MC["pdg"], self.MC["interaction_type"]
 

@@ -53,6 +53,8 @@ class Simulation:
 			self.W_mc = ORCAMC["weight"]
 			self.E_re = ORCAMC["reco_energy"]
 			self.C_re = ORCAMC["reco_zenith"]
+			self.pid = ORCAMC["pid"]
+			self.pdg = ORCAMC["pdg"]
 
 
 class Flux: 
