@@ -118,7 +118,7 @@ def plot_energy_reco_track_probability():
     plt.savefig("./RecoPlots/ORCA_Reco_track_probability")
     plt.close()
 
-plot_energy_reco_track_probability()
+# plot_energy_reco_track_probability()
 
 # plot the IC MC energy reco track normalized prob
 def plot_IC_energy_reco_track_probability():
@@ -177,7 +177,7 @@ def plot_energy_reco_cascade_probability():
     plt.savefig("./RecoPlots/ORCA_Reco_cascade_probability")
     plt.close()
 
-plot_energy_reco_cascade_probability()
+# plot_energy_reco_cascade_probability()
 
 def plot_IC_energy_reco_cascade_probability():
     IC_input_file = pd.read_csv("neutrino_mc.csv")
@@ -224,7 +224,7 @@ def plot_zenith_reco():
     plt.savefig("./RecoPlots/ORCA_coszen_Reco")
     plt.close()
 
-plot_zenith_reco()
+# plot_zenith_reco()
 
 def plot_IC_zenith_reco():
     IC_input_file = pd.read_csv("neutrino_mc.csv")
@@ -270,6 +270,46 @@ def plot_zenith_reco_range(elo, ehi):
 # plot_zenith_reco_range(5, 15)
 # plot_zenith_reco_range(15, 55)
 
+# currently only plots the numu distributions
+def plot_numu_CC_topology_distribution():
+    # first define the bins
+    bins = np.logspace(np.log10(2), np.log10(50), 31)
+    one = np.ones((30,))
+    numu_mask = input_file["pdg"] == 14
+    cc_mask = input_file["current_type"] == 1
+    cascade_mask = input_file["pid"] == 0
+    track_mask = input_file["pid"] == 1
+    intermediate_mask = input_file["pid"] == 2
 
+    numu_CC_track_hist, _ = np.histogram(e_true[numu_mask & track_mask & cc_mask], bins = bins)
+    numu_CC_cascade_hist, _ = np.histogram(e_true[numu_mask & cascade_mask & cc_mask], bins = bins)
+    numu_CC_inter_hist, _ = np.histogram(e_true[numu_mask & intermediate_mask & cc_mask], bins = bins)
+    numu_CC_all_hist, _ = np.histogram(e_true[numu_mask & cc_mask], bins = bins)
 
+    print(numu_CC_track_hist)
+    print(numu_CC_cascade_hist)
+    print(numu_CC_inter_hist)
+    print(numu_CC_all_hist)
 
+    # exit(0)
+
+    fig, ax = plt.subplots(figsize=(7,6))
+    fig.suptitle("ORCA MC nu_mu CC topology fractions")
+    # first the neutrino ones
+    ax.hist(bins[:-1], bins, weights = numu_CC_track_hist / numu_CC_all_hist,\
+                     label=r"$\nu_{\mu}$ CC Track", color="blue", histtype="step")
+    ax.hist(bins[:-1], bins, weights = one - numu_CC_cascade_hist / numu_CC_all_hist,\
+                     label=r"$\nu_{\mu}$ CC Track", color="red", histtype="step")
+
+    ax.set_xscale("log")
+    ax.set_xlabel("neutrino energy [GeV]")
+    ax.set_xlim(2, 50)
+    ax.set_ylim(0, 1)
+    ax.set_ylabel("fraction")
+    ax.grid(True)
+    ax.legend(loc = 4)
+    plt.show()
+    # fig.savefig("./RecoPlots/unosc_numu_CC_Topology_Fraction")
+    plt.close()
+
+plot_numu_CC_topology_distribution()

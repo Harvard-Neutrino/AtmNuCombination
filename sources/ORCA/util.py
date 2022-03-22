@@ -109,7 +109,7 @@ def get_topology_prob(nutype, current_type, pdg, true_energy):
 
 	# return the index in the topology histogram given the energy
 	def energy_to_index(energy):
-		energies = np.logspace(0, np.log10(50), 31)
+		energies = np.logspace(np.log10(2), np.log10(50), 31)
 		idx = 0
 		for i in range(len(energies) - 1):
 			# print(i)
@@ -155,5 +155,6 @@ def get_topology_prob(nutype, current_type, pdg, true_energy):
 	idx = energy_to_index(true_energy)
 	return track[idx], 1 - cascade[idx]
 
+# print(get_topology_prob(1, 1, 14, 3))
 
 

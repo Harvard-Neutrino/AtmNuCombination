@@ -96,7 +96,7 @@ def ORCA_topology_details(flavor, current):
 	weights = change_flavor_basis(analysis.bf_weights)
 
 	# define the bins
-	energy_bins = np.logspace(np.log10(3), np.log10(50), 31)
+	energy_bins = np.logspace(np.log10(2), np.log10(50), 31)
 	if flavor == 2: # if we look at taus
 		energy_bins = np.logspace(np.log10(4), np.log10(50), 31)
 	one = np.ones(30)
@@ -204,7 +204,7 @@ def ORCA_topology_details(flavor, current):
 
 	ax.set_xscale("log")
 	ax.set_xlabel("neutrino energy [GeV]")
-	ax.set_xlim(3, 50)
+	ax.set_xlim(2, 50)
 	ax.set_ylim(0, 1)
 	ax.set_ylabel("fraction")
 	ax.grid(True)
