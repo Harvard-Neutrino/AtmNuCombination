@@ -11,7 +11,8 @@ from util import gaussian
 from params import *
 
 input_file = pd.read_csv("ORCA.csv")
-pid = input_file["pid"]
+original = pd.read_csv("neutrino_mc.csv")
+pid = original["pid"]
 e_true = input_file["true_energy"]
 e_reco = input_file["reco_energy"]
 zen_true = input_file["true_zenith"]
@@ -118,7 +119,7 @@ def plot_energy_reco_track_probability():
     plt.savefig("./RecoPlots/ORCA_Reco_track_probability")
     plt.close()
 
-# plot_energy_reco_track_probability()
+plot_energy_reco_track_probability()
 
 # plot the IC MC energy reco track normalized prob
 def plot_IC_energy_reco_track_probability():
@@ -177,7 +178,7 @@ def plot_energy_reco_cascade_probability():
     plt.savefig("./RecoPlots/ORCA_Reco_cascade_probability")
     plt.close()
 
-# plot_energy_reco_cascade_probability()
+plot_energy_reco_cascade_probability()
 
 def plot_IC_energy_reco_cascade_probability():
     IC_input_file = pd.read_csv("neutrino_mc.csv")
@@ -224,7 +225,7 @@ def plot_zenith_reco():
     plt.savefig("./RecoPlots/ORCA_coszen_Reco")
     plt.close()
 
-# plot_zenith_reco()
+plot_zenith_reco()
 
 def plot_IC_zenith_reco():
     IC_input_file = pd.read_csv("neutrino_mc.csv")
@@ -312,4 +313,4 @@ def plot_numu_CC_topology_distribution():
     # fig.savefig("./RecoPlots/unosc_numu_CC_Topology_Fraction")
     plt.close()
 
-plot_numu_CC_topology_distribution()
+# plot_numu_CC_topology_distribution()
