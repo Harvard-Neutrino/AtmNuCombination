@@ -12,7 +12,7 @@ from params import *
 
 input_file = pd.read_csv("ORCA.csv")
 original = pd.read_csv("neutrino_mc.csv")
-pid = original["pid"]
+pid = input_file["pid"]
 e_true = input_file["true_energy"]
 e_reco = input_file["reco_energy"]
 zen_true = input_file["true_zenith"]
@@ -212,6 +212,32 @@ def plot_IC_energy_reco_cascade_probability():
     plt.close()
 
 # plot_IC_energy_reco_cascade_probability()
+
+def plot_energy_reco_intermediate_probability():
+    int_mask = pid == 2
+    x = np.logspace(np.log10(1.85), np.log10(53), 23)
+    y = np.logspace(np.log10(1.85), np.log10(53), 23)
+    X, Y = np.meshgrid(x, y)
+    Z, xedges, yedges = np.histogram2d(e_true[int_mask], e_reco[int_mask], bins=(x, y))
+    # attempt to manually normalize column
+    for i in range(22):
+        currcol = Z[i][:]
+        tot = 0
+        for j in range(22):
+            tot += currcol[j]
+        for j in range(22):
+            currcol[j] = currcol[j] / tot
+    im = plt.pcolor(X, Y, Z.T, cmap = "gray_r", norm = LogNorm())
+    plt.xlim(2, 53)
+    plt.ylim(2, 53)
+    plt.colorbar(im, orientation = "vertical", format = LogFormatterMathtext())
+    plt.xscale("log")
+    plt.yscale("log")
+    # plt.show()
+    plt.savefig("./RecoPlots/ORCA_Reco_intermediate_probability")
+    plt.close()
+
+plot_energy_reco_intermediate_probability()
 
 def plot_zenith_reco():
     x = np.linspace(-1, 1, 20)
