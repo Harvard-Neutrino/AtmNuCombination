@@ -48,7 +48,7 @@ python3 PlotGlobalSens.py <experiment> <output_file> [output_file2]
 
 ```
 
-In order to run src/Analysis/PlotGlobalSens.py, one should specify the experiment: SK, IC or IC+SK.
+In order to run src/Analysis/plotting/PlotGlobalSens.py, one should specify the experiment: SK, IC or IC+SK.
 
 The option of providing a second analysis output file is only for the cases when one wants to add the output of two separate analyses but with the same parameter grid.
 
