@@ -71,7 +71,6 @@ class parseXML:
 		for s,m in zip(self.experiments,self.mcFiles):
 			print(' + ',s, ', at ',m)
 		print('====================================')
-		print(f' + {self.Systematics}')
 
 
 	def readPhysics(self):

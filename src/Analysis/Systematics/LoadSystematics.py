@@ -10,6 +10,8 @@ def ICUp(Ebin, Zbin, syst, cut=[]):
     hp_nu_nc = pd.read_csv("Systematics/hyperplanes_all_nc.csv")
 
     method = 'nearest'
+    # method = 'linear'
+    # method = 'cubic'
 
     grid_cz = hp_nue_cc['reco_coszen'].to_numpy()
     grid_Er = hp_nue_cc['reco_energy'].to_numpy()
@@ -19,10 +21,15 @@ def ICUp(Ebin, Zbin, syst, cut=[]):
         print('Systematic source not known for IC.')
     
     # for syst in ICSyst:
-    values_nueCC = hp_nue_cc[syst].to_numpy()
-    values_numuCC = hp_numu_cc[syst].to_numpy()
-    values_nutauCC = hp_nutau_cc[syst].to_numpy()
-    values_NC = hp_nu_nc[syst].to_numpy()
+    offset_nueCC = hp_nue_cc['offset'].to_numpy()
+    offset_numuCC = hp_numu_cc['offset'].to_numpy()
+    offset_nutauCC = hp_nutau_cc['offset'].to_numpy()
+    offset_NC = hp_nu_nc['offset'].to_numpy()
+
+    values_nueCC = hp_nue_cc[syst].to_numpy() / offset_nueCC
+    values_numuCC = hp_numu_cc[syst].to_numpy() / offset_numuCC
+    values_nutauCC = hp_nutau_cc[syst].to_numpy() / offset_nutauCC
+    values_NC = hp_nu_nc[syst].to_numpy() / offset_NC
 
     dic = {}
     nuecc = np.array([])

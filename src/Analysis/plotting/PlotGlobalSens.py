@@ -11,8 +11,8 @@ def X2readerGeneral(filename):
 		rawOscPar[i] = df.values[:,i]
 		oscPar[i] = np.unique(rawOscPar[i])
 	rawchi2 = np.array(df["X2"])
-	minchi2 = np.amin(rawchi2)
-	chi2 = rawchi2 - minchi2
+	minchi2 = 0 #np.amin(rawchi2)
+	chi2 = rawchi2# - minchi2
 	print(f'Minimum x2 = {minchi2}')
 
 	fixPar = []
@@ -26,7 +26,7 @@ def X2readerGeneral(filename):
 		else:
 			fitPar.append(par)
 
-	if len(switchPar)>0:
+	if len(switchPar)>1:
 		ChiSq = {}
 		for switch in switchPar:
 			for par1 in fitPar:
@@ -53,7 +53,7 @@ def X2readerGeneral(filename):
 						for val2 in oscPar[par2]:
 							cut = (rawOscPar[par1]==val1) * (rawOscPar[par2]==val2)
 							chi2_slice = chi2[cut]
-							marg = np.amin(chi2_slice)
+							marg = chi2_slice #np.amin(chi2_slice)
 							ChiSq = np.append(ChiSq, marg)
 					cornerPlot(oscPar[par1],oscPar[par2],ChiSq)
 

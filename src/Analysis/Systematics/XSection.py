@@ -30,7 +30,7 @@ def NCHad(x, experiment):
 
 def DIS(x,experiment):
 	if x == 1: return 0 
-	if experiment.Experiment == 'IceCube-Upgrade' or experiment.Experiment == 'IC' or experiment.Experiment == 'DeepCore': return 0
+	# if experiment.Experiment == 'IceCube-Upgrade' or experiment.Experiment == 'ORCA' or experiment.Experiment == 'IC' or experiment.Experiment == 'DeepCore': return 0
 	dis = np.ones(experiment.NumberOfEvents)
 	cond = np.abs(experiment.Mode)>25 * experiment.CC
 	dis[cond] = x
@@ -38,21 +38,21 @@ def DIS(x,experiment):
 
 def CCQE(x,experiment):
 	if x == 1: return 0 
-	if experiment.Experiment == 'IceCube-Upgrade' or experiment.Experiment == 'IC' or experiment.Experiment == 'DeepCore': return 0
+	# if experiment.Experiment == 'IceCube-Upgrade' or experiment.Experiment == 'ORCA' or experiment.Experiment == 'IC' or experiment.Experiment == 'DeepCore': return 0
 	ccqe = np.ones(experiment.NumberOfEvents)
 	ccqe[np.abs(experiment.Mode)==1] = x
 	return experiment.Exp_wBinIt(ccqe) / experiment.weightOscBF_binned - 1
 
 def CCQENuBarNu(x,experiment):
 	if x == 1: return 0 
-	if experiment.Experiment == 'IceCube-Upgrade' or experiment.Experiment == 'IC' or experiment.Experiment == 'DeepCore': return 0
+	# if experiment.Experiment == 'IceCube-Upgrade' or experiment.Experiment == 'ORCA' or experiment.Experiment == 'IC' or experiment.Experiment == 'DeepCore': return 0
 	ccqe = np.ones(experiment.NumberOfEvents)
 	ccqe[experiment.Mode==-1] = x
 	return experiment.Exp_wBinIt(ccqe) / experiment.weightOscBF_binned - 1
 
 def CCQEMuE(x,experiment):
 	if x == 1: return 0 
-	if experiment.Experiment == 'IceCube-Upgrade' or experiment.Experiment == 'IC' or experiment.Experiment == 'DeepCore': return 0
+	# if experiment.Experiment == 'IceCube-Upgrade' or experiment.Experiment == 'ORCA' or experiment.Experiment == 'IC' or experiment.Experiment == 'DeepCore': return 0
 	ccqe = np.ones(experiment.NumberOfEvents)
 	cond = (np.abs(experiment.Mode)==1) * (np.abs(experiment.nuPDG)==14)
 	ccqe[cond] = x
@@ -60,14 +60,14 @@ def CCQEMuE(x,experiment):
 
 def CC1Pi_Pi0Pi(x,experiment):
 	if x == 1: return 0 
-	if experiment.Experiment == 'IceCube-Upgrade' or experiment.Experiment == 'IC' or experiment.Experiment == 'DeepCore': return 0
+	# if experiment.Experiment == 'IceCube-Upgrade' or experiment.Experiment == 'ORCA' or experiment.Experiment == 'IC' or experiment.Experiment == 'DeepCore': return 0
 	ccpi = np.ones(experiment.NumberOfEvents)
 	ccpi[np.abs(experiment.Mode)==12] = x
 	return experiment.Exp_wBinIt(ccpi) / experiment.weightOscBF_binned - 1
 
 def CC1Pi_NuBarNuE(x,experiment):
 	if x == 1: return 0 
-	if experiment.Experiment == 'IceCube-Upgrade' or experiment.Experiment == 'IC' or experiment.Experiment == 'DeepCore': return 0
+	# if experiment.Experiment == 'IceCube-Upgrade' or experiment.Experiment == 'ORCA' or experiment.Experiment == 'IC' or experiment.Experiment == 'DeepCore': return 0
 	ccpi = np.ones(experiment.NumberOfEvents)
 	cond = (np.abs(experiment.Mode)>10) * (np.abs(experiment.Mode)<17) * (experiment.nuPDG==-12)
 	ccpi[cond] = x
@@ -75,7 +75,7 @@ def CC1Pi_NuBarNuE(x,experiment):
 
 def CC1Pi_NuBarNuMu(x,experiment):
 	if x == 1: return 0 
-	if experiment.Experiment == 'IceCube-Upgrade' or experiment.Experiment == 'IC' or experiment.Experiment == 'DeepCore': return 0
+	# if experiment.Experiment == 'IceCube-Upgrade' or experiment.Experiment == 'ORCA' or experiment.Experiment == 'IC' or experiment.Experiment == 'DeepCore': return 0
 	ccpi = np.ones(experiment.NumberOfEvents)
 	cond = (np.abs(experiment.Mode)>10) * (np.abs(experiment.Mode)<17) * (experiment.nuPDG==-14)
 	ccpi[cond] = x
@@ -83,7 +83,7 @@ def CC1Pi_NuBarNuMu(x,experiment):
 
 def CC1PiProduction(x,experiment):
 	if x == 1: return 0 
-	if experiment.Experiment == 'IceCube-Upgrade' or experiment.Experiment == 'IC' or experiment.Experiment == 'DeepCore': return 0
+	# if experiment.Experiment == 'IceCube-Upgrade' or experiment.Experiment == 'ORCA' or experiment.Experiment == 'IC' or experiment.Experiment == 'DeepCore': return 0
 	ccpi = np.ones(experiment.NumberOfEvents)
 	cond = (np.abs(experiment.Mode)>10) * (np.abs(experiment.Mode)<17)
 	ccpi[cond] = x
@@ -91,7 +91,7 @@ def CC1PiProduction(x,experiment):
 
 def CohPiProduction(x,experiment):
 	if x == 1: return 0 
-	if experiment.Experiment == 'IceCube-Upgrade' or experiment.Experiment == 'IC' or experiment.Experiment == 'DeepCore': return 0
+	# if experiment.Experiment == 'IceCube-Upgrade' or experiment.Experiment == 'ORCA' or experiment.Experiment == 'IC' or experiment.Experiment == 'DeepCore': return 0
 	ccpi = np.ones(experiment.NumberOfEvents)
 	ccpi[np.abs(experiment.Mode)==16] = x
 	return experiment.Exp_wBinIt(ccpi) / experiment.weightOscBF_binned - 1

@@ -13,11 +13,12 @@ import argparse
 # Read arguments
 ############################
 parser = argparse.ArgumentParser()
-parser.add_argument("xml_file", type=str, nargs='?', default='xmlAnalysis/AnalysisTemplate.xml', help='Input analysis file in xml format')
-parser.add_argument('-p', '--point', nargs='?', type=int, default=0, help='Specify analysis point to run. Only if \'cluster\' option is enabled')
-parser.add_argument('-o', '--outfile', nargs='?', type=str, default='out.dat', help='Analysis output file')
-parser.add_argument("--multi", dest='multiproc', default=False, action='store_true', help='Option for running the analysis with multiprocessing (recommended locally)') 
-parser.add_argument("--cluster", dest='cluster', default=False, action='store_true', help='Option for submitting jobs to a cluster')
+parser.add_argument("xml_file", type=str, nargs='?', default='xmlAnalysis/AnalysisTemplate.xml', help='Input analysis file in xml format.')
+parser.add_argument('-p', '--point', nargs='?', type=int, default=0, help='Specify analysis point to run. Only if \'cluster\' option is enabled.')
+parser.add_argument('-lp', '--list_of_points', nargs='?', type=list, default=0, help='Specify set of analysis points to run.')
+parser.add_argument('-o', '--outfile', nargs='?', type=str, default='out.dat', help='Analysis output file.')
+parser.add_argument("--multi", dest='multiproc', default=False, action='store_true', help='Option for running the analysis with multiprocessing (recommended locally).') 
+parser.add_argument("--cluster", dest='cluster', default=False, action='store_true', help='Option for submitting jobs to a cluster.')
 args = parser.parse_args()
 
 # Setup running flags
@@ -90,7 +91,7 @@ if an.physics[0] == 'Three Flavour':
 	if cluster:
 		element = list(parametersGrid)[point]
 		print(f'Processing {element}')
-		sensitivity(an, *element, mcList, outfile, None)
+		sensitivity(an, *element, mcList, outfile)
 
 	elif multiproc:
 		cores = multiprocessing.cpu_count()
@@ -99,9 +100,8 @@ if an.physics[0] == 'Three Flavour':
 			print('Analyzing with no systematics')
 		processes = []
 		jj = 0
-		q = multiprocessing.Queue()
 		for element in parametersGrid:
-			p = multiprocessing.Process(target=sensitivity,args=(an, *element, mcList, outfile, q, ))
+			p = multiprocessing.Process(target=sensitivity,args=(an, *element, mcList, outfile))
 			if __name__ == "__main__":
 				processes.append(p)
 				p.start()
@@ -111,10 +111,9 @@ if an.physics[0] == 'Three Flavour':
 					for i,p in enumerate(processes):
 						p.join()
 						processes = []
-					an.SystPrior = q.get()
-					print(an.SystPrior)
+
 
 	else:
 		for element in parametersGrid:
 			print(f'Processing {element}')
-			sensitivity(an, *element, mcList, outfile, None)
+			sensitivity(an, *element, mcList, outfile)

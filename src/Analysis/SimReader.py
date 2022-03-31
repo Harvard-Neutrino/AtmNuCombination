@@ -8,6 +8,7 @@ import nuSQUIDSTools
 from itertools import repeat
 from math import asin, sqrt
 from Systematics import LoadSystematics
+import matplotlib
 
 class Reader:
 	def __init__(self, source, experiment, exposure, filename):
@@ -111,6 +112,7 @@ class Reader:
 				d_CosZTrue = np.cos(input_data['true_zenith'].to_numpy())
 				d_AziTrue = input_data['true_azimuth'].to_numpy()
 				d_CC = input_data['current_type'].to_numpy()
+				d_mode = input_data['interaction_type'].to_numpy()
 				d_nuPDG = np.int_(input_data['pdg'].to_numpy())
 				d_ETrue = input_data['true_energy'].to_numpy()
 				d_Weight = input_data['weight'].to_numpy()
@@ -122,6 +124,7 @@ class Reader:
 				d_CosZTrue = np.cos(input_data['true_zenith'])
 				d_AziTrue = np.array(input_data['true_azimuth'])
 				d_CC = np.array(input_data['current_type'])
+				d_mode = np.array(input_data['interaction_type'])
 				d_ETrue = np.array(input_data['true_energy'])
 				d_Weight = np.array(input_data['weight'])
 				d_Sample = np.int_(input_data['pid'])
@@ -130,14 +133,39 @@ class Reader:
 			self.CosZReco = d_CosZReco[condition]
 			self.CosZTrue = d_CosZTrue[condition]
 			self.AziTrue = d_AziTrue[condition]
-			self.CC = d_CC[condition]
 			self.nuPDG = d_nuPDG[condition]
+			self.CC = d_CC[condition]
+			noNEUTmode = d_mode[condition]
+			self.Mode = noNEUTmode
+			c_mode = np.logical_and(self.nuPDG>0, noNEUTmode==0)
+			self.Mode[c_mode] = 31
+			c_mode = np.logical_and(self.nuPDG>0, noNEUTmode==1)
+			self.Mode[c_mode] = 1
+			c_mode = np.logical_and(self.nuPDG>0, noNEUTmode==2)
+			self.Mode[c_mode] = 11
+			c_mode = np.logical_and(self.nuPDG>0, noNEUTmode==3)
+			self.Mode[c_mode] = 26
+			c_mode = np.logical_and(self.nuPDG>0, noNEUTmode==4)
+			self.Mode[c_mode] = 16
+			c_mode = np.logical_and(self.nuPDG<0, noNEUTmode==0)
+			self.Mode[c_mode] = -31
+			c_mode = np.logical_and(self.nuPDG<0, noNEUTmode==1)
+			self.Mode[c_mode] = -1
+			c_mode = np.logical_and(self.nuPDG<0, noNEUTmode==2)
+			self.Mode[c_mode] = -11
+			c_mode = np.logical_and(self.nuPDG<0, noNEUTmode==3)
+			self.Mode[c_mode] = -26
+			c_mode = np.logical_and(self.nuPDG<0, noNEUTmode==4)
+			self.Mode[c_mode] = -16
 			self.ETrue = d_ETrue[condition]
 			self.Weight = d_Weight[condition]
 			self.Sample = d_Sample[condition]
 			self.Norm = Time * meter_to_cm_sq
 			self.NumberOfSamples = 2
 			self.NumberOfEvents = self.nuPDG.size
+			# print(np.sum(self.Weight)*self.Norm)
+			# matplotlib.pyplot.hist2d(np.log10(self.ETrue), np.log10(self.EReco), bins=100, range=[[0, 2], [0, 2]])
+			# matplotlib.pyplot.show()
 
 
 		elif self.Experiment == 'ORCA':
@@ -146,13 +174,14 @@ class Reader:
 			input_data = pd.read_csv(filename)
 			Time = self.Exposure * 365*24*60*60
 			meter_to_cm_sq = 1e4
-			self.Erec_min = 1
+			self.Erec_min = 2
 			if int(pd.__version__[0]) == 1:
 				d_EReco = input_data['reco_energy'].to_numpy()
 				d_CosZReco = np.cos(input_data['reco_zenith'].to_numpy())
 				d_CosZTrue = np.cos(input_data['true_zenith'].to_numpy())
 				# d_AziTrue = input_data['true_azimuth'].to_numpy()
-				# d_CC = input_data['current_type'].to_numpy()
+				d_CC = input_data['current_type'].to_numpy()
+				d_mode = input_data['interaction_type'].to_numpy()
 				d_nuPDG = np.int_(input_data['pdg'].to_numpy())
 				d_ETrue = input_data['true_energy'].to_numpy()
 				d_Weight = input_data['weight'].to_numpy()
@@ -163,23 +192,50 @@ class Reader:
 				d_CosZReco = np.cos(input_data['reco_zenith'])
 				d_CosZTrue = np.cos(input_data['true_zenith'])
 				# d_AziTrue = np.array(input_data['true_azimuth'])
-				# d_CC = np.array(input_data['current_type'])
+				d_mode = np.array(input_data['interaction_type'])
+				d_CC = np.array(input_data['current_type'])
 				d_ETrue = np.array(input_data['true_energy'])
 				d_Weight = np.array(input_data['weight'])
 				d_Sample = np.int_(input_data['pid'])
-			condition = (d_ETrue > 1) * (d_ETrue < 1e3) * (d_EReco > 1)
+			condition = (d_ETrue > 2) * (d_ETrue < 1e3) * (d_EReco > 2)
 			self.EReco = d_EReco[condition]
 			self.CosZReco = d_CosZReco[condition]
 			self.CosZTrue = d_CosZTrue[condition]
 			# self.AziTrue = d_AziTrue[condition]
-			# self.CC = d_CC[condition]
+			self.CC = d_CC[condition]
 			self.nuPDG = d_nuPDG[condition]
 			self.ETrue = d_ETrue[condition]
 			self.Weight = d_Weight[condition]
 			self.Sample = d_Sample[condition]
-			self.Norm = Time * meter_to_cm_sq
-			self.NumberOfSamples = 2
+			noNEUTmode = d_mode[condition]
+			self.Mode = noNEUTmode
+			c_mode = np.logical_and(self.nuPDG>0, noNEUTmode==0)
+			self.Mode[c_mode] = 31
+			c_mode = np.logical_and(self.nuPDG>0, noNEUTmode==1)
+			self.Mode[c_mode] = 1
+			c_mode = np.logical_and(self.nuPDG>0, noNEUTmode==2)
+			self.Mode[c_mode] = 11
+			c_mode = np.logical_and(self.nuPDG>0, noNEUTmode==3)
+			self.Mode[c_mode] = 26
+			c_mode = np.logical_and(self.nuPDG>0, noNEUTmode==4)
+			self.Mode[c_mode] = 16
+			c_mode = np.logical_and(self.nuPDG<0, noNEUTmode==0)
+			self.Mode[c_mode] = -31
+			c_mode = np.logical_and(self.nuPDG<0, noNEUTmode==1)
+			self.Mode[c_mode] = -1
+			c_mode = np.logical_and(self.nuPDG<0, noNEUTmode==2)
+			self.Mode[c_mode] = -11
+			c_mode = np.logical_and(self.nuPDG<0, noNEUTmode==3)
+			self.Mode[c_mode] = -26
+			c_mode = np.logical_and(self.nuPDG<0, noNEUTmode==4)
+			self.Mode[c_mode] = -16
+			self.Norm = Time * meter_to_cm_sq # factor
+			self.NumberOfSamples = 3
 			self.NumberOfEvents = self.nuPDG.size
+			self.EReco = self.EReco * (np.random.normal(0.9, 0.5, self.NumberOfEvents))
+			# print(np.sum(self.Weight)*self.Norm)
+			# matplotlib.pyplot.hist2d(np.log10(self.ETrue), np.log10(self.EReco), bins=100, range=[[0, 2], [0, 2]])
+			# matplotlib.pyplot.show()
 
 		self.FewEntries = []
 
@@ -224,7 +280,7 @@ class Reader:
 			7:z10bins, 8:z10bins, 9:z10bins, 10:z10bins, 11:z10bins, 12:z10bins, 13:z10bins, 14:z10bins, 15:z10bins, 16:z10bins, 17:z10bins}
 			self.MaxNumberOfEnergyBins = 5
 			self.MaxNumberOfCzBins = 10
-		elif self.Experiment == 'IceCube-Upgrade' or self.Experiment == 'IC' or self.Experiment == 'DeepCore' or self.Experiment == 'ORCA':
+		elif self.Experiment == 'IceCube-Upgrade' or self.Experiment == 'IC' or self.Experiment == 'DeepCore':
 			Erec_max = 1e4
 			NErec = 40
 			erec = np.logspace(np.log10(self.Erec_min), np.log10(Erec_max), NErec+1, endpoint = True)
@@ -233,6 +289,16 @@ class Reader:
 			self.CzBins = {0:z10bins, 1:z10bins}
 			self.MaxNumberOfEnergyBins = 40
 			self.MaxNumberOfCzBins = 10
+		elif self.Experiment == 'ORCA':
+			Erec_max = 100
+			NErec = 17
+			erec = np.logspace(np.log10(self.Erec_min), np.log10(Erec_max), NErec+1, endpoint = True)
+			z5bins = np.array([-1, -0.8, -0.6, -0.4, -0.2, 0.0])
+			self.EnergyBins = {0:erec, 1:erec, 2:erec}
+			self.CzBins = {0:z5bins, 1:z5bins, 2:z5bins}
+			self.MaxNumberOfEnergyBins = 17
+			self.MaxNumberOfCzBins = 5
+
 
 	def ICSystematicTables(self):
 		ev = np.zeros(self.NumberOfEvents)
@@ -267,7 +333,7 @@ class Reader:
 		self.weightOscBF_binned = self.weightOscBF_binned[self.FewEntries]
 		self.NumberOfBins = self.weightOscBF_binned.size
 		
-		if self.Experiment == 'IceCube-Upgrade' or self.Experiment == 'IC' or self.Experiment == 'DeepCore' or self.Experiment == 'ORCA':
+		if self.Experiment == 'IceCube-Upgrade' or self.Experiment == 'IC' or self.Experiment == 'DeepCore':
 			self.ICSystematicTables()
 			
 
@@ -300,7 +366,11 @@ class Reader:
 			flux = nuflux.makeFlux('IPhonda2014_sk_solmin')
 			E_min = 0.1
 			E_max = 4.0e2
-		else:
+		elif  self.Experiment == 'ORCA':
+			flux = nuflux.makeFlux('IPhonda2014_sk_solmin')
+			E_min = 2.0
+			E_max = 1.0e3
+		elif self.Experiment == 'IceCube-Upgrade' or self.Experiment == 'IC' or self.Experiment == 'DeepCore':
 			flux = nuflux.makeFlux('IPhonda2014_spl_solmin')
 			E_min = 1.0
 			E_max = 1.0e3

@@ -123,86 +123,86 @@
 
 <!-- SuperK -->
 	<NeutrinoExperiment name="Super-Kamiokande">
-		<status name='status'> 0 </status>
+		<status name='status'> 1 </status>
 		<simulation filename='../Simulation/SuperK/data/output/SK/combined.hdf5'> </simulation>
 		<exposure> 7.685 </exposure> <!-- 14.582 years of SK up to 2017 paper, 7.685 years of SK123 and 6.897 of SK4-->
  		<systematic name='SKEnergyScale'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.03 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
  		<systematic name='FCPCSeparation'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.06 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
  		<systematic name='FCReduction'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.003 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
  		<systematic name='FiducialVolume'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.02 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
 		<systematic name='PCReduction'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.035 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
  		<systematic name='SubGeV2ringPi0'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.06 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
  		<systematic name='SubGeV1ringPi0'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.25 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
  		<systematic name='MultiRing_NuNuBarSeparation'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.06 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
  		<systematic name='MultiRing_EOtherSeparation'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.06 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
  		<systematic name='PC_StopThruSeparation'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.25 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
  		<systematic name='Pi0_RingSeparation'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.02 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
  		<systematic name='E_RingSeparation'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.06 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
  		<systematic name='Mu_RingSeparation'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.03 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
  		<systematic name='SingleRing_PID'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.0035 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
  		<systematic name='MultiRing_PID'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.04 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
 		<systematic name='DecayETagging'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.13 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
@@ -211,91 +211,91 @@
 
  <!-- SuperK with H-neutron tagging -->
 	<NeutrinoExperiment name="SuperK_Htag">
-		<status name='status'> 0 </status>
+		<status name='status'> 1 </status>
 		<simulation filename='../Simulation/SuperK/data/output/SK_Htag/combined.hdf5'> </simulation>
 		<exposure> 6.897 </exposure>  <!-- years of SK4 up to 2017 paper and ~8 until full Gd-phase -->
 		<systematic name='SKIV_SKEnergyScale'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.02 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
  		<systematic name='SKIV_FCPCSeparation'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.0002 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
  		<systematic name='SKIV_FiducialVolume'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.02 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
  		<systematic name='SKIV_FCReduction'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.013 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
  		<systematic name='SKIV_PCReduction'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.01 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
  		<systematic name='SKIV_SubGeV2ringPi0'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.06 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
  		<systematic name='SKIV_SubGeV1ringPi0'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.15 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
  		<systematic name='SKIV_MultiRing_NuNuBarSeparation'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.03 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
  		<systematic name='SKIV_MultiRing_EOtherSeparation'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.04 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
  		<systematic name='SKIV_PC_StopThruSeparation'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.2 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
  		<systematic name='SKIV_Pi0_RingSeparation'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.02 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
  		<systematic name='SKIV_E_RingSeparation'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.02 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
  		<systematic name='SKIV_Mu_RingSeparation'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.02 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
  		<systematic name='SKIV_SingleRing_PID'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.0035 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
  		<systematic name='SKIV_MultiRing_PID'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.04 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
 		<systematic name='SKIV_DecayETagging'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.13 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
  		<systematic name='SKIV_NeutronTagging'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.15 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
@@ -304,11 +304,11 @@
 
  <!-- SuperK-Gd -->
 	<NeutrinoExperiment name="SuperK-Gd">
-		<status name='status'> 0 </status>
+		<status name='status'> 1 </status>
 		<simulation filename='../Simulation/SuperK/data/output/SK_Gdtag/combined.hdf5'> </simulation>
 		<exposure> 5 </exposure>  <!-- years -->
 		<systematic name='SKGd_SKEnergyScale'>
-			<status> 0 </status>
+			<status> 1 </status>
 			<sigma> 0.02 </sigma>
 			<nominal> 1.0 </nominal>
 		</systematic>
@@ -397,9 +397,9 @@
 
 <!-- IceCube Upgrade -->
 	<NeutrinoExperiment name="IceCube-Upgrade">
-		<status name='status'> 0 </status>
+		<status name='status'> 1 </status>
 		<simulation filename='../Simulation/IceCubeUpgrade/data/neutrino_mc.csv'> </simulation>
-		<exposure> 1 </exposure>  <!-- years -->
+		<exposure> 5 </exposure>  <!-- years -->
 		<systematic name='IceAbsorption'>
 			<status> 1 </status>
 			<sigma> 0.1 </sigma>
@@ -440,7 +440,7 @@
 
 <!-- ORCA -->
 	<NeutrinoExperiment name="ORCA">
-		<status name='status'> 1 </status>
+		<status name='status'> 0 </status>
 		<simulation filename='../Simulation/ORCA/ORCA.csv'> </simulation>
 		<exposure> 3 </exposure>  <!-- years -->
 		<systematic name='ORCAEnergyScale'>
@@ -485,10 +485,10 @@
 				<best> 0.022 </best>
 			</Sin2Theta13>
 			<Sin2Theta23>
-				<points> 20 </points>
-				<min> 0.305 </min>
-				<max> 0.705 </max>
-				<best> 0.517 </best>
+				<points> 11 </points>
+				<min> 0.37 </min>
+				<max> 0.62 </max>
+				<best> 0.571 </best>
 			</Sin2Theta23>
 			<dCP>
 				<points> 1 </points>
@@ -503,9 +503,9 @@
 				<best> 7.42e-5 </best>
 			</Dm221>
 			<Dm231>
-				<points> 21 </points>
-				<min> 2.e-3 </min>
-				<max> 3.e-3 </max>
+				<points> 9 </points>
+				<min> 2.3e-3 </min>
+				<max> 2.7e-3 </max>
 				<best> 2.5e-3 </best>
 			</Dm231>
 			<Ordering>
@@ -517,3 +517,4 @@
 	</NeutrinoPhysics>
 
 </Analysis>
+

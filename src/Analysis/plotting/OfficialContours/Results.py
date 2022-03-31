@@ -74,8 +74,8 @@ class results:
 			if self.contour:
 				x = np.r_[x, x[0]]
 				y = np.r_[y, y[0]]
-			ax.plot(x, y, self.line[i], label=self.label[i])
-		ax.legend()
+			ax.plot(x, y, self.line[i], label=self.label[i], alpha=0.4)
+		ax.legend(loc='upper left')
 		plt.show()
 
 
