@@ -104,6 +104,8 @@ def cornerPlot(x,y,X2,title=''):
 	newX = zoom(X.astype('float64'), pw)
 	newY = zoom(Y.astype('float64'), pw)
 	newChi2 = zoom(Chi2.astype('float64'), pw)
+	colors = ['darkorange','fuchsia','c','g','r']
+	levels2d = np.array([4.61, 6.63]) # 90%, 99%
 	dele = ax.contour(newX,newY,newChi2, levels=levels2d, colors=colors) #, label='SK2020 results from this work')
 	h1,_ = dele.legend_elements()
 	ax.set_xlim(0.25,0.7)
@@ -115,8 +117,8 @@ def cornerPlot(x,y,X2,title=''):
 	axUp.set_title(title)
 
 	# if check23 and check31:
-	if True:
-	# if False:
+	# if True:
+	if False:
 		cont = results()
 		# cont.SK2017_theta23_dm31()
 		cont.SK2020_theta23_dm31()

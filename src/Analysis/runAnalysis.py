@@ -5,6 +5,7 @@ import math
 from math import asin, sqrt
 from SimReader import Reader
 import multiprocessing
+import emcee
 from xmlReader import parseXML
 from itertools import product
 from Sensitivity import sensitivity
@@ -19,6 +20,7 @@ parser.add_argument('-lp', '--list_of_points', nargs='?', type=list, default=0, 
 parser.add_argument('-o', '--outfile', nargs='?', type=str, default='out.dat', help='Analysis output file.')
 parser.add_argument("--multi", dest='multiproc', default=False, action='store_true', help='Option for running the analysis with multiprocessing (recommended locally).') 
 parser.add_argument("--cluster", dest='cluster', default=False, action='store_true', help='Option for submitting jobs to a cluster.')
+parser.add_argument("--mcmc", dest='mcmc', default=False, action='store_true', help='Option for sampling parameter space using Markov Chain Monte Carlo.')
 args = parser.parse_args()
 
 # Setup running flags
@@ -26,6 +28,7 @@ args = parser.parse_args()
 # mcmc = args.mcmc
 multiproc = args.multiproc
 cluster = args.cluster
+markov = args.mcmc
 if cluster:
 	if args.point is None:
 		point=0
@@ -90,30 +93,44 @@ if an.physics[0] == 'Three Flavour':
 
 	if cluster:
 		element = list(parametersGrid)[point]
-		print(f'Processing {element}')
-		sensitivity(an, *element, mcList, outfile)
+		sensitivity(element[:-1], element[-1], an, mcList, outfile)
 
 	elif multiproc:
 		cores = multiprocessing.cpu_count()
 		if an.NoSyst:
 			cores = 3*cores
 			print('Analyzing with no systematics')
-		processes = []
-		jj = 0
-		for element in parametersGrid:
-			p = multiprocessing.Process(target=sensitivity,args=(an, *element, mcList, outfile))
-			if __name__ == "__main__":
-				processes.append(p)
-				p.start()
-				jj = jj + 1
-				print(f'{element} process started')
-				if jj%cores==0:
-					for i,p in enumerate(processes):
-						p.join()
-						processes = []
 
+		if markov:
+			# nwalkers = 20
+			# ndim = len(an.OscParametersEdges) - 1
+			# nsteps = 5
+			# initial = np.zeros((nwalkers,ndim))
+
+			# for i,par in enumerate(an.OscParametersEdges.values()):
+			# 	param = list(an.OscParametersEdges.keys())[i]
+			# 	if param=='Ordering':
+			# 		pass
+			# 	else:
+			# 		mu = an.OscParametersBest[param]
+			# 		sigma = min(abs(par[0]-mu),abs(par[1]-mu))
+			# 		print(mu,sigma)
+			# 		initial[:,i] = np.abs(np.random.normal(mu,sigma,nwalkers))
+			# mo = np.repeat(an.OscParametersBest['Ordering'], nwalkers)
+			# mo = an.OscParametersBest['Ordering']
+
+			# with multiprocessing.Pool(processes=cores) as pool:
+			# 	sampler = emcee.EnsembleSampler(nwalkers, ndim, sensitivity, args=[mo, an, mcList, outfile], pool=pool)
+			# 	sampler.run_mcmc(initial, nsteps, progress=True, skip_initial_state_check=True)
+			pass
+
+		else:
+			with multiprocessing.Pool(processes=cores) as pool:
+				for element in parametersGrid:
+					res = pool.apply_async(sensitivity, args=(element[:-1], element[-1], an, mcList, outfile))
+				pool.close()
+				pool.join()				
 
 	else:
 		for element in parametersGrid:
-			print(f'Processing {element}')
-			sensitivity(an, *element, mcList, outfile)
+			sensitivity(element[:-1], element[-1], an, mcList, outfile)

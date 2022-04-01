@@ -13,6 +13,42 @@ def Chi2StatsCombined(analysis, Obs, experiments):
 
 	return X2
 
+# def AnalyticPriors(analysis, Obs, experiments):
+# 	priors = [0] * len(analysis.SystPrior)
+# 	A = [0] * len(analysis.SystPrior)
+# 	B = [0] * len(analysis.SystPrior)
+# 	A = np.zeros(len(analysis.SystPrior))
+# 	B = np.zeros((len(analysis.SystPrior),len(analysis.SystPrior)))
+
+# 	# Experiments
+# 	for exp in experiments.values():
+
+# 		# Binned statistics
+# 		E = exp.weightOscBF_binned
+# 		O = Obs[exp.Experiment]
+# 		OmE = O-E
+# 		EmO = - OmE
+
+# 		#Systematics
+# 		usedSysts = []
+# 		dfdx = [0] * len(analysis.SystPrior)
+# 		thisSyst = analysis.Systematics[exp.Experiment] + analysis.Systematics[exp.Source] + analysis.Systematics[exp.Detector]
+# 		for sys in thisSyst:
+# 			index = np.where(analysis.SystematicsList==sys)[0]
+# 			j = index[0]
+# 			dfdx[j] = globals()['Diff_'+sys](analysis.SystNominalList[j],exp)
+# 			usedSysts.append(j)
+
+# 		# Compute Jacobian of Chi^2
+# 		for i in usedSysts:
+# 			A[i] += np.sum(EmO * dfdx[i])
+# 			B[i] += np.sum(( dfdx[i] * dfdx)) 
+# 			B[i,i] += 1/analysis.SystSigmaList[i]**2
+
+# 	print(np.around(A))
+# 	print(np.around(B))
+# 	print(analysis.SystNominalList - np.matmul(np.linalg.inv(B),A.T))
+
 
 def AnalyticPriorsBounds(analysis, Obs, experiments):
 	priors = [0] * len(analysis.SystPrior)

@@ -1,9 +1,14 @@
 from scipy.optimize import minimize
-from merger import Chi2StatsCombined, Chi2SystsCombined, AnalyticPriorsBounds
+from merger import Chi2StatsCombined, Chi2SystsCombined, AnalyticPriorsBounds # , AnalyticPriors
 import numpy as np
 
-def sensitivity(analysis, t12, t13, t23, dm21, dm31, dcp, Ordering, experiments, outfile):
-	
+# def sensitivity(t12, t13, t23, dm21, dm31, dcp, Ordering, analysis, experiments, outfile):
+def sensitivity(x, Ordering, analysis, experiments, outfile):
+	t12, t13, t23, dm21, dm31, dcp = x
+	print(f'{t12} {t13} {t23} {dm21} {dm31} {dcp} {Ordering} process started')
+	if t23>1 or t23<0:
+		return -9999.
+
 	# Compute expectation at BF point
 	Obs = {}
 	for exp in experiments:
@@ -18,11 +23,12 @@ def sensitivity(analysis, t12, t13, t23, dm21, dm31, dcp, Ordering, experiments,
 			f.flush()
 
 		# print(statX2)
-		return statX2
+		return - 0.5 * statX2
 
 	else:
 		# Analytic estimate for priors and bounds
 		analysis.SystPrior, bounds = AnalyticPriorsBounds(analysis, Obs, experiments)
+		# AnalyticPriors(analysis, Obs, experiments)
 
 		# Combined chi^2 minimization
 		tol = max(1e-4,np.sqrt(statX2)*1e-4)
@@ -36,7 +42,7 @@ def sensitivity(analysis, t12, t13, t23, dm21, dm31, dcp, Ordering, experiments,
 
 		# print(res.fun)
 		
-		return res.fun
+		return - 0.5 * res.fun
 
 
 
