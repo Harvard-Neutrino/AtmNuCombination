@@ -5,7 +5,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from params import *
 import util
-
+ 
 write = True
 
 tracks = dgt.Digitalizer(input_track, input_scale)

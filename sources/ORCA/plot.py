@@ -94,6 +94,43 @@ def plot_zenith_errors():
 
 # plot_zenith_errors()
 
+# checks if digitalizer is working properly
+def check_digitalizer_track():
+    # first load the digitalized data
+    tracks = dgt.Digitalizer(input_track, input_scale)
+    cascades = dgt.Digitalizer(input_cascade, input_scale)
+
+    tracks.set_palette(0, -3, 100)
+    cascades.set_palette(0, -3, 100)
+
+    tracks.digitalize(22, 22)
+    cascades.digitalize(22, 22)
+
+    x = np.logspace(np.log10(1.85), np.log10(53), 23)
+    y = np.logspace(np.log10(1.85), np.log10(53), 23)
+    X, Y = np.meshgrid(x, y)
+
+    Z = tracks.extracted
+    Z[11][14] = 0.1
+    for i in range(22):
+        currcol = Z[i][:]
+        tot = 0
+        for j in range(22):
+            tot += currcol[j]
+        for j in range(22):
+            currcol[j] = currcol[j] / tot
+    im = plt.pcolor(X, Y, Z.T, cmap = "gray_r", norm = LogNorm())
+    plt.xlim(1.85, 53)
+    plt.ylim(1.85, 53)
+    plt.colorbar(im, orientation = "vertical", format = LogFormatterMathtext())
+    plt.xscale("log")
+    plt.yscale("log")
+    plt.show()
+    # plt.savefig("./RecoPlots/ORCA_Reco_track_probability")
+    plt.close()
+
+# check_digitalizer_track()
+
 # plot the fake ORCA MC energy reco track normalized prob
 def plot_energy_reco_track_probability():
     track_mask = pid == 1
@@ -251,7 +288,7 @@ def plot_zenith_reco():
     plt.savefig("./RecoPlots/ORCA_coszen_Reco")
     plt.close()
 
-plot_zenith_reco()
+# plot_zenith_reco()
 
 def plot_IC_zenith_reco():
     IC_input_file = pd.read_csv("neutrino_mc.csv")
