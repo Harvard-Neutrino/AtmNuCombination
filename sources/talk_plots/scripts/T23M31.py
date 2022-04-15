@@ -5,23 +5,23 @@ import matplotlib.pyplot as plt
 import scipy as scp
 import scipy.interpolate
 
-matplotlib.rcParams.update({'font.size': 16})
+matplotlib.rcParams.update({'font.size': 23})
 matplotlib.rcParams.update({'lines.linewidth': 3})
 matplotlib.rcParams.update({'patch.linewidth': 3})
 
 # first extract the data
-with_sys = pd.read_csv("./data/XiDM31_T23_Sys.dat", sep = " ")
-no_sys = pd.read_csv("./data/XiDM31_T23_Nosys.dat", sep = " ")
+with_sys = pd.read_csv("./../data/XiDM31_T23_Sys.dat", sep = " ")
+no_sys = pd.read_csv("./../data/XiDM31_T23_Nosys.dat", sep = " ")
 
 def plot_t23_dm31(incsys):
 	if incsys:
 		sys = with_sys
 		plot_name = "Chi-Sq Contour (NO, with systematic))"
-		savename = "T23DM31_sys"
+		savename = "./../plots/T23DM31_sys"
 	else:
 		sys = no_sys
 		plot_name = "Chi-Sq Contour (NO, without systematic))"
-		savename = "T23DM31_nosys"
+		savename = "./../plots/T23DM31_nosys"
 	theta23 = sys["Theta23"]
 	dm31 = sys["DM31"]
 	chisq = sys["ChiSq"]
@@ -42,7 +42,7 @@ def plot_t23_dm31(incsys):
 	newz = Zinterp(newx, newy)
 	XX, YY = np.meshgrid(newx, newy)
 
-	fig, ax  = plt.subplots(figsize=(10,8))
+	fig, ax  = plt.subplots(figsize=(13,11))
 	fig.suptitle(plot_name)
 	ax.set_xlabel(r"$\sin^2{\theta_{23}}$")
 	ax.set_ylabel(r"$\Delta m^2_{31}$")
@@ -54,8 +54,8 @@ def plot_t23_dm31(incsys):
 
 def plot_t23_dm31_together():
 
-	plot_name = "Chi-Sq Contour (NO))"
-	savename = "T23DM31_together"
+	plot_name = "Sensitivity w/ and w/o Systematics"
+	savename = "./../plots/T23DM31_together"
 
 	sys1 = with_sys
 	sys2 = no_sys
@@ -91,14 +91,15 @@ def plot_t23_dm31_together():
 	fig.suptitle(plot_name)
 	ax.set_xlabel(r"$\sin^2{\theta_{23}}$")
 	ax.set_ylabel(r"$\Delta m^2_{31}$ [eV^2]")
-	colors = ['orange', 'cyan', 'darkgreen']
-	axim = ax.contour(XX,YY,newz1,levels=[4.605, 5.991, 9.21],color = colors, \
+	colors = ['sienna', 'lawngreen', 'olivedrab']
+	axim = ax.contour(XX,YY,newz1,levels=[4.605, 5.991, 9.21],colors = colors, \
 									linewidths = 1.2, label = "with systematics")
 	axim2 = ax.contour(XX,YY,newz2, linestyles = "dashed", levels=[4.605, 5.991, 9.21], \
-										color = colors, linewidths = 1.2, label = "without systematics")
+										colors = colors, linewidths = 1.2, label = "without systematics")
 	h1,_ = axim.legend_elements()
 	ax.legend([h1[0], h1[1], h1[2]], [r'SK+SKGd(5yrs)+ICUp(5yrs) @ 90% CL',\
 	r'SK+SKGd(5yrs)+ICUp(5yrs) @ 95% CL',  r'SK+SKGd(5yrs)+ICUp(5yrs) @ 99% CL'])
+	ax.ticklabel_format(style = 'sci', scilimits = (-2,1))
 	# ax.legend()
 	# plt.show()
 	fig.savefig(savename, bbox_inches="tight")

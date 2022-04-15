@@ -3,6 +3,7 @@ import numpy as np
 from matplotlib.colors import LogNorm
 from matplotlib.ticker import LogFormatterMathtext
 from scipy.optimize import curve_fit
+import math
 
 import digitalizer as dgt
 import util
@@ -52,9 +53,9 @@ def plot_mig_hist(binnum, top):
         plt.savefig("./MigMatPlots/Cascades/CascadeMigMatBin{}.png".format(binnum))
     plt.close()
 
-# for i in range(22):
-#     plot_mig_hist(i, 0)
-#     plot_mig_hist(i, 1)
+for i in range(22):
+    plot_mig_hist(i, 0)
+    plot_mig_hist(i, 1)
 
 # plots the zenith error line plot reproduction from ORCA paper
 def plot_zenith_errors():
@@ -147,16 +148,18 @@ def plot_energy_reco_track_probability():
         for j in range(22):
             currcol[j] = currcol[j] / tot
     im = plt.pcolor(X, Y, Z.T, cmap = "gray_r", norm = LogNorm())
-    plt.xlim(2, 53)
-    plt.ylim(2, 53)
+
+    plt.xlim(1.85, 53)
+    plt.ylim(1.85, 53)
     plt.colorbar(im, orientation = "vertical", format = LogFormatterMathtext())
     plt.xscale("log")
     plt.yscale("log")
+    plt.legend()
     # plt.show()
     plt.savefig("./RecoPlots/ORCA_Reco_track_probability")
     plt.close()
 
-plot_energy_reco_track_probability()
+# plot_energy_reco_track_probability()
 
 # plot the IC MC energy reco track normalized prob
 def plot_IC_energy_reco_track_probability():
@@ -191,6 +194,7 @@ def plot_IC_energy_reco_track_probability():
 
 # plot_IC_energy_reco_track_probability()
 
+################### this one is changed right now ######################
 def plot_energy_reco_cascade_probability():
     cas_mask = pid == 0
     x = np.logspace(np.log10(1.85), np.log10(53), 23)
@@ -205,17 +209,43 @@ def plot_energy_reco_cascade_probability():
             tot += currcol[j]
         for j in range(22):
             currcol[j] = currcol[j] / tot
-    im = plt.pcolor(X, Y, Z.T, cmap = "gray_r", norm = LogNorm())
-    plt.xlim(2, 53)
-    plt.ylim(2, 53)
-    plt.colorbar(im, orientation = "vertical", format = LogFormatterMathtext())
+    # im = plt.pcolor(X, Y, Z.T, cmap = "gray_r", norm = LogNorm())
+
+    top15 = []
+    top85 = []
+    for i in range(len(x) - 1):
+        ls_reco = []
+        low = x[i]
+        hi = x[i + 1]
+        e_reco_selected = np.array(e_reco[cas_mask][:])
+        for j in range(len(e_true[cas_mask])):
+            if e_reco_selected[j] >= low and e_reco_selected[j] < hi:
+                ls_reco.append(e_reco_selected[j])
+        ls_reco.sort()
+        length = len(ls_reco)
+        # print(ls_reco)
+        range15 = math.ceil(length * 15 / 100)
+        # print(range15)
+        range85 = math.floor(length * 85 / 100)
+        # print(range85)
+        top15.append(ls_reco[range15])
+        top85.append(ls_reco[range85])
+
+    plt.xlim(1.85, 53)
+    plt.ylim(1.85, 53)
+    # plt.colorbar(im, orientation = "vertical", format = LogFormatterMathtext())
+    centers = np.array([0.5 * (x[i] + x[i+1]) for i in range(len(x)-1)])
+    plt.plot(centers, top15, color = 'red', label = "15%")
+    plt.plot(centers, top85, color = 'red', label = "85%")
     plt.xscale("log")
     plt.yscale("log")
-    # plt.show()
-    plt.savefig("./RecoPlots/ORCA_Reco_cascade_probability")
+    plt.legend()
+    plt.show()
+    # plt.savefig("./RecoPlots/ORCA_Reco_cascade_15+85")
     plt.close()
+#######################################################################
 
-plot_energy_reco_cascade_probability()
+# plot_energy_reco_cascade_probability()
 
 def plot_IC_energy_reco_cascade_probability():
     IC_input_file = pd.read_csv("neutrino_mc.csv")
@@ -274,7 +304,7 @@ def plot_energy_reco_intermediate_probability():
     plt.savefig("./RecoPlots/ORCA_Reco_intermediate_probability")
     plt.close()
 
-plot_energy_reco_intermediate_probability()
+# plot_energy_reco_intermediate_probability()
 
 def plot_zenith_reco():
     x = np.linspace(-1, 1, 20)
