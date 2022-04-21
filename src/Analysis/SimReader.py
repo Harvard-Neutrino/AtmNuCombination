@@ -232,10 +232,6 @@ class Reader:
 			self.Norm = Time * meter_to_cm_sq # factor
 			self.NumberOfSamples = 3
 			self.NumberOfEvents = self.nuPDG.size
-			self.EReco = self.EReco * (np.random.normal(0.9, 0.5, self.NumberOfEvents))
-			# print(np.sum(self.Weight)*self.Norm)
-			# matplotlib.pyplot.hist2d(np.log10(self.ETrue), np.log10(self.EReco), bins=100, range=[[0, 2], [0, 2]])
-			# matplotlib.pyplot.show()
 
 		self.FewEntries = []
 
