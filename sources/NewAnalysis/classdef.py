@@ -50,11 +50,15 @@ class Simulation:
 		self.pid = input_file["pid"]
 		self.currents = input_file["current_type"]
 		if includeORCA:
+			self.file = ORCAMC
 			self.W_mc = ORCAMC["weight"]
+			self.E_tr = ORCAMC["true_energy"]
+			self.C_tr = ORCAMC["true_zenith"]
 			self.E_re = ORCAMC["reco_energy"]
 			self.C_re = ORCAMC["reco_zenith"]
-			self.pid = ORCAMC["pid"]
 			self.pdg = ORCAMC["pdg"]
+			self.pid = ORCAMC["pid"]
+			self.currents = ORCAMC["current_type"]
 
 
 class Flux: 
