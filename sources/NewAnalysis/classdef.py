@@ -39,7 +39,7 @@ class Systematics:
 		self.Down = direction_down
 
 class Simulation:
-	def __init__(self, input_file):
+	def __init__(self, input_file, ORCA = includeORCA):
 		self.file = input_file
 		self.W_mc = input_file["weight"]
 		self.E_tr = input_file["true_energy"]
@@ -49,7 +49,7 @@ class Simulation:
 		self.pdg = input_file["pdg"]
 		self.pid = input_file["pid"]
 		self.currents = input_file["current_type"]
-		if includeORCA:
+		if ORCA:
 			self.W_mc = ORCAMC["weight"]
 			self.E_re = ORCAMC["reco_energy"]
 			self.C_re = ORCAMC["reco_zenith"]
