@@ -6,7 +6,7 @@ import pandas as pd
 
 # gaussian function
 def gaussian(x, mu, sigma, A):
-    return (A / (sigma * np.sqrt(2 * np.pi)) * np.exp(-1.0 * (x - mu)**2 / (2 * sigma**2)))
+    return (A / (sigma * np.sqrt(2 * np.pi)) * np.exp(-1.0 * (np.log(x) - mu)**2 / (2 * sigma**2)))
 
 # fit with the gaussian function
 def gaus_fit(data_entries, bins, current_binnum):

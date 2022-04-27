@@ -42,10 +42,10 @@ class Generator:
 				rand = np.random.randint(2)
 				if rand == 0:
 					gaus = self.G_E_ca
-				elif rand == 1:
+				elif rand >= 1: # this is a pessimistic result
 					gaus = self.G_E_tr
 			# set bounds on IC energy
-			if true_energy > 53 or true_energy < 1.85:
+			if true_energy >= 53 or true_energy <= 1.85:
 				return -1
 
 			# find which E_true_ORCA bin this E_true belongs to
@@ -62,19 +62,21 @@ class Generator:
 			# now generate a random reco number from t
 			sigma, mu, A = 0, 0, 1
 			[sigma, mu, A] = gaus[bin_num]
+			sigma = np.abs(sigma)
+			mu = np.abs(mu)
 			if (top == 1 or top == 2) and bin_num >= 12 and bin_num < 15: # manually set truncate
 				while True:
-					random_E_reco = np.random.normal(sigma, mu)
+					random_E_reco = np.random.lognormal(sigma, mu)
 					if random_E_reco >= 4:
 						break
 			elif (top == 1 or top == 2) and bin_num >= 15:
 				while True:
-					random_E_reco = np.random.normal(sigma, mu)
+					random_E_reco = np.random.lognormal(sigma, mu)
 					if random_E_reco >= 5:
 						break
 
 			else:
-				random_E_reco = np.random.normal(sigma, mu)
+				random_E_reco = np.random.lognormal(sigma, mu)
 
 			# return this fake ORCA MC energy
 			return random_E_reco
@@ -166,6 +168,8 @@ class Generator:
 		for i in range(len(self.MC["true_energy"])):
 			# first we should actually generate the new topogy, then the energy based on this topology
 			# assign random pid's!
+			if i % 100 == 0:
+				print(i)
 			ORCA_pid = assign_topology(self.MC["pdg"][i] / np.abs(self.MC["pdg"][i]), self.MC["current_type"][i], \
 										self.MC["pdg"][i], self.MC["true_energy"][i]) 
 

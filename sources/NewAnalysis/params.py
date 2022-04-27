@@ -5,7 +5,7 @@ import nuflux
 import sys
 from scipy.optimize import minimize
 
-dir_name = "./0222_ORCA_coarse/"
+dir_name = "./0426ORCAfit/"
 
 includeORCA = True
 

@@ -3,6 +3,7 @@ import numpy as np
 from matplotlib.colors import LogNorm
 from matplotlib.ticker import LogFormatterMathtext
 from scipy.optimize import curve_fit
+import math
 
 import digitalizer as dgt
 import util
@@ -17,6 +18,13 @@ e_true = input_file["true_energy"]
 e_reco = input_file["reco_energy"]
 zen_true = input_file["true_zenith"]
 zen_reco = input_file["reco_zenith"]
+
+# for i in range(len(pid)):
+#     if input_file["weight"][i] != 0:
+#         if zen_reco[i] == -1:
+#             print(i, " zen")
+#         if e_reco[i] == -1:
+#             print(i, " e")
 
 def plot_mig_hist(binnum, top):
 
@@ -46,15 +54,16 @@ def plot_mig_hist(binnum, top):
     # # Plot the histogram and the fitted function.
     plt.bar(bins_centers, data_entries, width=x_bins[1] - x_bins[0], color='navy', label=r'Histogram entries')
     plt.plot(xspace, gaussian(xspace, *popt), color='darkorange', linewidth=2.5, label=r'Fitted function')
+    plt.xscale('log')
     if top == 1:
         plt.savefig("./MigMatPlots/Tracks/TrackMigMatBin{}.png".format(binnum))
     if top == 0:
         plt.savefig("./MigMatPlots/Cascades/CascadeMigMatBin{}.png".format(binnum))
     plt.close()
 
-# for i in range(22):
-#     plot_mig_hist(i, 0)
-#     plot_mig_hist(i, 1)
+for i in range(22):
+    plot_mig_hist(i, 0)
+    plot_mig_hist(i, 1)
 
 # plots the zenith error line plot reproduction from ORCA paper
 def plot_zenith_errors():
@@ -94,6 +103,43 @@ def plot_zenith_errors():
 
 # plot_zenith_errors()
 
+# checks if digitalizer is working properly
+def check_digitalizer_track():
+    # first load the digitalized data
+    tracks = dgt.Digitalizer(input_track, input_scale)
+    cascades = dgt.Digitalizer(input_cascade, input_scale)
+
+    tracks.set_palette(0, -3, 100)
+    cascades.set_palette(0, -3, 100)
+
+    tracks.digitalize(22, 22)
+    cascades.digitalize(22, 22)
+
+    x = np.logspace(np.log10(1.85), np.log10(53), 23)
+    y = np.logspace(np.log10(1.85), np.log10(53), 23)
+    X, Y = np.meshgrid(x, y)
+
+    Z = tracks.extracted
+    Z[11][14] = 0.1
+    for i in range(22):
+        currcol = Z[i][:]
+        tot = 0
+        for j in range(22):
+            tot += currcol[j]
+        for j in range(22):
+            currcol[j] = currcol[j] / tot
+    im = plt.pcolor(X, Y, Z.T, cmap = "gray_r", norm = LogNorm())
+    plt.xlim(1.85, 53)
+    plt.ylim(1.85, 53)
+    plt.colorbar(im, orientation = "vertical", format = LogFormatterMathtext())
+    plt.xscale("log")
+    plt.yscale("log")
+    plt.show()
+    # plt.savefig("./RecoPlots/ORCA_Reco_track_probability")
+    plt.close()
+
+# check_digitalizer_track()
+
 # plot the fake ORCA MC energy reco track normalized prob
 def plot_energy_reco_track_probability():
     track_mask = pid == 1
@@ -110,16 +156,18 @@ def plot_energy_reco_track_probability():
         for j in range(22):
             currcol[j] = currcol[j] / tot
     im = plt.pcolor(X, Y, Z.T, cmap = "gray_r", norm = LogNorm())
-    plt.xlim(2, 53)
-    plt.ylim(2, 53)
+
+    plt.xlim(1.85, 53)
+    plt.ylim(1.85, 53)
     plt.colorbar(im, orientation = "vertical", format = LogFormatterMathtext())
     plt.xscale("log")
     plt.yscale("log")
+    plt.legend()
     # plt.show()
     plt.savefig("./RecoPlots/ORCA_Reco_track_probability")
     plt.close()
 
-plot_energy_reco_track_probability()
+# plot_energy_reco_track_probability()
 
 # plot the IC MC energy reco track normalized prob
 def plot_IC_energy_reco_track_probability():
@@ -154,6 +202,7 @@ def plot_IC_energy_reco_track_probability():
 
 # plot_IC_energy_reco_track_probability()
 
+################### this one is changed right now ######################
 def plot_energy_reco_cascade_probability():
     cas_mask = pid == 0
     x = np.logspace(np.log10(1.85), np.log10(53), 23)
@@ -168,17 +217,43 @@ def plot_energy_reco_cascade_probability():
             tot += currcol[j]
         for j in range(22):
             currcol[j] = currcol[j] / tot
-    im = plt.pcolor(X, Y, Z.T, cmap = "gray_r", norm = LogNorm())
-    plt.xlim(2, 53)
-    plt.ylim(2, 53)
-    plt.colorbar(im, orientation = "vertical", format = LogFormatterMathtext())
+    # im = plt.pcolor(X, Y, Z.T, cmap = "gray_r", norm = LogNorm())
+
+    top15 = []
+    top85 = []
+    for i in range(len(x) - 1):
+        ls_reco = []
+        low = x[i]
+        hi = x[i + 1]
+        e_reco_selected = np.array(e_reco[cas_mask][:])
+        for j in range(len(e_true[cas_mask])):
+            if e_reco_selected[j] >= low and e_reco_selected[j] < hi:
+                ls_reco.append(e_reco_selected[j])
+        ls_reco.sort()
+        length = len(ls_reco)
+        # print(ls_reco)
+        range15 = math.ceil(length * 15 / 100)
+        # print(range15)
+        range85 = math.floor(length * 85 / 100)
+        # print(range85)
+        top15.append(ls_reco[range15])
+        top85.append(ls_reco[range85])
+
+    plt.xlim(1.85, 53)
+    plt.ylim(1.85, 53)
+    # plt.colorbar(im, orientation = "vertical", format = LogFormatterMathtext())
+    centers = np.array([0.5 * (x[i] + x[i+1]) for i in range(len(x)-1)])
+    plt.plot(centers, top15, color = 'red', label = "15%")
+    plt.plot(centers, top85, color = 'red', label = "85%")
     plt.xscale("log")
     plt.yscale("log")
-    # plt.show()
-    plt.savefig("./RecoPlots/ORCA_Reco_cascade_probability")
+    plt.legend()
+    plt.show()
+    # plt.savefig("./RecoPlots/ORCA_Reco_cascade_15+85")
     plt.close()
+#######################################################################
 
-plot_energy_reco_cascade_probability()
+# plot_energy_reco_cascade_probability()
 
 def plot_IC_energy_reco_cascade_probability():
     IC_input_file = pd.read_csv("neutrino_mc.csv")
@@ -237,7 +312,7 @@ def plot_energy_reco_intermediate_probability():
     plt.savefig("./RecoPlots/ORCA_Reco_intermediate_probability")
     plt.close()
 
-plot_energy_reco_intermediate_probability()
+# plot_energy_reco_intermediate_probability()
 
 def plot_zenith_reco():
     x = np.linspace(-1, 1, 20)
@@ -251,7 +326,7 @@ def plot_zenith_reco():
     plt.savefig("./RecoPlots/ORCA_coszen_Reco")
     plt.close()
 
-plot_zenith_reco()
+# plot_zenith_reco()
 
 def plot_IC_zenith_reco():
     IC_input_file = pd.read_csv("neutrino_mc.csv")
