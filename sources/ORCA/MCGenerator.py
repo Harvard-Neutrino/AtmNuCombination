@@ -4,6 +4,8 @@ from Effective import ICEffectiveAnalysis as ICEff
 from Effective import ORCAEffectiveAnalysis as ORCAEff
 import util
 from scipy.stats import truncnorm
+import sys
+import math
 
 class Generator:
 	def __init__(self, input_mc_file, input_energy_gaus_track, input_energy_gaus_cas, ORCA_bins):
@@ -39,13 +41,13 @@ class Generator:
 					# print(sigma_tr, sigma_ca, sigma_inter)
 					# print(mu_tr, mu_ca, mu_inter)
 					# print(A_tr, A_ca, A_inter)
-				rand = np.random.randint(2)
+				rand = np.random.randint(10)
 				if rand == 0:
 					gaus = self.G_E_ca
 				elif rand >= 1: # this is a pessimistic result
 					gaus = self.G_E_tr
 			# set bounds on IC energy
-			if true_energy >= 53 or true_energy <= 1.85:
+			if true_energy >= 54 or true_energy <= 1.85:
 				return -1
 
 			# find which E_true_ORCA bin this E_true belongs to
@@ -84,7 +86,7 @@ class Generator:
 		# now define function to find reco zenith
 		def find_reco_zenith(exp, true_energy):
 			# bounds on IC energy
-			true_energy = min(53, true_energy)
+			true_energy = min(54, true_energy)
 			true_energy = max(1.85, true_energy)
 
 			# find sigma
@@ -164,12 +166,24 @@ class Generator:
 		all_zen_reco = []
 		all_Wmc = []
 		all_pid = []
+		all_mask = []
 		# now generate a fake ORCA MC energy and ORCA MC weight for all the events
 		for i in range(len(self.MC["true_energy"])):
+			n = len(self.MC["true_energy"]) / 1000
+			j = math.floor(i / 1000)
+			k = (j + 1) / n
+			# print the progress bar
+			if i % 1000 == 0:
+				print("\r[%-50s] %d%%" % ('='*int(50*k), 100*k), end = '\r', flush = True)
+
+			if self.MC["true_energy"][i] >= 54 or self.MC["true_energy"][i] <= 1.85:
+				all_mask.append(False)
+				continue
+
 			# first we should actually generate the new topogy, then the energy based on this topology
 			# assign random pid's!
-			if i % 100 == 0:
-				print(i)
+			# if i % 1000 == 0:
+			# 	print(i)
 			ORCA_pid = assign_topology(self.MC["pdg"][i] / np.abs(self.MC["pdg"][i]), self.MC["current_type"][i], \
 										self.MC["pdg"][i], self.MC["true_energy"][i]) 
 
@@ -205,7 +219,7 @@ class Generator:
 			
 			# also give some new MC weights!
 			W_mc = self.MC["weight"][i]
-			if energy <= 53 and energy >= 1.85:
+			if energy <= 54 and energy >= 1.85:
 				ratio = find_weight_ratio(self.MC["true_energy"][i], self.MC["pdg"][i], self.MC["current_type"][i])
 				all_Wmc.append(W_mc * ratio)
 			else:
@@ -216,6 +230,7 @@ class Generator:
 			all_zen_true.append(zenith)
 			all_zen_reco.append(ORCA_zen_reco)
 			all_pid.append(ORCA_pid)
+			all_mask.append(True)
 
 		res_e_true = np.array(all_e_true)
 		res_e_reco = np.array(all_e_reco)
@@ -224,5 +239,6 @@ class Generator:
 		res_wmc = np.array(all_Wmc)
 		res_pid = np.array(all_pid)
 
-		return res_e_true, res_e_reco, res_zen_true, res_zen_reco, res_wmc, res_pid, self.MC["pdg"], self.MC["current_type"], self.MC["interaction_type"]
+		return res_e_true, res_e_reco, res_zen_true, res_zen_reco, res_wmc, res_pid, all_mask
+
 

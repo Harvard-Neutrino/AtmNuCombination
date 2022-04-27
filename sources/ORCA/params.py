@@ -7,4 +7,4 @@ input_cascade = "./ORCA_Results/migrationCascades.png"
 
 input_MC = pd.read_csv("neutrino_mc.csv")
 
-x_bins = np.logspace(np.log10(1.85), np.log10(53), 23)
+x_bins = np.logspace(np.log10(1.85), np.log10(54), 23)
