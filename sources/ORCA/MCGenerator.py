@@ -42,10 +42,10 @@ class Generator:
 				rand = np.random.randint(2)
 				if rand == 0:
 					gaus = self.G_E_ca
-				elif rand == 1:
+				elif rand >= 1: # this is a pessimistic result
 					gaus = self.G_E_tr
 			# set bounds on IC energy
-			if true_energy > 53 or true_energy < 1.85:
+			if true_energy >= 53 or true_energy <= 1.85:
 				return -1
 
 			# find which E_true_ORCA bin this E_true belongs to

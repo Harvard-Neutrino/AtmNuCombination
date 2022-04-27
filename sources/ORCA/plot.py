@@ -19,6 +19,13 @@ e_reco = input_file["reco_energy"]
 zen_true = input_file["true_zenith"]
 zen_reco = input_file["reco_zenith"]
 
+# for i in range(len(pid)):
+#     if input_file["weight"][i] != 0:
+#         if zen_reco[i] == -1:
+#             print(i, " zen")
+#         if e_reco[i] == -1:
+#             print(i, " e")
+
 def plot_mig_hist(binnum, top):
 
     tracks = dgt.Digitalizer(input_track, input_scale)
@@ -47,6 +54,7 @@ def plot_mig_hist(binnum, top):
     # # Plot the histogram and the fitted function.
     plt.bar(bins_centers, data_entries, width=x_bins[1] - x_bins[0], color='navy', label=r'Histogram entries')
     plt.plot(xspace, gaussian(xspace, *popt), color='darkorange', linewidth=2.5, label=r'Fitted function')
+    plt.xscale('log')
     if top == 1:
         plt.savefig("./MigMatPlots/Tracks/TrackMigMatBin{}.png".format(binnum))
     if top == 0:
