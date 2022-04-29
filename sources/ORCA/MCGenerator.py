@@ -6,6 +6,7 @@ import util
 from scipy.stats import truncnorm
 import sys
 import math
+from params import *
 
 class Generator:
 	def __init__(self, input_mc_file, input_energy_gaus_track, input_energy_gaus_cas, ORCA_bins):
@@ -23,25 +24,7 @@ class Generator:
 			elif top == 1:
 				gaus = self.G_E_tr
 			elif top == 2: # if intermediate
-				# first calculate the mean gaussian mu and sigma
-				# gaus = np.zeros_like(self.G_E_ca)
-				# for i in range(self.G_E_ca.shape[0]):
-					# sigma_tr = self.G_E_tr[i][0]
-					# sigma_ca = self.G_E_ca[i][0]
-					# mu_tr = self.G_E_tr[i][1]
-					# mu_ca = self.G_E_ca[i][1]
-					# A_tr = self.G_E_tr[i][2]
-					# A_ca = self.G_E_ca[i][2]
-					# sigma_inter = np.sqrt(0.25 * (sigma_tr ** 2 + sigma_ca ** 2))
-					# mu_inter = 0.5 * mu_tr + 0.5 * mu_ca
-					# A_inter = 0.5 * A_tr + 0.5 * A_ca
-					# gaus[i][0] = sigma_inter
-					# gaus[i][1] = mu_inter
-					# gaus[i][2] = A_inter
-					# print(sigma_tr, sigma_ca, sigma_inter)
-					# print(mu_tr, mu_ca, mu_inter)
-					# print(A_tr, A_ca, A_inter)
-				rand = np.random.randint(10)
+				rand = np.random.randint(pess_ereco)
 				if rand == 0:
 					gaus = self.G_E_ca
 				elif rand >= 1: # this is a pessimistic result
@@ -66,19 +49,20 @@ class Generator:
 			[sigma, mu, A] = gaus[bin_num]
 			sigma = np.abs(sigma)
 			mu = np.abs(mu)
-			if (top == 1 or top == 2) and bin_num >= 12 and bin_num < 15: # manually set truncate
-				while True:
-					random_E_reco = np.random.lognormal(sigma, mu)
-					if random_E_reco >= 4:
-						break
-			elif (top == 1 or top == 2) and bin_num >= 15:
-				while True:
-					random_E_reco = np.random.lognormal(sigma, mu)
-					if random_E_reco >= 5:
-						break
 
-			else:
-				random_E_reco = np.random.lognormal(sigma, mu)
+			# hardcodes the truncated normal distributions, but turned off with lognorm implemented
+			# if (top == 1 or top == 2) and bin_num >= 12 and bin_num < 15: # manually set truncate
+			# 	while True:
+			# 		random_E_reco = np.random.lognormal(sigma, mu)
+			# 		if random_E_reco >= 4:
+			# 			break
+			# elif (top == 1 or top == 2) and bin_num >= 15:
+			# 	while True:
+			# 		random_E_reco = np.random.lognormal(sigma, mu)
+			# 		if random_E_reco >= 5:
+			# 			break
+
+			random_E_reco = np.random.lognormal(sigma, mu)
 
 			# return this fake ORCA MC energy
 			return random_E_reco
@@ -182,48 +166,68 @@ class Generator:
 
 			# first we should actually generate the new topogy, then the energy based on this topology
 			# assign random pid's!
-			# if i % 1000 == 0:
-			# 	print(i)
-			ORCA_pid = assign_topology(self.MC["pdg"][i] / np.abs(self.MC["pdg"][i]), self.MC["current_type"][i], \
+			if not rand_morph:
+				ORCA_pid = self.MC["pid"][i]
+			elif rand_morph:
+				ORCA_pid = assign_topology(self.MC["pdg"][i] / np.abs(self.MC["pdg"][i]), self.MC["current_type"][i], \
 										self.MC["pdg"][i], self.MC["true_energy"][i]) 
-
-
 
 			energy = self.MC["true_energy"][i]
 			zenith = self.MC["true_zenith"][i]
 			#if i < 10: # just to test the code
 			if ORCA_pid == 0:
 				# use cascade gaussian params
-				ORCA_E_reco = find_reco_energy(0, energy)
-				if int(self.MC["pdg"][i]) > 0:
-					ORCA_zen_reco = self.MC["true_zenith"][i] - find_reco_zenith(e_error, energy)
-				else:
-					ORCA_zen_reco = self.MC["true_zenith"][i] - find_reco_zenith(eb_error, energy)
+				if not rand_energy:
+					ORCA_E_reco = self.MC["reco_energy"][i]
+				elif rand_energy:
+					ORCA_E_reco = find_reco_energy(0, energy)
+				if not rand_zen:
+					ORCA_zen_reco = self.MC["reco_zenith"][i]
+				elif rand_zen:
+					if int(self.MC["pdg"][i]) > 0:
+						ORCA_zen_reco = self.MC["true_zenith"][i] - find_reco_zenith(e_error, energy)
+					else:
+						ORCA_zen_reco = self.MC["true_zenith"][i] - find_reco_zenith(eb_error, energy)
 			elif ORCA_pid == 1:
 				# use track gaussian params
-				ORCA_E_reco = find_reco_energy(1, energy)
-				if int(self.MC["pdg"][i]) > 0:
-					ORCA_zen_reco = self.MC["true_zenith"][i] - find_reco_zenith(mu_error, energy)
-				else:
-					ORCA_zen_reco = self.MC["true_zenith"][i] - find_reco_zenith(mub_error, energy)
+				if not rand_energy:
+					ORCA_E_reco = self.MC["reco_energy"][i]
+				elif rand_energy:
+					ORCA_E_reco = find_reco_energy(1, energy)
+				if not rand_zen:
+					ORCA_zen_reco = self.MC["reco_zenith"][i]
+				elif rand_zen:
+					if int(self.MC["pdg"][i]) > 0:
+						ORCA_zen_reco = self.MC["true_zenith"][i] - find_reco_zenith(mu_error, energy)
+					else:
+						ORCA_zen_reco = self.MC["true_zenith"][i] - find_reco_zenith(mub_error, energy)
 			elif ORCA_pid == 2:
 				# use intermediate gaussian params and average on the zenith 
-				ORCA_E_reco = find_reco_energy(2, energy)
-				if int(self.MC["pdg"][i]) > 0:
-					ORCA_zen_reco = self.MC["true_zenith"][i] - 0.5 * (find_reco_zenith(mu_error, energy) + find_reco_zenith(e_error, energy))
-				else:
-					ORCA_zen_reco = self.MC["true_zenith"][i] - 0.5 * (find_reco_zenith(mub_error, energy) + find_reco_zenith(eb_error, energy))
+				if not rand_energy:
+					ORCA_E_reco = self.MC["reco_energy"][i]
+				elif rand_energy:
+					ORCA_E_reco = find_reco_energy(2, energy)
+				if not rand_zen:
+					ORCA_zen_reco = self.MC["reco_zenith"][i]
+				elif rand_zen:
+					if int(self.MC["pdg"][i]) > 0:
+						ORCA_zen_reco = self.MC["true_zenith"][i] - 0.5 * (find_reco_zenith(mu_error, energy) + find_reco_zenith(e_error, energy))
+					else:
+						ORCA_zen_reco = self.MC["true_zenith"][i] - 0.5 * (find_reco_zenith(mub_error, energy) + find_reco_zenith(eb_error, energy))
 			else:
 				print("invalid pid detected")
 				exit(1)
 			
 			# also give some new MC weights!
 			W_mc = self.MC["weight"][i]
-			if energy <= 54 and energy >= 1.85:
-				ratio = find_weight_ratio(self.MC["true_energy"][i], self.MC["pdg"][i], self.MC["current_type"][i])
-				all_Wmc.append(W_mc * ratio)
-			else:
-				all_Wmc.append(0)
+			if not reweight:
+				all_Wmc.append(W_mc * 66 / 61)
+			elif reweight:
+				if energy <= 54 and energy >= 1.85:
+					ratio = find_weight_ratio(self.MC["true_energy"][i], self.MC["pdg"][i], self.MC["current_type"][i])
+					all_Wmc.append(W_mc * ratio)
+				else:
+					all_Wmc.append(0)
 
 			all_e_true.append(energy)
 			all_e_reco.append(ORCA_E_reco)

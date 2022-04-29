@@ -11,7 +11,7 @@ from util import gaussian
 # import analyze as anl
 from params import *
 
-input_file = pd.read_csv("ORCA.csv")
+input_file = pd.read_csv("ORCA_no_morph.csv")
 original = pd.read_csv("neutrino_mc.csv")
 pid = input_file["pid"]
 e_true = input_file["true_energy"]
@@ -146,7 +146,7 @@ def plot_energy_reco_track_probability():
     x = np.logspace(np.log10(1.85), np.log10(53), 23)
     y = np.logspace(np.log10(1.85), np.log10(53), 23)
     X, Y = np.meshgrid(x, y)
-    Z, xedges, yedges = np.histogram2d(e_true[track_mask], e_reco[track_mask], bins=(x, y))
+    Z, xedges, yedges = np.histogram2d(e_true[track_mask], e_reco[track_mask], bins=(x, y), weights = input_file["weight"][track_mask])
     # attempt to manually normalize column
     for i in range(22):
         currcol = Z[i][:]
@@ -162,12 +162,12 @@ def plot_energy_reco_track_probability():
     plt.colorbar(im, orientation = "vertical", format = LogFormatterMathtext())
     plt.xscale("log")
     plt.yscale("log")
-    plt.legend()
-    # plt.show()
-    plt.savefig("./RecoPlots/ORCA_Reco_track_probability")
+    # plt.legend()
+    plt.show()
+    # plt.savefig("./RecoPlots/ORCA_Reco_track_probability_weighted")
     plt.close()
 
-# plot_energy_reco_track_probability()
+plot_energy_reco_track_probability()
 
 # plot the IC MC energy reco track normalized prob
 def plot_IC_energy_reco_track_probability():

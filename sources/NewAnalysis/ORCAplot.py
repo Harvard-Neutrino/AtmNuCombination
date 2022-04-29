@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 import util
 from params import *
 import classdef as cl 
-
+ 
 
 
 sim = cl.Simulation(pd.read_csv(input_file))
@@ -18,6 +18,7 @@ analysis = cl.Analysis(sim, bf_fluxes, fluxes)
 util.get_all_weights(analysis, cl.PointType.BestFit)
 util.get_all_weights(analysis, cl.PointType.Physical)
 
+# checge the flavor basis so we now discern by the 3 flavors in detection
 def change_flavor_basis(weights):
 	res = np.zeros((2, 3, 3, len(sim.W_mc)))
 	for i in range(len(sim.W_mc)):
