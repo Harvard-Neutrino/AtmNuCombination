@@ -229,8 +229,8 @@ def reweight():
     ax2.set_xscale("log")
     # ax.set_yscale("log")
     # plt.legend()
-    # plt.show()
-    plt.savefig("./Plots/Event_Distribution_with_Reweighting")
+    plt.show()
+    # plt.savefig("./Plots/Event_Distribution_with_Reweighting")
     plt.close()
 
 def reweight_reco():
@@ -291,8 +291,8 @@ def reweight_reco():
     plt.savefig("./Plots/Event_Distribution_reco_with_Reweighting")
     # plt.close()
 # control()
-# reweight()
-reweight_reco()
+reweight()
+# reweight_reco()
 # control_reco()
 
 
