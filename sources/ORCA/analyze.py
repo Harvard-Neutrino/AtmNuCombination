@@ -58,10 +58,10 @@ if write:
 	# df.to_csv("ORCA.csv")
 	# df.to_csv("ORCA_no_morph.csv")
 	# df.to_csv("ORCA_control.csv")
-	# df.to_csv("ORCA_only_reweight.csv")
+	df.to_csv("ORCA_only_reweight.csv")
 	# df.to_csv("ORCA_only_rand_energy.csv")
 	# df.to_csv("ORCA_only_rand_zenith.csv")
-	df.to_csv("ORCA_only_rand_morph.csv")
+	# df.to_csv("ORCA_only_rand_morph.csv")
 
 
 

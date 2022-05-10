@@ -89,7 +89,24 @@ class Generator:
 		ORCAVol.computeVolume()
 		ICe, ICeb, ICmu, ICmub, ICtau, ICtaub, ICnc, ICncb = ICVol.returnVol()
 		ORe, OReb, ORmu, ORmub, ORtau, ORtaub, ORnc, ORncb = ORCAVol.returnVol()
+		e = ORe/ICe
+		mu = ORmu/ICmu
+		tau = ORtau/ICtau
+		nc = ORnc/ICnc
+		eb = OReb/ICeb
+		mub = ORmub/ICmub
+		taub = ORtau/ICtaub
+		ncb = ORnc/ICncb
 
+		for i in range(17):
+			tau[i] = 0
+			taub[i] = 0
+		
+		for i in range(50):
+			if tau[i] > 10:
+				tau[i] = 10
+			if taub[i] > 10:
+				taub[i] = 10
 
 		def find_weight_ratio(true_energy, pdg, interaction_type): # it's actually current type
 
@@ -105,25 +122,25 @@ class Generator:
 			
 			if interaction_type == 0:
 				if pdg / np.abs(pdg) == 1:
-					return ORnc[idx] / ICnc[idx]
+					return nc[idx]
 				elif pdg / np.abs(pdg) == -1:
-					return ORncb[idx] / ICncb[idx]
+					return nc[idx]
 				else:
 					print("wrong pdg detected")
 					exit(0)
 			elif interaction_type == 1:
 				if pdg == 12:
-					return ORe[idx] / ICe[idx]
+					return e[idx]
 				elif pdg == -12:
-					return OReb[idx] / ICeb[idx]
+					return eb[idx]
 				elif pdg == 14:
-					return ORmu[idx] / ICmu[idx]
+					return mu[idx]
 				elif pdg == -14:
-					return ORmub[idx] / ICmub[idx]
+					return mub[idx]
 				elif pdg == 16:
-					return ORtau[idx] / ICtau[idx]
+					return tau[idx]
 				elif pdg == -16:
-					return ORtaub[idx] / ICtaub[idx]
+					return taub[idx]
 				else:
 					print("wrong pdg detected")
 					exit(0)
