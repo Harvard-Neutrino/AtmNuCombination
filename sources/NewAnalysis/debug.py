@@ -192,6 +192,7 @@ def reweight():
         for j in range(2):
             for k in range(3):
                 for l in range(analysis.bf_weights.shape[-1]):
+                    # if np.abs(sim.pdg[l]) != 16: # get rid of the tau appearances
                     rated_weight[l] += analysis.bf_weights[i][j][k][l]
                     if np.cos(analysis.simulation.C_tr[l]) < 0:
                         num += analysis.bf_weights[i][j][k][l]
@@ -290,6 +291,8 @@ def reweight_reco():
     # plt.show()
     plt.savefig("./Plots/Event_Distribution_reco_with_Reweighting")
     # plt.close()
+
+
 # control()
 reweight()
 # reweight_reco()

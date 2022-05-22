@@ -91,22 +91,24 @@ class Generator:
 		ORe, OReb, ORmu, ORmub, ORtau, ORtaub, ORnc, ORncb = ORCAVol.returnVol()
 		e = ORe/ICe
 		mu = ORmu/ICmu
-		tau = ORtau/ICtau
+		# tau = ORtau/ICtau
+		tau = np.ones_like(e)
 		nc = ORnc/ICnc
 		eb = OReb/ICeb
 		mub = ORmub/ICmub
-		taub = ORtau/ICtaub
+		# taub = ORtau/ICtaub
+		taub = np.ones_like(e)
 		ncb = ORnc/ICncb
 
-		for i in range(17):
-			tau[i] = 0
-			taub[i] = 0
+		# for i in range(17):
+		# 	tau[i] = 0
+		# 	taub[i] = 0
 		
-		for i in range(50):
-			if tau[i] > 10:
-				tau[i] = 10
-			if taub[i] > 10:
-				taub[i] = 10
+		# for i in range(50):
+		# 	if tau[i] > 5:
+		# 		tau[i] = 5
+		# 	if taub[i] > 5:
+		# 		taub[i] = 5
 
 		def find_weight_ratio(true_energy, pdg, interaction_type): # it's actually current type
 
@@ -168,6 +170,7 @@ class Generator:
 		all_Wmc = []
 		all_pid = []
 		all_mask = []
+
 		# now generate a fake ORCA MC energy and ORCA MC weight for all the events
 		for i in range(len(self.MC["true_energy"])):
 			n = len(self.MC["true_energy"]) / 1000

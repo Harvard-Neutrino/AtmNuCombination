@@ -18,7 +18,7 @@ pess = False
 if not pess:
 	pess_ereco = 2
 elif pess:
-	pess_ereco = 10
+	pess_ereco = 3
 
 # turn on or off random zenith reco
 rand_zen = False

@@ -12,7 +12,7 @@ from util import gaussian
 # import analyze as anl
 from params import *
 
-input_file = pd.read_csv("ORCA.csv")
+input_file = pd.read_csv("ORCA_only_reweight.csv")
 original = pd.read_csv("neutrino_mc.csv")
 pid = input_file["pid"]
 e_true = input_file["true_energy"]
@@ -21,46 +21,47 @@ zen_true = input_file["true_zenith"]
 zen_reco = input_file["reco_zenith"]
 weights = input_file["weight"]
 
-# ICVol = ICEff(1, 50, 51)
-# ICVol.computeArea()
-# ICVol.computeVolume()
-# ORCAVol = ORCAEff()
-# ORCAVol.computeArea()
-# ORCAVol.computeVolume()
-# ICe, ICeb, ICmu, ICmub, ICtau, ICtaub, ICnc, ICncb = ICVol.returnVol()
-# ORe, OReb, ORmu, ORmub, ORtau, ORtaub, ORnc, ORncb = ORCAVol.returnVol()
+ICVol = ICEff(1, 50, 51)
+ICVol.computeArea()
+ICVol.computeVolume()
+ORCAVol = ORCAEff()
+ORCAVol.computeArea()
+ORCAVol.computeVolume()
+ICe, ICeb, ICmu, ICmub, ICtau, ICtaub, ICnc, ICncb = ICVol.returnVol()
+ORe, OReb, ORmu, ORmub, ORtau, ORtaub, ORnc, ORncb = ORCAVol.returnVol()
 
-# e = ORe/ICe
-# mu = ORmu/ICmu
-# tau = ORtau/ICtau
-# nc = ORnc/ICnc
-# eb = OReb/ICeb
-# mub = ORmub/ICmub
-# taub = ORtau/ICtaub
-# ncb = ORnc/ICncb
+e = ORe/ICe
+mu = ORmu/ICmu
+tau = ORtau/ICtau
+nc = ORnc/ICnc
+eb = OReb/ICeb
+mub = ORmub/ICmub
+taub = ORtau/ICtaub
+ncb = ORnc/ICncb
 
-# for i in range(17):
-#     tau[i] = 0
-#     taub[i] = 0
+for i in range(17):
+    tau[i] = 0
+    taub[i] = 0
 
-# for i in range(19):
-#     if tau[i] > 30:
-#         tau[i] = 30
-#     if taub[i] > 30:
-#         taub[i] = 30
+for i in range(30):
+    if tau[i] > 5:
+        tau[i] = 5
+    if taub[i] > 5:
+        taub[i] = 5
 
-# print(e)
-# print(mu)
-# print(tau)
-# print(nc)
-# print(eb)
-# print(mub)
-# print(taub)
-# print(ncb)
+print(e)
+print(mu)
+print(tau)
+print(nc)
+print(eb)
+print(mub)
+print(taub)
+print(ncb)
 
 # sorted = input_file.sort_values('weight', ascending = False)
 # print(sorted['weight'][:10])
 # print(sorted['true_energy'][:10])
+# print(sorted["pdg"][:10])
 
 # sorted2 = original.sort_values('weight', ascending = False)
 # print(sorted2['weight'][:10])
