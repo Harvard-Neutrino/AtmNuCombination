@@ -11,7 +11,7 @@ import classdef as cl
  
 
 
-sim = cl.Simulation(pd.read_csv(input_file))
+sim = cl.Simulation(pd.read_csv("ORCA_only_new_morph.csv"))
 bf_fluxes = util.bundle_fluxes(cth_nodes, energy_nodes, theta23, dm31, dcp)
 fluxes = bf_fluxes
 analysis = cl.Analysis(sim, bf_fluxes, fluxes)
@@ -182,6 +182,15 @@ def ORCA_topology_details(flavor, current):
 							weights = numuavg_CC_inter_weights)
 	numuavg_CC_all_hist, _ = np.histogram(sim.E_tr, bins = energy_bins, \
 							weights = numuavg_CC_all_weights)
+	
+	# # this is to save the bin heights (for IC, but general purpose)
+	# df_array = np.ndarray((4, 30), dtype = float) # in the order of nucas, nutrack, nubarcas, nubartrack
+	# df_array[0] = numu_CC_cas_hist / numu_CC_all_hist
+	# df_array[1] = numu_CC_track_hist / numu_CC_all_hist
+	# df_array[2] = numubar_CC_cas_hist / numubar_CC_all_hist
+	# df_array[3] = numubar_CC_track_hist / numubar_CC_all_hist
+	# df = pd.DataFrame(df_array.T, columns = ["nu_cas", "nu_track", "nubar_cas", "nubar_track"])
+	# df.to_csv("nu{}_{}_Topology_Fraction".format(flavname, curname))
 
 	fig, ax = plt.subplots(figsize=(7,6))
 	fig.suptitle("ORCA MC nu_{} {} topology fractions".format(flavname, curname))

@@ -94,7 +94,7 @@ def get_index(current, pdg):
 			return 1, 3
 
 
-def get_topology_prob(nutype, current_type, pdg, true_energy):
+def get_ORCA_topology_prob(nutype, current_type, pdg, true_energy):
 
 	# first define how to get the probabilities
 	def get_probs(input_file):
@@ -155,6 +155,56 @@ def get_topology_prob(nutype, current_type, pdg, true_energy):
 	idx = energy_to_index(true_energy)
 	return track[idx], 1 - cascade[idx]
 
+def get_IC_topology_prob(nutype, current_type, pdg, true_energy):
+	def energy_to_index(energy):
+		energies = np.logspace(np.log10(2), np.log10(50), 31)
+		idx = 0
+		for i in range(len(energies) - 1):
+			# print(i)
+			# print(energy)
+			# print(energies[i+1])
+			if energy <= energies[i + 1]:
+				return idx
+			idx += 1
+		return 29
+	
+	def get_prob(nutype, filename, padding = False):
+		df = pd.read_csv(filename)
+		if nutype == 1: # neutrinos
+			track = df["nu_track"]
+			cascade = df["nu_cas"]
+		elif nutype == -1:
+			track = df["nubar_track"]
+			cascade = df["nubar_cas"]
+		else:
+			print("wrong nutype detected")
+			exit(1)
+		if padding:
+			pad = np.zeros(30 - len(track))
+			track = np.concatenate((padding, track), axis = 0)
+			cascade = np.concatenate((padding, cascade), axis = 0)
+		return track, cascade
+	
+	tau_padding = False
+	if current_type == 0: # NC
+		filename = "./ORCA_Results/nu_NC_Topology_Fraction"
+	elif current_type == 1:
+		if np.abs(pdg) == 12:
+			filename = "./ORCA_Results/nue_CC_Topology_Fraction"
+		elif np.abs(pdg) == 14:
+			filename = "./ORCA_Results/numu_CC_Topology_Fraction"
+		elif np.abs(pdg) == 16:
+			filename = "./ORCA_Results/nutau_CC_Topology_Fraction"
+			tau_padding = True
+	else:
+		print("wrong pdg detected")
+	
+	track, cascade = get_prob(nutype, filename)
+
+	idx = energy_to_index(true_energy)
+	return track[idx], cascade[idx]
+
 # print(get_topology_prob(1, 1, 14, 3))
+# print(get_IC_topology_prob(1, 0, 14, 3))
 
 

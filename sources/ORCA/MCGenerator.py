@@ -92,11 +92,11 @@ class Generator:
 		e = ORe/ICe
 		mu = ORmu/ICmu
 		# tau = ORtau/ICtau
-		tau = np.ones_like(e)
+		tau = np.ones_like(e) # this is for not reweighting the tau neutrinos
 		nc = ORnc/ICnc
 		eb = OReb/ICeb
 		mub = ORmub/ICmub
-		# taub = ORtau/ICtaub
+		# taub = ORtau/ICtaub # this is for not reweighting the tau antineutrinos
 		taub = np.ones_like(e)
 		ncb = ORnc/ICncb
 
@@ -150,12 +150,32 @@ class Generator:
 				print("wrong interaction type detected: ", interaction_type)
 				exit(0)
 
-		def assign_topology(nutype, current_type, pdg, true_energy):
-			track_prob, cas_prob = util.get_topology_prob(nutype, current_type, pdg, true_energy)
+		def assign_topology(nutype, current_type, pdg, true_energy, pid):
+			o_track_prob, o_cas_prob = util.get_ORCA_topology_prob(nutype, current_type, pdg, true_energy)
+			i_track_prob, i_cas_prob = util.get_IC_topology_prob(nutype, current_type, pdg, true_energy)
 
-			# now generate discrete choices with numpy
+			# different cases
+			if i_track_prob >= o_track_prob and i_cas_prob >= o_cas_prob:
+				if pid == 0:
+					new_track_p, new_cas_p = 0, o_cas_prob / i_cas_prob
+				elif pid == 1:
+					new_track_p, new_cas_p = o_track_prob / i_track_prob, 0
+
+			elif i_track_prob >= o_track_prob and i_cas_prob < o_cas_prob:
+				if pid == 0:
+					new_track_p, new_cas_p = 0, 1
+				elif pid == 1:
+					new_track_p, new_cas_p = o_track_prob / i_track_prob, (o_cas_prob - i_cas_prob) / i_track_prob
+
+			elif i_track_prob < o_track_prob and i_cas_prob >= o_cas_prob:
+				if pid == 0:
+					new_track_p, new_cas_p = (o_track_prob - i_track_prob) / i_cas_prob, o_cas_prob / i_cas_prob, 
+				elif pid == 1:
+					new_track_p, new_cas_p = 1, 0
+
+
 			topologies = [0, 1, 2] # 0 is cascade, 1 is track, 2 is intermediate
-			probabilities = [cas_prob, track_prob, 1 - cas_prob - track_prob]
+			probabilities = [new_cas_p, new_track_p, 1- new_cas_p - new_track_p]
 			rand_topology = np.random.choice(topologies, p = probabilities)
 
 			return rand_topology
@@ -190,7 +210,7 @@ class Generator:
 				ORCA_pid = self.MC["pid"][i]
 			elif rand_morph:
 				ORCA_pid = assign_topology(self.MC["pdg"][i] / np.abs(self.MC["pdg"][i]), self.MC["current_type"][i], \
-										self.MC["pdg"][i], self.MC["true_energy"][i]) 
+										self.MC["pdg"][i], self.MC["true_energy"][i], self.MC["pid"][i]) 
 
 			energy = self.MC["true_energy"][i]
 			zenith = self.MC["true_zenith"][i]
