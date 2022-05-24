@@ -28,3 +28,6 @@ rand_energy = False
 
 # turn on or off MC weights
 reweight = False
+
+# turn on or off two log norm fit instead of one log norm fit
+two_gaus = True

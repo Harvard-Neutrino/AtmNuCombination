@@ -50,18 +50,6 @@ class Generator:
 			sigma = np.abs(sigma)
 			mu = np.abs(mu)
 
-			# hardcodes the truncated normal distributions, but turned off with lognorm implemented
-			# if (top == 1 or top == 2) and bin_num >= 12 and bin_num < 15: # manually set truncate
-			# 	while True:
-			# 		random_E_reco = np.random.lognormal(sigma, mu)
-			# 		if random_E_reco >= 4:
-			# 			break
-			# elif (top == 1 or top == 2) and bin_num >= 15:
-			# 	while True:
-			# 		random_E_reco = np.random.lognormal(sigma, mu)
-			# 		if random_E_reco >= 5:
-			# 			break
-
 			random_E_reco = np.random.lognormal(sigma, mu)
 
 			# return this fake ORCA MC energy

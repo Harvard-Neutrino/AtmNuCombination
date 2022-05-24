@@ -52,9 +52,17 @@ class Digitalizer:
 		self.extracted = ext_data
 
 	def fit(self):
-		self.gaussians = np.ndarray((self.extracted.shape[0],3), float)
-		for i in range(self.extracted.shape[0]):
-			sigma, mu, A = gaus_fit(self.extracted[i], x_bins, i)
-			self.gaussians[i][0] = sigma
-			self.gaussians[i][1] = mu
-			self.gaussians[i][2] = A
+		if not two_gaus:
+			self.gaussians = np.ndarray((self.extracted.shape[0],3), float)
+			for i in range(self.extracted.shape[0]):
+				sigma, mu, A = gaus_fit(self.extracted[i], x_bins, i)
+				self.gaussians[i][0] = sigma
+				self.gaussians[i][1] = mu
+				self.gaussians[i][2] = A
+		elif two_gaus:
+			self.gaussians = np.ndarray((self.extracted.shape[0],5), float)
+			for i in range(self.extracted.shape[0]):
+				sigma, mu, A = gaus_fit(self.extracted[i], x_bins, i)
+				self.gaussians[i][0] = sigma
+				self.gaussians[i][1] = mu
+				self.gaussians[i][2] = A
