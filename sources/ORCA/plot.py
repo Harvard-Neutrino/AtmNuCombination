@@ -8,10 +8,11 @@ import math
 import digitalizer as dgt
 import util
 from util import gaussian
+from util import twogaussian
 # import analyze as anl
 from params import *
 
-input_file = pd.read_csv("ORCA_no_morph.csv")
+input_file = pd.read_csv("newORCA.csv")
 original = pd.read_csv("neutrino_mc.csv")
 pid = input_file["pid"]
 e_true = input_file["true_energy"]
@@ -45,15 +46,26 @@ def plot_mig_hist(binnum, top):
     elif top == 0:
         data_entries = D_cascades[binnum]
 
-    bins_centers = np.array([0.5 * (x_bins[i] + x_bins[i+1]) for i in range(len(x_bins)-1)])
-    popt, pcov = curve_fit(gaussian, xdata=bins_centers, ydata=data_entries, p0=[binnum, 10, 1])
+    if not two_gaus:
+        bins_centers = np.array([0.5 * (x_bins[i] + x_bins[i+1]) for i in range(len(x_bins)-1)])
+        popt, pcov = curve_fit(gaussian, xdata=bins_centers, ydata=data_entries, p0=[binnum, 10, 1])
 
-    # # Generate enough x values to make the curves look smooth.
-    xspace = np.linspace(2, 55, 100000)
+        # # Generate enough x values to make the curves look smooth.
+        xspace = np.linspace(2, 55, 100000)
 
-    # # Plot the histogram and the fitted function.
-    plt.bar(bins_centers, data_entries, width=x_bins[1] - x_bins[0], color='navy', label=r'Histogram entries')
-    plt.plot(xspace, gaussian(xspace, *popt), color='darkorange', linewidth=2.5, label=r'Fitted function')
+        # # Plot the histogram and the fitted function.
+        plt.bar(bins_centers, data_entries, width=x_bins[1] - x_bins[0], color='navy', label=r'Histogram entries')
+        plt.plot(xspace, gaussian(xspace, *popt), color='darkorange', linewidth=2.5, label=r'Fitted function')
+    elif two_gaus:
+        bins_centers = np.array([0.5 * (x_bins[i] + x_bins[i+1]) for i in range(len(x_bins)-1)])
+        popt, pcov = curve_fit(twogaussian, xdata=bins_centers, ydata=data_entries, p0=[binnum, 10, 2, 1, .8])
+
+        # # Generate enough x values to make the curves look smooth.
+        xspace = np.linspace(2, 55, 100000)
+
+        # # Plot the histogram and the fitted function.
+        plt.bar(bins_centers, data_entries, width=x_bins[1] - x_bins[0], color='navy', label=r'Histogram entries')
+        plt.plot(xspace, twogaussian(xspace, *popt), color='darkorange', linewidth=2.5, label=r'Fitted function')
     plt.xscale('log')
     if top == 1:
         plt.savefig("./MigMatPlots/Tracks/TrackMigMatBin{}.png".format(binnum))
@@ -61,9 +73,9 @@ def plot_mig_hist(binnum, top):
         plt.savefig("./MigMatPlots/Cascades/CascadeMigMatBin{}.png".format(binnum))
     plt.close()
 
-for i in range(22):
-    plot_mig_hist(i, 0)
-    plot_mig_hist(i, 1)
+# for i in range(22):
+#     plot_mig_hist(i, 0)
+#     plot_mig_hist(i, 1)
 
 # plots the zenith error line plot reproduction from ORCA paper
 def plot_zenith_errors():
@@ -163,8 +175,8 @@ def plot_energy_reco_track_probability():
     plt.xscale("log")
     plt.yscale("log")
     # plt.legend()
-    plt.show()
-    # plt.savefig("./RecoPlots/ORCA_Reco_track_probability_weighted")
+    # plt.show()
+    plt.savefig("./RecoPlots/ORCA_Reco_track_probability_weighted")
     plt.close()
 
 plot_energy_reco_track_probability()
@@ -202,13 +214,12 @@ def plot_IC_energy_reco_track_probability():
 
 # plot_IC_energy_reco_track_probability()
 
-################### this one is changed right now ######################
 def plot_energy_reco_cascade_probability():
     cas_mask = pid == 0
     x = np.logspace(np.log10(1.85), np.log10(53), 23)
     y = np.logspace(np.log10(1.85), np.log10(53), 23)
     X, Y = np.meshgrid(x, y)
-    Z, xedges, yedges = np.histogram2d(e_true[cas_mask], e_reco[cas_mask], bins=(x, y))
+    Z, xedges, yedges = np.histogram2d(e_true[cas_mask], e_reco[cas_mask], bins=(x, y), weights = input_file["weight"][cas_mask])
     # attempt to manually normalize column
     for i in range(22):
         currcol = Z[i][:]
@@ -217,43 +228,20 @@ def plot_energy_reco_cascade_probability():
             tot += currcol[j]
         for j in range(22):
             currcol[j] = currcol[j] / tot
-    # im = plt.pcolor(X, Y, Z.T, cmap = "gray_r", norm = LogNorm())
-
-    top15 = []
-    top85 = []
-    for i in range(len(x) - 1):
-        ls_reco = []
-        low = x[i]
-        hi = x[i + 1]
-        e_reco_selected = np.array(e_reco[cas_mask][:])
-        for j in range(len(e_true[cas_mask])):
-            if e_reco_selected[j] >= low and e_reco_selected[j] < hi:
-                ls_reco.append(e_reco_selected[j])
-        ls_reco.sort()
-        length = len(ls_reco)
-        # print(ls_reco)
-        range15 = math.ceil(length * 15 / 100)
-        # print(range15)
-        range85 = math.floor(length * 85 / 100)
-        # print(range85)
-        top15.append(ls_reco[range15])
-        top85.append(ls_reco[range85])
+    im = plt.pcolor(X, Y, Z.T, cmap = "gray_r", norm = LogNorm())
 
     plt.xlim(1.85, 53)
     plt.ylim(1.85, 53)
-    # plt.colorbar(im, orientation = "vertical", format = LogFormatterMathtext())
-    centers = np.array([0.5 * (x[i] + x[i+1]) for i in range(len(x)-1)])
-    plt.plot(centers, top15, color = 'red', label = "15%")
-    plt.plot(centers, top85, color = 'red', label = "85%")
+    plt.colorbar(im, orientation = "vertical", format = LogFormatterMathtext())
     plt.xscale("log")
     plt.yscale("log")
-    plt.legend()
-    plt.show()
-    # plt.savefig("./RecoPlots/ORCA_Reco_cascade_15+85")
+    # plt.legend()
+    # plt.show()
+    plt.savefig("./RecoPlots/ORCA_Reco_cascade_probability_weighted")
     plt.close()
-#######################################################################
 
-# plot_energy_reco_cascade_probability()
+
+plot_energy_reco_cascade_probability()
 
 def plot_IC_energy_reco_cascade_probability():
     IC_input_file = pd.read_csv("neutrino_mc.csv")

@@ -54,17 +54,9 @@ if write:
 	df["pid"].astype('int64')
 	df["interaction_type"].astype('int64')
 	df["current_type"].astype('int64')
-	# df.to_csv("ORCA_pessimistic_Ereco.csv")
-	# df.to_csv("ORCA.csv")
-	# df.to_csv("ORCA_no_morph.csv")
-	# df.to_csv("ORCA_control.csv")
-	# df.to_csv("ORCA_only_reweight.csv")
-	# df.to_csv("ORCA_only_rand_energy.csv")
-	# df.to_csv("ORCA_only_rand_zenith.csv")
-	# df.to_csv("ORCA_only_rand_morph.csv")
-	# df.to_csv("ORCA_only_reweighting_no_taus.csv")
 
-	df.to_csv("./ORCA_new_csv_debug/ORCA_only_new_morph.csv")
+
+	df.to_csv(savename)
 
 
 

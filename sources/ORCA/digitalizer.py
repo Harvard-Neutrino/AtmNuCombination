@@ -55,7 +55,7 @@ class Digitalizer:
 		if not two_gaus:
 			self.gaussians = np.ndarray((self.extracted.shape[0],3), float)
 			for i in range(self.extracted.shape[0]):
-				sigma, mu, A = gaus_fit(self.extracted[i], x_bins, i)
+				mu, sigma, A = gaus_fit(self.extracted[i], x_bins, i)
 				self.gaussians[i][0] = sigma
 				self.gaussians[i][1] = mu
 				self.gaussians[i][2] = A
@@ -63,6 +63,8 @@ class Digitalizer:
 			self.gaussians = np.ndarray((self.extracted.shape[0],5), float)
 			for i in range(self.extracted.shape[0]):
 				sigma, mu, A = gaus_fit(self.extracted[i], x_bins, i)
-				self.gaussians[i][0] = sigma
-				self.gaussians[i][1] = mu
-				self.gaussians[i][2] = A
+				self.gaussians[i][0] = sigma1
+				self.gaussians[i][1] = sigma2
+				self.gaussians[i][2] = mu1
+				self.gaussians[i][3] = mu2
+				self.gaussians[i][4] = alpha

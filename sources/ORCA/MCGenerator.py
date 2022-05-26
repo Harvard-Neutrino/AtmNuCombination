@@ -50,7 +50,7 @@ class Generator:
 			sigma = np.abs(sigma)
 			mu = np.abs(mu)
 
-			random_E_reco = np.random.lognormal(sigma, mu)
+			random_E_reco = np.random.lognormal(mu, sigma)
 
 			# return this fake ORCA MC energy
 			return random_E_reco
@@ -79,13 +79,15 @@ class Generator:
 		ORe, OReb, ORmu, ORmub, ORtau, ORtaub, ORnc, ORncb = ORCAVol.returnVol()
 		e = ORe/ICe
 		mu = ORmu/ICmu
-		# tau = ORtau/ICtau
-		tau = np.ones_like(e) # this is for not reweighting the tau neutrinos
+		if reweight_tau:
+			tau = ORtau/ICtau
+			taub = ORtau/ICtaub 
+		elif not reweight_tau:
+			tau = np.ones_like(e) 
+			taub = np.ones_like(e)
 		nc = ORnc/ICnc
 		eb = OReb/ICeb
 		mub = ORmub/ICmub
-		# taub = ORtau/ICtaub # this is for not reweighting the tau antineutrinos
-		taub = np.ones_like(e)
 		ncb = ORnc/ICncb
 
 		# for i in range(17):

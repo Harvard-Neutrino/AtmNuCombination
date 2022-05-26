@@ -14,6 +14,7 @@ def gaus_fit(data_entries, bins, current_binnum):
 	popt, pcov = curve_fit(gaussian, xdata=bins_centers, ydata=data_entries, p0=[current_binnum, 5, 1])
 	return popt[0], popt[1], popt[2]
 
+############################ This does not work for the moment#######################################################
 # two gaussian function
 def twogaussian(x, mu1, mu2, sigma1, sigma2, alpha):
 	first = (alpha / (sigma1 * np.sqrt(2 * np.pi)) * np.exp(-1.0 * (np.log(x) - mu1)**2 / (2 * sigma1**2)))
@@ -25,6 +26,7 @@ def two_gaus_fit(data_entries, bins, current_binnum):
 	bins_centers = np.array([0.5 * (bins[i] + bins[i+1]) for i in range(len(bins)-1)])
 	popt, pcov = curve_fit(gaussian, xdata=bins_centers, ydata=data_entries, p0=[current_binnum, 5, 1])
 	return popt[0], popt[1], popt[2] , popt[3] , popt[4]
+######################################################################################################################
 
 # input the zenith error histogram from ORCA paper plot
 def get_zenith_error():
