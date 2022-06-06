@@ -31,8 +31,12 @@ class Generator:
 				elif rand >= 1: # this is a pessimistic result
 					gaus = self.G_E_tr
 			# set bounds on IC energy
-			if true_energy >= 54 or true_energy <= 1.85:
-				return -1
+			if not below_two:
+				if true_energy >= 54 or true_energy <= 1.85:
+					return -1
+			elif below_two:
+				if true_energy >= 54 or true_energy <= 1:
+					return -1
 
 			# find which E_true_ORCA bin this E_true belongs to
 			for i in range(len(self.bins) - 1):
@@ -60,7 +64,10 @@ class Generator:
 		def find_reco_zenith(exp, true_energy):
 			# bounds on IC energy
 			true_energy = min(54, true_energy)
-			true_energy = max(1.85, true_energy)
+			if not below_two:
+				true_energy = max(1.85, true_energy)
+			if below_two:
+				true_energy = max(1, true_energy)
 
 			# find sigma
 			sigma = exp(true_energy)
@@ -71,10 +78,10 @@ class Generator:
 
 		# set up effective area + volume analysis
 		f_e, f_mu, f_tau, f_nc, f_eb, f_mub, f_taub, f_ncb = get_ratios()
-		print(f_e.slope, f_e.intercept)
-		print(f_mu.slope, f_mu.intercept)
-		print(f_tau.slope, f_tau.intercept)
-		print(f_nc.slope, f_nc.intercept)
+		# print(f_e.slope, f_e.intercept)
+		# print(f_mu.slope, f_mu.intercept)
+		# print(f_tau.slope, f_tau.intercept)
+		# print(f_nc.slope, f_nc.intercept)
 
 
 		def find_weight_ratio(true_energy, pdg, current_type): # it's actually current type
@@ -151,16 +158,21 @@ class Generator:
 
 		# now generate a fake ORCA MC energy and ORCA MC weight for all the events
 		for i in range(len(self.MC["true_energy"])):
-			# n = len(self.MC["true_energy"]) / 1000
-			# j = math.floor(i / 1000)
-			# k = (j + 1) / n
-			# # print the progress bar
-			# if i % 1000 == 0:
-			# 	print("\r[%-50s] %d%%" % ('='*int(50*k), 100*k), end = '\r', flush = True)
+			n = len(self.MC["true_energy"]) / 1000
+			j = math.floor(i / 1000)
+			k = (j + 1) / n
+			# print the progress bar
+			if i % 1000 == 0:
+				print("\r[%-50s] %d%%" % ('='*int(50*k), 100*k), end = '\r', flush = True)
 
-			if self.MC["true_energy"][i] >= 54 or self.MC["true_energy"][i] <= 1.85:
-				all_mask.append(False)
-				continue
+			if not below_two:
+				if self.MC["true_energy"][i] >= 54 or self.MC["true_energy"][i] <= 1.85:
+					all_mask.append(False)
+					continue
+			elif below_two:
+				if self.MC["true_energy"][i] >= 54 or self.MC["true_energy"][i] <= 1:
+					all_mask.append(False)
+					continue
 
 			# first we should actually generate the new topogy, then the energy based on this topology
 			# assign random pid's!
@@ -221,16 +233,18 @@ class Generator:
 			if not reweight:
 				all_Wmc.append(W_mc * 66 / 61)
 			elif reweight:
-				if energy <= 54 and energy >= 1.85:
-					ratio = find_weight_ratio(self.MC["true_energy"][i], self.MC["pdg"][i], self.MC["current_type"][i])
-					# if self.MC["pdg"][i] == 12:
-					# 	print(energy, ratio)
-					# if np.isnan(ratio):
-					# 	print(self.MC["pdg"][i])
-					# 	print(energy)
-					all_Wmc.append(W_mc * ratio)
-				else:
-					all_Wmc.append(0)
+				if not below_two:
+					if energy <= 54 and energy >= 1.85:
+						ratio = find_weight_ratio(self.MC["true_energy"][i], self.MC["pdg"][i], self.MC["current_type"][i])
+						all_Wmc.append(W_mc * ratio)
+					else:
+						all_Wmc.append(0)
+				elif below_two:
+					if energy <= 54 and energy >= 1:
+						ratio = find_weight_ratio(self.MC["true_energy"][i], self.MC["pdg"][i], self.MC["current_type"][i])
+						all_Wmc.append(W_mc * ratio)
+					else:
+						all_Wmc.append(0)
 
 			all_e_true.append(energy)
 			all_e_reco.append(ORCA_E_reco)

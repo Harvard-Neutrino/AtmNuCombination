@@ -11,12 +11,18 @@ import classdef as cl
  
 
 
-sim = cl.Simulation(pd.read_csv("ORCA_only_new_morph.csv"))
+sim = cl.Simulation(pd.read_csv("0605ORCA_new_rw_no_morph_with_LE.csv"))
+ic_sim = cl.Simulation(pd.read_csv("neutrino_mc.csv"))
 bf_fluxes = util.bundle_fluxes(cth_nodes, energy_nodes, theta23, dm31, dcp)
 fluxes = bf_fluxes
 analysis = cl.Analysis(sim, bf_fluxes, fluxes)
 util.get_all_weights(analysis, cl.PointType.BestFit)
 util.get_all_weights(analysis, cl.PointType.Physical)
+
+
+ic_analysis = cl.Analysis(ic_sim, bf_fluxes, fluxes)
+util.get_all_weights(ic_analysis, cl.PointType.BestFit)
+util.get_all_weights(ic_analysis, cl.PointType.Physical)
 
 # checge the flavor basis so we now discern by the 3 flavors in detection
 def change_flavor_basis(weights):
@@ -219,11 +225,60 @@ def ORCA_topology_details(flavor, current):
 	ax.set_ylabel("fraction")
 	ax.grid(True)
 	ax.legend(loc = legendloc)
-	# plt.show()
-	fig.savefig("./../ORCA/RecoPlots/nu{}_{}_Topology_Fraction".format(flavname, curname))
+	plt.show()
+	# fig.savefig("./../ORCA/RecoPlots/nu{}_{}_Topology_Fraction".format(flavname, curname))
 	plt.close()
 
-ORCA_topology_details(0, 1)
-ORCA_topology_details(1, 1)
-ORCA_topology_details(2, 1)
-ORCA_topology_details(3, 0)
+# ORCA_topology_details(0, 1)
+# ORCA_topology_details(1, 1)
+# ORCA_topology_details(2, 1)
+# ORCA_topology_details(3, 0)
+
+# plot the energy distribution of tracks and cascades
+def morph_distribution():
+	cas_weights = np.zeros_like(sim.W_mc)
+	track_weights = np.zeros_like(sim.W_mc)
+	ic_cas_weights = np.zeros_like(ic_sim.W_mc)
+	ic_track_weights = np.zeros_like(ic_sim.W_mc)
+	for i in range(len(cas_weights)):
+		cas_weights[i] = analysis.bf_weights[0][0][0][i] + analysis.bf_weights[0][1][0][i] +  \
+							analysis.bf_weights[1][0][0][i] + analysis.bf_weights[1][1][0][i]
+		track_weights[i] = analysis.bf_weights[0][0][1][i] + analysis.bf_weights[0][1][1][i] +  \
+							analysis.bf_weights[1][0][1][i] + analysis.bf_weights[1][1][1][i]
+	for i in range(len(ic_cas_weights)):
+		ic_cas_weights[i] = ic_analysis.bf_weights[0][0][0][i] + ic_analysis.bf_weights[0][1][0][i] +  \
+							ic_analysis.bf_weights[1][0][0][i] + ic_analysis.bf_weights[1][1][0][i]
+		ic_track_weights[i] = ic_analysis.bf_weights[0][0][1][i] + ic_analysis.bf_weights[0][1][1][i] +  \
+							ic_analysis.bf_weights[1][0][1][i] + ic_analysis.bf_weights[1][1][1][i]	
+	energy_bins = np.logspace(0, np.log10(50), 21)
+	bin_widths = np.zeros((20,))
+	for i in range(20):
+		bin_widths[i] = energy_bins[i+1] - energy_bins[i]
+	# print(bin_widths)
+	cascade, _ = np.histogram(sim.E_tr, bins = energy_bins, weights = cas_weights)
+	track, _ = np.histogram(sim.E_tr, bins = energy_bins, weights = track_weights)
+	ic_cascade, _ = np.histogram(ic_sim.E_tr, bins = energy_bins, weights = ic_cas_weights)
+	ic_track, _ = np.histogram(ic_sim.E_tr, bins = energy_bins, weights = ic_track_weights)
+	# print(cascade)
+	fig, ax = plt.subplots(figsize=(7,6))
+	fig.suptitle("ORCA MC energy distribution")
+	ax.hist(energy_bins[:-1], energy_bins, weights = cascade / bin_widths,\
+					 label="ORCA cascade", histtype="step")
+	ax.hist(energy_bins[:-1], energy_bins, weights = track / bin_widths,\
+					 label="ORCA track", histtype="step")
+	ax.hist(energy_bins[:-1], energy_bins, weights = ic_cascade / bin_widths,\
+					 label="IC cascade", histtype="step")
+	ax.hist(energy_bins[:-1], energy_bins, weights = ic_track / bin_widths,\
+					 label="IC track", histtype="step")
+	ax.set_xscale("log")
+	ax.set_yscale("log")
+	ax.set_xlabel("neutrino energy [GeV]")
+	ax.set_xlim(1, 50)
+	ax.set_ylabel("event rate [3yrs]")
+	# ax.grid(True)
+	ax.legend()
+	# plt.show()
+	fig.savefig("./../ORCA/RecoPlots/Energy_Distribution_with_LE_events")
+	plt.close()
+
+morph_distribution()

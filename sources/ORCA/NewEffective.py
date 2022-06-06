@@ -436,10 +436,10 @@ def get_ratios(binnum = 20):
 	ax.set_ylim(0, 5)
 	ax.set_xscale('log')
 
-	print(f_e.slope, f_e.intercept)
-	print(f_mu.slope, f_mu.intercept)
-	print(f_tau.slope, f_tau.intercept)
-	print(f_nc.slope, f_nc.intercept)
+	# print(f_e.slope, f_e.intercept)
+	# print(f_mu.slope, f_mu.intercept)
+	# print(f_tau.slope, f_tau.intercept)
+	# print(f_nc.slope, f_nc.intercept)
 
 	ax.legend()
 	# plt.show()
