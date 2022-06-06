@@ -281,4 +281,86 @@ def morph_distribution():
 	fig.savefig("./../ORCA/RecoPlots/Energy_Distribution_with_LE_events")
 	plt.close()
 
-morph_distribution()
+# morph_distribution()
+
+# plot the energy distribution of tracks and cascades
+def flavor_distribution():
+	e_weights = np.zeros_like(sim.W_mc)
+	mu_weights = np.zeros_like(sim.W_mc)
+	tau_weights = np.zeros_like(sim.W_mc)
+
+	ic_e_weights = np.zeros_like(ic_sim.W_mc)
+	ic_mu_weights = np.zeros_like(ic_sim.W_mc)
+	ic_tau_weights = np.zeros_like(ic_sim.W_mc)
+
+	for i in range(len(e_weights)):
+		if np.abs(sim.pdg[i]) == 12:
+			e_weights[i] = analysis.bf_weights[0][0][0][i] + analysis.bf_weights[0][0][1][i] +  \
+								analysis.bf_weights[0][1][0][i] + analysis.bf_weights[0][1][1][i] + \
+								analysis.bf_weights[1][0][0][i] + analysis.bf_weights[1][0][1][i] +  \
+								analysis.bf_weights[1][1][0][i] + analysis.bf_weights[1][1][1][i]
+		elif np.abs(sim.pdg[i]) == 14: 
+			mu_weights[i] = analysis.bf_weights[0][0][0][i] + analysis.bf_weights[0][0][1][i] +  \
+								analysis.bf_weights[0][1][0][i] + analysis.bf_weights[0][1][1][i] + \
+								analysis.bf_weights[1][0][0][i] + analysis.bf_weights[1][0][1][i] +  \
+								analysis.bf_weights[1][1][0][i] + analysis.bf_weights[1][1][1][i]
+		elif np.abs(sim.pdg[i]) == 16: 
+			tau_weights[i] = analysis.bf_weights[0][0][0][i] + analysis.bf_weights[0][0][1][i] +  \
+								analysis.bf_weights[0][1][0][i] + analysis.bf_weights[0][1][1][i] + \
+								analysis.bf_weights[1][0][0][i] + analysis.bf_weights[1][0][1][i] +  \
+								analysis.bf_weights[1][1][0][i] + analysis.bf_weights[1][1][1][i]
+	for i in range(len(ic_e_weights)):
+		if np.abs(ic_sim.pdg[i]) == 12:
+			ic_e_weights[i] = ic_analysis.bf_weights[0][0][0][i] + ic_analysis.bf_weights[0][0][1][i] +  \
+								ic_analysis.bf_weights[0][1][0][i] + ic_analysis.bf_weights[0][1][1][i] + \
+								ic_analysis.bf_weights[1][0][0][i] + ic_analysis.bf_weights[1][0][1][i] +  \
+								ic_analysis.bf_weights[1][1][0][i] + ic_analysis.bf_weights[1][1][1][i]
+		elif np.abs(ic_sim.pdg[i]) == 14: 
+			ic_mu_weights[i] = ic_analysis.bf_weights[0][0][0][i] + ic_analysis.bf_weights[0][0][1][i] +  \
+								ic_analysis.bf_weights[0][1][0][i] + ic_analysis.bf_weights[0][1][1][i] + \
+								ic_analysis.bf_weights[1][0][0][i] + ic_analysis.bf_weights[1][0][1][i] +  \
+								ic_analysis.bf_weights[1][1][0][i] + ic_analysis.bf_weights[1][1][1][i] 
+		elif np.abs(ic_sim.pdg[i]) == 16: 
+			ic_tau_weights[i] = ic_analysis.bf_weights[0][0][0][i] + ic_analysis.bf_weights[0][0][1][i] +  \
+								ic_analysis.bf_weights[0][1][0][i] + ic_analysis.bf_weights[0][1][1][i] + \
+								ic_analysis.bf_weights[1][0][0][i] + ic_analysis.bf_weights[1][0][1][i] +  \
+								ic_analysis.bf_weights[1][1][0][i] + ic_analysis.bf_weights[1][1][1][i]
+	energy_bins = np.logspace(0, np.log10(50), 21)
+	bin_widths = np.zeros((20,))
+	for i in range(20):
+		bin_widths[i] = energy_bins[i+1] - energy_bins[i]
+	# print(bin_widths)
+	e, _ = np.histogram(sim.E_tr, bins = energy_bins, weights = e_weights)
+	mu, _ = np.histogram(sim.E_tr, bins = energy_bins, weights = mu_weights)
+	tau, _ = np.histogram(sim.E_tr, bins = energy_bins, weights = tau_weights)
+
+	ic_e, _ = np.histogram(ic_sim.E_tr, bins = energy_bins, weights = ic_e_weights)
+	ic_mu, _ = np.histogram(ic_sim.E_tr, bins = energy_bins, weights = ic_mu_weights)
+	ic_tau, _ = np.histogram(ic_sim.E_tr, bins = energy_bins, weights = ic_tau_weights)
+	# print(cascade)
+	fig, ax = plt.subplots(figsize=(7,6))
+	fig.suptitle("ORCA MC energy distribution")
+	ax.hist(energy_bins[:-1], energy_bins, weights = e / bin_widths,\
+					 label="ORCA nue", histtype="step")
+	ax.hist(energy_bins[:-1], energy_bins, weights = mu / bin_widths,\
+					 label="ORCA numu", histtype="step")
+	ax.hist(energy_bins[:-1], energy_bins, weights = tau / bin_widths,\
+					 label="ORCA nutau", histtype="step")
+	ax.hist(energy_bins[:-1], energy_bins, weights = ic_e / bin_widths,\
+					 label="IC nue", histtype="step")
+	ax.hist(energy_bins[:-1], energy_bins, weights = ic_mu / bin_widths,\
+					 label="IC numu", histtype="step")
+	ax.hist(energy_bins[:-1], energy_bins, weights = ic_tau / bin_widths,\
+					 label="IC nutau", histtype="step")
+	ax.set_xscale("log")
+	ax.set_yscale("log")
+	ax.set_xlabel("neutrino energy [GeV]")
+	ax.set_xlim(1, 50)
+	ax.set_ylabel("event rate [3yrs]")
+	# ax.grid(True)
+	ax.legend()
+	# plt.show()
+	fig.savefig("./../ORCA/RecoPlots/Flavor_Energy_Distribution_with_LE_events")
+	plt.close()
+
+flavor_distribution()
