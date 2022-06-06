@@ -1,7 +1,8 @@
 import numpy as np
 import digitalizer as dgt
-from Effective import ICEffectiveAnalysis as ICEff
-from Effective import ORCAEffectiveAnalysis as ORCAEff
+# from Effective import ICEffectiveAnalysis as ICEff
+# from Effective import ORCAEffectiveAnalysis as ORCAEff
+from NewEffective import get_ratios
 import util
 from scipy.stats import truncnorm
 import sys
@@ -69,76 +70,43 @@ class Generator:
 			return reco_zenith_error
 
 		# set up effective area + volume analysis
-		ICVol = ICEff(1, 50, 51)
-		ICVol.computeArea()
-		ICVol.computeVolume()
-		ORCAVol = ORCAEff()
-		ORCAVol.computeArea()
-		ORCAVol.computeVolume()
-		ICe, ICeb, ICmu, ICmub, ICtau, ICtaub, ICnc, ICncb = ICVol.returnVol()
-		ORe, OReb, ORmu, ORmub, ORtau, ORtaub, ORnc, ORncb = ORCAVol.returnVol()
-		e = ORe/ICe
-		mu = ORmu/ICmu
-		if reweight_tau:
-			tau = ORtau/ICtau
-			taub = ORtau/ICtaub 
-		elif not reweight_tau:
-			tau = np.ones_like(e) 
-			taub = np.ones_like(e)
-		nc = ORnc/ICnc
-		eb = OReb/ICeb
-		mub = ORmub/ICmub
-		ncb = ORnc/ICncb
+		f_e, f_mu, f_tau, f_nc, f_eb, f_mub, f_taub, f_ncb = get_ratios()
+		print(f_e.slope, f_e.intercept)
+		print(f_mu.slope, f_mu.intercept)
+		print(f_tau.slope, f_tau.intercept)
+		print(f_nc.slope, f_nc.intercept)
 
-		# for i in range(17):
-		# 	tau[i] = 0
-		# 	taub[i] = 0
-		
-		# for i in range(50):
-		# 	if tau[i] > 5:
-		# 		tau[i] = 5
-		# 	if taub[i] > 5:
-		# 		taub[i] = 5
 
-		def find_weight_ratio(true_energy, pdg, interaction_type): # it's actually current type
-
-			volbins = np.logspace(np.log10(1), np.log10(50), num=51)
+		def find_weight_ratio(true_energy, pdg, current_type): # it's actually current type
 			
-			idx = 0
-			for i in range(len(volbins) - 1):
-				idx = i
-				if true_energy <= volbins[i + 1]:
-					break
-			
-			# print(idx)
-			
-			if interaction_type == 0:
+			if current_type == 0:
 				if pdg / np.abs(pdg) == 1:
-					return nc[idx]
+					return f_nc.slope * np.log10(true_energy) + f_nc.intercept
 				elif pdg / np.abs(pdg) == -1:
-					return nc[idx]
+					return f_ncb.slope * np.log10(true_energy) + f_ncb.intercept
 				else:
 					print("wrong pdg detected")
 					exit(0)
-			elif interaction_type == 1:
+			elif current_type == 1:
 				if pdg == 12:
-					return e[idx]
+					return f_e.slope * np.log10(true_energy) + f_e.intercept
 				elif pdg == -12:
-					return eb[idx]
+					return f_eb.slope * np.log10(true_energy) + f_eb.intercept
 				elif pdg == 14:
-					return mu[idx]
+					return f_mu.slope * np.log10(true_energy) + f_mu.intercept
 				elif pdg == -14:
-					return mub[idx]
+					return f_mub.slope * np.log10(true_energy) + f_mub.intercept
 				elif pdg == 16:
-					return tau[idx]
+					return f_tau.slope * np.log10(true_energy) + f_tau.intercept
 				elif pdg == -16:
-					return taub[idx]
+					return f_taub.slope * np.log10(true_energy) + f_taub.intercept
 				else:
 					print("wrong pdg detected")
 					exit(0)
 			else:
-				print("wrong interaction type detected: ", interaction_type)
+				print("wrong interaction type detected: ", current_type)
 				exit(0)
+
 
 		def assign_topology(nutype, current_type, pdg, true_energy, pid):
 			o_track_prob, o_cas_prob = util.get_ORCA_topology_prob(nutype, current_type, pdg, true_energy)
@@ -183,12 +151,12 @@ class Generator:
 
 		# now generate a fake ORCA MC energy and ORCA MC weight for all the events
 		for i in range(len(self.MC["true_energy"])):
-			n = len(self.MC["true_energy"]) / 1000
-			j = math.floor(i / 1000)
-			k = (j + 1) / n
-			# print the progress bar
-			if i % 1000 == 0:
-				print("\r[%-50s] %d%%" % ('='*int(50*k), 100*k), end = '\r', flush = True)
+			# n = len(self.MC["true_energy"]) / 1000
+			# j = math.floor(i / 1000)
+			# k = (j + 1) / n
+			# # print the progress bar
+			# if i % 1000 == 0:
+			# 	print("\r[%-50s] %d%%" % ('='*int(50*k), 100*k), end = '\r', flush = True)
 
 			if self.MC["true_energy"][i] >= 54 or self.MC["true_energy"][i] <= 1.85:
 				all_mask.append(False)
@@ -255,6 +223,11 @@ class Generator:
 			elif reweight:
 				if energy <= 54 and energy >= 1.85:
 					ratio = find_weight_ratio(self.MC["true_energy"][i], self.MC["pdg"][i], self.MC["current_type"][i])
+					# if self.MC["pdg"][i] == 12:
+					# 	print(energy, ratio)
+					# if np.isnan(ratio):
+					# 	print(self.MC["pdg"][i])
+					# 	print(energy)
 					all_Wmc.append(W_mc * ratio)
 				else:
 					all_Wmc.append(0)

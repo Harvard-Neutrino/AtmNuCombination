@@ -12,7 +12,8 @@ from util import twogaussian
 # import analyze as anl
 from params import *
 
-input_file = pd.read_csv("newORCA.csv")
+# input_file = pd.read_csv("ORCA.csv")
+input_file = pd.read_csv(savename)
 original = pd.read_csv("neutrino_mc.csv")
 pid = input_file["pid"]
 e_true = input_file["true_energy"]
@@ -175,8 +176,8 @@ def plot_energy_reco_track_probability():
     plt.xscale("log")
     plt.yscale("log")
     # plt.legend()
-    # plt.show()
-    plt.savefig("./RecoPlots/ORCA_Reco_track_probability_weighted")
+    plt.show()
+    # plt.savefig("./RecoPlots/ORCA_Reco_track_probability_weighted")
     plt.close()
 
 plot_energy_reco_track_probability()
@@ -236,12 +237,12 @@ def plot_energy_reco_cascade_probability():
     plt.xscale("log")
     plt.yscale("log")
     # plt.legend()
-    # plt.show()
-    plt.savefig("./RecoPlots/ORCA_Reco_cascade_probability_weighted")
+    plt.show()
+    # plt.savefig("./RecoPlots/ORCA_Reco_cascade_probability_weighted")
     plt.close()
 
 
-plot_energy_reco_cascade_probability()
+# plot_energy_reco_cascade_probability()
 
 def plot_IC_energy_reco_cascade_probability():
     IC_input_file = pd.read_csv("neutrino_mc.csv")

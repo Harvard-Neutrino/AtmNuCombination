@@ -58,10 +58,43 @@ def getORCAbins(input_file, tau = False, nc = False):
 	# print(res)
 	return w_bin
 
-def interpolate_xsection(nutype):
+# def interp_tau_xs(nutype):
+# 	tau_xs = pd.read_csv("./ORCA_Results/nutau_xs.csv", header = None, usecols = [0, 1])
+# 	# nubarxsection = pd.read_csv("nubar.txt", sep = ' ', usecols = [0, 1, 2])
+# 	if nutype == 1:
+# 		length = len(tau_xs[0])
+# 		extracted = np.zeros(length)
+# 		energies = np.zeros(length)
+# 		for i in range(length):
+# 			extracted[i] = tau_xs[1][i]
+# 			energies[i] = tau_xs[0][i]
+
+# 	resf = interp1d(energies, extracted)
+
+# 	return resf
+
+# # interpolates the tau xs ratio file
+# def tau_xs_ratio():
+# 	tau_ratio = pd.read_csv("./ORCA_Results/tau_xs_ratio.csv", header = None, usecols = [0, 1])
+
+# 	length = len(tau_ratio[0])
+# 	extracted = np.zeros(length)
+# 	energies = np.zeros(length)
+# 	for i in range(length):
+# 		extracted[i] = tau_ratio[1][i]
+# 		energies[i] = tau_ratio[0][i]
+
+# 	resf = interp1d(energies, extracted)
+
+# 	return resf
+
+def interpolate_xsection(nutype, tau = False):
 	# reads the xsection txt file
 	nuxsection = pd.read_csv("nu.txt", sep = ' ', usecols = [0, 1, 2])
 	nubarxsection = pd.read_csv("nubar.txt", sep = ' ', usecols = [0, 1, 2])
+	# tausec = interp_tau_xs(1)
+	# tau_ratio = tau_xs_ratio()
+	# taubarsec
 
 	length = len(nuxsection["Energy"])
 	extracted = np.zeros(length)
@@ -71,8 +104,22 @@ def interpolate_xsection(nutype):
 		for i in range(length):
 			extracted[i] = nuxsection["sigmaCC"][i] + nuxsection["sigmaNC"][i]
 			energies[i] = nuxsection["Energy"][i]
-			# print(extracted[i])
-			# print(energies[i])
+		# if not tau:
+		# 	for i in range(length):
+		# 		extracted[i] = nuxsection["sigmaCC"][i] + nuxsection["sigmaNC"][i]
+		# 		energies[i] = nuxsection["Energy"][i]
+		# 		# print(extracted[i])
+		# 		# print(energies[i])
+		# elif tau:
+		# 	for i in range(length):
+		# 		energy = energies[i]
+		# 		if energy >= 3.5 and energy <= 70:
+		# 			extracted[i] = tausec(energy) + nuxsection["sigmaNC"][i]
+		# 			# extracted[i] = nuxsection["sigmaCC"][i] * tau_ratio(energy) + nubarxsection["sigmaNC"][i]
+		# 			energies[i] = nuxsection["Energy"][i]
+		# 		else:
+		# 			extracted[i] = nuxsection["sigmaCC"][i] + nubarxsection["sigmaNC"][i]
+		# 			energies[i] = nuxsection["Energy"][i]
 	elif nutype == -1:
 		for i in range(length):
 			extracted[i] = nubarxsection["sigmaCC"][i] + nubarxsection["sigmaNC"][i]
@@ -82,8 +129,27 @@ def interpolate_xsection(nutype):
 
 	return resf
 
-# interpolate_xsection(1)
+def all_xsec():
+	xsec = pd.read_csv("all_xsecs.csv")
+	energy = xsec["energy"]
+	nu = xsec["nu"]
+	nubar = xsec["nubar"]
+	tau = xsec["tau"]
+	taubar = xsec["taubar"]
+	nc = xsec["nc"]
+	ncbar = xsec["ncbar"]
+	f_nu = interp1d(energy, nu)
+	f_nubar = interp1d(energy, nubar)
+	f_tau = interp1d(energy, tau)
+	f_taubar = interp1d(energy, taubar)
+	f_nc = interp1d(energy, nc)
+	f_ncbar = interp1d(energy, ncbar)
+	return f_nu, f_nubar, f_tau, f_taubar, f_nc, f_ncbar
 
+
+# return the index of effective volume/area matrix according to current type and pdg
+# first index is neutrino/antineutrino = 0/1
+# second index is flavor+current (e/mu/tau/nc) = 0/1/2/3
 def get_index(current, pdg):
 	if current == 1: #charged
 		if pdg / np.abs(pdg) == 1: # neutrino
