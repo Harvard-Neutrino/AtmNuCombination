@@ -11,13 +11,13 @@ import classdef as cl
  
 
 
-sim = cl.Simulation(pd.read_csv("0605ORCA_new_rw_no_morph_with_LE.csv"))
+# sim = cl.Simulation(pd.read_csv("new_rw_no_morph_with_LE.csv"))
 ic_sim = cl.Simulation(pd.read_csv("neutrino_mc.csv"))
 bf_fluxes = util.bundle_fluxes(cth_nodes, energy_nodes, theta23, dm31, dcp)
 fluxes = bf_fluxes
-analysis = cl.Analysis(sim, bf_fluxes, fluxes)
-util.get_all_weights(analysis, cl.PointType.BestFit)
-util.get_all_weights(analysis, cl.PointType.Physical)
+# analysis = cl.Analysis(sim, bf_fluxes, fluxes)
+# util.get_all_weights(analysis, cl.PointType.BestFit)
+# util.get_all_weights(analysis, cl.PointType.Physical)
 
 
 ic_analysis = cl.Analysis(ic_sim, bf_fluxes, fluxes)
@@ -277,8 +277,8 @@ def morph_distribution():
 	ax.set_ylabel("event rate [3yrs]")
 	# ax.grid(True)
 	ax.legend()
-	# plt.show()
-	fig.savefig("./../ORCA/RecoPlots/Energy_Distribution_with_LE_events")
+	plt.show()
+	# fig.savefig("./../ORCA/RecoPlots/Energy_Distribution_with_LE_events")
 	plt.close()
 
 # morph_distribution()
@@ -363,4 +363,131 @@ def flavor_distribution():
 	fig.savefig("./../ORCA/RecoPlots/Flavor_Energy_Distribution_with_LE_events")
 	plt.close()
 
-flavor_distribution()
+# flavor_distribution()
+
+def y_distribution():
+	# cas_weights = np.zeros_like(sim.W_mc)
+	# track_weights = np.zeros_like(sim.W_mc)
+	ic_cas_weights = np.zeros_like(ic_sim.W_mc)
+	ic_track_weights = np.zeros_like(ic_sim.W_mc)
+	# for i in range(len(cas_weights)):
+	# 	cas_weights[i] = analysis.bf_weights[0][0][0][i] + analysis.bf_weights[0][1][0][i] +  \
+	# 						analysis.bf_weights[1][0][0][i] + analysis.bf_weights[1][1][0][i]
+	# 	track_weights[i] = analysis.bf_weights[0][0][1][i] + analysis.bf_weights[0][1][1][i] +  \
+	# 						analysis.bf_weights[1][0][1][i] + analysis.bf_weights[1][1][1][i]
+	for i in range(len(ic_cas_weights)):
+		ic_cas_weights[i] = ic_analysis.bf_weights[0][0][0][i] + ic_analysis.bf_weights[0][1][0][i] +  \
+							ic_analysis.bf_weights[1][0][0][i] + ic_analysis.bf_weights[1][1][0][i]
+		ic_track_weights[i] = ic_analysis.bf_weights[0][0][1][i] + ic_analysis.bf_weights[0][1][1][i] +  \
+							ic_analysis.bf_weights[1][0][1][i] + ic_analysis.bf_weights[1][1][1][i]	
+	binnum = 10
+	y_bins = np.logspace(-4, 0, binnum + 1)
+	bin_widths = np.zeros((binnum,))
+	for i in range(binnum):
+		bin_widths[i] = y_bins[i+1] - y_bins[i]
+	# print(bin_widths)
+	# cascade, _ = np.histogram(sim.E_tr, bins = energy_bins, weights = cas_weights)
+	# track, _ = np.histogram(sim.E_tr, bins = energy_bins, weights = track_weights)
+	ic_cascade, _ = np.histogram(ic_sim.file["y"], bins = y_bins, weights = ic_cas_weights)
+	ic_track, _ = np.histogram(ic_sim.file["y"], bins = y_bins, weights = ic_track_weights)
+	# print(cascade)
+	fig, ax = plt.subplots(figsize=(7,6))
+	fig.suptitle("IC MC y distribution")
+	# ax.hist(energy_bins[:-1], energy_bins, weights = cascade / bin_widths,\
+	# 				 label="ORCA cascade", histtype="step")
+	# ax.hist(energy_bins[:-1], energy_bins, weights = track / bin_widths,\
+	# 				 label="ORCA track", histtype="step")
+	ax.hist(y_bins[:-1], y_bins, weights = ic_cascade / bin_widths,\
+					 label="IC cascade", histtype="step")
+	ax.hist(y_bins[:-1], y_bins, weights = ic_track / bin_widths,\
+					 label="IC track", histtype="step")
+	ax.set_xscale("log")
+	ax.set_yscale("log")
+	ax.set_xlabel("y")
+	# ax.set_xlim(1, 50)
+	ax.set_ylabel("event rate [3yrs]")
+	# ax.grid(True)
+	ax.legend()
+	# plt.show()
+	fig.savefig("./../ORCA/RecoPlots/IC_y_distribution")
+	plt.close()
+
+# y_distribution()
+
+def track_E_vs_y_distribution():
+	# ic_cas_weights = np.zeros_like(ic_sim.W_mc)
+	ic_weights = np.zeros_like(ic_sim.W_mc)
+	for i in range(len(ic_weights)):
+		# ic_cas_weights[i] = ic_analysis.bf_weights[0][0][0][i] + ic_analysis.bf_weights[0][1][0][i] +  \
+		# 					ic_analysis.bf_weights[1][0][0][i] + ic_analysis.bf_weights[1][1][0][i]
+		ic_weights[i] = ic_analysis.bf_weights[0][0][1][i] + ic_analysis.bf_weights[0][1][1][i] +  \
+							ic_analysis.bf_weights[1][0][1][i] + ic_analysis.bf_weights[1][1][1][i]	
+	binnum = 10
+	y_bins = np.logspace(-4, 0, binnum + 1)
+	E_bins = np.logspace(0, 2, binnum + 1)
+	y_bin_widths = np.zeros((binnum,))
+	E_bin_widths = np.zeros((binnum,))
+	for i in range(binnum):
+		y_bin_widths[i] = y_bins[i+1] - y_bins[i]
+		E_bin_widths[i] = E_bins[i+1] - E_bins[i]
+	bin_areas = np.ndarray((binnum, binnum))
+	for i in range(binnum):
+		for j in range(binnum):
+			bin_areas[i][j] = E_bin_widths[i] * y_bin_widths[j]
+	# ic_cascade, _ = np.histogram(ic_sim.file["y"], bins = y_bins, weights = ic_cas_weights)
+	ic_track, _, _ = np.histogram2d(ic_sim.E_tr, ic_sim.file["y"], bins = [E_bins, y_bins], weights = ic_weights)
+	ic_track /= bin_areas
+	# print(cascade)
+	fig, ax = plt.subplots(figsize=(7,6))
+	fig.suptitle("ORCA MC energy vs y distribution")
+	c = ax.pcolormesh(E_bins, y_bins, ic_track.T)
+	plt.colorbar(c)
+	ax.set_xscale("log")
+	ax.set_yscale("log")
+	ax.set_xlabel("Energy[GeV")
+	ax.set_ylabel("y")
+	ax.legend()
+	# plt.show()
+	fig.savefig("./../ORCA/RecoPlots/IC_track_E_y_distribution")
+	plt.close()
+
+track_E_vs_y_distribution()
+
+def cas_E_vs_y_distribution():
+	# ic_cas_weights = np.zeros_like(ic_sim.W_mc)
+	ic_weights = np.zeros_like(ic_sim.W_mc)
+	for i in range(len(ic_weights)):
+		ic_weights[i] = ic_analysis.bf_weights[0][0][0][i] + ic_analysis.bf_weights[0][1][0][i] +  \
+							ic_analysis.bf_weights[1][0][0][i] + ic_analysis.bf_weights[1][1][0][i]
+		# ic_weights[i] = ic_analysis.bf_weights[0][0][1][i] + ic_analysis.bf_weights[0][1][1][i] +  \
+		# 					ic_analysis.bf_weights[1][0][1][i] + ic_analysis.bf_weights[1][1][1][i]	
+	binnum = 10
+	y_bins = np.logspace(-4, 0, binnum + 1)
+	E_bins = np.logspace(0, 2, binnum + 1)
+	y_bin_widths = np.zeros((binnum,))
+	E_bin_widths = np.zeros((binnum,))
+	for i in range(binnum):
+		y_bin_widths[i] = y_bins[i+1] - y_bins[i]
+		E_bin_widths[i] = E_bins[i+1] - E_bins[i]
+	bin_areas = np.ndarray((binnum, binnum))
+	for i in range(binnum):
+		for j in range(binnum):
+			bin_areas[i][j] = E_bin_widths[i] * y_bin_widths[j]
+	# ic_cascade, _ = np.histogram(ic_sim.file["y"], bins = y_bins, weights = ic_cas_weights)
+	ic_track, _, _ = np.histogram2d(ic_sim.E_tr, ic_sim.file["y"], bins = [E_bins, y_bins], weights = ic_weights)
+	ic_track /= bin_areas
+	# print(cascade)
+	fig, ax = plt.subplots(figsize=(7,6))
+	fig.suptitle("IC MC cascades energy vs y distribution")
+	c = ax.pcolormesh(E_bins, y_bins, ic_track.T)
+	plt.colorbar(c)
+	ax.set_xscale("log")
+	ax.set_yscale("log")
+	ax.set_xlabel("Energy [GeV]")
+	ax.set_ylabel("y")
+	ax.legend()
+	# plt.show()
+	fig.savefig("./../ORCA/RecoPlots/IC_cas_E__y_distribution")
+	plt.close()
+
+cas_E_vs_y_distribution()

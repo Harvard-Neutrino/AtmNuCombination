@@ -116,6 +116,8 @@ class Generator:
 
 
 		def assign_topology(nutype, current_type, pdg, true_energy, pid):
+			# 0 is cas, 1 is track
+			
 			o_track_prob, o_cas_prob = util.get_ORCA_topology_prob(nutype, current_type, pdg, true_energy)
 			i_track_prob, i_cas_prob = util.get_IC_topology_prob(nutype, current_type, pdg, true_energy)
 
@@ -130,11 +132,16 @@ class Generator:
 				if pid == 0:
 					new_track_p, new_cas_p = 0, 1
 				elif pid == 1:
-					new_track_p, new_cas_p = o_track_prob / i_track_prob, (o_cas_prob - i_cas_prob) / i_track_prob
-
+					if not restricted_rand_morph:
+						new_track_p, new_cas_p = o_track_prob / i_track_prob, (o_cas_prob - i_cas_prob) / i_track_prob
+					else:
+						new_track_p, new_cas_p = o_track_prob / i_track_prob, 0
 			elif i_track_prob < o_track_prob and i_cas_prob >= o_cas_prob:
 				if pid == 0:
-					new_track_p, new_cas_p = (o_track_prob - i_track_prob) / i_cas_prob, o_cas_prob / i_cas_prob, 
+					if not restricted_rand_morph:
+						new_track_p, new_cas_p = (o_track_prob - i_track_prob) / i_cas_prob, o_cas_prob / i_cas_prob
+					else:
+						new_track_p, new_cas_p = 0 , o_cas_prob / i_cas_prob
 				elif pid == 1:
 					new_track_p, new_cas_p = 1, 0
 
