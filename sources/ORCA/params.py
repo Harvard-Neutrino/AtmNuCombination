@@ -6,7 +6,7 @@ input_track = "./ORCA_Results/migrationTracks.png"
 input_cascade = "./ORCA_Results/migrationCascades.png"
 
 input_MC = pd.read_csv("neutrino_mc.csv")
-savename = "0605ORCA_new_rw_no_morph_with_LE.csv"
+savename = "0612ORCA_new_rw_no_morph_with_LE.csv"
 
 x_bins = np.logspace(np.log10(1.85), np.log10(54), 23)
 

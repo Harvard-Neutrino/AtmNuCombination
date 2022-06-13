@@ -28,6 +28,15 @@ def two_gaus_fit(data_entries, bins, current_binnum):
 	return popt[0], popt[1], popt[2] , popt[3] , popt[4]
 ######################################################################################################################
 
+
+# tanh fit
+def tanh(x, A, b, k):
+	return b + A * np.tanh(k * (x))
+
+def tanh_fit(data, bins_centers):
+	popt, pcov = curve_fit(tanh, xdata=bins_centers, ydata=data, p0=[1.5, 1, 2.8])
+	return popt[0], popt[1], popt[2]
+
 # input the zenith error histogram from ORCA paper plot
 def get_zenith_error():
 

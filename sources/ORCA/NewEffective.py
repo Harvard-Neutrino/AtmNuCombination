@@ -392,14 +392,6 @@ def get_ratios(binnum = 20):
 	nc_ratio = ORnc / ICnc
 	ncb_ratio = ORncb / ICncb
 
-	# f_e_prelim = interp1d(bin_centers, e_ratio, kind = "cubic")
-	# f_mu_prelim = interp1d(bin_centers, mu_ratio, kind = "cubic")
-	# f_tau_prelim = interp1d(bin_centers, tau_ratio, kind = "cubic")
-	# f_nc_prelim = interp1d(bin_centers, nc_ratio, kind = "cubic")
-	# f_eb_prelim = interp1d(bin_centers, eb_ratio, kind = "cubic")
-	# f_mub_prelim = interp1d(bin_centers, mub_ratio, kind = "cubic")
-	# f_taub_prelim = interp1d(bin_centers, taub_ratio, kind = "cubic")
-	# f_ncb_prelim = interp1d(bin_centers, ncb_ratio, kind = "cubic")
 
 	f_e = linregress(np.log10(bin_centers), e_ratio)
 	f_mu = linregress(np.log10(bin_centers), mu_ratio)
@@ -410,19 +402,21 @@ def get_ratios(binnum = 20):
 	f_taub = linregress(np.log10(bin_centers)[6:], taub_ratio[6:])
 	f_ncb = linregress(np.log10(bin_centers), ncb_ratio)
 
+	# print(e_A, e_b, e_k)
+
 	xspace = np.logspace(np.log10(1), np.log10(50), 10000)
 
 	fig, ax = plt.subplots(figsize=(7,6))
 	fig.suptitle("Effective Volume Ratios")
 
-	ax.plot(bin_centers, e_ratio, label = "nu_e", color = 'r', linestyle = "-", alpha = 0.4)
-	ax.plot(bin_centers, eb_ratio, label = "nu_ebar", color = 'r', linestyle = "--", alpha = 0.4)
-	ax.plot(bin_centers, mu_ratio, label = "nu_mu", color = 'b', linestyle = "-", alpha = 0.4)
-	ax.plot(bin_centers, mub_ratio, label = "nu_mubar", color = 'b', linestyle = "--", alpha = 0.4)
-	ax.plot(bin_centers, tau_ratio, label = "nu_tau", color = 'g', linestyle = "-", alpha = 0.4)
-	ax.plot(bin_centers, taub_ratio, label = "nu_taubar", color = 'g', linestyle = "--", alpha = 0.4)
-	ax.plot(bin_centers, nc_ratio, label = "nu_nc",color = 'brown', linestyle = "-", alpha = 0.4)
-	ax.plot(bin_centers, ncb_ratio, label = "nu_ncbar",color = 'brown', linestyle = "--", alpha = 0.4)
+	ax.plot(bin_centers, e_ratio, color = 'r', linestyle = "-", alpha = 0.4)
+	ax.plot(bin_centers, eb_ratio, color = 'r', linestyle = "--", alpha = 0.4)
+	ax.plot(bin_centers, mu_ratio, color = 'b', linestyle = "-", alpha = 0.4)
+	ax.plot(bin_centers, mub_ratio, color = 'b', linestyle = "--", alpha = 0.4)
+	ax.plot(bin_centers, tau_ratio,  color = 'g', linestyle = "-", alpha = 0.4)
+	ax.plot(bin_centers, taub_ratio, color = 'g', linestyle = "--", alpha = 0.4)
+	ax.plot(bin_centers, nc_ratio, color = 'brown', linestyle = "-", alpha = 0.4)
+	ax.plot(bin_centers, ncb_ratio, color = 'brown', linestyle = "--", alpha = 0.4)
 
 	ax.plot(xspace, f_e.intercept + f_e.slope * np.log10(xspace), label = "nu_e", color = 'r', linestyle = "-", alpha = 0.8)
 	ax.plot(xspace, f_eb.intercept + f_eb.slope * np.log10(xspace), label = "nu_ebar", color = 'r', linestyle = "--", alpha = 0.8)
@@ -447,7 +441,7 @@ def get_ratios(binnum = 20):
 
 	return f_e, f_mu, f_tau, f_nc, f_eb, f_mub, f_taub, f_ncb
 
-# get_ratios(binnum = 20)
+get_ratios(binnum = 20)
 
 # ICanalysis = ICEffectiveAnalysis(1, 50, 21)
 # ICanalysis.compute()
