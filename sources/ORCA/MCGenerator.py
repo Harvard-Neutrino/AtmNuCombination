@@ -96,13 +96,13 @@ class Generator:
 					exit(0)
 			elif current_type == 1:
 				if pdg == 12:
-					return f_e.slope * np.log10(true_energy) + f_e.intercept
+					return np.polyval(f_e, np.log10(true_energy))
 				elif pdg == -12:
-					return f_eb.slope * np.log10(true_energy) + f_eb.intercept
+					return np.polyval(f_eb, np.log10(true_energy))
 				elif pdg == 14:
-					return f_mu.slope * np.log10(true_energy) + f_mu.intercept
+					return np.polyval(f_mu, np.log10(true_energy))
 				elif pdg == -14:
-					return f_mub.slope * np.log10(true_energy) + f_mub.intercept
+					return np.polyval(f_mub, np.log10(true_energy))
 				elif pdg == 16:
 					return f_tau.slope * np.log10(true_energy) + f_tau.intercept
 				elif pdg == -16:

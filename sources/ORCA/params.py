@@ -6,12 +6,12 @@ input_track = "./ORCA_Results/migrationTracks.png"
 input_cascade = "./ORCA_Results/migrationCascades.png"
 
 input_MC = pd.read_csv("neutrino_mc.csv")
-savename = "0612ORCA_rand_morph_restricted.csv"
+savename = "0621ORCA_poly_rw_no_morph.csv"
 
 x_bins = np.logspace(np.log10(1.85), np.log10(54), 23)
 
 # turn on or off randomize morphology
-rand_morph = True
+rand_morph = False
 
 # turn on or off prohibition of track <-> cascade morphology under random assignment
 restricted_rand_morph = True

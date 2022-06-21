@@ -393,18 +393,26 @@ def get_ratios(binnum = 20):
 	ncb_ratio = ORncb / ICncb
 
 
-	f_e = linregress(np.log10(bin_centers), e_ratio)
-	f_mu = linregress(np.log10(bin_centers), mu_ratio)
+	# f_e = linregress(np.log10(bin_centers), e_ratio)
+	f_e = np.polyfit(np.log10(bin_centers)[:-1], e_ratio[:-1], deg = 4)
+	# f_mu = linregress(np.log10(bin_centers), mu_ratio)
+	f_mu = np.polyfit(np.log10(bin_centers)[:-1], mu_ratio[:-1], deg = 4)
+
 	f_tau = linregress(np.log10(bin_centers)[6:], tau_ratio[6:])
 	f_nc = linregress(np.log10(bin_centers), nc_ratio)
-	f_eb = linregress(np.log10(bin_centers), eb_ratio)
-	f_mub = linregress(np.log10(bin_centers), mub_ratio)
+
+	# f_eb = linregress(np.log10(bin_centers), eb_ratio)
+	f_eb = np.polyfit(np.log10(bin_centers)[:-1], eb_ratio[:-1], deg = 4)
+
+	# f_mub = linregress(np.log10(bin_centers), mub_ratio)
+	f_mub = np.polyfit(np.log10(bin_centers)[:-1], mub_ratio[:-1], deg = 4)
+
 	f_taub = linregress(np.log10(bin_centers)[6:], taub_ratio[6:])
 	f_ncb = linregress(np.log10(bin_centers), ncb_ratio)
 
 	# print(e_A, e_b, e_k)
 
-	xspace = np.logspace(np.log10(1), np.log10(50), 10000)
+	xspace = np.logspace(np.log10(1), np.log10(50), 1000)
 
 	fig, ax = plt.subplots(figsize=(7,6))
 	fig.suptitle("Effective Volume Ratios")
@@ -418,10 +426,18 @@ def get_ratios(binnum = 20):
 	ax.plot(bin_centers, nc_ratio, color = 'brown', linestyle = "-", alpha = 0.4)
 	ax.plot(bin_centers, ncb_ratio, color = 'brown', linestyle = "--", alpha = 0.4)
 
-	ax.plot(xspace, f_e.intercept + f_e.slope * np.log10(xspace), label = "nu_e", color = 'r', linestyle = "-", alpha = 0.8)
-	ax.plot(xspace, f_eb.intercept + f_eb.slope * np.log10(xspace), label = "nu_ebar", color = 'r', linestyle = "--", alpha = 0.8)
-	ax.plot(xspace, f_mu.intercept + f_mu.slope * np.log10(xspace), label = "nu_mu", color = 'b', linestyle = "-", alpha = 0.8)
-	ax.plot(xspace, f_mub.intercept + f_mub.slope * np.log10(xspace), label = "nu_mubar", color = 'b', linestyle = "--", alpha = 0.8)
+	# ax.plot(xspace, f_e.intercept + f_e.slope * np.log10(xspace), label = "nu_e", color = 'r', linestyle = "-", alpha = 0.8)
+	ax.plot(xspace, np.polyval(f_e, np.log10(xspace)), label = "nu_e", color = 'r', linestyle = "-", alpha = 0.8)
+
+	# ax.plot(xspace, f_eb.intercept + f_eb.slope * np.log10(xspace), label = "nu_ebar", color = 'r', linestyle = "--", alpha = 0.8)
+	ax.plot(xspace, np.polyval(f_eb, np.log10(xspace)), label = "nu_ebar", color = 'r', linestyle = "--", alpha = 0.8)
+
+	# ax.plot(xspace, f_mu.intercept + f_mu.slope * np.log10(xspace), label = "nu_mu", color = 'b', linestyle = "-", alpha = 0.8)
+	ax.plot(xspace, np.polyval(f_mu, np.log10(xspace)), label = "nu_mu", color = 'b', linestyle = "-", alpha = 0.8)
+
+	# ax.plot(xspace, f_mub.intercept + f_mub.slope * np.log10(xspace), label = "nu_mubar", color = 'b', linestyle = "--", alpha = 0.8)
+	ax.plot(xspace, np.polyval(f_mub, np.log10(xspace)), label = "nu_mubar", color = 'b', linestyle = "--", alpha = 0.8)
+
 	ax.plot(xspace, f_tau.intercept + f_tau.slope * np.log10(xspace), label = "nu_tau", color = 'g', linestyle = "-", alpha = 0.8)
 	ax.plot(xspace, f_taub.intercept + f_taub.slope * np.log10(xspace), label = "nu_taubar", color = 'g', linestyle = "--", alpha = 0.8)
 	ax.plot(xspace, f_nc.intercept + f_nc.slope * np.log10(xspace), label = "nu_nc",color = 'brown', linestyle = "-", alpha = 0.8)
@@ -437,7 +453,7 @@ def get_ratios(binnum = 20):
 
 	ax.legend()
 	# plt.show()
-	# fig.savefig("./RecoPlots/Effective_Volume_Ratio")
+	fig.savefig("./RecoPlots/Effective_Volume_Ratio_poly4_fit")
 
 	return f_e, f_mu, f_tau, f_nc, f_eb, f_mub, f_taub, f_ncb
 

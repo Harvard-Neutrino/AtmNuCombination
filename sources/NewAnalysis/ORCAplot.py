@@ -11,13 +11,14 @@ import classdef as cl
  
 
 
-# sim = cl.Simulation(pd.read_csv("new_rw_no_morph_with_LE.csv"))
+sim = cl.Simulation(pd.read_csv("0621ORCA_poly_rw_no_morph.csv"))
 ic_sim = cl.Simulation(pd.read_csv("neutrino_mc.csv"))
 bf_fluxes = util.bundle_fluxes(cth_nodes, energy_nodes, theta23, dm31, dcp)
 fluxes = bf_fluxes
-# analysis = cl.Analysis(sim, bf_fluxes, fluxes)
-# util.get_all_weights(analysis, cl.PointType.BestFit)
-# util.get_all_weights(analysis, cl.PointType.Physical)
+
+analysis = cl.Analysis(sim, bf_fluxes, fluxes)
+util.get_all_weights(analysis, cl.PointType.BestFit)
+util.get_all_weights(analysis, cl.PointType.Physical)
 
 
 ic_analysis = cl.Analysis(ic_sim, bf_fluxes, fluxes)
@@ -277,11 +278,11 @@ def morph_distribution():
 	ax.set_ylabel("event rate [3yrs]")
 	# ax.grid(True)
 	ax.legend()
-	plt.show()
-	# fig.savefig("./../ORCA/RecoPlots/Energy_Distribution_with_LE_events")
+	# plt.show()
+	fig.savefig("./../ORCA/RecoPlots/Energy_Distribution_with_LE_events")
 	plt.close()
 
-# morph_distribution()
+morph_distribution()
 
 # plot the energy distribution of tracks and cascades
 def flavor_distribution():
@@ -363,7 +364,7 @@ def flavor_distribution():
 	fig.savefig("./../ORCA/RecoPlots/Flavor_Energy_Distribution_with_LE_events")
 	plt.close()
 
-# flavor_distribution()
+flavor_distribution()
 
 def y_distribution():
 	# cas_weights = np.zeros_like(sim.W_mc)
@@ -451,7 +452,7 @@ def track_E_vs_y_distribution():
 	fig.savefig("./../ORCA/RecoPlots/IC_track_E_y_distribution")
 	plt.close()
 
-track_E_vs_y_distribution()
+# track_E_vs_y_distribution()
 
 def cas_E_vs_y_distribution():
 	# ic_cas_weights = np.zeros_like(ic_sim.W_mc)
@@ -490,4 +491,4 @@ def cas_E_vs_y_distribution():
 	fig.savefig("./../ORCA/RecoPlots/IC_cas_E__y_distribution")
 	plt.close()
 
-cas_E_vs_y_distribution()
+# cas_E_vs_y_distribution()
