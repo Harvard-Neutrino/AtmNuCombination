@@ -279,7 +279,7 @@ def morph_distribution():
 	# ax.grid(True)
 	ax.legend()
 	# plt.show()
-	fig.savefig("./../ORCA/RecoPlots/Energy_Distribution_with_LE_events")
+	fig.savefig("./../ORCA/RecoPlots/0621poly_rw_distribution_morph")
 	plt.close()
 
 morph_distribution()
@@ -361,7 +361,7 @@ def flavor_distribution():
 	# ax.grid(True)
 	ax.legend()
 	# plt.show()
-	fig.savefig("./../ORCA/RecoPlots/Flavor_Energy_Distribution_with_LE_events")
+	fig.savefig("./../ORCA/RecoPlots/0621poly_rw_distribution_flavor")
 	plt.close()
 
 flavor_distribution()

@@ -78,10 +78,6 @@ class Generator:
 
 		# set up effective area + volume analysis
 		f_e, f_mu, f_tau, f_nc, f_eb, f_mub, f_taub, f_ncb = get_ratios()
-		# print(f_e.slope, f_e.intercept)
-		# print(f_mu.slope, f_mu.intercept)
-		# print(f_tau.slope, f_tau.intercept)
-		# print(f_nc.slope, f_nc.intercept)
 
 
 		def find_weight_ratio(true_energy, pdg, current_type): # it's actually current type
@@ -145,10 +141,14 @@ class Generator:
 				elif pid == 1:
 					new_track_p, new_cas_p = 1, 0
 
-
-			topologies = [0, 1, 2] # 0 is cascade, 1 is track, 2 is intermediate
-			probabilities = [new_cas_p, new_track_p, 1- new_cas_p - new_track_p]
-			rand_topology = np.random.choice(topologies, p = probabilities)
+			if inter_to_tracks:
+				topologies = [0, 1] # 0 is cascade, 1 is track, 2 is intermediate
+				probabilities = [new_cas_p, 1- new_cas_p]
+				rand_topology = np.random.choice(topologies, p = probabilities)
+			else:
+				topologies = [0, 1, 2] # 0 is cascade, 1 is track, 2 is intermediate
+				probabilities = [new_cas_p, new_track_p, 1- new_cas_p - new_track_p]
+				rand_topology = np.random.choice(topologies, p = probabilities)
 
 			return rand_topology
 
@@ -237,21 +237,24 @@ class Generator:
 			
 			# also give some new MC weights!
 			W_mc = self.MC["weight"][i]
-			if not reweight:
-				all_Wmc.append(W_mc * 66 / 61)
-			elif reweight:
-				if not below_two:
-					if energy <= 54 and energy >= 1.85:
-						ratio = find_weight_ratio(self.MC["true_energy"][i], self.MC["pdg"][i], self.MC["current_type"][i])
-						all_Wmc.append(W_mc * ratio)
-					else:
-						all_Wmc.append(0)
-				elif below_two:
-					if energy <= 54 and energy >= 1:
-						ratio = find_weight_ratio(self.MC["true_energy"][i], self.MC["pdg"][i], self.MC["current_type"][i])
-						all_Wmc.append(W_mc * ratio)
-					else:
-						all_Wmc.append(0)
+			if ORCA_pid == 2 and not interm_weight:
+				all_Wmc.append(0)
+			else:
+				if not reweight:
+					all_Wmc.append(W_mc * 66 / 61)
+				elif reweight:
+					if not below_two:
+						if energy <= 54 and energy >= 1.85:
+							ratio = find_weight_ratio(self.MC["true_energy"][i], self.MC["pdg"][i], self.MC["current_type"][i])
+							all_Wmc.append(W_mc * ratio)
+						else:
+							all_Wmc.append(0)
+					elif below_two:
+						if energy <= 54 and energy >= 1:
+							ratio = find_weight_ratio(self.MC["true_energy"][i], self.MC["pdg"][i], self.MC["current_type"][i])
+							all_Wmc.append(W_mc * ratio)
+						else:
+							all_Wmc.append(0)
 
 			all_e_true.append(energy)
 			all_e_reco.append(ORCA_E_reco)
