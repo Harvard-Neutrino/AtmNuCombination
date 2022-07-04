@@ -11,7 +11,7 @@ import classdef as cl
  
 
 
-sim = cl.Simulation(pd.read_csv("0621ORCA_poly_rw_no_morph.csv"))
+sim = cl.Simulation(pd.read_csv("paper.csv"))
 ic_sim = cl.Simulation(pd.read_csv("neutrino_mc.csv"))
 bf_fluxes = util.bundle_fluxes(cth_nodes, energy_nodes, theta23, dm31, dcp)
 fluxes = bf_fluxes
@@ -226,14 +226,14 @@ def ORCA_topology_details(flavor, current):
 	ax.set_ylabel("fraction")
 	ax.grid(True)
 	ax.legend(loc = legendloc)
-	plt.show()
-	# fig.savefig("./../ORCA/RecoPlots/nu{}_{}_Topology_Fraction".format(flavname, curname))
+	# plt.show()
+	fig.savefig("./../ORCA/paper_plots/nu{}_{}_Topology_Fraction".format(flavname, curname))
 	plt.close()
 
-# ORCA_topology_details(0, 1)
-# ORCA_topology_details(1, 1)
-# ORCA_topology_details(2, 1)
-# ORCA_topology_details(3, 0)
+ORCA_topology_details(0, 1)
+ORCA_topology_details(1, 1)
+ORCA_topology_details(2, 1)
+ORCA_topology_details(3, 0)
 
 # plot the energy distribution of tracks and cascades
 def morph_distribution():
@@ -282,7 +282,7 @@ def morph_distribution():
 	fig.savefig("./../ORCA/RecoPlots/0621poly_rw_distribution_morph")
 	plt.close()
 
-morph_distribution()
+# morph_distribution()
 
 # plot the energy distribution of tracks and cascades
 def flavor_distribution():
@@ -364,7 +364,7 @@ def flavor_distribution():
 	fig.savefig("./../ORCA/RecoPlots/0621poly_rw_distribution_flavor")
 	plt.close()
 
-flavor_distribution()
+# flavor_distribution()
 
 def y_distribution():
 	# cas_weights = np.zeros_like(sim.W_mc)

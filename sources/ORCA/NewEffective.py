@@ -458,7 +458,7 @@ def get_ratios(binnum = 20):
 
 	return f_e, f_mu, f_tau, f_nc, f_eb, f_mub, f_taub, f_ncb
 
-get_ratios(binnum = 20)
+# get_ratios(binnum = 20)
 
 # ICanalysis = ICEffectiveAnalysis(1, 50, 21)
 # ICanalysis.compute()

@@ -6,7 +6,7 @@ input_track = "./ORCA_Results/migrationTracks.png"
 input_cascade = "./ORCA_Results/migrationCascades.png"
 
 input_MC = pd.read_csv("neutrino_mc.csv")
-savename = "0627ORCA_no_morph_lin_fit.csv"
+savename = "paper.csv"
 
 x_bins = np.logspace(np.log10(1.85), np.log10(54), 23)
 
@@ -41,10 +41,10 @@ below_two = False
 two_gaus = False
 
 # turn on or off intermediate event weights
-interm_weight = True
+interm_weight = False
 
 # make all interm as tracks
 inter_to_tracks = False
 
 # degree of polynomial used in Veff fit
-fit_deg = 1
+fit_deg = 4
