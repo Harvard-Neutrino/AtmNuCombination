@@ -6,12 +6,12 @@ input_track = "./ORCA_Results/migrationTracks.png"
 input_cascade = "./ORCA_Results/migrationCascades.png"
 
 input_MC = pd.read_csv("neutrino_mc.csv")
-savename = "0622ORCA_morph_no_inter_without_LE.csv"
+savename = "0627ORCA_no_morph_lin_fit.csv"
 
 x_bins = np.logspace(np.log10(1.85), np.log10(54), 23)
 
 # turn on or off randomize morphology
-rand_morph = True
+rand_morph = False
 
 # turn on or off prohibition of track <-> cascade morphology under random assignment
 restricted_rand_morph = True
@@ -41,7 +41,10 @@ below_two = False
 two_gaus = False
 
 # turn on or off intermediate event weights
-interm_weight = False
+interm_weight = True
 
 # make all interm as tracks
 inter_to_tracks = False
+
+# degree of polynomial used in Veff fit
+fit_deg = 1

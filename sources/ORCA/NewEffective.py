@@ -6,6 +6,7 @@ from util import get_index
 import scipy as scp
 from scipy.interpolate import interp1d
 from scipy.stats import linregress
+import params
 
 
 class ICEffectiveAnalysis:
@@ -394,18 +395,18 @@ def get_ratios(binnum = 20):
 
 
 	# f_e = linregress(np.log10(bin_centers), e_ratio)
-	f_e = np.polyfit(np.log10(bin_centers)[:-1], e_ratio[:-1], deg = 4)
+	f_e = np.polyfit(np.log10(bin_centers)[:-1], e_ratio[:-1], deg = params.fit_deg)
 	# f_mu = linregress(np.log10(bin_centers), mu_ratio)
-	f_mu = np.polyfit(np.log10(bin_centers)[:-1], mu_ratio[:-1], deg = 4)
+	f_mu = np.polyfit(np.log10(bin_centers)[:-1], mu_ratio[:-1], deg = params.fit_deg)
 
 	f_tau = linregress(np.log10(bin_centers)[6:], tau_ratio[6:])
 	f_nc = linregress(np.log10(bin_centers), nc_ratio)
 
 	# f_eb = linregress(np.log10(bin_centers), eb_ratio)
-	f_eb = np.polyfit(np.log10(bin_centers)[:-1], eb_ratio[:-1], deg = 4)
+	f_eb = np.polyfit(np.log10(bin_centers)[:-1], eb_ratio[:-1], deg = params.fit_deg)
 
 	# f_mub = linregress(np.log10(bin_centers), mub_ratio)
-	f_mub = np.polyfit(np.log10(bin_centers)[:-1], mub_ratio[:-1], deg = 4)
+	f_mub = np.polyfit(np.log10(bin_centers)[:-1], mub_ratio[:-1], deg = params.fit_deg)
 
 	f_taub = linregress(np.log10(bin_centers)[6:], taub_ratio[6:])
 	f_ncb = linregress(np.log10(bin_centers), ncb_ratio)
@@ -453,7 +454,7 @@ def get_ratios(binnum = 20):
 
 	ax.legend()
 	# plt.show()
-	fig.savefig("./RecoPlots/Effective_Volume_Ratio_poly4_fit")
+	# fig.savefig("./RecoPlots/Effective_Volume_Ratio_poly4_fit")
 
 	return f_e, f_mu, f_tau, f_nc, f_eb, f_mub, f_taub, f_ncb
 
