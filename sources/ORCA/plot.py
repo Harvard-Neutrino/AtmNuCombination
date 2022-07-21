@@ -108,8 +108,8 @@ def plot_zenith_errors():
     plt.legend()
     plt.grid(True)
 
-    # plt.show()
-    plt.savefig("KM3NeT Angular Error")
+    plt.show()
+    # plt.savefig("KM3NeT Angular Error")
     plt.close()
 
     return
@@ -180,7 +180,7 @@ def plot_energy_reco_track_probability():
     # plt.savefig("./RecoPlots/ORCA_Reco_track_probability_weighted")
     plt.close()
 
-plot_energy_reco_track_probability()
+# plot_energy_reco_track_probability()
 
 # plot the IC MC energy reco track normalized prob
 def plot_IC_energy_reco_track_probability():
@@ -312,10 +312,10 @@ def plot_zenith_reco():
     plt.xlim(-1, 1)
     plt.ylim(-1, 1)
     plt.colorbar(im, orientation = "vertical", format = LogFormatterMathtext())
-    plt.savefig("./RecoPlots/ORCA_coszen_Reco")
+    plt.savefig("./RecoPlots/ORCA_coszen_Reco_new")
     plt.close()
 
-# plot_zenith_reco()
+plot_zenith_reco()
 
 def plot_IC_zenith_reco():
     IC_input_file = pd.read_csv("neutrino_mc.csv")

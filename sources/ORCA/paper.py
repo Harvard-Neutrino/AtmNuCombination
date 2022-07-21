@@ -125,6 +125,22 @@ def energy_resolution():
 
 # energy_resolution()
 
+def zenith_resolution():
+    x = np.linspace(-1, 1, 20)
+    y = np.linspace(-1, 1, 20)
+    X, Y = np.meshgrid(x, y)
+    Z, xedges, yedges = np.histogram2d(np.cos(ORCA["true_zenith"]), np.cos(ORCA["reco_zenith"]), bins=(x, y))
+    im = plt.pcolor(X, Y, Z.T, cmap = "gray_r", norm = LogNorm())
+    plt.xlim(-1, 1)
+    plt.ylim(-1, 1)
+    plt.xlabel("Cosine True Zenith")
+    plt.ylabel("Cosine Reco Zenith")
+    plt.colorbar(im, orientation = "vertical", format = LogFormatterMathtext())
+    plt.savefig("./paper_plots/Zenith_Resolution.png")
+    plt.close()
+
+zenith_resolution()
+
 # then plot Effective Area comparisons
 def effective_volumes():
     IC = eff.ICEffectiveAnalysis(1, 50, 21)

@@ -202,9 +202,11 @@ class Generator:
 					ORCA_zen_reco = self.MC["reco_zenith"][i]
 				elif rand_zen:
 					if int(self.MC["pdg"][i]) > 0:
-						ORCA_zen_reco = self.MC["true_zenith"][i] - find_reco_zenith(e_error, energy)
+						ORCA_zen_reco = util.rand_reco_zen(self.MC["true_zenith"][i],\
+										 self.MC["true_azimuth"][i], find_reco_zenith(e_error, energy))
 					else:
-						ORCA_zen_reco = self.MC["true_zenith"][i] - find_reco_zenith(eb_error, energy)
+						ORCA_zen_reco = util.rand_reco_zen(self.MC["true_zenith"][i],\
+										 self.MC["true_azimuth"][i], find_reco_zenith(eb_error, energy))
 			elif ORCA_pid == 1:
 				# use track gaussian params
 				if not rand_energy:
@@ -215,9 +217,11 @@ class Generator:
 					ORCA_zen_reco = self.MC["reco_zenith"][i]
 				elif rand_zen:
 					if int(self.MC["pdg"][i]) > 0:
-						ORCA_zen_reco = self.MC["true_zenith"][i] - find_reco_zenith(mu_error, energy)
+						ORCA_zen_reco = util.rand_reco_zen(self.MC["true_zenith"][i],\
+										 self.MC["true_azimuth"][i], find_reco_zenith(mu_error, energy))
 					else:
-						ORCA_zen_reco = self.MC["true_zenith"][i] - find_reco_zenith(mub_error, energy)
+						ORCA_zen_reco = util.rand_reco_zen(self.MC["true_zenith"][i],\
+										 self.MC["true_azimuth"][i], find_reco_zenith(mub_error, energy))
 			elif ORCA_pid == 2:
 				# use intermediate gaussian params and average on the zenith 
 				if not rand_energy:
@@ -227,6 +231,7 @@ class Generator:
 				if not rand_zen:
 					ORCA_zen_reco = self.MC["reco_zenith"][i]
 				elif rand_zen:
+					# this reco zenith not implemented fully yet
 					if int(self.MC["pdg"][i]) > 0:
 						ORCA_zen_reco = self.MC["true_zenith"][i] - 0.5 * (find_reco_zenith(mu_error, energy) + find_reco_zenith(e_error, energy))
 					else:

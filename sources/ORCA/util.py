@@ -3,10 +3,13 @@ import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 from scipy.interpolate import interp1d
 import pandas as pd
+from numpy import sin 
+from numpy import cos  
+
 
 # gaussian function
 def gaussian(x, mu, sigma, A):
-    return (A / (sigma * np.sqrt(2 * np.pi)) * np.exp(-1.0 * (np.log(x) - mu)**2 / (2 * sigma**2)))
+	return (A / (sigma * np.sqrt(2 * np.pi)) * np.exp(-1.0 * (np.log(x) - mu)**2 / (2 * sigma**2)))
 
 # fit with the gaussian function
 def gaus_fit(data_entries, bins, current_binnum):
@@ -294,5 +297,217 @@ def get_IC_topology_prob(nutype, current_type, pdg, true_energy):
 
 # print(get_topology_prob(1, 1, 14, 3))
 # print(get_IC_topology_prob(1, 0, 14, 3))
+
+
+# define the rodrigues rotation formula
+def rand_vector():
+	ph = np.random.uniform(low = 0, high = np.pi * 2)
+	th = np.random.uniform(low = 0, high = np.pi)
+	# print(ph, th)
+	u = np.array([cos(ph)*sin(th),sin(ph)*sin(th),cos(th)])
+	# print(u)
+	# u = np.array([1, 1, 0])
+	u = u / np.linalg.norm(u)
+	return u
+
+# def the conversion between coordinate systems
+def cart_from_sp(th, ph):
+	u = np.array([cos(ph)*sin(th),sin(ph)*sin(th),cos(th)])
+	return u
+
+# directly get the rotation matrix
+def R_from_axis(u, th):
+	cth = cos(th)
+	sth = sin(th)
+	R11 = cos(th) + u[0]**2*(1-cos(th))
+	R12 = u[0]*u[1]*(1-cos(th)) - u[2]*sin(th)
+	R13 = u[0] * u[2] * (1-cos(th)) + u[1] * sin(th)
+	R21 = u[1] * u[0] * (1-cos(th)) + u[2] * sth
+	R22 = cth + u[1]**2 * (1-cth)
+	R23 = u[1] * u[2] * (1-cth) - u[0] * sth
+	R31 = u[2] * u[0] * (1-cth) - u[1] * sth
+	R32 = u[2] * u[1] * (1-cth) + u[0] * sth
+	R33 = cth + u[2] ** 2 * (1-cth)
+	return np.array([[R11, R12, R13],[R21, R22, R23],[R31, R32, R33]])
+
+# checks the theta is retained by trace
+def check_trace(R):
+	Tr = R[0][0] + R[1][1] + R[2][2]
+	return np.arccos((Tr - 1) / 2)
+
+
+# implementation using rodrigues rotation formula
+def rod_rot(v, u, ang):
+	u = u / np.linalg.norm(u)
+	vrot = np.array([0.,0.,0.])
+	vrot[0] = (cos(ang)+u[0]**2*(1-cos(ang)))*v[0] + (u[0]*u[1]*(1-cos(ang))-u[2]*sin(ang))*v[1] + (u[0]*u[2]*(1-cos(ang)+u[1]*sin(ang)))*v[2]
+	vrot[1] = (cos(ang)+u[1]**2*(1-cos(ang)))*v[1] + (u[0]*u[1]*(1-cos(ang))+u[2]*sin(ang))*v[0] + (u[1]*u[2]*(1-cos(ang)-u[0]*sin(ang)))*v[2]
+	vrot[2] = (cos(ang)+u[2]**2*(1-cos(ang)))*v[2] + (u[0]*u[2]*(1-cos(ang))-u[1]*sin(ang))*v[0] + (u[1]*u[2]*(1-cos(ang)+u[0]*sin(ang)))*v[1]
+	# print(vrot)
+	vrot = vrot / np.linalg.norm(vrot)
+	print(v[0] * vrot[0] + v[1] * vrot[1] + v[2] * vrot[2])
+	# print(vrot[0] ** 2 + vrot[1] ** 2 + vrot[2] ** 2) # checked that it's normalized
+	return vrot
+
+# implementation using the two rotations
+def rot_vector(v, th, phi):
+	v = v / np.linalg.norm(v)
+	# first create an orthogonal vector
+	u = np.array([v[1], -v[0], 0])
+	u = u / np.linalg.norm(u)
+
+	# rotate u around this vector by theta
+	Rth = R_from_axis(u, th)
+
+	vth = np.zeros((3,))
+	vth[0] = Rth[0][0] * v[0] + Rth[0][1] * v[1] + Rth[0][2] * v[2]
+	vth[1] = Rth[1][0] * v[0] + Rth[1][1] * v[1] + Rth[1][2] * v[2]
+	vth[2] = Rth[2][0] * v[0] + Rth[2][1] * v[1] + Rth[2][2] * v[2]
+	vth = vth / np.linalg.norm(vth)
+
+	# now apply the phi rotation in a cone
+	Rphi = R_from_axis(v, phi)
+	vrot = np.zeros((3,))
+	vrot[0] = Rphi[0][0] * vth[0] + Rphi[0][1] * vth[1] + Rphi[0][2] * vth[2]
+	vrot[1] = Rphi[1][0] * vth[0] + Rphi[1][1] * vth[1] + Rphi[1][2] * vth[2]
+	vrot[2] = Rphi[2][0] * vth[0] + Rphi[2][1] * vth[1] + Rphi[2][2] * vth[2]
+	vrot = vrot / np.linalg.norm(vrot)
+	return vrot
+
+# v = np.array([1, 0, 0])
+# print(rot_vector(v, np.pi / 2))
+
+
+# check the dot product
+def check_dot(v, th, phi):
+	vrot = rot_vector(v, th, phi)
+	return np.arccos(np.dot(v, vrot)/(np.linalg.norm(v) * np.linalg.norm(vrot)))
+
+# print(check_dot(rand_vector(), 2, np.random.uniform(low = 0, high = 2 * np.pi)))
+
+# this version is the rodrigues rotation formula implementation
+# def rand_reco_zen(zen, azim, err):
+# 	v = np.array([np.cos(azim) * np.sin(zen), np.sin(azim) * np.sin(zen), np.cos(zen)])
+# 	# print(v)
+# 	u = rand_vector()
+# 	vrot = rod_rot(v, u, err)
+# 	zenrot = (np.arctan(np.sqrt(vrot[0] ** 2 + vrot[1] ** 2) / vrot[2]))
+# 	if zenrot < 0:
+# 		zenrot += np.pi
+# 	return zenrot
+
+# this is the two successive rotations version
+def rand_reco_zen(zen, azim, err):
+	v = np.array([np.cos(azim) * np.sin(zen), np.sin(azim) * np.sin(zen), np.cos(zen)])
+	# print(v)
+	vrot = rot_vector(v, err, np.random.uniform(low = 0, high = 2 * np.pi))
+	zenrot = (np.arctan(np.sqrt(vrot[0] ** 2 + vrot[1] ** 2) / vrot[2]))
+	if zenrot < 0:
+		zenrot += np.pi
+	return zenrot
+
+
+def test_rot_zen_distribution(num):
+	ls = np.zeros(num)
+	for i in range(num):
+		ls[i] = rand_reco_zen(1.5, 2, np.pi/6)
+
+	plt.hist(ls, bins = 30)
+	plt.show()
+	plt.close()
+
+# test_rot_zen_distribution(100)
+
+def test_rot_graphic(zen, azim, err, num):
+	ls = np.ndarray((num, 3))
+	zenls = np.zeros(num)
+	v = cart_from_sp(zen, azim)
+	for i in range(num):
+		vrot = rot_vector(v, err, np.random.uniform(low = 0, high = 2 * np.pi))
+		ls[i][0] = vrot[0]
+		ls[i][1] = vrot[1]
+		ls[i][2] = vrot[2]
+		zenls[i] = (np.arctan(np.sqrt(vrot[0] ** 2 + vrot[1] ** 2) / vrot[2]))
+		if zenls[i] < 0:
+			zenls[i] += np.pi
+	x_pos = y_pos = z_pos = np.zeros(num)
+	x_dir = np.zeros(num)
+	y_dir = np.zeros(num)
+	z_dir = np.zeros(num)
+	for i in range(num):
+		x_dir[i] = ls[i][0]
+		y_dir[i] = ls[i][1]
+		z_dir[i] = ls[i][2]
+	fig = plt.figure()
+	ax = plt.axes(projection = '3d')
+	ax.set_xlim(-1, 1)
+	ax.set_ylim(-1, 1)
+	ax.set_zlim(-1, 1)
+	# start = [0, 0, 0]
+	# for i in range(num):
+	# 	ax.quiver(start[0], start[1], start[2], ls[i][0], ls[i][1], ls[i][2])
+	ax.quiver(x_pos, y_pos, z_pos, x_dir, y_dir, z_dir)
+	plt.show()
+	plt.close()
+	plt.hist(zenls, bins = 30)
+	plt.show()
+	plt.close()
+
+# test_rot_graphic(1.5, 2, np.pi / 6, 100)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
