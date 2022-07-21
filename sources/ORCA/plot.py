@@ -315,7 +315,7 @@ def plot_zenith_reco():
     plt.savefig("./RecoPlots/ORCA_coszen_Reco_new")
     plt.close()
 
-plot_zenith_reco()
+# plot_zenith_reco()
 
 def plot_IC_zenith_reco():
     IC_input_file = pd.read_csv("neutrino_mc.csv")

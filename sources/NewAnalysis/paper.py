@@ -84,7 +84,7 @@ def true_event_distribution():
 	fig.savefig("./../ORCA/paper_plots/Event_Distribution_True.png")
 	plt.close()
 
-# true_event_distribution()
+true_event_distribution()
 
 
 # plot the reco distribution of tracks and cascades
@@ -149,7 +149,7 @@ def reco_event_distribution():
 	fig.savefig("./../ORCA/paper_plots/Event_Distribution_Reco.png")
 	plt.close()
 
-# reco_event_distribution()
+reco_event_distribution()
 
 def true_event_distribution_zen():
 	cas_weights = np.zeros_like(sim.W_mc)
@@ -277,4 +277,4 @@ def reco_event_distribution_zen():
 	fig.savefig("./../ORCA/paper_plots/Event_Distribution_Reco_w_zenith.png")
 	plt.close()
 
-# reco_event_distribution_zen()
+reco_event_distribution_zen()
