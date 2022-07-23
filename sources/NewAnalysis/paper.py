@@ -13,7 +13,7 @@ matplotlib.rcParams.update({'font.size': 20})
 
 
 
-sim = cl.Simulation(pd.read_csv("paper.csv"))
+sim = cl.Simulation(pd.read_csv("../ORCA/paper_new_zen.csv"))
 bf_fluxes = util.bundle_fluxes(cth_nodes, energy_nodes, theta23, dm31, dcp)
 fluxes = bf_fluxes
 
@@ -130,8 +130,8 @@ def reco_event_distribution():
 	ax2.set_ylabel("Total Event Count [3yrs]")
 	# ax.grid(True)
 	ax2.legend()
-	ax2.title.set_text("True Cosine Zenith Distribution")
-	ax1.title.set_text("True Energy Distribution")
+	ax2.title.set_text("Reconstructed Cosine Zenith Distribution")
+	ax1.title.set_text("Reconstructed Energy Distribution")
 
 	ax1.hist(energy_bins[:-1], energy_bins, weights = cascade / bin_widths,\
 					 label="ORCA cascade", histtype="step")
@@ -139,6 +139,7 @@ def reco_event_distribution():
 					 label="ORCA track", histtype="step")
 	ax1.set_xscale("log")
 	ax1.set_yscale("log")
+	ax1.set_ylim(2 * 10 ** 2, 6 * 10 ** 4)
 	ax1.set_xlabel("Neutrino Reconstructed Energy [GeV]")
 	ax1.set_xlim(1.85, 50)
 	ax1.set_ylabel("Total Event Count [3yrs]")
@@ -228,8 +229,8 @@ def reco_event_distribution_zen():
 	bin_widths = np.zeros((20,))
 	for i in range(20):
 		bin_widths[i] = energy_bins[i+1] - energy_bins[i]
-	cascade, _ = np.histogram(sim.E_tr, bins = energy_bins, weights = cas_weights)
-	track, _ = np.histogram(sim.E_tr, bins = energy_bins, weights = track_weights)
+	cascade, _ = np.histogram(sim.E_re, bins = energy_bins, weights = cas_weights)
+	track, _ = np.histogram(sim.E_re, bins = energy_bins, weights = track_weights)
 
 
 	zen_bins = np.linspace(-0.3, np.pi + 0.3, 11)
@@ -267,7 +268,7 @@ def reco_event_distribution_zen():
 					 label="ORCA track", histtype="step")
 	ax1.set_xscale("log")
 	ax1.set_yscale("log")
-	ax1.set_xlabel("Neutrino True Energy [GeV]")
+	ax1.set_xlabel("Neutrino Reco Energy [GeV]")
 	ax1.set_xlim(1.85, 50)
 	ax1.set_ylabel("Total Event Count [3yrs]")
 	ax1.set_xticks([1.85, 10, 50])
