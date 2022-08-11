@@ -120,10 +120,10 @@ def energy_resolution():
     # plt.subplots_adjust(top = 1.3)
     
     # plt.show()
-    plt.savefig("./paper_plots/Energy_Resolution.png")
+    plt.savefig("./paper_plots/Energy_Resolution_new.png")
     plt.close()
 
-# energy_resolution()
+energy_resolution()
 
 def zenith_resolution():
     x = np.linspace(-1, 1, 20)
@@ -139,7 +139,53 @@ def zenith_resolution():
     plt.savefig("./paper_plots/Zenith_Resolution.png")
     plt.close()
 
-zenith_resolution()
+# zenith_resolution()
+
+def range_zenith_resolution():
+    zen_true = ORCA["true_zenith"]
+    zen_reco = ORCA["reco_zenith"]
+    e_true = ORCA["true_energy"]
+    e_reco = ORCA["reco_energy"]
+    x = np.linspace(-1, 1, 20)
+    y = np.linspace(-1, 1, 20)
+    X, Y = np.meshgrid(x, y)
+    def rangezen(elo, ehi):
+        select_true = []
+        select_reco = []
+        for i in range(len(zen_true)):
+            if e_true[i] >= elo and e_true[i] <= ehi:
+                select_true.append(zen_true[i])
+                select_reco.append(zen_reco[i])
+        Z, xedges, yedges = np.histogram2d(np.cos(select_true), np.cos(select_reco), bins=(x, y))
+        return Z
+    Z1 = rangezen(1, 5)
+    Z2 = rangezen(5, 10)
+    Z3 = rangezen(10, 50)
+    fig, axes = plt.subplots(nrows = 3, ncols = 1, figsize = (13, 35), constrained_layout = True)
+    ax1, ax2, ax3 = axes[0], axes[1], axes[2]
+    im1 = ax1.pcolor(X, Y, Z1.T, cmap = "gray_r", norm = LogNorm())
+    im2 = ax2.pcolor(X, Y, Z2.T, cmap = "gray_r", norm = LogNorm())
+    im3 = ax3.pcolor(X, Y, Z3.T, cmap = "gray_r", norm = LogNorm())
+    ax1.set_xlim(-1, 1)
+    ax2.set_xlim(-1, 1)
+    ax3.set_xlim(-1, 1)
+    ax1.set_ylim(-1, 1)
+    ax2.set_ylim(-1, 1)
+    ax3.set_ylim(-1, 1)
+    ax1.set_title(r"$E_{{true}} \in [1, 5]$ GeV")
+    ax2.set_title(r"$E_{{true}} \in [5, 10]$ GeV")
+    ax3.set_title(r"$E_{{true}} \in [10, 50]$ GeV")
+    ax2.set_ylabel("Reconstructed Cosine Zenith")
+    ax3.set_xlabel("True Cosine Zenith")
+    plt.colorbar(im1, orientation = "vertical", format = LogFormatterMathtext())
+    # plt.show()
+    plt.savefig("./paper_plots/Ranged_Zenith_Resolution.png")
+
+# range_zenith_resolution()
+
+
+
+    
 
 # then plot Effective Area comparisons
 def effective_volumes():
@@ -147,7 +193,7 @@ def effective_volumes():
     ORCA = eff.ORCAEffectiveAnalysis(num_bins = 20)
     IC.compute()
     ORCA.compute()
-    fig, axes = plt.subplots(nrows = 1, ncols = 2, figsize = (25, 10))
+    fig, axes = plt.subplots(nrows = 2, ncols = 1, figsize = (10, 25))
     ax1, ax2 = axes[0], axes[1]
 
     # first plot IC

@@ -52,7 +52,10 @@ class Generator:
 			# now generate a random reco number from t
 			sigma, mu, A = 0, 0, 1
 			[sigma, mu, A] = gaus[bin_num]
-			sigma = np.abs(sigma)
+			if top == 1:
+				sigma = np.abs(sigma) * worse_e_reco
+			else:
+				sigma = np.abs(sigma)
 			mu = np.abs(mu)
 
 			random_E_reco = np.random.lognormal(mu, sigma)

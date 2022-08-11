@@ -84,7 +84,7 @@ def true_event_distribution():
 	fig.savefig("./../ORCA/paper_plots/Event_Distribution_True.png")
 	plt.close()
 
-true_event_distribution()
+# true_event_distribution()
 
 
 # plot the reco distribution of tracks and cascades
@@ -115,7 +115,7 @@ def reco_event_distribution():
 
 
 
-	fig, axes = plt.subplots(nrows = 1, ncols = 2, figsize=(20,10))
+	fig, axes = plt.subplots(nrows = 2, ncols = 1, figsize=(10,20))
 	ax1, ax2 = axes[0], axes[1]
 	fig.suptitle("ORCA MC Event Distributions")
 
@@ -213,7 +213,7 @@ def true_event_distribution_zen():
 	fig.savefig("./../ORCA/paper_plots/Event_Distribution_True_w_zenith.png")
 	plt.close()
 
-true_event_distribution_zen()
+# true_event_distribution_zen()
 
 
 # plot the reco distribution of tracks and cascades
@@ -278,4 +278,4 @@ def reco_event_distribution_zen():
 	fig.savefig("./../ORCA/paper_plots/Event_Distribution_Reco_w_zenith.png")
 	plt.close()
 
-reco_event_distribution_zen()
+# reco_event_distribution_zen()
