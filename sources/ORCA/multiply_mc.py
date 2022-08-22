@@ -6,7 +6,7 @@ import math
 from params import *
 
 # this file multiplies each row of a given csv NUM times
-NUM = 2
+NUM = 15
 OUTPUT_NAME = "{}xneutrino_mc.csv".format(NUM)
 
 input_mc = pd.read_csv("neutrino_mc.csv")
