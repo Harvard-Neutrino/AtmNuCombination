@@ -11,13 +11,13 @@ savename = "paper.csv"
 x_bins = np.logspace(np.log10(1.85), np.log10(54), 23)
 
 # turn on or off randomize morphology
-rand_morph = False
+rand_morph = True
 
 # turn on or off prohibition of track <-> cascade morphology under random assignment
 restricted_rand_morph = True
 
 # worsen e reco sigma by a ratio
-worse_e_reco = 1.1
+worse_e_reco = 1
 
 # turn on or off random zenith reco
 rand_zen = True
@@ -34,11 +34,6 @@ below_two = False
 # degree of polynomial used in Veff fit
 fit_deg = 4
 
-
-################################
-##### not useful stuff #########
-################################
-
 # turn on or off pessimistic ereco for intermediate class events
 pess = False
 
@@ -48,11 +43,20 @@ if not pess:
 elif pess:
 	pess_ereco = 3
 
+# turn on or off intermediate event weights
+interm_weight = True
+
+# turn on or off use original reco info for intermediate events
+interm_reco = True
+
+
+################################
+##### not useful stuff #########
+################################
+
+
 # turn on or off two log norm fit instead of one log norm fit !!!!! CURRENTLY DOES NOT WORK !!!!!
 two_gaus = False
-
-# turn on or off intermediate event weights
-interm_weight = False
 
 # make all interm as tracks
 inter_to_tracks = False

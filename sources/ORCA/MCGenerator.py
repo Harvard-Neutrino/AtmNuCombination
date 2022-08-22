@@ -17,6 +17,9 @@ class Generator:
 		self.bins = ORCA_bins
 
 	def generate(self):
+
+		# define the 4 exponential functions of zenith error
+		e_error, eb_error, mu_error, mub_error = util.get_zenith_error()
 		# first define function to find reco energy for one event
 		def find_reco_energy(top, true_energy):
 			# specify gaussian of topologies
@@ -64,7 +67,7 @@ class Generator:
 			return random_E_reco
 
 		# now define function to find reco zenith
-		def find_reco_zenith(exp, true_energy):
+		def find_reco_zenith(exp, true_energy, exp2 = e_error, interm = False):
 			# bounds on IC energy
 			true_energy = min(54, true_energy)
 			if not below_two:
@@ -73,7 +76,10 @@ class Generator:
 				true_energy = max(1, true_energy)
 
 			# find sigma
-			sigma = exp(true_energy)
+			if not interm:
+				sigma = exp(true_energy)
+			elif interm:
+				sigma = .5 * (exp(true_energy) + exp2(true_energy))
 			# random generate reco error
 			reco_zenith_error = np.random.normal(0, sigma) * np.pi / 180
 
@@ -155,8 +161,7 @@ class Generator:
 
 			return rand_topology
 
-		# define the 4 exponential functions of zenith error
-		e_error, eb_error, mu_error, mub_error = util.get_zenith_error()
+
 
 		all_e_true = []
 		all_e_reco = []
@@ -188,14 +193,21 @@ class Generator:
 			# assign random pid's!
 			if not rand_morph:
 				ORCA_pid = self.MC["pid"][i]
+				reco_pid = ORCA_pid
 			elif rand_morph:
-				ORCA_pid = assign_topology(self.MC["pdg"][i] / np.abs(self.MC["pdg"][i]), self.MC["current_type"][i], \
+				if interm_reco:
+					ORCA_pid = assign_topology(self.MC["pdg"][i] / np.abs(self.MC["pdg"][i]), self.MC["current_type"][i], \
 										self.MC["pdg"][i], self.MC["true_energy"][i], self.MC["pid"][i]) 
+					reco_pid = ORCA_pid
+				else:
+					ORCA_pid = assign_topology(self.MC["pdg"][i] / np.abs(self.MC["pdg"][i]), self.MC["current_type"][i], \
+										self.MC["pdg"][i], self.MC["true_energy"][i], self.MC["pid"][i]) 
+					reco_pid = self.MC["pid"][i]
 
 			energy = self.MC["true_energy"][i]
 			zenith = self.MC["true_zenith"][i]
 			#if i < 10: # just to test the code
-			if ORCA_pid == 0:
+			if reco_pid == 0:
 				# use cascade gaussian params
 				if not rand_energy:
 					ORCA_E_reco = self.MC["reco_energy"][i]
@@ -210,7 +222,7 @@ class Generator:
 					else:
 						ORCA_zen_reco = util.rand_reco_zen(self.MC["true_zenith"][i],\
 										 self.MC["true_azimuth"][i], find_reco_zenith(eb_error, energy))
-			elif ORCA_pid == 1:
+			elif reco_pid == 1:
 				# use track gaussian params
 				if not rand_energy:
 					ORCA_E_reco = self.MC["reco_energy"][i]
@@ -225,7 +237,7 @@ class Generator:
 					else:
 						ORCA_zen_reco = util.rand_reco_zen(self.MC["true_zenith"][i],\
 										 self.MC["true_azimuth"][i], find_reco_zenith(mub_error, energy))
-			elif ORCA_pid == 2:
+			elif reco_pid == 2:
 				# use intermediate gaussian params and average on the zenith 
 				if not rand_energy:
 					ORCA_E_reco = self.MC["reco_energy"][i]
@@ -236,9 +248,11 @@ class Generator:
 				elif rand_zen:
 					# this reco zenith not implemented fully yet
 					if int(self.MC["pdg"][i]) > 0:
-						ORCA_zen_reco = self.MC["true_zenith"][i] - 0.5 * (find_reco_zenith(mu_error, energy) + find_reco_zenith(e_error, energy))
+						ORCA_zen_reco = util.rand_reco_zen(self.MC["true_zenith"][i],\
+										 self.MC["true_azimuth"][i], find_reco_zenith(e_error, energy, exp2 = mu_error, interm = True))
 					else:
-						ORCA_zen_reco = self.MC["true_zenith"][i] - 0.5 * (find_reco_zenith(mub_error, energy) + find_reco_zenith(eb_error, energy))
+						ORCA_zen_reco = util.rand_reco_zen(self.MC["true_zenith"][i],\
+										 self.MC["true_azimuth"][i], find_reco_zenith(eb_error, energy, exp2 = mub_error, interm = True))
 			else:
 				print("invalid pid detected")
 				exit(1)
