@@ -182,6 +182,7 @@ def plot_energy_reco_track_probability():
 
 # plot_energy_reco_track_probability()
 
+#########################################################NEEDS FURTHER IMPLEMENTATION########################################################
 # plot the IC MC energy reco track normalized prob
 def plot_IC_energy_reco_track_probability():
     IC_input_file = pd.read_csv("neutrino_mc.csv")
@@ -191,6 +192,8 @@ def plot_IC_energy_reco_track_probability():
     zen_true = IC_input_file["true_zenith"]
     zen_reco = IC_input_file["reco_zenith"]
     track_mask = pid == 1
+    fifteens = np.zeros((22,))
+    eightyfives = np.zeros((22,))
     x = np.logspace(np.log10(1.85), np.log10(53), 23)
     y = np.logspace(np.log10(1.85), np.log10(53), 23)
     X, Y = np.meshgrid(x, y)
@@ -203,6 +206,20 @@ def plot_IC_energy_reco_track_probability():
             tot += currcol[j]
         for j in range(22):
             currcol[j] = currcol[j] / tot
+        
+        # now also get the 15 and 85 percentiles
+        emin = x[i]
+        emax = x[i + 1]
+        current_bin_recos = []
+        for k in range(len(IC_input_file["true_energy"])):
+            if IC_input_file["true_energy"][i] > emin and IC_input_file["true_energy"][i] <= emax:
+                current_bin_recos.append(IC_input_file["true_energy"][i])
+        length_of_current = len(current_bin_recos)
+        sorted_current = length_of_current.sort()
+        fifteens[i] = sorted_current[math.ceil(.15 * length_of_current)]
+        eightyfives[i] = sorted_current[math.ceil(.85 * length_of_current)]
+
+
     im = plt.pcolor(X, Y, Z.T, cmap = "gray_r", norm = LogNorm())
     plt.xlim(2, 53)
     plt.ylim(2, 53)
@@ -214,6 +231,7 @@ def plot_IC_energy_reco_track_probability():
     plt.close()
 
 # plot_IC_energy_reco_track_probability()
+###################################################################################################################
 
 def plot_energy_reco_cascade_probability():
     cas_mask = pid == 0

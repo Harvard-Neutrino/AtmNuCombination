@@ -11,7 +11,7 @@ import classdef as cl
  
 
 
-sim = cl.Simulation(pd.read_csv("paper.csv"))
+sim = cl.Simulation(pd.read_csv("../ORCA/15x_with_interm.csv"))
 ic_sim = cl.Simulation(pd.read_csv("neutrino_mc.csv"))
 bf_fluxes = util.bundle_fluxes(cth_nodes, energy_nodes, theta23, dm31, dcp)
 fluxes = bf_fluxes
@@ -227,7 +227,7 @@ def ORCA_topology_details(flavor, current):
 	ax.grid(True)
 	ax.legend(loc = legendloc)
 	# plt.show()
-	fig.savefig("./../ORCA/paper_plots/nu{}_{}_Topology_Fraction".format(flavname, curname))
+	fig.savefig("./../ORCA/new_paper_plots/nu{}_{}_Topology_Fraction".format(flavname, curname))
 	plt.close()
 
 ORCA_topology_details(0, 1)

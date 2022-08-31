@@ -5,8 +5,8 @@ input_scale = "./ORCA_Results/scale.png"
 input_track = "./ORCA_Results/migrationTracks.png"
 input_cascade = "./ORCA_Results/migrationCascades.png"
 
-input_MC = pd.read_csv("5xneutrino_mc.csv")
-savename = "5x_with_interm.csv"
+input_MC = pd.read_csv("15x_with_interm.csv")
+savename = "15x_with_interm.csv"
 
 x_bins = np.logspace(np.log10(1.85), np.log10(54), 23)
 

@@ -13,7 +13,7 @@ matplotlib.rcParams.update({'font.size': 20})
 
 
 
-sim = cl.Simulation(pd.read_csv("../ORCA/paper_new_zen.csv"))
+sim = cl.Simulation(pd.read_csv("../ORCA/15x_with_interm.csv"))
 bf_fluxes = util.bundle_fluxes(cth_nodes, energy_nodes, theta23, dm31, dcp)
 fluxes = bf_fluxes
 
@@ -81,10 +81,10 @@ def true_event_distribution():
 	# ax.grid(True)
 	ax1.legend()
 	# plt.show()
-	fig.savefig("./../ORCA/paper_plots/Event_Distribution_True.png")
+	fig.savefig("./../ORCA/new_paper_plots/Event_Distribution_True.png")
 	plt.close()
 
-# true_event_distribution()
+true_event_distribution()
 
 
 # plot the reco distribution of tracks and cascades
@@ -147,7 +147,7 @@ def reco_event_distribution():
 	# ax.grid(True)
 	ax1.legend()
 	# plt.show()
-	fig.savefig("./../ORCA/paper_plots/Event_Distribution_Reco.png")
+	fig.savefig("./../ORCA/new_paper_plots/Event_Distribution_Reco.png")
 	plt.close()
 
 reco_event_distribution()
@@ -210,10 +210,10 @@ def true_event_distribution_zen():
 	# ax.grid(True)
 	ax1.legend()
 	# plt.show()
-	fig.savefig("./../ORCA/paper_plots/Event_Distribution_True_w_zenith.png")
+	fig.savefig("./../ORCA/new_paper_plots/Event_Distribution_True_w_zenith.png")
 	plt.close()
 
-# true_event_distribution_zen()
+true_event_distribution_zen()
 
 
 # plot the reco distribution of tracks and cascades
@@ -275,7 +275,7 @@ def reco_event_distribution_zen():
 	# ax.grid(True)
 	ax1.legend()
 	# plt.show()
-	fig.savefig("./../ORCA/paper_plots/Event_Distribution_Reco_w_zenith.png")
+	fig.savefig("./../ORCA/new_paper_plots/Event_Distribution_Reco_w_zenith.png")
 	plt.close()
 
-# reco_event_distribution_zen()
+reco_event_distribution_zen()
