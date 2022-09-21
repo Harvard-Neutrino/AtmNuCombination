@@ -124,7 +124,7 @@ def energy_resolution():
     plt.savefig("./new_paper_plots/Energy_Resolution_new.png")
     plt.close()
 
-# energy_resolution()
+energy_resolution()
 
 def zenith_resolution():
     x = np.linspace(-1, 1, 20)
@@ -140,7 +140,7 @@ def zenith_resolution():
     plt.savefig("./new_paper_plots/Zenith_Resolution.png")
     plt.close()
 
-# zenith_resolution()
+zenith_resolution()
 
 def range_zenith_resolution():
     zen_true = ORCA["true_zenith"]
@@ -182,7 +182,7 @@ def range_zenith_resolution():
     # plt.show()
     plt.savefig("./new_paper_plots/Ranged_Zenith_Resolution.png")
 
-# range_zenith_resolution()
+range_zenith_resolution()
 
 
 
@@ -207,38 +207,38 @@ def effective_volumes():
     nchist, ncbin = np.histogram(IC.energy, bins = IC.bins, weights = IC.volumes[0][3])
     ncbarhist, ncbarbin = np.histogram(IC.energy, bins = IC.bins, weights = IC.volumes[1][3])
 
-    ax1.hist(ebin[:-1], ebin, weights = ehist / IC.widths, label=r"$\nu_eCC$", color="red", histtype="step")
+    ax1.hist(ebin[:-1], ebin, weights = ehist / IC.widths, label=r"$\nu_eCC$", histtype="step")
     ax1.hist(ebarbin[:-1], ebarbin, weights = ebarhist / IC.widths, label=r"$\overline{\nu}_eCC$", \
-                            linestyle = '--', color="red", histtype="step")
-    ax1.hist(mubin[:-1], mubin, weights = muhist / IC.widths, label=r"$\nu_{\mu}CC$", color="blue", histtype="step")
+                            linestyle = '--', histtype="step")
+    ax1.hist(mubin[:-1], mubin, weights = muhist / IC.widths, label=r"$\nu_{\mu}CC$", histtype="step")
     ax1.hist(mubarbin[:-1], mubarbin, weights = mubarhist / IC.widths, label=r"$\overline{\nu}_{\mu}CC$", \
-                            linestyle = '--', color="blue", histtype="step")
-    ax1.hist(taubin[:-1], taubin, weights = tauhist / IC.widths, label=r"$\nu_{\tau}CC$", color="green", histtype="step")
+                            linestyle = '--', histtype="step")
+    ax1.hist(taubin[:-1], taubin, weights = tauhist / IC.widths, label=r"$\nu_{\tau}CC$", histtype="step")
     ax1.hist(taubarbin[:-1], taubarbin, weights = taubarhist / IC.widths, label=r"$\overline{\nu}_{\tau}CC$",\
-                            color="green", linestyle = "--", histtype="step")
-    ax1.hist(ncbin[:-1], ncbin, weights = nchist / IC.widths, label=r"$\nu NC$", color="brown", histtype="step")
-    ax1.hist(ncbarbin[:-1], ncbarbin, weights = ncbarhist / IC.widths, label=r"$\overline{\nu} NC$", color="brown",\
+                            linestyle = "--", histtype="step")
+    ax1.hist(ncbin[:-1], ncbin, weights = nchist / IC.widths, label=r"$\nu NC$", histtype="step")
+    ax1.hist(ncbarbin[:-1], ncbarbin, weights = ncbarhist / IC.widths, label=r"$\overline{\nu} NC$",\
                             linestyle = "--", histtype="step")
     ax1.set_xscale("log")
     ax1.set_xlabel(r"$E_{\nu,\rm{true}}$ [GeV]")
     ax1.set_xlim(IC.lo, IC.hi)
     ax1.set_ylabel("Effective Volume [m^3]")
     ax1.grid(True)
-    ax1.legend(loc = 2)
+    ax1.legend(loc = 4)
     ax1.title.set_text("IceCube Upgrade Deepcore")
 
     # then plot ORCA
-    ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.evol , label=r"$\nu_eCC$", color="red", histtype="step")
+    ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.evol , label=r"$\nu_eCC$", histtype="step")
     ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.ebarvol , label=r"$\overline{\nu}_eCC$", \
-                            linestyle = '--', color="red", histtype="step")
-    ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.muvol , label=r"$\nu_{\mu}CC$", color="blue", histtype="step")
+                            linestyle = '--', histtype="step")
+    ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.muvol , label=r"$\nu_{\mu}CC$", histtype="step")
     ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.mubarvol , label=r"$\overline{\nu}_{\mu}CC$", \
-                            linestyle = '--', color="blue", histtype="step")
-    ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.tauvol , label=r"$\nu_{\tau}CC$", color="green", histtype="step")
+                            linestyle = '--', histtype="step")
+    ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.tauvol , label=r"$\nu_{\tau}CC$", histtype="step")
     ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.taubarvol , label=r"$\overline{\nu}_{\tau}CC$",\
-                            color="green", linestyle = "--", histtype="step")
-    ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.ncvol , label=r"$\nu NC$", color="brown", histtype="step")
-    ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.ncbarvol , label=r"$\overline{\nu} NC$", color="brown",\
+                             linestyle = "--", histtype="step")
+    ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.ncvol , label=r"$\nu NC$", histtype="step")
+    ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.ncbarvol , label=r"$\overline{\nu} NC$", \
                             linestyle = "--", histtype="step")
     ax2.set_xscale("log")
     # ax.set_yscale("log")
