@@ -200,7 +200,7 @@ def ORCA_topology_details(flavor, current):
 	# df.to_csv("nu{}_{}_Topology_Fraction".format(flavname, curname))
 
 	fig, ax = plt.subplots(figsize=(7,6))
-	fig.suptitle("ORCA MC nu_{} {} topology fractions".format(flavname, curname))
+	fig.suptitle(r"ORCA MC $\nu_\{}$ {} topology fractions".format(flavname, curname))
 	# first the neutrino ones
 	ax.hist(energy_bins[:-1], energy_bins, weights = numu_CC_track_hist / numu_CC_all_hist,\
 					 label=labelname1, color="blue", histtype="step")
