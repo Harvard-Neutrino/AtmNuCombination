@@ -84,7 +84,7 @@ def true_event_distribution():
 	fig.savefig("./../ORCA/new_paper_plots/Event_Distribution_True.png")
 	plt.close()
 
-true_event_distribution()
+# true_event_distribution()
 
 
 # plot the reco distribution of tracks and cascades
@@ -115,9 +115,9 @@ def reco_event_distribution():
 
 
 
-	fig, axes = plt.subplots(nrows = 2, ncols = 1, figsize=(10,20))
+	fig, axes = plt.subplots(nrows = 1, ncols = 2, figsize=(20,10))
 	ax1, ax2 = axes[0], axes[1]
-	fig.suptitle("ORCA MC Event Distributions")
+	# fig.suptitle("ORCA MC Event Distributions")
 
 	ax2.hist(zen_bins[:-1], zen_bins, weights = zencascade / zen_bin_widths,\
 					 label="ORCA cascade", histtype="step")
@@ -129,7 +129,7 @@ def reco_event_distribution():
 	ax2.set_xlim(-1, 0)
 	ax2.set_ylabel("Total Event Count [3yrs]")
 	# ax.grid(True)
-	ax2.legend()
+	ax2.legend(loc = 2)
 	ax2.title.set_text("Reconstructed Cosine Zenith Distribution")
 	ax1.title.set_text("Reconstructed Energy Distribution")
 
@@ -139,7 +139,7 @@ def reco_event_distribution():
 					 label="ORCA track", histtype="step")
 	ax1.set_xscale("log")
 	ax1.set_yscale("log")
-	ax1.set_ylim(2 * 10 ** 2, 6 * 10 ** 4)
+	ax1.set_ylim(2 * 10 ** 2, 2 * 10 ** 4)
 	ax1.set_xlabel("Neutrino Reconstructed Energy [GeV]")
 	ax1.set_xlim(1.85, 50)
 	ax1.set_ylabel("Total Event Count [3yrs]")
@@ -213,7 +213,7 @@ def true_event_distribution_zen():
 	fig.savefig("./../ORCA/new_paper_plots/Event_Distribution_True_w_zenith.png")
 	plt.close()
 
-true_event_distribution_zen()
+# true_event_distribution_zen()
 
 
 # plot the reco distribution of tracks and cascades
@@ -278,4 +278,4 @@ def reco_event_distribution_zen():
 	fig.savefig("./../ORCA/new_paper_plots/Event_Distribution_Reco_w_zenith.png")
 	plt.close()
 
-reco_event_distribution_zen()
+# reco_event_distribution_zen()

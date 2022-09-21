@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy import interpolate
 from scipy.optimize import curve_fit
 from scipy.interpolate import interp1d
 import pandas as pd
@@ -457,6 +458,30 @@ def test_rot_graphic(zen, azim, err, num):
 
 
 
+def ORCA_paper_sensitivity():
+	data = pd.read_csv("./ORCA_Results/ORCA_sensitivity.csv", header = None, usecols = [0, 1])
+	# print(data[0])
+	# print(data[1])
+	x = np.array(data[0])
+	y = np.array(data[1])
+	# print(x)
+	# fit splines to x=f(u) and y=g(u), treating both as periodic. also note that s=0
+	# is needed in order to force the spline fit to pass through all the input points.
+	tck, u = interpolate.splprep([x, y], s=0, k=2, per=True)
+
+	# evaluate the spline fits for 1000 evenly spaced distance values
+	xi, yi = interpolate.splev(np.linspace(0, 1, 1000), tck)
+
+	# plot the result
+	fig, ax = plt.subplots(1, 1)
+	# ax.plot(x, y, 'or')
+	ax.plot(xi, yi, '-b')
+
+	# plt.show()
+	plt.savefig("./ORCA_Results/ORCA_paper_sensitivity")
+
+
+ORCA_paper_sensitivity()
 
 
 

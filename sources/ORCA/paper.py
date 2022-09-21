@@ -14,7 +14,8 @@ from util import twogaussian
 from params import *
 import NewEffective as eff
 
-matplotlib.rcParams.update({'font.size': 20})
+# matplotlib.rcParams.update({'font.size': 18})
+plt.style.use('./paper.mplstyle')
 
 ORCA = pd.read_csv("15x_with_interm.csv")
 IC = pd.read_csv("neutrino_mc.csv")
@@ -81,8 +82,8 @@ def energy_resolution():
     ax1.title.set_text("IceCube Upgrade Tracks")
     ax2 = axes[0][1]
     ax2.title.set_text("IceCube Upgrade Cascades")
-    im1 = ax1.pcolor(X, Y, ICtZ.T, cmap = "gray_r", norm = LogNorm())
-    im2 = ax2.pcolor(X, Y, ICcZ.T, cmap = "gray_r", norm = LogNorm())
+    im1 = ax1.pcolor(X, Y, ICtZ.T, cmap = "plasma", norm = LogNorm())
+    im2 = ax2.pcolor(X, Y, ICcZ.T, cmap = "plasma", norm = LogNorm())
     ax1.set_xlim(2, 53)
     ax1.set_xlabel("True Energy [GeV]")
     ax1.set_ylim(2, 53)
@@ -99,8 +100,8 @@ def energy_resolution():
     ax3.title.set_text("ORCA Tracks")
     ax4 = axes[1][1]
     ax4.title.set_text("ORCA Cascades")
-    im3 = ax3.pcolor(X, Y, ORCAtZ.T, cmap = "gray_r", norm = LogNorm())
-    im4 = ax4.pcolor(X, Y, ORCAcZ.T, cmap = "gray_r", norm = LogNorm())
+    im3 = ax3.pcolor(X, Y, ORCAtZ.T, cmap = "plasma", norm = LogNorm())
+    im4 = ax4.pcolor(X, Y, ORCAcZ.T, cmap = "plasma", norm = LogNorm())
     ax3.set_xlim(2, 53)
     ax3.set_xlabel("True Energy [GeV]")
     ax3.set_ylim(2, 53)
@@ -113,7 +114,7 @@ def energy_resolution():
     ax4.set_xscale("log")
     ax4.set_yscale("log")
 
-    fig.suptitle("IceCube Upgrade and ORCA Energy Reconstruction Resolution")
+    # fig.suptitle("IceCube Upgrade and ORCA Energy Reconstruction Resolution")
     fig.colorbar(im1, ax=axes.ravel().tolist(), orientation = "vertical", format = LogFormatterMathtext())
 
     # plt.constrained_layout()
@@ -123,14 +124,14 @@ def energy_resolution():
     plt.savefig("./new_paper_plots/Energy_Resolution_new.png")
     plt.close()
 
-energy_resolution()
+# energy_resolution()
 
 def zenith_resolution():
     x = np.linspace(-1, 1, 20)
     y = np.linspace(-1, 1, 20)
     X, Y = np.meshgrid(x, y)
     Z, xedges, yedges = np.histogram2d(np.cos(ORCA["true_zenith"]), np.cos(ORCA["reco_zenith"]), bins=(x, y))
-    im = plt.pcolor(X, Y, Z.T, cmap = "gray_r", norm = LogNorm())
+    im = plt.pcolor(X, Y, Z.T, cmap = "plasma", norm = LogNorm())
     plt.xlim(-1, 1)
     plt.ylim(-1, 1)
     plt.xlabel("Cosine True Zenith")
@@ -139,7 +140,7 @@ def zenith_resolution():
     plt.savefig("./new_paper_plots/Zenith_Resolution.png")
     plt.close()
 
-zenith_resolution()
+# zenith_resolution()
 
 def range_zenith_resolution():
     zen_true = ORCA["true_zenith"]
@@ -161,11 +162,11 @@ def range_zenith_resolution():
     Z1 = rangezen(1, 5)
     Z2 = rangezen(5, 10)
     Z3 = rangezen(10, 50)
-    fig, axes = plt.subplots(nrows = 3, ncols = 1, figsize = (13, 35), constrained_layout = True)
+    fig, axes = plt.subplots(nrows = 1, ncols = 3, figsize = (35, 13), constrained_layout = True)
     ax1, ax2, ax3 = axes[0], axes[1], axes[2]
-    im1 = ax1.pcolor(X, Y, Z1.T, cmap = "gray_r", norm = LogNorm())
-    im2 = ax2.pcolor(X, Y, Z2.T, cmap = "gray_r", norm = LogNorm())
-    im3 = ax3.pcolor(X, Y, Z3.T, cmap = "gray_r", norm = LogNorm())
+    im1 = ax1.pcolor(X, Y, Z1.T, cmap = "plasma", norm = LogNorm())
+    im2 = ax2.pcolor(X, Y, Z2.T, cmap = "plasma", norm = LogNorm())
+    im3 = ax3.pcolor(X, Y, Z3.T, cmap = "plasma", norm = LogNorm())
     ax1.set_xlim(-1, 1)
     ax2.set_xlim(-1, 1)
     ax3.set_xlim(-1, 1)
@@ -181,7 +182,7 @@ def range_zenith_resolution():
     # plt.show()
     plt.savefig("./new_paper_plots/Ranged_Zenith_Resolution.png")
 
-range_zenith_resolution()
+# range_zenith_resolution()
 
 
 
@@ -193,7 +194,7 @@ def effective_volumes():
     ORCA = eff.ORCAEffectiveAnalysis(num_bins = 20)
     IC.compute()
     ORCA.compute()
-    fig, axes = plt.subplots(nrows = 2, ncols = 1, figsize = (10, 25))
+    fig, axes = plt.subplots(nrows = 1, ncols = 2, figsize = (25, 10))
     ax1, ax2 = axes[0], axes[1]
 
     # first plot IC
@@ -248,7 +249,7 @@ def effective_volumes():
     ax2.legend(loc = 2)
     ax2.title.set_text("ORCA")
 
-    fig.suptitle("IceCube Upgrade DeepCore and ORCA Effective Volumes")
+    # fig.suptitle("IceCube Upgrade DeepCore and ORCA Effective Volumes")
     # plt.show()
     plt.savefig("./new_paper_plots/Effective_Volumes.png")
     plt.close()
