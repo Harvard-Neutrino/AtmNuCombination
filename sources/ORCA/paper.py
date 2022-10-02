@@ -5,6 +5,8 @@ from matplotlib.colors import LogNorm
 from matplotlib.ticker import LogFormatterMathtext
 from scipy.optimize import curve_fit
 import math
+from statistics import median
+from scipy import interpolate
 
 import digitalizer as dgt
 import util
@@ -15,7 +17,7 @@ from params import *
 import NewEffective as eff
 
 # matplotlib.rcParams.update({'font.size': 18})
-plt.style.use('./paper.mplstyle')
+plt.style.use('./mystyle.mplstyle')
 
 ORCA = pd.read_csv("15x_with_interm.csv")
 IC = pd.read_csv("neutrino_mc.csv")
@@ -82,8 +84,8 @@ def energy_resolution():
     ax1.title.set_text("IceCube Upgrade Tracks")
     ax2 = axes[0][1]
     ax2.title.set_text("IceCube Upgrade Cascades")
-    im1 = ax1.pcolor(X, Y, ICtZ.T, cmap = "plasma", norm = LogNorm())
-    im2 = ax2.pcolor(X, Y, ICcZ.T, cmap = "plasma", norm = LogNorm())
+    im1 = ax1.pcolor(X, Y, ICtZ.T, cmap = "plasma", norm = LogNorm(), alpha = 0.7)
+    im2 = ax2.pcolor(X, Y, ICcZ.T, cmap = "plasma", norm = LogNorm(), alpha = 0.7)
     ax1.set_xlim(2, 53)
     ax1.set_xlabel("True Energy [GeV]")
     ax1.set_ylim(2, 53)
@@ -100,8 +102,8 @@ def energy_resolution():
     ax3.title.set_text("ORCA Tracks")
     ax4 = axes[1][1]
     ax4.title.set_text("ORCA Cascades")
-    im3 = ax3.pcolor(X, Y, ORCAtZ.T, cmap = "plasma", norm = LogNorm())
-    im4 = ax4.pcolor(X, Y, ORCAcZ.T, cmap = "plasma", norm = LogNorm())
+    im3 = ax3.pcolor(X, Y, ORCAtZ.T, cmap = "plasma", norm = LogNorm(), alpha = 0.7)
+    im4 = ax4.pcolor(X, Y, ORCAcZ.T, cmap = "plasma", norm = LogNorm(), alpha = 0.7)
     ax3.set_xlim(2, 53)
     ax3.set_xlabel("True Energy [GeV]")
     ax3.set_ylim(2, 53)
@@ -115,32 +117,600 @@ def energy_resolution():
     ax4.set_yscale("log")
 
     # fig.suptitle("IceCube Upgrade and ORCA Energy Reconstruction Resolution")
-    fig.colorbar(im1, ax=axes.ravel().tolist(), orientation = "vertical", format = LogFormatterMathtext())
+    fig.colorbar(im1, ax=axes.ravel().tolist(), orientation = "vertical", format = LogFormatterMathtext(), alpha = 0.7)
 
     # plt.constrained_layout()
     # plt.subplots_adjust(top = 1.3)
     
     # plt.show()
-    plt.savefig("./new_paper_plots/Energy_Resolution_new.png")
+    plt.savefig("./new_paper_plots/Energy_Resolution_new.png", bbox_inches = 'tight', pad_inches = 2)
     plt.close()
 
-energy_resolution()
+# energy_resolution()
+
+def IC_track_error():
+    IC_pid = IC["pid"]
+    IC_et = IC["true_energy"]
+    IC_er = IC["reco_energy"]
+    track_mask = IC_pid == 1
+    cascade_mask = IC_pid == 0
+
+    x = np.logspace(np.log10(1.85), np.log10(53), 23)
+
+    all_bins = []
+    Cas_all_bins = []
+    for i in range(22):
+        all_bins.append([])
+        Cas_all_bins.append([])
+
+
+    median_errors = np.zeros((22,))
+    top15 = np.zeros((22,))
+    bottom15 = np.zeros((22,))
+
+    Cascade_median_errors = np.zeros((22,))
+    Cascade_top15 = np.zeros((22,))
+    Cascade_bottom15 = np.zeros((22,))
+    ICetTrack = np.array(IC_et[track_mask][:])
+    ICerTrack = np.array(IC_er[track_mask][:])
+
+    ICetCascade = np.array(IC_et[cascade_mask][:])
+    ICerCascade = np.array(IC_er[cascade_mask][:])
+
+    # print(IC_et[track_mask])
+    # print(ICetTrack)
+
+
+    for i in range(len(IC_er[track_mask])):
+        curcol = 0
+        for j in range(len(x) - 1):
+            # find which index we belong to
+            if ICetTrack[i] < x[j + 1]:
+                curcol = j 
+                break
+            else:
+                continue 
+        # now put the difference between reco and true into the corresponding list
+        all_bins[curcol].append(ICerTrack[i] - ICetTrack[i])
+
+    for i in range(len(IC_er[cascade_mask])):
+        curcol = 0
+        for j in range(len(x) - 1):
+            # find which index we belong to
+            if ICetCascade[i] < x[j + 1]:
+                curcol = j 
+                break
+            else:
+                continue 
+        # now put the difference between reco and true into the corresponding list
+        Cas_all_bins[curcol].append(ICerCascade[i] - ICetCascade[i])
+
+    # now select the mean from each list
+    for i in range(22):
+        # print(all_bins[i])
+        median_errors[i] = median(all_bins[i])
+        sorted_current_bin = all_bins[i].sort()
+        top15[i] = abs(all_bins[i][math.ceil(0.85 * len(all_bins[i]))] - median_errors[i])
+        bottom15[i] = abs(all_bins[i][math.ceil(0.15 * len(all_bins[i]))] - median_errors[i])
+
+        Cascade_median_errors[i] = median(Cas_all_bins[i])
+        Cascade_sorted_current_bin = Cas_all_bins[i].sort()
+        Cascade_top15[i] = abs(Cas_all_bins[i][math.ceil(0.85 * len(Cas_all_bins[i]))] - Cascade_median_errors[i])
+        Cascade_bottom15[i] = abs(Cas_all_bins[i][math.ceil(0.15 * len(Cas_all_bins[i]))] - Cascade_median_errors[i])
+
+    # print(median_errors)
+    # print(median_errors)
+    # print(top15)
+    # print(bottom15)
+    IC_track_err = np.array([np.array(bottom15), np.array(top15)])
+    IC_cas_err = np.array([np.array(Cascade_bottom15), np.array(Cascade_top15)])
+
+
+    fig, [ax, ax2] = plt.subplots(figsize = (18, 8), ncols = 2, nrows = 1, sharey = True)
+    fig.suptitle("IceCube Energy Reconstruction Errors")
+    ax.set_xscale("log")
+    ax.set_ylim(-25, 10)
+    ax.errorbar(x[1:], median_errors, yerr = IC_track_err, fmt = 'o', capsize = 3, label = r"IceCube Track Energy Reco Median Error ($15\%$ and $85\%$)")
+    ax.legend(fontsize = 15)
+    ax.set_xlabel("True Energy [GeV]")
+    ax2.set_xlabel("True Energy [GeV]")
+    ax.set_ylabel("Energy Error [GeV]")
+    # ax2.set_ylabel("Energy Error [GeV]")
+    ax2.set_xscale("log")
+    # ax2.set_ylim(-25, 5)
+    ax2.errorbar(x[1:], Cascade_median_errors, yerr = IC_cas_err, fmt = 'o', capsize = 3, label = r"IceCube Cascade Energy Reco Median Error ($15\%$ and $85\%$)")
+    plt.subplots_adjust(wspace=0, hspace=0)
+    ax2.legend(fontsize = 15)
+    # plt.show()
+    plt.savefig("./new_paper_plots/IceCube_Energy_Errors.png", bbox_inches = 'tight', pad_inches = 1)
+    plt.close()
+
+# IC_track_error()
+
+def IC_resolution_with_errors():
+    lo = 0.5
+    hi = 105
+    # first define the energy bins
+    x = np.logspace(np.log10(lo), np.log10(hi), 23)
+    y = np.logspace(np.log10(lo), np.log10(hi), 23)
+    X, Y = np.meshgrid(x, y)
+    # define the plotting start and end points
+    plot_start = np.sqrt(x[0] * x[1])
+    plot_end = np.sqrt(x[-1] * x[-2])
+    # print(plot_start, plot_end)
+
+    # Here are the IC resolution plots
+        # tracks
+    IC_pid = IC["pid"]
+    IC_et = IC["true_energy"]
+    IC_er = IC["reco_energy"]
+    IC_track_mask = IC_pid == 1
+    ICtZ, xedges, yedges = np.histogram2d(IC_et[IC_track_mask], IC_er[IC_track_mask], bins=(x, y))
+    for i in range(22):
+        currcol = ICtZ[i][:]
+        tot = 0
+        for j in range(22):
+            tot += currcol[j]
+        for j in range(22):
+            currcol[j] = currcol[j] / tot
+
+        # cascades
+    IC_cas_mask = IC_pid == 0
+    ICcZ, xedges, yedges = np.histogram2d(IC_et[IC_cas_mask], IC_er[IC_cas_mask], bins=(x, y))
+    for i in range(22):
+        currcol = ICcZ[i][:]
+        tot = 0
+        for j in range(22):
+            tot += currcol[j]
+        for j in range(22):
+            currcol[j] = currcol[j] / tot
+
+    # Here are the IC error bars
+    IC_pid = IC["pid"]
+    IC_et = IC["true_energy"]
+    IC_er = IC["reco_energy"]
+    track_mask = IC_pid == 1
+    cascade_mask = IC_pid == 0
+
+    # THIS ENDS THE RESOLUTION PLOT
+
+    error_x = np.logspace(np.log10(lo), np.log10(hi), 23)
+    IC_bins_means = np.sqrt(x[1:] * x[:-1])
+
+    all_bins = []
+    Cas_all_bins = []
+    for i in range(22):
+        all_bins.append([])
+        Cas_all_bins.append([])
+
+
+    median_errors = np.zeros((22,))
+    top15 = np.zeros((22,))
+    bottom15 = np.zeros((22,))
+    track_median_ratio = np.zeros((22,))
+    track_ratio_top = np.zeros((22,))
+    track_ratio_bottom = np.zeros((22,))
+
+    Cascade_median_errors = np.zeros((22,))
+    cascade_median_ratio = np.zeros((22,))
+    Cascade_top15 = np.zeros((22,))
+    Cascade_bottom15 = np.zeros((22,))
+    cascade_ratio_top = np.zeros((22,))
+    cascade_ratio_bottom = np.zeros((22,))
+
+
+    ICetTrack = np.array(IC_et[track_mask][:])
+    ICerTrack = np.array(IC_er[track_mask][:])
+
+    ICetCascade = np.array(IC_et[cascade_mask][:])
+    ICerCascade = np.array(IC_er[cascade_mask][:])
+
+    for i in range(len(IC_er[track_mask])):
+        found_place = False
+        curcol = 0
+        for j in range(len(error_x) - 1):
+            # find which index we belong to
+            if ICetTrack[i] < error_x[j + 1]:
+                curcol = j 
+                found_place = True
+                break
+            else:
+                curcol = j
+                continue 
+        # now put the difference between reco and true into the corresponding list
+        if found_place:
+            all_bins[curcol].append(ICerTrack[i] - ICetTrack[i])
+
+    for i in range(len(IC_er[cascade_mask])):
+        curcol = 0
+        found_place = False
+        for j in range(len(x) - 1):
+            # find which index we belong to
+            if ICetCascade[i] < error_x[j + 1]:
+                curcol = j 
+                found_place = True
+                break
+            else:
+                curcol = j
+                continue 
+        # now put the difference between reco and true into the corresponding list
+        if found_place:
+            Cas_all_bins[curcol].append(ICerCascade[i] - ICetCascade[i])
+
+    # print(len(all_bins[0]))
+    # print(len(Cas_all_bins[0]))
+
+    # print(len(all_bins[1]))
+    # print(len(Cas_all_bins[1]))
+
+    # print(all_bins[0])
+    # print(Cas_all_bins[0])
+
+    # now select the mean from each list
+    for i in range(22):
+        # print(all_bins[i])
+        median_errors[i] = median(all_bins[i])
+        sorted_current_bin = all_bins[i].sort()
+        top15[i] = abs(all_bins[i][math.floor(0.85 * len(all_bins[i]))] - median_errors[i])
+        bottom15[i] = abs(all_bins[i][math.ceil(0.15 * len(all_bins[i]))] - median_errors[i])
+
+        track_ratio_top[i] = top15[i] / IC_bins_means[i]
+        track_ratio_bottom[i] = bottom15[i] / IC_bins_means[i]
+        track_median_ratio[i] = median_errors[i] / IC_bins_means[i]
+
+        Cascade_median_errors[i] = median(Cas_all_bins[i])
+        Cascade_sorted_current_bin = Cas_all_bins[i].sort()
+        Cascade_top15[i] = abs(Cas_all_bins[i][math.floor(0.85 * len(Cas_all_bins[i]))] - Cascade_median_errors[i])
+        Cascade_bottom15[i] = abs(Cas_all_bins[i][math.ceil(0.15 * len(Cas_all_bins[i]))] - Cascade_median_errors[i])
+
+        cascade_ratio_top[i] = Cascade_top15[i] / IC_bins_means[i]
+        cascade_ratio_bottom[i] = Cascade_bottom15[i] / IC_bins_means[i]
+        cascade_median_ratio[i] = Cascade_median_errors[i] / IC_bins_means[i]
+
+
+    IC_track_err = np.array([np.array(bottom15), np.array(top15)])
+    IC_cas_err = np.array([np.array(Cascade_bottom15), np.array(Cascade_top15)])
+
+    IC_track_ratio_err = np.array([np.array(track_ratio_bottom), np.array(track_ratio_top)])
+    IC_cas_ratio_err = np.array([np.array(cascade_ratio_bottom), np.array(cascade_ratio_top)])
+
+    # here process the lists of line points that go into the resolutioon plot
+    
+    track_median = np.zeros_like(IC_bins_means)
+    track_up = np.zeros_like(IC_bins_means)
+    track_down = np.zeros_like(IC_bins_means)
+    for i in range(len(IC_bins_means)):
+        track_median[i] = IC_bins_means[i] + median_errors[i]
+        track_up[i] = IC_bins_means[i] + top15[i]
+        track_down[i] = IC_bins_means[i] - bottom15[i]
+
+    cascade_median = np.zeros_like(IC_bins_means)
+    cascade_up = np.zeros_like(IC_bins_means)
+    cascade_down = np.zeros_like(IC_bins_means)
+    for i in range(len(IC_bins_means)):
+        cascade_median[i] = IC_bins_means[i] + Cascade_median_errors[i]
+        cascade_up[i] = IC_bins_means[i] + Cascade_top15[i]
+        cascade_down[i] = IC_bins_means[i] - Cascade_bottom15[i]
+
+    # Now interpolate this line in the histogram
+    # print(IC_bins_means)
+    f_track_median = interpolate.interp1d(IC_bins_means, track_median, kind = "quadratic")
+    f_track_top = interpolate.interp1d(IC_bins_means, track_up, kind = "quadratic")
+    f_track_bot = interpolate.interp1d(IC_bins_means, track_down, kind = "quadratic")
+    f_cascade_median = interpolate.interp1d(IC_bins_means, cascade_median, kind = "quadratic")
+    f_cascade_top = interpolate.interp1d(IC_bins_means, cascade_up, kind = "quadratic")
+    f_cascade_bot = interpolate.interp1d(IC_bins_means, cascade_down, kind = "quadratic")
+
+    plot_error_x = np.logspace(np.log10(IC_bins_means[0]), np.log10(IC_bins_means[-1]), 1000)
+    plot_track_median = f_track_median(plot_error_x)
+    plot_track_top = f_track_top(plot_error_x)
+    plot_track_bot = f_track_bot(plot_error_x)
+    plot_cascade_median = f_cascade_median(plot_error_x)
+    plot_cascade_top = f_cascade_top(plot_error_x)
+    plot_cascade_bot = f_cascade_bot(plot_error_x)
+
+    fig, axes = plt.subplots(nrows = 2, ncols = 2, figsize = (15, 10), constrained_layout = True, sharex = True, sharey = 'row', gridspec_kw = {'height_ratios':[1, 2]})
+    ax3 = axes[0][0]
+    ax4 = axes[0][1]
+    ax1 = axes[1][0]
+    ax2 = axes[1][1]
+    im1 = ax1.pcolor(X, Y, ICtZ.T, cmap = "plasma", norm = LogNorm(), alpha = 0.7)
+    im2 = ax2.pcolor(X, Y, ICcZ.T, cmap = "plasma", norm = LogNorm(), alpha = 0.7)
+    ax1.set_xlim(plot_start, plot_end)
+    ax1.set_xlabel("True Energy [GeV]")
+    ax1.set_ylim(lo, hi)
+    ax1.set_ylabel("Reconstructed Energy [GeV]")
+    ax2.set_xlim(plot_start, plot_end)
+    ax2.set_xlabel("True Energy [GeV]")
+    ax2.set_ylim(lo, hi)
+    ax1.set_xscale("log")
+    ax1.set_yscale("log")
+    ax2.set_xscale("log")
+    ax2.set_yscale("log")
+    fig.colorbar(im1, orientation = "vertical", format = LogFormatterMathtext(), alpha = 0.7)
+
+    # also plot the error bars
+    ax1.plot(plot_error_x, plot_track_median, label = "50%", color = 'navy', alpha = 0.7)
+    ax1.plot(plot_error_x, plot_track_top, label = "top 15%", color = 'navy', linestyle = '--', alpha = 0.7)
+    ax1.plot(plot_error_x, plot_track_bot, label = "bottom 15%", color = 'navy', linestyle = '-.', alpha = 0.7)
+    ax1.legend()
+
+
+    ax2.plot(plot_error_x, plot_cascade_median, label = "50%", color = 'navy', alpha = 0.7)
+    ax2.plot(plot_error_x, plot_cascade_top, label = "top 15%", color = 'navy', linestyle = '--', alpha = 0.7)
+    ax2.plot(plot_error_x, plot_cascade_bot, label = "bottom 15%", color = 'navy', linestyle = '-.', alpha = 0.7)
+    ax2.legend()
+
+    # ax3.set_ylim(-25, 10)
+    # ax3.errorbar(IC_bins_means, track_median_ratio, yerr = IC_track_ratio_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
+    ax3.errorbar(IC_bins_means, track_median, yerr = IC_track_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
+    ax3.legend()
+    # ax3.set_xlabel("True Energy [GeV]")
+    # ax4.set_xlabel("True Energy [GeV]")
+    ax3.set_ylabel("Energy Error[GeV]")
+    # ax4.set_xscale("log")
+    # ax2.set_ylim(-25, 5)
+    # ax4.errorbar(IC_bins_means, cascade_median_ratio, yerr = IC_cas_ratio_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
+    ax4.errorbar(IC_bins_means, cascade_median, yerr = IC_cas_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
+    # plt.subplots_adjust(hspace=0)
+    ax4.legend()
+    # plt.subplots_adjust(wspace=0.1, hspace=0.03)
+
+    # plt.show()
+    plt.savefig("./new_paper_plots/IC_energy_Reconstruction", bbox_inches = 'tight', pad_inches = 0.3)
+
+IC_resolution_with_errors()
+
+def ORCA_resolution_with_errors():
+    lo = 1.85
+    hi = 53
+    # first define the energy bins
+    x = np.logspace(np.log10(lo), np.log10(hi), 23)
+    y = np.logspace(np.log10(lo), np.log10(hi), 23)
+    X, Y = np.meshgrid(x, y)
+    # define the plotting start and end points
+    plot_start = np.sqrt(x[0] * x[1])
+    plot_end = np.sqrt(x[-1] * x[-2])
+    # print(plot_start, plot_end)
+
+    # Here are the IC resolution plots
+        # tracks
+    IC_pid = ORCA["pid"]
+    IC_et = ORCA["true_energy"]
+    IC_er = ORCA["reco_energy"]
+    IC_track_mask = IC_pid == 1
+    ICtZ, xedges, yedges = np.histogram2d(IC_et[IC_track_mask], IC_er[IC_track_mask], bins=(x, y))
+    for i in range(22):
+        currcol = ICtZ[i][:]
+        tot = 0
+        for j in range(22):
+            tot += currcol[j]
+        for j in range(22):
+            currcol[j] = currcol[j] / tot
+
+        # cascades
+    IC_cas_mask = IC_pid == 0
+    ICcZ, xedges, yedges = np.histogram2d(IC_et[IC_cas_mask], IC_er[IC_cas_mask], bins=(x, y))
+    for i in range(22):
+        currcol = ICcZ[i][:]
+        tot = 0
+        for j in range(22):
+            tot += currcol[j]
+        for j in range(22):
+            currcol[j] = currcol[j] / tot
+
+    # Here are the IC error bars
+    IC_pid = IC["pid"]
+    IC_et = IC["true_energy"]
+    IC_er = IC["reco_energy"]
+    track_mask = IC_pid == 1
+    cascade_mask = IC_pid == 0
+
+    # THIS ENDS THE RESOLUTION PLOT
+
+    error_x = np.logspace(np.log10(lo), np.log10(hi), 23)
+    IC_bins_means = np.sqrt(x[1:] * x[:-1])
+
+    all_bins = []
+    Cas_all_bins = []
+    for i in range(22):
+        all_bins.append([])
+        Cas_all_bins.append([])
+
+
+    median_errors = np.zeros((22,))
+    top15 = np.zeros((22,))
+    bottom15 = np.zeros((22,))
+    track_median_ratio = np.zeros((22,))
+    track_ratio_top = np.zeros((22,))
+    track_ratio_bottom = np.zeros((22,))
+
+    Cascade_median_errors = np.zeros((22,))
+    cascade_median_ratio = np.zeros((22,))
+    Cascade_top15 = np.zeros((22,))
+    Cascade_bottom15 = np.zeros((22,))
+    cascade_ratio_top = np.zeros((22,))
+    cascade_ratio_bottom = np.zeros((22,))
+
+
+    ICetTrack = np.array(IC_et[track_mask][:])
+    ICerTrack = np.array(IC_er[track_mask][:])
+
+    ICetCascade = np.array(IC_et[cascade_mask][:])
+    ICerCascade = np.array(IC_er[cascade_mask][:])
+
+    for i in range(len(IC_er[track_mask])):
+        found_place = False
+        curcol = 0
+        for j in range(len(error_x) - 1):
+            # find which index we belong to
+            if ICetTrack[i] < error_x[j + 1]:
+                curcol = j 
+                found_place = True
+                break
+            else:
+                curcol = j
+                continue 
+        # now put the difference between reco and true into the corresponding list
+        if found_place:
+            all_bins[curcol].append(ICerTrack[i] - ICetTrack[i])
+
+    for i in range(len(IC_er[cascade_mask])):
+        curcol = 0
+        found_place = False
+        for j in range(len(x) - 1):
+            # find which index we belong to
+            if ICetCascade[i] < error_x[j + 1]:
+                curcol = j 
+                found_place = True
+                break
+            else:
+                curcol = j
+                continue 
+        # now put the difference between reco and true into the corresponding list
+        if found_place:
+            Cas_all_bins[curcol].append(ICerCascade[i] - ICetCascade[i])
+
+    # print(len(all_bins[0]))
+    # print(len(Cas_all_bins[0]))
+
+    # print(len(all_bins[1]))
+    # print(len(Cas_all_bins[1]))
+
+    # print(all_bins[0])
+    # print(Cas_all_bins[0])
+
+    # now select the mean from each list
+    for i in range(22):
+        # print(all_bins[i])
+        median_errors[i] = median(all_bins[i])
+        sorted_current_bin = all_bins[i].sort()
+        top15[i] = abs(all_bins[i][math.floor(0.85 * len(all_bins[i]))] - median_errors[i])
+        bottom15[i] = abs(all_bins[i][math.ceil(0.15 * len(all_bins[i]))] - median_errors[i])
+
+        track_ratio_top[i] = top15[i] / IC_bins_means[i]
+        track_ratio_bottom[i] = bottom15[i] / IC_bins_means[i]
+        track_median_ratio[i] = median_errors[i] / IC_bins_means[i]
+
+        Cascade_median_errors[i] = median(Cas_all_bins[i])
+        Cascade_sorted_current_bin = Cas_all_bins[i].sort()
+        Cascade_top15[i] = abs(Cas_all_bins[i][math.floor(0.85 * len(Cas_all_bins[i]))] - Cascade_median_errors[i])
+        Cascade_bottom15[i] = abs(Cas_all_bins[i][math.ceil(0.15 * len(Cas_all_bins[i]))] - Cascade_median_errors[i])
+
+        cascade_ratio_top[i] = Cascade_top15[i] / IC_bins_means[i]
+        cascade_ratio_bottom[i] = Cascade_bottom15[i] / IC_bins_means[i]
+        cascade_median_ratio[i] = Cascade_median_errors[i] / IC_bins_means[i]
+
+
+    IC_track_err = np.array([np.array(bottom15), np.array(top15)])
+    IC_cas_err = np.array([np.array(Cascade_bottom15), np.array(Cascade_top15)])
+
+    IC_track_ratio_err = np.array([np.array(track_ratio_bottom), np.array(track_ratio_top)])
+    IC_cas_ratio_err = np.array([np.array(cascade_ratio_bottom), np.array(cascade_ratio_top)])
+
+    # here process the lists of line points that go into the resolutioon plot
+    
+    track_median = np.zeros_like(IC_bins_means)
+    track_up = np.zeros_like(IC_bins_means)
+    track_down = np.zeros_like(IC_bins_means)
+    for i in range(len(IC_bins_means)):
+        track_median[i] = IC_bins_means[i] + median_errors[i]
+        track_up[i] = IC_bins_means[i] + top15[i]
+        track_down[i] = IC_bins_means[i] - bottom15[i]
+
+    cascade_median = np.zeros_like(IC_bins_means)
+    cascade_up = np.zeros_like(IC_bins_means)
+    cascade_down = np.zeros_like(IC_bins_means)
+    for i in range(len(IC_bins_means)):
+        cascade_median[i] = IC_bins_means[i] + Cascade_median_errors[i]
+        cascade_up[i] = IC_bins_means[i] + Cascade_top15[i]
+        cascade_down[i] = IC_bins_means[i] - Cascade_bottom15[i]
+
+    # Now interpolate this line in the histogram
+    # print(IC_bins_means)
+    f_track_median = interpolate.interp1d(IC_bins_means, track_median, kind = "quadratic")
+    f_track_top = interpolate.interp1d(IC_bins_means, track_up, kind = "quadratic")
+    f_track_bot = interpolate.interp1d(IC_bins_means, track_down, kind = "quadratic")
+    f_cascade_median = interpolate.interp1d(IC_bins_means, cascade_median, kind = "quadratic")
+    f_cascade_top = interpolate.interp1d(IC_bins_means, cascade_up, kind = "quadratic")
+    f_cascade_bot = interpolate.interp1d(IC_bins_means, cascade_down, kind = "quadratic")
+
+    plot_error_x = np.logspace(np.log10(IC_bins_means[0]), np.log10(IC_bins_means[-1]), 1000)
+    plot_track_median = f_track_median(plot_error_x)
+    plot_track_top = f_track_top(plot_error_x)
+    plot_track_bot = f_track_bot(plot_error_x)
+    plot_cascade_median = f_cascade_median(plot_error_x)
+    plot_cascade_top = f_cascade_top(plot_error_x)
+    plot_cascade_bot = f_cascade_bot(plot_error_x)
+
+    fig, axes = plt.subplots(nrows = 2, ncols = 2, figsize = (15, 10), constrained_layout = True, sharex = True, sharey = 'row', gridspec_kw = {'height_ratios':[1, 2]})
+    ax3 = axes[0][0]
+    ax4 = axes[0][1]
+    ax1 = axes[1][0]
+    ax2 = axes[1][1]
+    im1 = ax1.pcolor(X, Y, ICtZ.T, cmap = "plasma", norm = LogNorm(), alpha = 0.7)
+    im2 = ax2.pcolor(X, Y, ICcZ.T, cmap = "plasma", norm = LogNorm(), alpha = 0.7)
+    ax1.set_xlim(plot_start, plot_end)
+    ax1.set_xlabel("True Energy [GeV]")
+    ax1.set_ylim(lo, hi)
+    ax1.set_ylabel("Reconstructed Energy [GeV]")
+    ax2.set_xlim(plot_start, plot_end)
+    ax2.set_xlabel("True Energy [GeV]")
+    ax2.set_ylim(lo, hi)
+    ax1.set_xscale("log")
+    ax1.set_yscale("log")
+    ax2.set_xscale("log")
+    ax2.set_yscale("log")
+    fig.colorbar(im1, orientation = "vertical", format = LogFormatterMathtext(), alpha = 0.7)
+
+    # also plot the error bars
+    ax1.plot(plot_error_x, plot_track_median, label = "50%", color = 'navy', alpha = 0.7)
+    ax1.plot(plot_error_x, plot_track_top, label = "top 15%", color = 'navy', linestyle = '--', alpha = 0.7)
+    ax1.plot(plot_error_x, plot_track_bot, label = "bottom 15%", color = 'navy', linestyle = '-.', alpha = 0.7)
+    ax1.legend()
+
+
+    ax2.plot(plot_error_x, plot_cascade_median, label = "50%", color = 'navy', alpha = 0.7)
+    ax2.plot(plot_error_x, plot_cascade_top, label = "top 15%", color = 'navy', linestyle = '--', alpha = 0.7)
+    ax2.plot(plot_error_x, plot_cascade_bot, label = "bottom 15%", color = 'navy', linestyle = '-.', alpha = 0.7)
+    ax2.legend()
+
+    # ax3.set_ylim(-25, 10)
+    # ax3.errorbar(IC_bins_means, track_median_ratio, yerr = IC_track_ratio_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
+    ax3.errorbar(IC_bins_means, track_median, yerr = IC_track_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
+    ax3.legend()
+    # ax3.set_xlabel("True Energy [GeV]")
+    # ax4.set_xlabel("True Energy [GeV]")
+    ax3.set_ylabel("Energy Error[GeV]")
+    # ax4.set_xscale("log")
+    # ax2.set_ylim(-25, 5)
+    # ax4.errorbar(IC_bins_means, cascade_median_ratio, yerr = IC_cas_ratio_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
+    ax4.errorbar(IC_bins_means, cascade_median, yerr = IC_cas_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
+    # plt.subplots_adjust(hspace=0)
+    ax4.legend()
+    # plt.subplots_adjust(wspace=0.1, hspace=0.03)
+
+    # plt.show()
+    plt.savefig("./new_paper_plots/ORCA_energy_Reconstruction", bbox_inches = 'tight', pad_inches = 0.3)
+
+ORCA_resolution_with_errors()
 
 def zenith_resolution():
     x = np.linspace(-1, 1, 20)
     y = np.linspace(-1, 1, 20)
     X, Y = np.meshgrid(x, y)
     Z, xedges, yedges = np.histogram2d(np.cos(ORCA["true_zenith"]), np.cos(ORCA["reco_zenith"]), bins=(x, y))
-    im = plt.pcolor(X, Y, Z.T, cmap = "plasma", norm = LogNorm())
-    plt.xlim(-1, 1)
-    plt.ylim(-1, 1)
-    plt.xlabel("Cosine True Zenith")
-    plt.ylabel("Cosine Reco Zenith")
-    plt.colorbar(im, orientation = "vertical", format = LogFormatterMathtext())
-    plt.savefig("./new_paper_plots/Zenith_Resolution.png")
+    fig, ax = plt.subplots(figsize = (8, 8))
+    im = plt.pcolor(X, Y, Z.T, cmap = "plasma", norm = LogNorm(), alpha = 0.7)
+    ax.set_xlim(-1, 1)
+    ax.set_ylim(-1, 1)
+    ax.set_xlabel("Cosine True Zenith")
+    ax.set_ylabel("Cosine Reco Zenith")
+    fig.colorbar(im, orientation = "vertical", format = LogFormatterMathtext(), alpha = 0.7)
+    plt.savefig("./new_paper_plots/Zenith_Resolution.png", bbox_inches = 'tight', pad_inches = 0.3)
     plt.close()
 
-zenith_resolution()
+# zenith_resolution()
 
 def range_zenith_resolution():
     zen_true = ORCA["true_zenith"]
@@ -180,13 +750,10 @@ def range_zenith_resolution():
     ax3.set_xlabel("True Cosine Zenith")
     plt.colorbar(im1, orientation = "vertical", format = LogFormatterMathtext())
     # plt.show()
-    plt.savefig("./new_paper_plots/Ranged_Zenith_Resolution.png")
+    plt.savefig("./new_paper_plots/Ranged_Zenith_Resolution.png", bbox_inches = 'tight', pad_inches = 2)
 
-range_zenith_resolution()
+# range_zenith_resolution()
 
-
-
-    
 
 # then plot Effective Area comparisons
 def effective_volumes():
@@ -222,7 +789,7 @@ def effective_volumes():
     ax1.set_xscale("log")
     ax1.set_xlabel(r"$E_{\nu,\rm{true}}$ [GeV]")
     ax1.set_xlim(IC.lo, IC.hi)
-    ax1.set_ylabel("Effective Volume [m^3]")
+    ax1.set_ylabel(r"Effective Volume [m$^3$]")
     ax1.grid(True)
     ax1.legend(loc = 4)
     ax1.title.set_text("IceCube Upgrade Deepcore")
@@ -246,12 +813,12 @@ def effective_volumes():
     ax2.set_ylabel("Effective Volume [m^3]")
     ax2.set_xlim(1, 50)
     ax2.grid(True)
-    ax2.legend(loc = 2)
+    ax2.legend(loc = 2, fontsize = 13)
     ax2.title.set_text("ORCA")
 
     # fig.suptitle("IceCube Upgrade DeepCore and ORCA Effective Volumes")
     # plt.show()
-    plt.savefig("./new_paper_plots/Effective_Volumes.png")
+    plt.savefig("./new_paper_plots/Effective_Volumes.png", bbox_inches = 'tight', pad_inches = 1)
     plt.close()
 
-effective_volumes()
+# effective_volumes()
