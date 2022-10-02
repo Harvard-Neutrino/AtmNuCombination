@@ -14,7 +14,7 @@ def gaussian(x, mu, sigma, A):
 
 # fit with the gaussian function
 def gaus_fit(data_entries, bins, current_binnum):
-	bins_centers = np.array([0.5 * (bins[i] + bins[i+1]) for i in range(len(bins)-1)])
+	bins_centers = np.sqrt(bins[1:] * bins[:-1])
 	popt, pcov = curve_fit(gaussian, xdata=bins_centers, ydata=data_entries, p0=[current_binnum, 5, 1])
 	return popt[0], popt[1], popt[2]
 
