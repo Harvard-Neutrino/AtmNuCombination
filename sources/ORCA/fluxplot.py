@@ -63,7 +63,7 @@ def readline(input_file):
 # Now read in all the flux information
 SKnue_x_val, SKnue_y_val, SKnue_yerr = read_yerr("../FluxRangePlot/SKnue.csv")
 SKnumu_x_val, SKnumu_y_val, SKnumu_yerr = read_yerr("../FluxRangePlot/SKnumu.csv")
-Frej_nue_x_val, Frej_nue_y_val, Frej_nue_xerr, Frej_nue_yerr = read_xyerr("../FluxRangePlot/frejusnue.csv")
+Frej_nue_x_val, Frej_nue_y_val, Frej_nue_xerr, Frej_nue_yerr = read_xyerr("../FluxRangePlot/Frejusnue.csv")
 ICDC2013_x_val, ICDC2013_y_val, ICDC2013_xerr, ICDC2013_yerr = read_xyerr("../FluxRangePlot/IC_DC2013nue.csv")
 IC2014_x_val, IC2014_y_val, IC2014_xerr, IC2014_yerr = read_xyerr("../FluxRangePlot/IC_DC2013nue.csv")
 ANTARES_x_val, ANTARES_y_val, ANTARES_xerr, ANTARES_yerr = read_xyerr("../FluxRangePlot/ANTARES_numu.csv")
@@ -136,7 +136,7 @@ ax2.legend(fontsize = 16)
 ax.set_xlim(10**(-1), 3*10**5)
 
 ax.legend(loc = 1, fontsize = 18)
-plt.subplots_adjust(wspace=0, hspace=0.05)
+plt.subplots_adjust(hspace=0.05)
 # plt.show()
 plt.savefig("./new_paper_plots/Flux_range_plot")
 

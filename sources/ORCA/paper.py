@@ -631,7 +631,7 @@ def IC_resolution_with_errors():
     # plt.show()
     plt.savefig("./new_paper_plots/IC_energy_Reconstruction", bbox_inches = 'tight', pad_inches = 0.3)
 
-IC_resolution_with_errors()
+# IC_resolution_with_errors()
 
 def ORCA_resolution_with_errors():
     lo = 1.85
@@ -875,7 +875,7 @@ def ORCA_resolution_with_errors():
     # plt.show()
     plt.savefig("./new_paper_plots/ORCA_energy_Reconstruction", bbox_inches = 'tight', pad_inches = 0.3)
 
-ORCA_resolution_with_errors()
+# ORCA_resolution_with_errors()
 
 def zenith_resolution():
     x = np.linspace(-1, 1, 20)
@@ -943,7 +943,7 @@ def effective_volumes():
     ORCA = eff.ORCAEffectiveAnalysis(num_bins = 20)
     IC.compute()
     ORCA.compute()
-    fig, axes = plt.subplots(nrows = 1, ncols = 2, figsize = (25, 10))
+    fig, axes = plt.subplots(nrows = 1, ncols = 2, figsize = (15, 6))
     ax1, ax2 = axes[0], axes[1]
 
     # first plot IC
@@ -965,8 +965,8 @@ def effective_volumes():
     ax1.hist(taubin[:-1], taubin, weights = tauhist / IC.widths, label=r"$\nu_{\tau}CC$", histtype="step")
     ax1.hist(taubarbin[:-1], taubarbin, weights = taubarhist / IC.widths, label=r"$\overline{\nu}_{\tau}CC$",\
                             linestyle = "--", histtype="step")
-    ax1.hist(ncbin[:-1], ncbin, weights = nchist / IC.widths, label=r"$\nu NC$", histtype="step")
-    ax1.hist(ncbarbin[:-1], ncbarbin, weights = ncbarhist / IC.widths, label=r"$\overline{\nu} NC$",\
+    ax1.hist(ncbin[:-1], ncbin, weights = nchist / IC.widths, color = "brown", label=r"$\nu NC$", histtype="step")
+    ax1.hist(ncbarbin[:-1], ncbarbin, weights = ncbarhist / IC.widths,color = "brown", label=r"$\overline{\nu} NC$",\
                             linestyle = "--", histtype="step")
     ax1.set_xscale("log")
     ax1.set_xlabel(r"$E_{\nu,\rm{true}}$ [GeV]")
