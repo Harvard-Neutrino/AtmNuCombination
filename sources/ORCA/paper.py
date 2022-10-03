@@ -17,7 +17,7 @@ from params import *
 import NewEffective as eff
 
 # matplotlib.rcParams.update({'font.size': 18})
-plt.style.use('./mystyle.mplstyle')
+plt.style.use('./paper.mplstyle')
 
 ORCA = pd.read_csv("15x_with_interm.csv")
 IC = pd.read_csv("neutrino_mc.csv")
@@ -219,7 +219,7 @@ def IC_track_error():
     ax.set_xscale("log")
     ax.set_ylim(-25, 10)
     ax.errorbar(x[1:], median_errors, yerr = IC_track_err, fmt = 'o', capsize = 3, label = r"IceCube Track Energy Reco Median Error ($15\%$ and $85\%$)")
-    ax.legend(fontsize = 15)
+    ax.legend()
     ax.set_xlabel("True Energy [GeV]")
     ax2.set_xlabel("True Energy [GeV]")
     ax.set_ylabel("Energy Error [GeV]")
@@ -228,7 +228,7 @@ def IC_track_error():
     # ax2.set_ylim(-25, 5)
     ax2.errorbar(x[1:], Cascade_median_errors, yerr = IC_cas_err, fmt = 'o', capsize = 3, label = r"IceCube Cascade Energy Reco Median Error ($15\%$ and $85\%$)")
     plt.subplots_adjust(wspace=0, hspace=0)
-    ax2.legend(fontsize = 15)
+    ax2.legend()
     # plt.show()
     plt.savefig("./new_paper_plots/IceCube_Energy_Errors.png", bbox_inches = 'tight', pad_inches = 1)
     plt.close()
@@ -605,18 +605,18 @@ def IC_resolution_with_errors():
     ax1.plot(plot_error_x, plot_track_median, label = "50%", color = 'navy', alpha = 0.7)
     ax1.plot(plot_error_x, plot_track_top, label = "top 15%", color = 'navy', linestyle = '--', alpha = 0.7)
     ax1.plot(plot_error_x, plot_track_bot, label = "bottom 15%", color = 'navy', linestyle = '-.', alpha = 0.7)
-    ax1.legend()
+    ax1.legend(fontsize = 18)
 
 
     ax2.plot(plot_error_x, plot_cascade_median, label = "50%", color = 'navy', alpha = 0.7)
     ax2.plot(plot_error_x, plot_cascade_top, label = "top 15%", color = 'navy', linestyle = '--', alpha = 0.7)
     ax2.plot(plot_error_x, plot_cascade_bot, label = "bottom 15%", color = 'navy', linestyle = '-.', alpha = 0.7)
-    ax2.legend()
+    ax2.legend(fontsize = 18)
 
     # ax3.set_ylim(-25, 10)
     # ax3.errorbar(IC_bins_means, track_median_ratio, yerr = IC_track_ratio_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
     ax3.errorbar(IC_bins_means, median_errors, yerr = IC_track_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
-    ax3.legend()
+    ax3.legend(fontsize = 18)
     # ax3.set_xlabel("True Energy [GeV]")
     # ax4.set_xlabel("True Energy [GeV]")
     ax3.set_ylabel("Energy Error[GeV]")
@@ -625,7 +625,7 @@ def IC_resolution_with_errors():
     # ax4.errorbar(IC_bins_means, cascade_median_ratio, yerr = IC_cas_ratio_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
     ax4.errorbar(IC_bins_means, Cascade_median_errors, yerr = IC_cas_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
     # plt.subplots_adjust(hspace=0)
-    ax4.legend()
+    ax4.legend(fontsize = 18)
     # plt.subplots_adjust(wspace=0.1, hspace=0.03)
 
     # plt.show()
@@ -849,18 +849,18 @@ def ORCA_resolution_with_errors():
     ax1.plot(plot_error_x, plot_track_median, label = "50%", color = 'navy', alpha = 0.7)
     ax1.plot(plot_error_x, plot_track_top, label = "top 15%", color = 'navy', linestyle = '--', alpha = 0.7)
     ax1.plot(plot_error_x, plot_track_bot, label = "bottom 15%", color = 'navy', linestyle = '-.', alpha = 0.7)
-    ax1.legend()
+    ax1.legend(fontsize = 18)
 
 
     ax2.plot(plot_error_x, plot_cascade_median, label = "50%", color = 'navy', alpha = 0.7)
     ax2.plot(plot_error_x, plot_cascade_top, label = "top 15%", color = 'navy', linestyle = '--', alpha = 0.7)
     ax2.plot(plot_error_x, plot_cascade_bot, label = "bottom 15%", color = 'navy', linestyle = '-.', alpha = 0.7)
-    ax2.legend()
+    ax2.legend(fontsize = 18)
 
     # ax3.set_ylim(-25, 10)
     # ax3.errorbar(IC_bins_means, track_median_ratio, yerr = IC_track_ratio_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
     ax3.errorbar(IC_bins_means, median_errors, yerr = IC_track_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
-    ax3.legend()
+    ax3.legend(fontsize = 18)
     # ax3.set_xlabel("True Energy [GeV]")
     # ax4.set_xlabel("True Energy [GeV]")
     ax3.set_ylabel("Energy Error[GeV]")
@@ -869,13 +869,13 @@ def ORCA_resolution_with_errors():
     # ax4.errorbar(IC_bins_means, cascade_median_ratio, yerr = IC_cas_ratio_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
     ax4.errorbar(IC_bins_means, Cascade_median_errors, yerr = IC_cas_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
     # plt.subplots_adjust(hspace=0)
-    ax4.legend()
+    ax4.legend(fontsize = 18)
     # plt.subplots_adjust(wspace=0.1, hspace=0.03)
 
     # plt.show()
     plt.savefig("./new_paper_plots/ORCA_energy_Reconstruction", bbox_inches = 'tight', pad_inches = 0.3)
 
-# ORCA_resolution_with_errors()
+ORCA_resolution_with_errors()
 
 def zenith_resolution():
     x = np.linspace(-1, 1, 20)
@@ -992,10 +992,10 @@ def effective_volumes():
     ax2.set_xscale("log")
     # ax.set_yscale("log")
     ax2.set_xlabel(r"$E_{\nu,\rm{true}}$ [GeV]")
-    ax2.set_ylabel("Effective Volume [m^3]")
+    ax2.set_ylabel(r"Effective Volume [m$^3$]")
     ax2.set_xlim(1, 50)
     ax2.grid(True)
-    ax2.legend(loc = 2, fontsize = 13)
+    ax2.legend(loc = 2, fontsize = 18)
     ax2.title.set_text("ORCA")
 
     # fig.suptitle("IceCube Upgrade DeepCore and ORCA Effective Volumes")
@@ -1003,4 +1003,4 @@ def effective_volumes():
     plt.savefig("./new_paper_plots/Effective_Volumes.png", bbox_inches = 'tight', pad_inches = 1)
     plt.close()
 
-# effective_volumes()
+effective_volumes()

@@ -7,7 +7,7 @@ from scipy import interpolate
 import NewEffective as eff
 
 
-plt.style.use('./mystyle.mplstyle')
+plt.style.use('./paper.mplstyle')
 
 # first the function to read yerr bar data
 def read_yerr(input_file):
@@ -135,8 +135,8 @@ ax2.legend(fontsize = 16)
 # set the x axis range
 ax.set_xlim(10**(-1), 3*10**5)
 
-ax.legend(loc = 1, fontsize = 16)
-plt.subplots_adjust(wspace=0, hspace=0)
+ax.legend(loc = 1, fontsize = 18)
+plt.subplots_adjust(wspace=0, hspace=0.05)
 # plt.show()
 plt.savefig("./new_paper_plots/Flux_range_plot")
 
