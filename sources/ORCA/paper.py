@@ -973,7 +973,7 @@ def effective_volumes():
     ax1.set_xlim(IC.lo, IC.hi)
     ax1.set_ylabel(r"Effective Volume [m$^3$]")
     ax1.grid(True)
-    ax1.legend(loc = 4)
+    ax1.legend(loc = 4, fontsize = 16)
     ax1.title.set_text("IceCube Upgrade Deepcore")
 
     # then plot ORCA
@@ -986,8 +986,8 @@ def effective_volumes():
     ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.tauvol , label=r"$\nu_{\tau}CC$", histtype="step")
     ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.taubarvol , label=r"$\overline{\nu}_{\tau}CC$",\
                              linestyle = "--", histtype="step")
-    ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.ncvol , label=r"$\nu NC$", histtype="step")
-    ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.ncbarvol , label=r"$\overline{\nu} NC$", \
+    ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.ncvol ,color = "brown", label=r"$\nu NC$", histtype="step")
+    ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.ncbarvol ,color = "brown", label=r"$\overline{\nu} NC$", \
                             linestyle = "--", histtype="step")
     ax2.set_xscale("log")
     # ax.set_yscale("log")
@@ -995,7 +995,7 @@ def effective_volumes():
     ax2.set_ylabel(r"Effective Volume [m$^3$]")
     ax2.set_xlim(1, 50)
     ax2.grid(True)
-    ax2.legend(loc = 2, fontsize = 18)
+    ax2.legend(loc = 2, fontsize = 16)
     ax2.title.set_text("ORCA")
 
     # fig.suptitle("IceCube Upgrade DeepCore and ORCA Effective Volumes")
