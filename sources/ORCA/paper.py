@@ -163,27 +163,35 @@ def IC_track_error():
 
     for i in range(len(IC_er[track_mask])):
         curcol = 0
+        found_place = False
         for j in range(len(x) - 1):
             # find which index we belong to
             if ICetTrack[i] < x[j + 1]:
                 curcol = j 
+                found_place = True
                 break
             else:
+                curcol = j
                 continue 
         # now put the difference between reco and true into the corresponding list
-        all_bins[curcol].append(ICerTrack[i] - ICetTrack[i])
+        if found_place:
+            all_bins[curcol].append(ICerTrack[i] - ICetTrack[i])
 
     for i in range(len(IC_er[cascade_mask])):
         curcol = 0
+        found_place = False
         for j in range(len(x) - 1):
             # find which index we belong to
             if ICetCascade[i] < x[j + 1]:
                 curcol = j 
+                found_place = True
                 break
             else:
+                curcol = j
                 continue 
         # now put the difference between reco and true into the corresponding list
-        Cas_all_bins[curcol].append(ICerCascade[i] - ICetCascade[i])
+        if found_place:
+            Cas_all_bins[curcol].append(ICerCascade[i] - ICetCascade[i])
 
     # now select the mean from each list
     for i in range(22):
@@ -226,6 +234,170 @@ def IC_track_error():
     plt.close()
 
 # IC_track_error()
+
+def ORCA_track_error():
+    lo = 1.85
+    hi = 53
+    IC_pid = ORCA["pid"]
+    IC_et = ORCA["true_energy"]
+    IC_er = ORCA["reco_energy"]
+    track_mask = IC_pid == 1
+    cascade_mask = IC_pid == 0
+
+    x = np.logspace(np.log10(lo), np.log10(hi), 23)
+
+    y = np.logspace(np.log10(lo), np.log10(hi), 23)
+    X, Y = np.meshgrid(x, y)
+    # define the plotting start and end points
+    plot_start = np.sqrt(x[0] * x[1])
+    plot_end = np.sqrt(x[-1] * x[-2])
+
+    IC_track_mask = IC_pid == 1
+    ICtZ, xedges, yedges = np.histogram2d(IC_et[IC_track_mask], IC_er[IC_track_mask], bins=(x, y))
+    for i in range(22):
+        currcol = ICtZ[i][:]
+        tot = 0
+        for j in range(22):
+            tot += currcol[j]
+        for j in range(22):
+            currcol[j] = currcol[j] / tot
+
+        # cascades
+    IC_cas_mask = IC_pid == 0
+    ICcZ, xedges, yedges = np.histogram2d(IC_et[IC_cas_mask], IC_er[IC_cas_mask], bins=(x, y))
+    for i in range(22):
+        currcol = ICcZ[i][:]
+        tot = 0
+        for j in range(22):
+            tot += currcol[j]
+        for j in range(22):
+            currcol[j] = currcol[j] / tot
+
+    error_x = np.logspace(np.log10(lo), np.log10(hi), 23)
+
+    IC_bins_means = np.sqrt(x[1:] * x[:-1])
+
+    all_bins = []
+    Cas_all_bins = []
+    for i in range(22):
+        all_bins.append([])
+        Cas_all_bins.append([])
+
+
+    median_errors = np.zeros((22,))
+    top15 = np.zeros((22,))
+    bottom15 = np.zeros((22,))
+
+    Cascade_median_errors = np.zeros((22,))
+    Cascade_top15 = np.zeros((22,))
+    Cascade_bottom15 = np.zeros((22,))
+    ICetTrack = np.array(IC_et[track_mask][:])
+    ICerTrack = np.array(IC_er[track_mask][:])
+
+    ICetCascade = np.array(IC_et[cascade_mask][:])
+    ICerCascade = np.array(IC_er[cascade_mask][:])
+
+    # print(IC_et[track_mask])
+    # print(ICetTrack)
+
+
+    for i in range(len(IC_er[track_mask])):
+        if i <= 10:
+            print(ICetTrack[i])
+        curcol = 0
+        found_place = False
+        for j in range(len(error_x) - 1):
+            # find which index we belong to
+            if ICetTrack[i] < error_x[j + 1]:
+                curcol = j 
+                found_place = True
+                if i < 10:
+                    print(j)
+                break
+            else:
+                curcol = j
+                continue 
+        # now put the difference between reco and true into the corresponding list
+        if found_place:
+            all_bins[curcol].append(ICerTrack[i] - ICetTrack[i])
+    # print(all_bins[0][:10])
+    for i in range(len(IC_er[cascade_mask])):
+        curcol = 0
+        found_place = False
+        for j in range(len(x) - 1):
+            # find which index we belong to
+            if ICetCascade[i] < x[j + 1]:
+                curcol = j 
+                found_place = True
+                break
+            else:
+                curcol = j
+                continue 
+        # now put the difference between reco and true into the corresponding list
+        if found_place:
+            Cas_all_bins[curcol].append(ICerCascade[i] - ICetCascade[i])
+
+    # now select the mean from each list
+    for i in range(22):
+        # print(all_bins[i])
+        median_errors[i] = median(all_bins[i])
+        sorted_current_bin = all_bins[i].sort()
+        top15[i] = abs(all_bins[i][math.ceil(0.85 * len(all_bins[i]))] - median_errors[i])
+        bottom15[i] = abs(all_bins[i][math.ceil(0.15 * len(all_bins[i]))] - median_errors[i])
+
+        Cascade_median_errors[i] = median(Cas_all_bins[i])
+        Cascade_sorted_current_bin = Cas_all_bins[i].sort()
+        Cascade_top15[i] = abs(Cas_all_bins[i][math.ceil(0.85 * len(Cas_all_bins[i]))] - Cascade_median_errors[i])
+        Cascade_bottom15[i] = abs(Cas_all_bins[i][math.ceil(0.15 * len(Cas_all_bins[i]))] - Cascade_median_errors[i])
+
+    # print(median_errors)
+    # print(median_errors)
+    # print(top15)
+    # print(bottom15)
+    IC_track_err = np.array([np.array(bottom15), np.array(top15)])
+    IC_cas_err = np.array([np.array(Cascade_bottom15), np.array(Cascade_top15)])
+
+
+    fig, axes = plt.subplots(nrows = 2, ncols = 2, figsize = (15, 10), constrained_layout = True, sharex = True, sharey = 'row', gridspec_kw = {'height_ratios':[1, 2]})
+    # fig, axes = plt.subplots(figsize = (15, 10), ncols = 2, nrows = 2, sharey = True)
+    fig.suptitle("ORCA Energy Reconstruction Errors")
+    ax, ax2 = axes[0][0], axes[0][1]
+    ax3, ax4 = axes[1][0], axes[1][1]
+    ax.set_xscale("log")
+    # ax.set_ylim(-25, 10)
+    ax.errorbar(IC_bins_means, median_errors, yerr = IC_track_err, fmt = 'o', capsize = 3, label = r"ORCA Track Energy Reco Median Error ($15\%$ and $85\%$)")
+    ax.legend(fontsize = 13)
+    ax.set_xlabel("True Energy [GeV]")
+    ax2.set_xlabel("True Energy [GeV]")
+    ax.set_ylabel("Energy Error [GeV]")
+    # ax2.set_ylabel("Energy Error [GeV]")
+    ax2.set_xscale("log")
+    # ax2.set_ylim(-25, 5)
+    ax2.errorbar(IC_bins_means, Cascade_median_errors, yerr = IC_cas_err, fmt = 'o', capsize = 3, label = r"ORCA Cascade Energy Reco Median Error ($15\%$ and $85\%$)")
+    # plt.subplots_adjust(wspace=0, hspace=0)
+    ax2.legend(fontsize = 13)
+
+    im1 = ax3.pcolor(X, Y, ICtZ.T, cmap = "plasma", norm = LogNorm(), alpha = 0.7)
+    im2 = ax4.pcolor(X, Y, ICcZ.T, cmap = "plasma", norm = LogNorm(), alpha = 0.7)
+    ax3.set_xlim(plot_start, plot_end)
+    ax3.set_xlabel("True Energy [GeV]")
+    ax3.set_ylim(lo, hi)
+    ax3.set_ylabel("Reconstructed Energy [GeV]")
+    ax4.set_xlim(plot_start, plot_end)
+    ax4.set_xlabel("True Energy [GeV]")
+    ax4.set_ylim(lo, hi)
+    ax3.set_xscale("log")
+    ax3.set_yscale("log")
+    ax4.set_xscale("log")
+    ax4.set_yscale("log")
+    fig.colorbar(im1, orientation = "vertical", format = LogFormatterMathtext(), alpha = 0.7)
+
+    # plt.show()
+
+    plt.savefig("./new_paper_plots/ORCA_Energy_Errors.png", bbox_inches = 'tight', pad_inches = 1)
+    plt.close()
+
+# ORCA_track_error()
 
 def IC_resolution_with_errors():
     lo = 0.5
@@ -381,16 +553,16 @@ def IC_resolution_with_errors():
     track_down = np.zeros_like(IC_bins_means)
     for i in range(len(IC_bins_means)):
         track_median[i] = IC_bins_means[i] + median_errors[i]
-        track_up[i] = IC_bins_means[i] + top15[i]
-        track_down[i] = IC_bins_means[i] - bottom15[i]
+        track_up[i] = IC_bins_means[i] + median_errors[i]+ top15[i]
+        track_down[i] = IC_bins_means[i] + median_errors[i]- bottom15[i]
 
     cascade_median = np.zeros_like(IC_bins_means)
     cascade_up = np.zeros_like(IC_bins_means)
     cascade_down = np.zeros_like(IC_bins_means)
     for i in range(len(IC_bins_means)):
         cascade_median[i] = IC_bins_means[i] + Cascade_median_errors[i]
-        cascade_up[i] = IC_bins_means[i] + Cascade_top15[i]
-        cascade_down[i] = IC_bins_means[i] - Cascade_bottom15[i]
+        cascade_up[i] = IC_bins_means[i] + Cascade_median_errors[i]+ Cascade_top15[i]
+        cascade_down[i] = IC_bins_means[i] + Cascade_median_errors[i]- Cascade_bottom15[i]
 
     # Now interpolate this line in the histogram
     # print(IC_bins_means)
@@ -443,7 +615,7 @@ def IC_resolution_with_errors():
 
     # ax3.set_ylim(-25, 10)
     # ax3.errorbar(IC_bins_means, track_median_ratio, yerr = IC_track_ratio_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
-    ax3.errorbar(IC_bins_means, track_median, yerr = IC_track_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
+    ax3.errorbar(IC_bins_means, median_errors, yerr = IC_track_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
     ax3.legend()
     # ax3.set_xlabel("True Energy [GeV]")
     # ax4.set_xlabel("True Energy [GeV]")
@@ -451,7 +623,7 @@ def IC_resolution_with_errors():
     # ax4.set_xscale("log")
     # ax2.set_ylim(-25, 5)
     # ax4.errorbar(IC_bins_means, cascade_median_ratio, yerr = IC_cas_ratio_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
-    ax4.errorbar(IC_bins_means, cascade_median, yerr = IC_cas_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
+    ax4.errorbar(IC_bins_means, Cascade_median_errors, yerr = IC_cas_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
     # plt.subplots_adjust(hspace=0)
     ax4.legend()
     # plt.subplots_adjust(wspace=0.1, hspace=0.03)
@@ -500,9 +672,9 @@ def ORCA_resolution_with_errors():
             currcol[j] = currcol[j] / tot
 
     # Here are the IC error bars
-    IC_pid = IC["pid"]
-    IC_et = IC["true_energy"]
-    IC_er = IC["reco_energy"]
+    IC_pid = ORCA["pid"]
+    IC_et = ORCA["true_energy"]
+    IC_er = ORCA["reco_energy"]
     track_mask = IC_pid == 1
     cascade_mask = IC_pid == 0
 
@@ -521,16 +693,16 @@ def ORCA_resolution_with_errors():
     median_errors = np.zeros((22,))
     top15 = np.zeros((22,))
     bottom15 = np.zeros((22,))
-    track_median_ratio = np.zeros((22,))
-    track_ratio_top = np.zeros((22,))
-    track_ratio_bottom = np.zeros((22,))
+    # track_median_ratio = np.zeros((22,))
+    # track_ratio_top = np.zeros((22,))
+    # track_ratio_bottom = np.zeros((22,))
 
     Cascade_median_errors = np.zeros((22,))
-    cascade_median_ratio = np.zeros((22,))
+    # cascade_median_ratio = np.zeros((22,))
     Cascade_top15 = np.zeros((22,))
     Cascade_bottom15 = np.zeros((22,))
-    cascade_ratio_top = np.zeros((22,))
-    cascade_ratio_bottom = np.zeros((22,))
+    # cascade_ratio_top = np.zeros((22,))
+    # cascade_ratio_bottom = np.zeros((22,))
 
 
     ICetTrack = np.array(IC_et[track_mask][:])
@@ -540,6 +712,8 @@ def ORCA_resolution_with_errors():
     ICerCascade = np.array(IC_er[cascade_mask][:])
 
     for i in range(len(IC_er[track_mask])):
+        # if i <= 10:
+        #     print(ICetTrack[i])
         found_place = False
         curcol = 0
         for j in range(len(error_x) - 1):
@@ -547,6 +721,8 @@ def ORCA_resolution_with_errors():
             if ICetTrack[i] < error_x[j + 1]:
                 curcol = j 
                 found_place = True
+                # if i < 10:
+                #     print(j)
                 break
             else:
                 curcol = j
@@ -554,7 +730,7 @@ def ORCA_resolution_with_errors():
         # now put the difference between reco and true into the corresponding list
         if found_place:
             all_bins[curcol].append(ICerTrack[i] - ICetTrack[i])
-
+    # print(all_bins[0][:10])
     for i in range(len(IC_er[cascade_mask])):
         curcol = 0
         found_place = False
@@ -588,25 +764,27 @@ def ORCA_resolution_with_errors():
         top15[i] = abs(all_bins[i][math.floor(0.85 * len(all_bins[i]))] - median_errors[i])
         bottom15[i] = abs(all_bins[i][math.ceil(0.15 * len(all_bins[i]))] - median_errors[i])
 
-        track_ratio_top[i] = top15[i] / IC_bins_means[i]
-        track_ratio_bottom[i] = bottom15[i] / IC_bins_means[i]
-        track_median_ratio[i] = median_errors[i] / IC_bins_means[i]
+        # track_ratio_top[i] = top15[i] / IC_bins_means[i]
+        # track_ratio_bottom[i] = bottom15[i] / IC_bins_means[i]
+        # track_median_ratio[i] = median_errors[i] / IC_bins_means[i]
 
         Cascade_median_errors[i] = median(Cas_all_bins[i])
         Cascade_sorted_current_bin = Cas_all_bins[i].sort()
         Cascade_top15[i] = abs(Cas_all_bins[i][math.floor(0.85 * len(Cas_all_bins[i]))] - Cascade_median_errors[i])
         Cascade_bottom15[i] = abs(Cas_all_bins[i][math.ceil(0.15 * len(Cas_all_bins[i]))] - Cascade_median_errors[i])
 
-        cascade_ratio_top[i] = Cascade_top15[i] / IC_bins_means[i]
-        cascade_ratio_bottom[i] = Cascade_bottom15[i] / IC_bins_means[i]
-        cascade_median_ratio[i] = Cascade_median_errors[i] / IC_bins_means[i]
+        # cascade_ratio_top[i] = Cascade_top15[i] / IC_bins_means[i]
+        # cascade_ratio_bottom[i] = Cascade_bottom15[i] / IC_bins_means[i]
+        # cascade_median_ratio[i] = Cascade_median_errors[i] / IC_bins_means[i]
 
+    # print(median_errors)
+    # print(Cascade_median_errors)
 
     IC_track_err = np.array([np.array(bottom15), np.array(top15)])
     IC_cas_err = np.array([np.array(Cascade_bottom15), np.array(Cascade_top15)])
 
-    IC_track_ratio_err = np.array([np.array(track_ratio_bottom), np.array(track_ratio_top)])
-    IC_cas_ratio_err = np.array([np.array(cascade_ratio_bottom), np.array(cascade_ratio_top)])
+    # IC_track_ratio_err = np.array([np.array(track_ratio_bottom), np.array(track_ratio_top)])
+    # IC_cas_ratio_err = np.array([np.array(cascade_ratio_bottom), np.array(cascade_ratio_top)])
 
     # here process the lists of line points that go into the resolutioon plot
     
@@ -615,16 +793,20 @@ def ORCA_resolution_with_errors():
     track_down = np.zeros_like(IC_bins_means)
     for i in range(len(IC_bins_means)):
         track_median[i] = IC_bins_means[i] + median_errors[i]
-        track_up[i] = IC_bins_means[i] + top15[i]
-        track_down[i] = IC_bins_means[i] - bottom15[i]
+        track_up[i] = IC_bins_means[i] + median_errors[i] + top15[i]
+        track_down[i] = IC_bins_means[i] + median_errors[i] - bottom15[i]
+
+    # print(track_median)
+    # print(track_up)
+    # print(track_down)
 
     cascade_median = np.zeros_like(IC_bins_means)
     cascade_up = np.zeros_like(IC_bins_means)
     cascade_down = np.zeros_like(IC_bins_means)
     for i in range(len(IC_bins_means)):
         cascade_median[i] = IC_bins_means[i] + Cascade_median_errors[i]
-        cascade_up[i] = IC_bins_means[i] + Cascade_top15[i]
-        cascade_down[i] = IC_bins_means[i] - Cascade_bottom15[i]
+        cascade_up[i] = IC_bins_means[i] + Cascade_median_errors[i] + Cascade_top15[i]
+        cascade_down[i] = IC_bins_means[i] + Cascade_median_errors[i] - Cascade_bottom15[i]
 
     # Now interpolate this line in the histogram
     # print(IC_bins_means)
@@ -677,7 +859,7 @@ def ORCA_resolution_with_errors():
 
     # ax3.set_ylim(-25, 10)
     # ax3.errorbar(IC_bins_means, track_median_ratio, yerr = IC_track_ratio_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
-    ax3.errorbar(IC_bins_means, track_median, yerr = IC_track_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
+    ax3.errorbar(IC_bins_means, median_errors, yerr = IC_track_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
     ax3.legend()
     # ax3.set_xlabel("True Energy [GeV]")
     # ax4.set_xlabel("True Energy [GeV]")
@@ -685,7 +867,7 @@ def ORCA_resolution_with_errors():
     # ax4.set_xscale("log")
     # ax2.set_ylim(-25, 5)
     # ax4.errorbar(IC_bins_means, cascade_median_ratio, yerr = IC_cas_ratio_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
-    ax4.errorbar(IC_bins_means, cascade_median, yerr = IC_cas_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
+    ax4.errorbar(IC_bins_means, Cascade_median_errors, yerr = IC_cas_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
     # plt.subplots_adjust(hspace=0)
     ax4.legend()
     # plt.subplots_adjust(wspace=0.1, hspace=0.03)
@@ -693,7 +875,7 @@ def ORCA_resolution_with_errors():
     # plt.show()
     plt.savefig("./new_paper_plots/ORCA_energy_Reconstruction", bbox_inches = 'tight', pad_inches = 0.3)
 
-ORCA_resolution_with_errors()
+# ORCA_resolution_with_errors()
 
 def zenith_resolution():
     x = np.linspace(-1, 1, 20)
