@@ -7,7 +7,7 @@ from scipy import interpolate
 import NewEffective as eff
 
 
-plt.style.use('./paper.mplstyle')
+plt.style.use('./fluxplot.mplstyle')
 
 # first the function to read yerr bar data
 def read_yerr(input_file):
@@ -108,8 +108,8 @@ ax.errorbar(Frej_numu_x_val, Frej_numu_y_val, xerr = Frej_numu_xerr, yerr = Frej
 ax.errorbar(AMANDA_numu_x_val, AMANDA_numu_y_val, xerr = AMANDA_numu_xerr, yerr = AMANDA_numu_yerr, fmt = 'D', fillstyle = 'none', capsize = 3, label = r"AMANDA-II $\nu_\mu$")
 ax.errorbar(IC_numu_unfolding_x_val, IC_numu_unfolding_y_val, xerr = IC_numu_unfolding_xerr, yerr = IC_numu_unfolding_yerr, fmt = '^', capsize = 3, label = r"IceCube $\nu_\mu$ unfolding")
 # now plot the fitted flux lines
-ax.plot(HKKM11_nue_xval, HKKM11_nue_yval, label = r"HKKM11 $\nu_e$")
-ax.plot(HKKM11_numu_xval, HKKM11_numu_yval, label = r"HKKM11 $\nu_\mu$")
+ax.plot(HKKM11_nue_xval, HKKM11_nue_yval, linestyle = '--', linewidth = 2.4,  label = r"HKKM11 $\nu_e$")
+ax.plot(HKKM11_numu_xval, HKKM11_numu_yval, linestyle = '--', linewidth = 2.4, label = r"HKKM11 $\nu_\mu$")
 
 # now label the experiment energy sensitivity regions
 ax.axvspan(10**(-1), 10**(0.7), alpha = 0.2)
@@ -138,7 +138,7 @@ ax.set_xlim(10**(-1), 3*10**5)
 ax.legend(loc = 1, fontsize = 18)
 plt.subplots_adjust(hspace=0.05)
 # plt.show()
-plt.savefig("./new_paper_plots/Flux_range_plot")
+plt.savefig("./new_paper_plots/Flux_range_plot", bbox_inches = 'tight', pad_inches = 0.4)
 
 
 

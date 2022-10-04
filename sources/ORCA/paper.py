@@ -602,21 +602,21 @@ def IC_resolution_with_errors():
     fig.colorbar(im1, orientation = "vertical", format = LogFormatterMathtext(), alpha = 0.7)
 
     # also plot the error bars
-    ax1.plot(plot_error_x, plot_track_median, label = "50%", color = 'navy', alpha = 0.7)
-    ax1.plot(plot_error_x, plot_track_top, label = "top 15%", color = 'navy', linestyle = '--', alpha = 0.7)
-    ax1.plot(plot_error_x, plot_track_bot, label = "bottom 15%", color = 'navy', linestyle = '-.', alpha = 0.7)
-    ax1.legend(fontsize = 18)
+    ax1.plot(plot_error_x, plot_track_median, label = r"\textbf{Median} 50\%", color = 'navy', alpha = 0.7)
+    ax1.plot(plot_error_x, plot_track_top, label = r"\textbf{Top} 15\%", color = 'navy', linestyle = '--', alpha = 0.7)
+    ax1.plot(plot_error_x, plot_track_bot, label = r"\textbf{Bottom} 15\%", color = 'navy', linestyle = '-.', alpha = 0.7)
+    ax1.legend(fontsize = 20)
 
 
-    ax2.plot(plot_error_x, plot_cascade_median, label = "50%", color = 'navy', alpha = 0.7)
-    ax2.plot(plot_error_x, plot_cascade_top, label = "top 15%", color = 'navy', linestyle = '--', alpha = 0.7)
-    ax2.plot(plot_error_x, plot_cascade_bot, label = "bottom 15%", color = 'navy', linestyle = '-.', alpha = 0.7)
-    ax2.legend(fontsize = 18)
+    ax2.plot(plot_error_x, plot_cascade_median, label = r"\textbf{Median} 50\%", color = 'navy', alpha = 0.7)
+    ax2.plot(plot_error_x, plot_cascade_top, label = r"\textbf{Top} 15\%", color = 'navy', linestyle = '--', alpha = 0.7)
+    ax2.plot(plot_error_x, plot_cascade_bot, label = r"\textbf{Bottom} 15\%", color = 'navy', linestyle = '-.', alpha = 0.7)
+    ax2.legend(fontsize = 20)
 
     # ax3.set_ylim(-25, 10)
     # ax3.errorbar(IC_bins_means, track_median_ratio, yerr = IC_track_ratio_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
     ax3.errorbar(IC_bins_means, median_errors, yerr = IC_track_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
-    ax3.legend(fontsize = 18)
+    ax3.legend(fontsize = 20)
     # ax3.set_xlabel("True Energy [GeV]")
     # ax4.set_xlabel("True Energy [GeV]")
     ax3.set_ylabel("Energy Error[GeV]")
@@ -625,7 +625,7 @@ def IC_resolution_with_errors():
     # ax4.errorbar(IC_bins_means, cascade_median_ratio, yerr = IC_cas_ratio_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
     ax4.errorbar(IC_bins_means, Cascade_median_errors, yerr = IC_cas_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
     # plt.subplots_adjust(hspace=0)
-    ax4.legend(fontsize = 18)
+    ax4.legend(fontsize = 20)
     # plt.subplots_adjust(wspace=0.1, hspace=0.03)
 
     # plt.show()
@@ -846,21 +846,21 @@ def ORCA_resolution_with_errors():
     fig.colorbar(im1, orientation = "vertical", format = LogFormatterMathtext(), alpha = 0.7)
 
     # also plot the error bars
-    ax1.plot(plot_error_x, plot_track_median, label = "50%", color = 'navy', alpha = 0.7)
-    ax1.plot(plot_error_x, plot_track_top, label = "top 15%", color = 'navy', linestyle = '--', alpha = 0.7)
-    ax1.plot(plot_error_x, plot_track_bot, label = "bottom 15%", color = 'navy', linestyle = '-.', alpha = 0.7)
-    ax1.legend(fontsize = 18)
+    ax1.plot(plot_error_x, plot_track_median, label = r"\textbf{Median} 50\%", color = 'navy', alpha = 0.7)
+    ax1.plot(plot_error_x, plot_track_top, label = r"\textbf{Top} 15\%", color = 'navy', linestyle = '--', alpha = 0.7)
+    ax1.plot(plot_error_x, plot_track_bot, label = r"\textbf{Bottom} 15\%", color = 'navy', linestyle = '-.', alpha = 0.7)
+    ax1.legend(fontsize = 20)
 
 
-    ax2.plot(plot_error_x, plot_cascade_median, label = "50%", color = 'navy', alpha = 0.7)
-    ax2.plot(plot_error_x, plot_cascade_top, label = "top 15%", color = 'navy', linestyle = '--', alpha = 0.7)
-    ax2.plot(plot_error_x, plot_cascade_bot, label = "bottom 15%", color = 'navy', linestyle = '-.', alpha = 0.7)
-    ax2.legend(fontsize = 18)
+    ax2.plot(plot_error_x, plot_cascade_median, label = r"\textbf{Median} 50\%", color = 'navy', alpha = 0.7)
+    ax2.plot(plot_error_x, plot_cascade_top, label = r"\textbf{Top} 15\%", color = 'navy', linestyle = '--', alpha = 0.7)
+    ax2.plot(plot_error_x, plot_cascade_bot, label = r"\textbf{Bottom} 15\%", color = 'navy', linestyle = '-.', alpha = 0.7)
+    ax2.legend(fontsize = 20)
 
     # ax3.set_ylim(-25, 10)
     # ax3.errorbar(IC_bins_means, track_median_ratio, yerr = IC_track_ratio_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
     ax3.errorbar(IC_bins_means, median_errors, yerr = IC_track_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
-    ax3.legend(fontsize = 18)
+    ax3.legend(fontsize = 20)
     # ax3.set_xlabel("True Energy [GeV]")
     # ax4.set_xlabel("True Energy [GeV]")
     ax3.set_ylabel("Energy Error[GeV]")
@@ -869,7 +869,7 @@ def ORCA_resolution_with_errors():
     # ax4.errorbar(IC_bins_means, cascade_median_ratio, yerr = IC_cas_ratio_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
     ax4.errorbar(IC_bins_means, Cascade_median_errors, yerr = IC_cas_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
     # plt.subplots_adjust(hspace=0)
-    ax4.legend(fontsize = 18)
+    ax4.legend(fontsize = 20)
     # plt.subplots_adjust(wspace=0.1, hspace=0.03)
 
     # plt.show()
@@ -877,22 +877,104 @@ def ORCA_resolution_with_errors():
 
 # ORCA_resolution_with_errors()
 
-def zenith_resolution():
+def ORCA_zenith_resolution():
     x = np.linspace(-1, 1, 20)
     y = np.linspace(-1, 1, 20)
     X, Y = np.meshgrid(x, y)
     Z, xedges, yedges = np.histogram2d(np.cos(ORCA["true_zenith"]), np.cos(ORCA["reco_zenith"]), bins=(x, y))
-    fig, ax = plt.subplots(figsize = (8, 8))
-    im = plt.pcolor(X, Y, Z.T, cmap = "plasma", norm = LogNorm(), alpha = 0.7)
-    ax.set_xlim(-1, 1)
-    ax.set_ylim(-1, 1)
-    ax.set_xlabel("Cosine True Zenith")
-    ax.set_ylabel("Cosine Reco Zenith")
-    fig.colorbar(im, orientation = "vertical", format = LogFormatterMathtext(), alpha = 0.7)
-    plt.savefig("./new_paper_plots/Zenith_Resolution.png", bbox_inches = 'tight', pad_inches = 0.3)
-    plt.close()
+    
+    zen_t = ORCA["true_zenith"]
+    zen_r = ORCA["reco_zenith"]
 
-# zenith_resolution()
+    plot_start = .5 * (x[0] + x[1])
+    plot_end = .5 * (x[-1] + x[-2])
+
+    error_zen = np.linspace(-1, 1, 20)
+    ORCA_bins_means = 0.5 * (x[1:] + x[:-1])
+
+    all_bins = []
+    for i in range(19):
+        all_bins.append([])
+
+    median_errors = np.zeros((19,))
+    top15 = np.zeros((19,))
+    bottom15 = np.zeros((19,))
+
+    zen_t = np.array(zen_t[:])
+    zen_r = np.array(zen_r[:])
+
+    for i in range(len(zen_t)):
+        found_place = False
+        curcol = 0
+        for j in range(len(error_zen) - 1):
+            # find which index we belong to
+            if np.cos(zen_t[i]) < error_zen[j + 1]:
+                curcol = j 
+                found_place = True
+                # if i < 10:
+                #     print(j)
+                break
+            else:
+                curcol = j
+                continue 
+        # now put the difference between reco and true into the corresponding list
+        if found_place:
+            all_bins[curcol].append(np.cos(zen_r[i]) - np.cos(zen_t[i]))
+        
+    for i in range(19):
+    # print(all_bins[i])
+        median_errors[i] = median(all_bins[i])
+        sorted_current_bin = all_bins[i].sort()
+        top15[i] = abs(all_bins[i][math.floor(0.85 * len(all_bins[i]))] - median_errors[i])
+        bottom15[i] = abs(all_bins[i][math.ceil(0.15 * len(all_bins[i]))] - median_errors[i])
+    
+    zen_error = np.array([np.array(bottom15), np.array(top15)])
+
+    zen_median = np.zeros_like(ORCA_bins_means)
+    zen_up = np.zeros_like(ORCA_bins_means)
+    zen_down = np.zeros_like(ORCA_bins_means)
+    for i in range(len(ORCA_bins_means)):
+        zen_median[i] = ORCA_bins_means[i] + median_errors[i]
+        zen_up[i] = ORCA_bins_means[i] + median_errors[i] + top15[i]
+        zen_down[i] = ORCA_bins_means[i] + median_errors[i] - bottom15[i]
+
+    
+    f_zen_median = interpolate.interp1d(ORCA_bins_means, zen_median, kind = "quadratic")
+    f_zen_top = interpolate.interp1d(ORCA_bins_means, zen_up, kind = "quadratic")
+    f_zen_bot = interpolate.interp1d(ORCA_bins_means, zen_down, kind = "quadratic")
+
+    plot_error_zen = np.linspace(ORCA_bins_means[0], ORCA_bins_means[-1], 1000)
+    plot_zen_median = f_zen_median(plot_error_zen)
+    plot_zen_top = f_zen_top(plot_error_zen)
+    plot_zen_bot = f_zen_bot(plot_error_zen)
+
+    fig, axes = plt.subplots(nrows = 2, ncols = 1, figsize = (8, 10), constrained_layout = True, sharex = True, gridspec_kw = {'height_ratios':[1, 2]})
+    ax3 = axes[0]
+    ax3.set_ylim(-0.2, 0.2)
+    ax1 = axes[1]
+    im1 = ax1.pcolor(X, Y, Z.T, cmap = "plasma", norm = LogNorm(), alpha = 0.7)
+    ax1.set_xlim(plot_start, plot_end)
+    ax1.set_xlabel(r"True $\cos \theta$")
+    ax1.set_ylim(-1, 1)
+    ax1.set_ylabel(r"Reconstructed $\cos \theta$")
+    fig.colorbar(im1, orientation = "vertical", format = LogFormatterMathtext(), alpha = 0.7)
+
+    # also plot the error bars
+    ax1.plot(plot_error_zen, plot_zen_median, label = r"\textbf{Median} $50\%$", color = 'navy', alpha = 0.7)
+    ax1.plot(plot_error_zen, plot_zen_top, label = r"\textbf{Top} $15\%$", color = 'navy', linestyle = '--', alpha = 0.7)
+    ax1.plot(plot_error_zen, plot_zen_bot, label = r"\textbf{Bottom} $15\%$", color = 'navy', linestyle = '-.', alpha = 0.7)
+    ax1.legend(fontsize = 20)
+
+    # ax3.set_ylim(-25, 10)
+    # ax3.errorbar(IC_bins_means, track_median_ratio, yerr = IC_track_ratio_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
+    ax3.errorbar(ORCA_bins_means, median_errors, yerr = zen_error, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
+    ax3.legend(fontsize = 18)
+    ax3.set_ylabel(r"$\cos \theta$ Error")
+
+    # plt.show()
+    plt.savefig("./new_paper_plots/Zenith_Resolution.png", bbox_inches = 'tight', pad_inches = 0.3)
+
+# ORCA_zenith_resolution()
 
 def range_zenith_resolution():
     zen_true = ORCA["true_zenith"]
@@ -943,7 +1025,7 @@ def effective_volumes():
     ORCA = eff.ORCAEffectiveAnalysis(num_bins = 20)
     IC.compute()
     ORCA.compute()
-    fig, axes = plt.subplots(nrows = 1, ncols = 2, figsize = (15, 6))
+    fig, axes = plt.subplots(nrows = 1, ncols = 2, figsize = (20, 8))
     ax1, ax2 = axes[0], axes[1]
 
     # first plot IC
@@ -956,14 +1038,14 @@ def effective_volumes():
     nchist, ncbin = np.histogram(IC.energy, bins = IC.bins, weights = IC.volumes[0][3])
     ncbarhist, ncbarbin = np.histogram(IC.energy, bins = IC.bins, weights = IC.volumes[1][3])
 
-    ax1.hist(ebin[:-1], ebin, weights = ehist / IC.widths, label=r"$\nu_eCC$", histtype="step")
-    ax1.hist(ebarbin[:-1], ebarbin, weights = ebarhist / IC.widths, label=r"$\overline{\nu}_eCC$", \
+    ax1.hist(ebin[:-1], ebin, weights = ehist / IC.widths, color = 'blue', label=r"$\nu_eCC$", histtype="step")
+    ax1.hist(ebarbin[:-1], ebarbin, weights = ebarhist / IC.widths, color = 'blue', label=r"$\overline{\nu}_eCC$", \
                             linestyle = '--', histtype="step")
-    ax1.hist(mubin[:-1], mubin, weights = muhist / IC.widths, label=r"$\nu_{\mu}CC$", histtype="step")
-    ax1.hist(mubarbin[:-1], mubarbin, weights = mubarhist / IC.widths, label=r"$\overline{\nu}_{\mu}CC$", \
+    ax1.hist(mubin[:-1], mubin, weights = muhist / IC.widths, color = 'red', label=r"$\nu_{\mu}CC$", histtype="step")
+    ax1.hist(mubarbin[:-1], mubarbin, weights = mubarhist / IC.widths,  color = 'red',label=r"$\overline{\nu}_{\mu}CC$", \
                             linestyle = '--', histtype="step")
-    ax1.hist(taubin[:-1], taubin, weights = tauhist / IC.widths, label=r"$\nu_{\tau}CC$", histtype="step")
-    ax1.hist(taubarbin[:-1], taubarbin, weights = taubarhist / IC.widths, label=r"$\overline{\nu}_{\tau}CC$",\
+    ax1.hist(taubin[:-1], taubin, weights = tauhist / IC.widths, color = 'green', label=r"$\nu_{\tau}CC$", histtype="step")
+    ax1.hist(taubarbin[:-1], taubarbin, weights = taubarhist / IC.widths, color = 'green', label=r"$\overline{\nu}_{\tau}CC$",\
                             linestyle = "--", histtype="step")
     ax1.hist(ncbin[:-1], ncbin, weights = nchist / IC.widths, color = "brown", label=r"$\nu NC$", histtype="step")
     ax1.hist(ncbarbin[:-1], ncbarbin, weights = ncbarhist / IC.widths,color = "brown", label=r"$\overline{\nu} NC$",\
@@ -973,18 +1055,18 @@ def effective_volumes():
     ax1.set_xlim(IC.lo, IC.hi)
     ax1.set_ylabel(r"Effective Volume [m$^3$]")
     ax1.grid(True)
-    ax1.legend(loc = 4, fontsize = 16)
+    ax1.legend(loc = 2, fontsize = 16)
     ax1.title.set_text("IceCube Upgrade Deepcore")
 
     # then plot ORCA
-    ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.evol , label=r"$\nu_eCC$", histtype="step")
-    ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.ebarvol , label=r"$\overline{\nu}_eCC$", \
+    ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.evol, color = 'blue', label=r"$\nu_eCC$", histtype="step")
+    ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.ebarvol , color = 'blue', label=r"$\overline{\nu}_eCC$", \
                             linestyle = '--', histtype="step")
-    ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.muvol , label=r"$\nu_{\mu}CC$", histtype="step")
-    ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.mubarvol , label=r"$\overline{\nu}_{\mu}CC$", \
+    ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.muvol , color = 'red',label=r"$\nu_{\mu}CC$", histtype="step")
+    ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.mubarvol , color = 'red',label=r"$\overline{\nu}_{\mu}CC$", \
                             linestyle = '--', histtype="step")
-    ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.tauvol , label=r"$\nu_{\tau}CC$", histtype="step")
-    ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.taubarvol , label=r"$\overline{\nu}_{\tau}CC$",\
+    ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.tauvol , color = 'green',label=r"$\nu_{\tau}CC$", histtype="step")
+    ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.taubarvol , color = 'green',label=r"$\overline{\nu}_{\tau}CC$",\
                              linestyle = "--", histtype="step")
     ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.ncvol ,color = "brown", label=r"$\nu NC$", histtype="step")
     ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.ncbarvol ,color = "brown", label=r"$\overline{\nu} NC$", \
@@ -1000,7 +1082,7 @@ def effective_volumes():
 
     # fig.suptitle("IceCube Upgrade DeepCore and ORCA Effective Volumes")
     # plt.show()
-    plt.savefig("./new_paper_plots/Effective_Volumes.png", bbox_inches = 'tight', pad_inches = 1)
+    plt.savefig("./new_paper_plots/Effective_Volumes.png", bbox_inches = 'tight', pad_inches = 0.4)
     plt.close()
 
-effective_volumes()
+effective_volumes() 

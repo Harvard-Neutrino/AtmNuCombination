@@ -9,6 +9,7 @@ import util
 from params import *
 import classdef as cl 
  
+plt.style.use('./ORCAplot.mplstyle')
 
 
 sim = cl.Simulation(pd.read_csv("../ORCA/15x_with_interm.csv"))
@@ -199,8 +200,22 @@ def ORCA_topology_details(flavor, current):
 	# df = pd.DataFrame(df_array.T, columns = ["nu_cas", "nu_track", "nubar_cas", "nubar_track"])
 	# df.to_csv("nu{}_{}_Topology_Fraction".format(flavname, curname))
 
-	fig, ax = plt.subplots(figsize=(7,6))
-	fig.suptitle(r"ORCA MC $\nu_\{}$ {} topology fractions".format(flavname, curname))
+	fig, ax = plt.subplots(figsize=(10,8))
+	if flavname == "e":
+		if curname == "CC":
+			fig.suptitle(r"ORCA MC $\nu_e$ CC morphology composition")
+		elif curname == "NC":
+			fig.suptitle(r"ORCA MC $\nu_e$ NC morphology composition")
+	elif flavname == "mu":
+		if curname == "CC":
+			fig.suptitle(r"ORCA MC $\nu_\mu$ CC morphology composition")
+		elif curname == "NC":
+			fig.suptitle(r"ORCA MC $\nu_\mu$ NC morphology composition")
+	elif flavname == "tau":
+		if curname == "CC":
+			fig.suptitle(r"ORCA MC $\nu_\tau$ CC morphology composition")
+		elif curname == "NC":
+			fig.suptitle(r"ORCA MC $\nu_\tau$ NC morphology composition")
 	# first the neutrino ones
 	ax.hist(energy_bins[:-1], energy_bins, weights = numu_CC_track_hist / numu_CC_all_hist,\
 					 label=labelname1, color="blue", histtype="step")
@@ -220,12 +235,12 @@ def ORCA_topology_details(flavor, current):
 	
 
 	ax.set_xscale("log")
-	ax.set_xlabel("neutrino energy [GeV]")
+	ax.set_xlabel("Neutrino True Energy [GeV]")
 	ax.set_xlim(2, 50)
 	ax.set_ylim(0, 1)
-	ax.set_ylabel("fraction")
+	ax.set_ylabel("Fraction")
 	ax.grid(True)
-	ax.legend(loc = legendloc)
+	ax.legend(loc = legendloc, fontsize = 22)
 	# plt.show()
 	fig.savefig("./../ORCA/new_paper_plots/nu{}_{}_Topology_Fraction".format(flavname, curname))
 	plt.close()
