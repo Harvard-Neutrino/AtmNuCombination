@@ -203,19 +203,18 @@ def ORCA_topology_details(flavor, current):
 	fig, ax = plt.subplots(figsize=(10,8))
 	if flavname == "e":
 		if curname == "CC":
-			fig.suptitle(r"ORCA MC $\nu_e$ CC morphology composition")
-		elif curname == "NC":
-			fig.suptitle(r"ORCA MC $\nu_e$ NC morphology composition")
+			fig.suptitle(r"ORCA MC $\nu_e$ CC Morphology Composition")
 	elif flavname == "mu":
 		if curname == "CC":
-			fig.suptitle(r"ORCA MC $\nu_\mu$ CC morphology composition")
-		elif curname == "NC":
-			fig.suptitle(r"ORCA MC $\nu_\mu$ NC morphology composition")
+			fig.suptitle(r"ORCA MC $\nu_\mu$ CC Morphology Composition")
 	elif flavname == "tau":
 		if curname == "CC":
-			fig.suptitle(r"ORCA MC $\nu_\tau$ CC morphology composition")
-		elif curname == "NC":
-			fig.suptitle(r"ORCA MC $\nu_\tau$ NC morphology composition")
+			fig.suptitle(r"ORCA MC $\nu_\tau$ CC Morphology Composition")
+	
+	if curname == "NC":
+		fig.suptitle(r"ORCA MC NC Morphology Composition")
+	
+
 	# first the neutrino ones
 	ax.hist(energy_bins[:-1], energy_bins, weights = numu_CC_track_hist / numu_CC_all_hist,\
 					 label=labelname1, color="blue", histtype="step")
