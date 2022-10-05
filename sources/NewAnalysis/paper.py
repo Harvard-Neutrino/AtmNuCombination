@@ -135,16 +135,16 @@ def reco_event_distribution():
 
 
 
-	fig, axes = plt.subplots(nrows = 1, ncols = 2, figsize=(25,10))
+	fig, axes = plt.subplots(nrows = 1, ncols = 2, figsize=(15,6))
 	ax1, ax2 = axes[0], axes[1]
 	ax1.ticklabel_format(axis = 'y', style = 'sci')
 	ax2.ticklabel_format(axis = 'y', style = 'sci')
 	# fig.suptitle("ORCA MC Event Distributions")
 
-	ax2.hist(zen_bins[:-1], zen_bins, weights = zencascade / zen_bin_widths,\
-					 label="Cascade", histtype="step")
 	ax2.hist(zen_bins[:-1], zen_bins, weights = zentrack / zen_bin_widths,\
 					 label="Track", histtype="step")
+	ax2.hist(zen_bins[:-1], zen_bins, weights = zencascade / zen_bin_widths,\
+					 label="Cascade", histtype="step")
 	ax2.hist(zen_bins[:-1], zen_bins, weights = zeninterm / zen_bin_widths,\
 					 label="Intermediate", histtype="step")
 	# ax.set_xscale("log")
@@ -154,14 +154,14 @@ def reco_event_distribution():
 	ax2.set_xlim(-1, 0)
 	ax2.set_ylabel("Total Event Count [3 yrs]")
 	# ax.grid(True)
-	ax2.legend(loc = 2, fontsize = 20)
+	ax2.legend(loc = 2, fontsize = 18)
 	ax2.title.set_text("Reconstructed Cosine Zenith Distribution")
 	ax1.title.set_text("Reconstructed Energy Distribution")
 
-	ax1.hist(energy_bins[:-1], energy_bins, weights = cascade / bin_widths,\
-					 label="Cascade", histtype="step")
 	ax1.hist(energy_bins[:-1], energy_bins, weights = track / bin_widths,\
 					 label="Track", histtype="step")
+	ax1.hist(energy_bins[:-1], energy_bins, weights = cascade / bin_widths,\
+					 label="Cascade", histtype="step")
 	ax1.hist(energy_bins[:-1], energy_bins, weights = interm / bin_widths,\
 					 label="Intermediate", histtype="step")
 	ax1.set_xscale("log")
@@ -171,10 +171,11 @@ def reco_event_distribution():
 	ax1.set_xlim(1.85, 50)
 	ax1.set_ylabel("Total Event Count [3 yrs]")
 	ax1.set_xticks([1.85, 10, 50])
+	plt.subplots_adjust(wspace=0.5)
 	# ax.grid(True)
 	ax1.legend(fontsize = 18)
-	# plt.show()
-	fig.savefig("./../ORCA/new_paper_plots/Event_Distribution_Reco.png")
+	plt.show()
+	fig.savefig("./../ORCA/new_paper_plots/Event_Distribution_Reco.png", bbox_inches = 'tight', pad_inches = 0.2)
 	plt.close()
 
 reco_event_distribution()
