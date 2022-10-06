@@ -90,7 +90,7 @@ SKweights = np.array([27000])
 
 
 # start plotting
-fig, [ax2, ax] = plt.subplots(figsize = (13, 20), ncols = 1, nrows = 2, gridspec_kw = {'height_ratios':[1, 2]}, sharex = True)
+fig, [ax2, ax] = plt.subplots(figsize = (8, 17), ncols = 1, nrows = 2, gridspec_kw = {'height_ratios':[1, 2]}, sharex = True)
 ax.set_yscale("log")
 ax.set_xscale("log")
 ax.set_xlabel(r"Energy [GeV]")
@@ -130,13 +130,13 @@ ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.evol + ORCA.ebarvol + ORCA.
 ax2.hist(SKbins[:-1], SKbins, weights = SKweights, label=r"Super-K Effective Volume", lw = 0, alpha = 0.3)
 
 ax2.set_yscale('log')
-ax2.legend(fontsize = 16)
+ax2.legend(fontsize = 14)
 
 # set the x axis range
-ax.set_xlim(10**(-1), 3*10**5)
+ax.set_xlim(10**(-1), 1.5 * 10 ** 2)
 
-ax.legend(loc = 1, fontsize = 18)
-plt.subplots_adjust(hspace=0.05)
+ax.legend(loc = 3, fontsize = 14)
+plt.subplots_adjust(hspace=0.03)
 # plt.show()
 plt.savefig("./new_paper_plots/Flux_range_plot", bbox_inches = 'tight', pad_inches = 0.4)
 

@@ -171,7 +171,7 @@ def reco_event_distribution():
 	ax1.set_xlim(1.85, 50)
 	ax1.set_ylabel("Total Event Count [3 yrs]")
 	ax1.set_xticks([1.85, 10, 50])
-	plt.subplots_adjust(wspace=0.5)
+	plt.subplots_adjust(wspace=0.3)
 	# ax.grid(True)
 	ax1.legend(fontsize = 18)
 	plt.show()

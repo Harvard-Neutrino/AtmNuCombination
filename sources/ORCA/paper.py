@@ -974,7 +974,7 @@ def ORCA_zenith_resolution():
     # plt.show()
     plt.savefig("./new_paper_plots/Zenith_Resolution.png", bbox_inches = 'tight', pad_inches = 0.3)
 
-ORCA_zenith_resolution()
+# ORCA_zenith_resolution()
 
 def range_zenith_resolution():
     zen_true = ORCA["true_zenith"]
@@ -1078,8 +1078,8 @@ def effective_volumes():
     ax2.set_xlim(1, 50)
     ax2.grid(True)
     ax2.legend(loc = 2, fontsize = 16)
-    ax1.tick_params(axis='both', which='major', labelsize=18)
-    ax2.tick_params(axis='both', which='major', labelsize=18)
+    # ax1.tick_params(axis='both', which='major', labelsize=18)
+    # ax2.tick_params(axis='both', which='major', labelsize=18)
 
     plt.subplots_adjust(wspace=0.3)
     ax2.title.set_text("ORCA")
@@ -1089,4 +1089,4 @@ def effective_volumes():
     plt.savefig("./new_paper_plots/Effective_Volumes.png", bbox_inches = 'tight', pad_inches = 0.2)
     plt.close()
 
-# effective_volumes() 
+effective_volumes() 

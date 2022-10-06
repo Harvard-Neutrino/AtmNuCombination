@@ -200,19 +200,19 @@ def ORCA_topology_details(flavor, current):
 	# df = pd.DataFrame(df_array.T, columns = ["nu_cas", "nu_track", "nubar_cas", "nubar_track"])
 	# df.to_csv("nu{}_{}_Topology_Fraction".format(flavname, curname))
 
-	fig, ax = plt.subplots(figsize=(10,8))
-	if flavname == "e":
-		if curname == "CC":
-			fig.suptitle(r"ORCA MC $\nu_e$ CC Morphology Composition")
-	elif flavname == "mu":
-		if curname == "CC":
-			fig.suptitle(r"ORCA MC $\nu_\mu$ CC Morphology Composition")
-	elif flavname == "tau":
-		if curname == "CC":
-			fig.suptitle(r"ORCA MC $\nu_\tau$ CC Morphology Composition")
+	fig, ax = plt.subplots(figsize=(7.5,6))
+	# if flavname == "e":
+	# 	if curname == "CC":
+	# 		fig.suptitle(r"ORCA MC $\nu_e$ CC Morphology Composition")
+	# elif flavname == "mu":
+	# 	if curname == "CC":
+	# 		fig.suptitle(r"ORCA MC $\nu_\mu$ CC Morphology Composition")
+	# elif flavname == "tau":
+	# 	if curname == "CC":
+	# 		fig.suptitle(r"ORCA MC $\nu_\tau$ CC Morphology Composition")
 	
-	if curname == "NC":
-		fig.suptitle(r"ORCA MC NC Morphology Composition")
+	# if curname == "NC":
+	# 	fig.suptitle(r"ORCA MC NC Morphology Composition")
 	
 
 	# first the neutrino ones
