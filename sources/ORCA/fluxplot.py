@@ -90,22 +90,22 @@ SKweights = np.array([27000])
 
 
 # start plotting
-fig, [ax2, ax] = plt.subplots(figsize = (8, 17), ncols = 1, nrows = 2, gridspec_kw = {'height_ratios':[1, 2]}, sharex = True)
+fig, [ax2, ax] = plt.subplots(figsize = (6, 14), ncols = 1, nrows = 2, gridspec_kw = {'height_ratios':[1, 1.5]}, sharex = True)
 ax.set_yscale("log")
 ax.set_xscale("log")
-ax.set_xlabel(r"Energy [GeV]")
+ax.set_xlabel(r"$E_\nu$ [GeV]")
 ax.set_ylabel(r"$E^2 \Phi$ [GeV $\cdot$ cm$^{-2}$ sec$^{-1}$ sr$^{-1}]$")
-ax2.set_ylabel(r"Effective Volume [m $^3$]")
+ax2.set_ylabel(r"Effective Volume [m$^3$]")
 # ax.set_xlim(-1, 6)
 # First plot the flux points
 ax.errorbar(SKnue_x_val, SKnue_y_val, yerr = SKnue_yerr, fmt = 'o', capsize = 3, label = r"SK I-IV $\nu_e$")
 ax.errorbar(SKnumu_x_val, SKnumu_y_val, yerr = SKnumu_yerr, fmt = 's', capsize = 3, label = r"SK I-IV $\nu_\mu$")
-ax.errorbar(Frej_nue_x_val, Frej_nue_y_val, xerr = Frej_nue_xerr, yerr = Frej_nue_yerr, fmt = 'x', capsize = 3, label = r"Frejus $\nu_e$")
-ax.errorbar(ICDC2013_x_val, ICDC2013_y_val, xerr = ICDC2013_xerr, yerr = ICDC2013_yerr, fmt = 'v', capsize = 3, label = r"IceCube/Deepcore 2013 $\nu_e$")
+# ax.errorbar(Frej_nue_x_val, Frej_nue_y_val, xerr = Frej_nue_xerr, yerr = Frej_nue_yerr, fmt = 'x', capsize = 3, label = r"Frejus $\nu_e$")
+# ax.errorbar(ICDC2013_x_val, ICDC2013_y_val, xerr = ICDC2013_xerr, yerr = ICDC2013_yerr, fmt = 'v', capsize = 3, label = r"IceCube/Deepcore 2013 $\nu_e$")
 ax.errorbar(IC2014_x_val, IC2014_y_val, xerr = IC2014_xerr, yerr = IC2014_yerr, fmt = 'v', capsize = 3, label = r"IceCube 2014 $\nu_e$")
-ax.errorbar(ANTARES_x_val, ANTARES_y_val, xerr = ANTARES_xerr, yerr = ANTARES_yerr, fmt = 'P', fillstyle = 'none', capsize = 3, label = r"ANTARES $\nu_mu$")
-ax.errorbar(Frej_numu_x_val, Frej_numu_y_val, xerr = Frej_numu_xerr, yerr = Frej_numu_yerr, fmt = 'x', capsize = 3, label = r"Frejus $\nu_\mu$")
-ax.errorbar(AMANDA_numu_x_val, AMANDA_numu_y_val, xerr = AMANDA_numu_xerr, yerr = AMANDA_numu_yerr, fmt = 'D', fillstyle = 'none', capsize = 3, label = r"AMANDA-II $\nu_\mu$")
+# ax.errorbar(ANTARES_x_val, ANTARES_y_val, xerr = ANTARES_xerr, yerr = ANTARES_yerr, fmt = 'P', fillstyle = 'none', capsize = 3, label = r"ANTARES $\nu_\mu$")
+# ax.errorbar(Frej_numu_x_val, Frej_numu_y_val, xerr = Frej_numu_xerr, yerr = Frej_numu_yerr, fmt = 'x', capsize = 3, label = r"Frejus $\nu_\mu$")
+# ax.errorbar(AMANDA_numu_x_val, AMANDA_numu_y_val, xerr = AMANDA_numu_xerr, yerr = AMANDA_numu_yerr, fmt = 'D', fillstyle = 'none', capsize = 3, label = r"AMANDA-II $\nu_\mu$")
 ax.errorbar(IC_numu_unfolding_x_val, IC_numu_unfolding_y_val, xerr = IC_numu_unfolding_xerr, yerr = IC_numu_unfolding_yerr, fmt = '^', capsize = 3, label = r"IceCube $\nu_\mu$ unfolding")
 # now plot the fitted flux lines
 ax.plot(HKKM11_nue_xval, HKKM11_nue_yval, linestyle = '--', linewidth = 2.4,  label = r"HKKM11 $\nu_e$")
@@ -128,7 +128,7 @@ ax2.hist(ICbin[:-1], ICbin, weights = IChist / IC.widths, label=r"IceCube Upgrad
 ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.evol + ORCA.ebarvol + ORCA.muvol + ORCA.mubarvol\
 					+ ORCA.tauvol + ORCA.taubarvol + ORCA.ncvol + ORCA.ncbarvol, label=r"ORCA Effective Volume", lw = 0 , color = "lightgreen", alpha = 0.4)
 ax2.hist(SKbins[:-1], SKbins, weights = SKweights, label=r"Super-K Effective Volume", lw = 0, alpha = 0.3)
-
+ax.set_ylim(10**(-6), 10**(-1))
 ax2.set_yscale('log')
 ax2.legend(fontsize = 14)
 
@@ -138,7 +138,7 @@ ax.set_xlim(10**(-1), 1.5 * 10 ** 2)
 ax.legend(loc = 3, fontsize = 14)
 plt.subplots_adjust(hspace=0.03)
 # plt.show()
-plt.savefig("./new_paper_plots/Flux_range_plot", bbox_inches = 'tight', pad_inches = 0.4)
+plt.savefig("./new_paper_plots/Flux_range_plot", bbox_inches = 'tight', pad_inches = 0.2)
 
 
 

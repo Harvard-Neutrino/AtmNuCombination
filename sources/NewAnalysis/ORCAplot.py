@@ -234,14 +234,14 @@ def ORCA_topology_details(flavor, current):
 	
 
 	ax.set_xscale("log")
-	ax.set_xlabel("Neutrino True Energy [GeV]")
+	ax.set_xlabel(r"$E_\nu$ [GeV]")
 	ax.set_xlim(2, 50)
 	ax.set_ylim(0, 1)
 	ax.set_ylabel("Fraction")
 	ax.grid(True)
 	ax.legend(loc = legendloc, fontsize = 22)
 	# plt.show()
-	fig.savefig("./../ORCA/new_paper_plots/nu{}_{}_Topology_Fraction".format(flavname, curname))
+	fig.savefig("./../ORCA/new_paper_plots/nu{}_{}_Topology_Fraction".format(flavname, curname),bbox_inches = 'tight', pad_inches = 0.1)
 	plt.close()
 
 ORCA_topology_details(0, 1)
