@@ -85,7 +85,7 @@ ORCA.compute()
 IChist, ICbin = np.histogram(IC.energy, bins = IC.bins, weights = IC.volumes[0][0] + IC.volumes[0][1] + IC.volumes[0][2] \
 															+ IC.volumes[1][0]+ IC.volumes[1][1]+ IC.volumes[1][2])
 # Now create SK effective volume information
-SKbins = np.array([10**-1, 10**(0.7)])
+SKbins = np.array([10**-1, 200])
 SKweights = np.array([27000])
 
 
