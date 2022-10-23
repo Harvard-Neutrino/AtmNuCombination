@@ -149,7 +149,7 @@ def reco_event_distribution():
 					 label="Intermediate", histtype="step")
 	# ax.set_xscale("log")
 	ax2.set_yscale("log")
-	ax2.set_xlabel(r"$\cos \theta_r$")
+	ax2.set_xlabel(r"$\cos{(\theta_{zen, r})}$")
 	# ax2.set_ylim(2 * 10 ** 2, 2 * 10 ** 4 )
 	ax2.set_xlim(-1, 0)
 	ax2.set_ylabel(r"Events/3years")

@@ -948,15 +948,15 @@ def ORCA_zenith_resolution():
     plot_zen_top = f_zen_top(plot_error_zen)
     plot_zen_bot = f_zen_bot(plot_error_zen)
 
-    fig, axes = plt.subplots(nrows = 2, ncols = 1, figsize = (7, 9), constrained_layout = True, sharex = True, gridspec_kw = {'height_ratios':[1, 2]})
+    fig, axes = plt.subplots(nrows = 2, ncols = 1, figsize = (9, 9), constrained_layout = True, sharex = True, gridspec_kw = {'height_ratios':[1, 2]})
     ax3 = axes[0]
     ax3.set_ylim(-0.2, 0.2)
     ax1 = axes[1]
     im1 = ax1.pcolor(X, Y, Z.T, cmap = "plasma", norm = LogNorm(), alpha = 0.7)
     ax1.set_xlim(plot_start, plot_end)
-    ax1.set_xlabel(r"$\cos \theta_\nu$")
+    ax1.set_xlabel(r"$\cos{(\theta_{zen})}$")
     ax1.set_ylim(-1, 1)
-    ax1.set_ylabel(r"$\cos \theta_\r$")
+    ax1.set_ylabel(r"$\cos{(\theta_{zen, r})}$")
     fig.colorbar(im1, orientation = "vertical", format = LogFormatterMathtext(), alpha = 0.7)
 
     # also plot the error bars
@@ -969,7 +969,7 @@ def ORCA_zenith_resolution():
     # ax3.errorbar(IC_bins_means, track_median_ratio, yerr = IC_track_ratio_err, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
     ax3.errorbar(ORCA_bins_means, median_errors, yerr = zen_error, fmt = 'o', fillstyle = 'none', capsize = 5, label = r"Energy Reco Error (Median, $15\%$ and $85\%$)")
     ax3.legend(fontsize = 15)
-    ax3.set_ylabel(r"$\cos \theta$ Error")
+    ax3.set_ylabel(r"$\cos{(\theta_{zen})}$ Error")
 
     # plt.show()
     plt.savefig("./new_paper_plots/Zenith_Resolution.png", bbox_inches = 'tight', pad_inches = 0.2)

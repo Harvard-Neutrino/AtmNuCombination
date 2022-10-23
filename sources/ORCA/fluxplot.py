@@ -112,7 +112,7 @@ ax.plot(HKKM11_nue_xval, HKKM11_nue_yval, linestyle = '--', linewidth = 2.4,  la
 ax.plot(HKKM11_numu_xval, HKKM11_numu_yval, linestyle = '--', linewidth = 2.4, label = r"HKKM11 $\nu_\mu$")
 
 # now label the experiment energy sensitivity regions
-ax.axvspan(10**(-1), 10**(0.7), alpha = 0.2)
+ax.axvspan(10**(-1), 200, alpha = 0.2)
 ax.axvspan(1, 50, alpha = 0.3, color = "lightgreen")
 ax.axvspan(0.4, 1.5 * 10 ** 2, alpha = 0.2, color = "orange")
 
@@ -124,16 +124,16 @@ ax.axvspan(0.4, 1.5 * 10 ** 2, alpha = 0.2, color = "orange")
 # plt.text(1.3, 10**(-8.6), r"IceCube Upgrade", fontsize = 18, color = 'peru')
 
 # Now plot the upper panel
-ax2.hist(ICbin[:-1], ICbin, weights = IChist / IC.widths, label=r"IceCube Upgrade Effective Volume", lw = 0, color = "orange", alpha = 0.4)
+ax2.hist(ICbin[:-1], ICbin, weights = IChist / IC.widths, label=r"IceCube Upgrade", lw = 0, color = "orange", alpha = 0.4)
 ax2.hist(ORCA.e_bin[:-1], ORCA.e_bin, weights = ORCA.evol + ORCA.ebarvol + ORCA.muvol + ORCA.mubarvol\
-					+ ORCA.tauvol + ORCA.taubarvol + ORCA.ncvol + ORCA.ncbarvol, label=r"ORCA Effective Volume", lw = 0 , color = "lightgreen", alpha = 0.4)
-ax2.hist(SKbins[:-1], SKbins, weights = SKweights, label=r"Super-K Effective Volume", lw = 0, alpha = 0.3)
+					+ ORCA.tauvol + ORCA.taubarvol + ORCA.ncvol + ORCA.ncbarvol, label=r"ORCA", lw = 0 , color = "lightgreen", alpha = 0.4)
+ax2.hist(SKbins[:-1], SKbins, weights = SKweights, label=r"Super-K Gd", lw = 0, alpha = 0.3)
 ax.set_ylim(10**(-6), 10**(-1))
 ax2.set_yscale('log')
 ax2.legend(fontsize = 14)
 
 # set the x axis range
-ax.set_xlim(10**(-1), 1.5 * 10 ** 2)
+ax.set_xlim(10**(-1), 2 * 10 ** 2)
 
 ax.legend(loc = 3, fontsize = 14)
 plt.subplots_adjust(hspace=0.03)
