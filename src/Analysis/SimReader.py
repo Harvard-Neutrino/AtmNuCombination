@@ -329,7 +329,7 @@ class Reader:
 		self.weightOscBF_binned = self.weightOscBF_binned[self.FewEntries]
 		self.NumberOfBins = self.weightOscBF_binned.size
 		
-		if self.Experiment == 'IceCube-Upgrade' or self.Experiment == 'IC' or self.Experiment == 'DeepCore':
+		if self.Experiment == 'IceCube-Upgrade' or self.Experiment == 'IC' or self.Experiment == 'DeepCore' or self.Experiment == 'ORCA':
 			self.ICSystematicTables()
 			
 
