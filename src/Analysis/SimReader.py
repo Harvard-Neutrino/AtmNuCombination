@@ -202,7 +202,7 @@ class Reader:
 			self.CosZReco = d_CosZReco[condition]
 			self.CosZTrue = d_CosZTrue[condition]
 			# self.AziTrue = d_AziTrue[condition]
-			self.CC = d_CC[condition]
+			self.CC = d_CC[condition].astype(int)
 			self.nuPDG = d_nuPDG[condition]
 			self.ETrue = d_ETrue[condition]
 			self.Weight = d_Weight[condition]
