@@ -4,10 +4,17 @@ from scipy.interpolate import griddata
 
 def ICUp(Ebin, Zbin, syst, cut=[]):
 
-    hp_nue_cc = pd.read_csv("Systematics/hyperplanes_nue_cc.csv")
-    hp_numu_cc = pd.read_csv("Systematics/hyperplanes_numu_cc.csv")
-    hp_nutau_cc = pd.read_csv("Systematics/hyperplanes_nutau_cc.csv")
-    hp_nu_nc = pd.read_csv("Systematics/hyperplanes_all_nc.csv")
+    pynu = os.getenv('PYNU_DIR')
+
+    hp_nue_cc = pd.read_csv(pynu+"/Systematics/hyperplanes_nue_cc.csv")
+    hp_numu_cc = pd.read_csv(pynu+"/Systematics/hyperplanes_numu_cc.csv")
+    hp_nutau_cc = pd.read_csv(pynu+"/Systematics/hyperplanes_nutau_cc.csv")
+    hp_nu_nc = pd.read_csv(pynu+"/Systematics/hyperplanes_all_nc.csv")
+    
+    # hp_nue_cc = pd.read_csv("Systematics/hyperplanes_nue_cc.csv")
+    # hp_numu_cc = pd.read_csv("Systematics/hyperplanes_numu_cc.csv")
+    # hp_nutau_cc = pd.read_csv("Systematics/hyperplanes_nutau_cc.csv")
+    # hp_nu_nc = pd.read_csv("Systematics/hyperplanes_all_nc.csv")
 
     method = 'nearest'
     # method = 'linear'
