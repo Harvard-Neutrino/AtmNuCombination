@@ -24,7 +24,7 @@ def Diff_IntermediateClassification(x,experiment):
 	ev[experiment.Sample==1] = 1
 	return experiment.Exp_wBinIt(ev) / experiment.weightOscBF_binned
 
-def Diff_TrackClassification(x,experiment):
+def Diff_TrackClassification_ORCA(x, experiment):
 	ev = np.zeros(experiment.NumberOfEvents)
 	ev[experiment.Sample==2] = 1
 	return experiment.Exp_wBinIt(ev) / experiment.weightOscBF_binned

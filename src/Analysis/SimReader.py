@@ -202,7 +202,7 @@ class Reader:
 			self.CosZReco = d_CosZReco[condition]
 			self.CosZTrue = d_CosZTrue[condition]
 			# self.AziTrue = d_AziTrue[condition]
-            self.CC = d_CC[condition].astype(int)
+			self.CC = d_CC[condition].astype(int)
 			self.nuPDG = d_nuPDG[condition]
 			self.ETrue = d_ETrue[condition]
 			self.Weight = d_Weight[condition]
@@ -298,6 +298,7 @@ class Reader:
 
 	def ICSystematicTables(self):
 		ev = np.zeros(self.NumberOfEvents)
+<<<<<<< HEAD
 		c = (np.abs(self.nuPDG)==12) * (self.CC==1)
 		ev[c] = 1
 		self.ExpFracNuECC = self.Exp_wBinIt(ev) / self.weightOscBF_binned
@@ -311,6 +312,21 @@ class Reader:
 		self.ExpFracNuTauCC = self.Exp_wBinIt(ev) / self.weightOscBF_binned
 		ev = np.zeros(self.NumberOfEvents)
 		c = np.logical_not(self.CC==1)
+=======
+		c = (np.abs(self.nuPDG)==12) * (self.CC == 1)
+		ev[c] = 1
+		self.ExpFracNuECC = self.Exp_wBinIt(ev) / self.weightOscBF_binned
+		ev = np.zeros(self.NumberOfEvents)
+		c = (np.abs(self.nuPDG)==14) * (self.CC == 1)
+		ev[c] = 1
+		self.ExpFracNuMuCC = self.Exp_wBinIt(ev) / self.weightOscBF_binned
+		ev = np.zeros(self.NumberOfEvents)
+		c = (np.abs(self.nuPDG)==16) * (self.CC == 1)
+		ev[c] = 1
+		self.ExpFracNuTauCC = self.Exp_wBinIt(ev) / self.weightOscBF_binned
+		ev = np.zeros(self.NumberOfEvents)
+		c = np.logical_not(self.CC == 1)
+>>>>>>> origin/main
 		ev[c] = 1
 		self.ExpFracNC = self.Exp_wBinIt(ev) / self.weightOscBF_binned
 		# Load systematics tables
