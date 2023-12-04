@@ -100,7 +100,7 @@ def binned_sensitivity(x, Ordering, analysis, experiments, outfile):
 					for energy_bins in range(len(experiments[exp].EnergyBins[sample])-1):
 						for cz_bins in range(len(experiments[exp].CzBins[sample])-1):
 							counter += 1
-							f.write(f'{sample} {experiments[exp].EnergyBins[sample][energy_bins]} {experiments[exp].EnergyBins[sample][energy_bins+1]} {experiments[exp].CzBins[sample][cz_bins]} {experiments[exp].CzBins[sample][cz_bins+1]} {binned_systs2[counter]}')
+							f.write(f'{sample} {experiments[exp].EnergyBins[sample][energy_bins]} {experiments[exp].EnergyBins[sample][energy_bins+1]} {experiments[exp].CzBins[sample][cz_bins]} {experiments[exp].CzBins[sample][cz_bins+1]} {binned_systX2[counter]}\n')
 							f.flush()
 
 		# print(res.fun)

@@ -48,7 +48,7 @@ print('=============================================================')
 parameters the same (may not be true in more in-depth analyses). """
 
 OscParametersBest_alternateMO = list(an.OscParametersBest.values())
-if an.OscParametersBest[-1] == 'normal':
+if an.OscParametersBest['Ordering'] == 'normal':
 	OscParametersBest_alternateMO[-1] = 'inverted'
 else:
 	OscParametersBest_alternateMO[-1] = 'normal'
