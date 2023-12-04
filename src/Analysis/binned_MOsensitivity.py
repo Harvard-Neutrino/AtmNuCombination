@@ -1,7 +1,8 @@
+import os
 import sys
 from SimReader import Reader
 from xmlReader import parseXML
-from Sensitivity import sensitivity
+from Sensitivity import sensitivity, binned_sensitivity
 import argparse
 
 # Read arguments

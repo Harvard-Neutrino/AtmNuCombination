@@ -56,8 +56,6 @@ def binned_sensitivity(x, Ordering, analysis, experiments, outfile):
 	Obs = {}
 	for exp in experiments:
 		Obs[exp] = experiments[exp].BinOscillator(analysis.neutrinos, t12, t13, t23, dm21, dm31, dcp, Ordering)
-		for sample in range(experiments[exp].NumberOfSamples):
-
 
 	statX2 = Chi2StatsCombined(analysis, Obs, experiments)
 

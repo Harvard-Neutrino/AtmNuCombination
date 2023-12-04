@@ -298,7 +298,6 @@ class Reader:
 
 	def ICSystematicTables(self):
 		ev = np.zeros(self.NumberOfEvents)
-<<<<<<< HEAD
 		c = (np.abs(self.nuPDG)==12) * (self.CC==1)
 		ev[c] = 1
 		self.ExpFracNuECC = self.Exp_wBinIt(ev) / self.weightOscBF_binned
@@ -312,7 +311,6 @@ class Reader:
 		self.ExpFracNuTauCC = self.Exp_wBinIt(ev) / self.weightOscBF_binned
 		ev = np.zeros(self.NumberOfEvents)
 		c = np.logical_not(self.CC==1)
-=======
 		c = (np.abs(self.nuPDG)==12) * (self.CC == 1)
 		ev[c] = 1
 		self.ExpFracNuECC = self.Exp_wBinIt(ev) / self.weightOscBF_binned
@@ -326,7 +324,6 @@ class Reader:
 		self.ExpFracNuTauCC = self.Exp_wBinIt(ev) / self.weightOscBF_binned
 		ev = np.zeros(self.NumberOfEvents)
 		c = np.logical_not(self.CC == 1)
->>>>>>> origin/main
 		ev[c] = 1
 		self.ExpFracNC = self.Exp_wBinIt(ev) / self.weightOscBF_binned
 		# Load systematics tables
