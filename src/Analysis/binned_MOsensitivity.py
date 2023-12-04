@@ -47,11 +47,11 @@ print('=============================================================')
 """ We're only interested in comparing both orderings keeping the rest of the 
 parameters the same (may not be true in more in-depth analyses). """
 
-OscParametersBest_alternateMO = an.OscParametersBest
-if an.OscParametersBest['Ordering'] == 'normal':
-	OscParametersBest_alternateMO['Ordering'] = 'inverted'
+OscParametersBest_alternateMO = list(an.OscParametersBest.values())
+if an.OscParametersBest[-1] == 'normal':
+	OscParametersBest_alternateMO[-1] = 'inverted'
 else:
-	OscParametersBest_alternateMO['Ordering'] = 'normal'
+	OscParametersBest_alternateMO[-1] = 'normal'
 
 binned_sensitivity(OscParametersBest_alternateMO[:-1], OscParametersBest_alternateMO[-1], an, mcList, outfile)
 
