@@ -24,7 +24,56 @@ def Diff_IntermediateClassification(x,experiment):
 	ev[experiment.Sample==1] = 1
 	return experiment.Exp_wBinIt(ev) / experiment.weightOscBF_binned
 
-def Diff_TrackClassification(x,experiment):
+def Diff_TrackClassification_ORCA(x, experiment):
 	ev = np.zeros(experiment.NumberOfEvents)
 	ev[experiment.Sample==2] = 1
 	return experiment.Exp_wBinIt(ev) / experiment.weightOscBF_binned
+
+def Diff_IceAbsorption_ORCA(x, experiment):
+	d = experiment.ExpFracNuECC * experiment.ice_absorption['nueCC'] + \
+	experiment.ExpFracNuMuCC * experiment.ice_absorption['numuCC'] + \
+	experiment.ExpFracNuTauCC * experiment.ice_absorption['nutauCC'] + \
+	experiment.ExpFracNC * experiment.ice_absorption['NC']
+	return d
+
+def Diff_IceScattering_ORCA(x, experiment):
+	d = experiment.ExpFracNuECC * experiment.ice_absorption['nueCC'] + \
+	experiment.ExpFracNuMuCC * experiment.ice_absorption['numuCC'] + \
+	experiment.ExpFracNuTauCC * experiment.ice_absorption['nutauCC'] + \
+	experiment.ExpFracNC * experiment.ice_absorption['NC']
+	return d
+
+def Diff_OffSet_ORCA(x, experiment):
+	d = experiment.ExpFracNuECC * experiment.ice_absorption['nueCC'] + \
+	experiment.ExpFracNuMuCC * experiment.ice_absorption['numuCC'] + \
+	experiment.ExpFracNuTauCC * experiment.ice_absorption['nutauCC'] + \
+	experiment.ExpFracNC * experiment.ice_absorption['NC']
+	return d
+
+def Diff_OptEffHeadon_ORCA(x, experiment):
+	d = experiment.ExpFracNuECC * experiment.ice_absorption['nueCC'] + \
+	experiment.ExpFracNuMuCC * experiment.ice_absorption['numuCC'] + \
+	experiment.ExpFracNuTauCC * experiment.ice_absorption['nutauCC'] + \
+	experiment.ExpFracNC * experiment.ice_absorption['NC']
+	return d
+
+def Diff_OptEffLateral_ORCA(x, experiment):
+	d = experiment.ExpFracNuECC * experiment.ice_absorption['nueCC'] + \
+	experiment.ExpFracNuMuCC * experiment.ice_absorption['numuCC'] + \
+	experiment.ExpFracNuTauCC * experiment.ice_absorption['nutauCC'] + \
+	experiment.ExpFracNC * experiment.ice_absorption['NC']
+	return d
+
+def Diff_OptEffOverall_ORCA(x, experiment):
+	d = experiment.ExpFracNuECC * experiment.ice_absorption['nueCC'] + \
+	experiment.ExpFracNuMuCC * experiment.ice_absorption['numuCC'] + \
+	experiment.ExpFracNuTauCC * experiment.ice_absorption['nutauCC'] + \
+	experiment.ExpFracNC * experiment.ice_absorption['NC']
+	return d
+
+def Diff_CoinFraction_ORCA(x, experiment):
+	d = experiment.ExpFracNuECC * experiment.ice_absorption['nueCC'] + \
+	experiment.ExpFracNuMuCC * experiment.ice_absorption['numuCC'] + \
+	experiment.ExpFracNuTauCC * experiment.ice_absorption['nutauCC'] + \
+	experiment.ExpFracNC * experiment.ice_absorption['NC']
+	return d

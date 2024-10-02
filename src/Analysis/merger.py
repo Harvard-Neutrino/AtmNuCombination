@@ -13,6 +13,17 @@ def Chi2StatsCombined(analysis, Obs, experiments):
 
 	return X2
 
+
+def Chi2StatsBinned(analysis, Obs, experiments):
+	for exp in experiments.values():
+		# Binned tatistics
+		E = exp.weightOscBF_binned
+		O = Obs[exp.Experiment]
+		X2 = 2 * (E-O+O*np.log(O/E))
+
+	return X2
+
+
 # def AnalyticPriors(analysis, Obs, experiments):
 # 	priors = [0] * len(analysis.SystPrior)
 # 	A = [0] * len(analysis.SystPrior)
@@ -134,3 +145,33 @@ def Chi2SystsCombined(syst, analysis, Obs, experiments):
 
 	return (X2,JX2)
 
+def Chi2SystsBinned(syst, analysis, Obs, experiments):
+	# Experiments
+	for exp in experiments.values():
+
+		# Binned tatistics
+		E = exp.weightOscBF_binned
+		O = Obs[exp.Experiment]
+
+		#Systematics
+		usedSysts = []
+		wSys = 0
+		dummywSys = 0
+		thisSyst = analysis.Systematics[exp.Experiment] + analysis.Systematics[exp.Source] + analysis.Systematics[exp.Detector]
+		for sys in thisSyst:
+			index = np.where(analysis.SystematicsList==sys)[0]
+			j = index[0]
+			xFij = globals()[sys](syst[j],exp)
+			wSys += xFij
+			usedSysts.append(j)
+
+		Es = E * (1 + wSys)
+
+		# Compute Chi^2 for each bin
+		X2 = 2 * (Es-O+O*np.log(O/Es))
+
+	# Systematic's penalty terms are ignored for this calculation as they are spreaded over all bins
+	# for i,(x,mu,sig) in enumerate(zip(syst,analysis.SystNominalList,analysis.SystSigmaList)):
+	# 	X2 += ((x-mu) / sig)**2
+
+	return X2
