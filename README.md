@@ -2,6 +2,12 @@
 
 For the time being the code is contained under the src folder and structured in Analysis and Simulation folders.
 
+If you use any part of this code please cite:
+
+Measuring Oscillations with a Million Atmospheric Neutrinos
+C. A. Arg\"uelles, P. Fernandez, I. Martinez-Soler, M. Jin
+Phys. Rev. X 13, 041055
+
 ## Analysis
 ### src/Analysis
 Currently performs standard 3-flavor neutrino oscillation analyses for the implemented experiments (IceCube Upgrade and Super-Kamiokande) and their combination. The code also includes some systematic uncertainties associated to the neutrino source and each experiment. 
