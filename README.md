@@ -5,7 +5,7 @@ For the time being the code is contained under the src folder and structured in 
 If you use any part of this code please cite:
 
 Measuring Oscillations with a Million Atmospheric Neutrinos
-C. A. Arg\"uelles, P. Fernandez, I. Martinez-Soler, M. Jin
+C. A. Argüelles, P. Fernandez, I. Martinez-Soler, M. Jin
 Phys. Rev. X 13, 041055
 
 ## Analysis
