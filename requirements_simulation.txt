@@ -1,0 +1,7 @@
+h5py>=3.6.0
+matplotlib>=3.5.1
+nuflux>=2.0.7
+numpy>=1.21.5
+pandas>=2.2.3
+particle>=0.25.1
+scipy>=1.8.0

@@ -2,12 +2,6 @@
 
 For the time being the code is contained under the src folder and structured in Analysis and Simulation folders.
 
-If you use any part of this code please cite:
-
-Measuring Oscillations with a Million Atmospheric Neutrinos
-C. A. Argüelles, P. Fernandez, I. Martinez-Soler, M. Jin
-Phys. Rev. X 13, 041055
-
 ## Analysis
 ### src/Analysis
 Currently performs standard 3-flavor neutrino oscillation analyses for the implemented experiments (IceCube Upgrade and Super-Kamiokande) and their combination. The code also includes some systematic uncertainties associated to the neutrino source and each experiment. 
@@ -15,13 +9,17 @@ Currently performs standard 3-flavor neutrino oscillation analyses for the imple
 ### Dependencies
 - numpy  
 - nuSQuIDS  
-- nuSQUIDSTools  
 - nuflux  
 - h5py  
 - matplotlib  
 - pandas  
-- scipy  
+- scipy 
 
+Except for nuSQuIDS, you can install them by doing: 
+```
+pip install -r requirements_analysis.txt
+```
+For nuSQuIDS, please follow the instructions at https://github.com/arguelles/nuSQuIDS/ .
 
 ### Running
 An analysis is specified to the code via a xml file which contains all the information about the experiments, the neutrino sources and the systematic errors. An example of this can be found in src/Analysis/xmlAnalysis/AnalysisTemplate.xml.  
@@ -77,6 +75,8 @@ NOTE: This needs to be improved and merged with Ivan's plotting.
 - scipy
 
 #### Super-Kamiokande
+Contains the relevant information extracted from various publications to closely match the reconstruction performance for SK. The code works applying the reconstruction on GENIE simulation files with format _gst_.
+
 ##### Running
 
 ```
@@ -98,10 +98,13 @@ optional arguments:
 ```
 
 #### IceCube Upgrage
-They have a public release of the MC simulation, use that.
+Public release of the MC simulation at https://icecube.wisc.edu/data-releases/2020/04/icecube-upgrade-neutrino-monte-carlo-simulation/ .
 
 #### ORCA
 Tune IC-Up MC release to match the quoted resolution and efficiencies reported by the ORCA collaboration.
 
 ## Utils
 The folder utils gathers tools for converting ROOT files produced by GENIE to HDF5 files, and read and merge any HDF5 files.
+
+## Questions?
+Please, send any doubts or suggestions to pablo.fernandez@dipc.org, ivan.j.martinez-soler@durham.ac.uk, carguelles@g.harvard.edu, miaochenjin@g.harvard.edu, santiagoginer@college.harvard.edu .
