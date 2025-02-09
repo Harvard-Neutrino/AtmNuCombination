@@ -294,7 +294,8 @@ def reweight_reco():
 
 
 # control()
-reweight()
+IC_num_events()
+# reweight()
 # reweight_reco()
 # control_reco()
 
